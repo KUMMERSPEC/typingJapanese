@@ -1,0 +1,636 @@
+{
+  "questions": [
+    {
+      "character": "トイレ",
+      "hiragana": "トイレ",
+      "romaji": "toire",
+      "meaning": "洗手间",
+      "type": "normal",
+      "answers": "トイレ:toire"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "トイレから出る",
+      "hiragana": "トイレ:から:でる",
+      "romaji": "toire:kara:deru",
+      "meaning": "从厕所出来",
+      "type": "split",
+      "answers": "トイレ:toire|から:kara|でる:deru"
+    },
+    {
+      "character": "行く",
+      "hiragana": "いく",
+      "romaji": "iku",
+      "meaning": "去，前往",
+      "type": "normal",
+      "answers": "いく:iku"
+    },
+    {
+      "character": "トイレに行く",
+      "hiragana": "トイレ:に:いく",
+      "romaji": "toire:ni:iku",
+      "meaning": "去厕所",
+      "type": "split",
+      "answers": "トイレ:toire|に:ni|いく:iku"
+    },
+    {
+      "character": "入る",
+      "hiragana": "はいる",
+      "romaji": "hairu",
+      "meaning": "进入",
+      "type": "normal",
+      "answers": "はいる:hairu"
+    },
+    {
+      "character": "トイレに入る",
+      "hiragana": "トイレ:に:はいる",
+      "romaji": "toire:ni:hairu",
+      "meaning": "进入厕所（去厕所）",
+      "type": "split",
+      "answers": "トイレ:toire|に:ni|はいる:hairu"
+    },
+    {
+      "character": "トイレを借りる",
+      "hiragana": "トイレ:を:かりる",
+      "romaji": "toire:wo:kariru",
+      "meaning": "借（别人家）厕所",
+      "type": "split",
+      "answers": "トイレ:toire|を:wo|かりる:kariru"
+    },
+    {
+      "character": "トイレを出る",
+      "hiragana": "トイレ:を:でる",
+      "romaji": "toire:wo:deru",
+      "meaning": "离开厕所（助词を）",
+      "type": "split",
+      "answers": "トイレ:toire|を:wo|でる:deru"
+    },
+    {
+      "character": "流す",
+      "hiragana": "ながす",
+      "romaji": "nagasu",
+      "meaning": "流动",
+      "type": "normal",
+      "answers": "ながす:nagasu"
+    },
+    {
+      "character": "トイレを流す",
+      "hiragana": "トイレ:を:ながす",
+      "romaji": "toire:wo:nagasu",
+      "meaning": "冲厕所",
+      "type": "split",
+      "answers": "トイレ:toire|を:wo|ながす:nagasu"
+    },
+    {
+      "character": "風呂",
+      "hiragana": "ふろ",
+      "romaji": "furo",
+      "meaning": "洗澡",
+      "type": "normal",
+      "answers": "ふろ:furo"
+    },
+    {
+      "character": "お風呂から出る",
+      "hiragana": "おふろ:から:でる",
+      "romaji": "ofuro:kara:deru",
+      "meaning": "从浴缸里出来",
+      "type": "split",
+      "answers": "おふろ:ofuro|から:kara|でる:deru"
+    },
+    {
+      "character": "お風呂を出る",
+      "hiragana": "おふろ:を:でる",
+      "romaji": "ofuro:wo:deru",
+      "meaning": "从浴缸里出来（助词を）",
+      "type": "split",
+      "answers": "おふろ:ofuro|を:wo|でる:deru"
+    },
+    {
+      "character": "お風呂がわく",
+      "hiragana": "おふろ:が:わく",
+      "romaji": "ofuro:ga:waku",
+      "meaning": "洗澡水很热",
+      "type": "split",
+      "answers": "おふろ:ofuro|が:ga|わく:waku"
+    },
+    {
+      "character": "お風呂に入る",
+      "hiragana": "おふろ:に:はいる",
+      "romaji": "ofuro:ni:hairu",
+      "meaning": "洗澡",
+      "type": "split",
+      "answers": "おふろ:ofuro|に:ni|はいる:hairu"
+    },
+    {
+      "character": "お風呂をわかす",
+      "hiragana": "おふろ:を:わかす",
+      "romaji": "ofuro:wo:wakasu",
+      "meaning": "热洗澡水",
+      "type": "split",
+      "answers": "おふろ:ofuro|を:wo|わかす:wakasu"
+    },
+    {
+      "character": "スイッチ",
+      "hiragana": "スイッチ",
+      "romaji": "suicchi",
+      "meaning": "开关",
+      "type": "normal",
+      "answers": "スイッチ:suicchi"
+    },
+    {
+      "character": "スイッチを入れる",
+      "hiragana": "スイッチ:を:いれる",
+      "romaji": "suicchi:wo:ireru",
+      "meaning": "打开开关（所有开关都可以）",
+      "type": "split",
+      "answers": "スイッチ:suicchi|を:wo|いれる:ireru"
+    },
+    {
+      "character": "押す",
+      "hiragana": "おす",
+      "romaji": "osu",
+      "meaning": "推，按压",
+      "type": "normal",
+      "answers": "おす:osu"
+    },
+    {
+      "character": "スイッチを押す",
+      "hiragana": "スイッチ:を:おす",
+      "romaji": "suicchi:wo:osu",
+      "meaning": "按下开关",
+      "type": "split",
+      "answers": "スイッチ:suicchi|を:wo|おす:osu"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "关闭，切断",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "スイッチを切る",
+      "hiragana": "スイッチ:を:きる",
+      "romaji": "suicchi:wo:kiru",
+      "meaning": "关掉开关",
+      "type": "split",
+      "answers": "スイッチ:suicchi|を:wo|きる:kiru"
+    },
+    {
+      "character": "電気",
+      "hiragana": "でんき",
+      "romaji": "denki",
+      "meaning": "电灯",
+      "type": "normal",
+      "answers": "でんき:denki"
+    },
+    {
+      "character": "明るい",
+      "hiragana": "あかるい",
+      "romaji": "akarui",
+      "meaning": "明亮的",
+      "type": "normal",
+      "answers": "あかるい:akarui"
+    },
+    {
+      "character": "電気が明るい",
+      "hiragana": "でんき:が:あかるい",
+      "romaji": "denki:ga:akarui",
+      "meaning": "电很亮",
+      "type": "split",
+      "answers": "でんき:denki|が:ga|あかるい:akarui"
+    },
+    {
+      "character": "消える",
+      "hiragana": "きえる",
+      "romaji": "kieru",
+      "meaning": "消失",
+      "type": "normal",
+      "answers": "きえる:kieru"
+    },
+    {
+      "character": "電気が消える",
+      "hiragana": "でんき:が:きえる",
+      "romaji": "denki:ga:kieru",
+      "meaning": "停电了",
+      "type": "split",
+      "answers": "でんき:denki|が:ga|きえる:kieru"
+    },
+    {
+      "character": "暗い",
+      "hiragana": "くらい",
+      "romaji": "kurai",
+      "meaning": "黑暗的",
+      "type": "normal",
+      "answers": "くらい:kurai"
+    },
+    {
+      "character": "電気が暗い",
+      "hiragana": "でんき:が:くらい",
+      "romaji": "denki:ga:kurai",
+      "meaning": "电灯很暗",
+      "type": "split",
+      "answers": "でんき:denki|が:ga|くらい:kurai"
+    },
+    {
+      "character": "電源を切る",
+      "hiragana": "でんげん:を:きる",
+      "romaji": "dengen:wo:kiru",
+      "meaning": "关掉电源（动作）",
+      "type": "split",
+      "answers": "でんげん:dengen|を:wo|きる:kiru"
+    },
+    {
+      "character": "消す",
+      "hiragana": "けす",
+      "romaji": "kesu",
+      "meaning": "擦除，消除",
+      "type": "normal",
+      "answers": "けす:kesu"
+    },
+    {
+      "character": "電気を消す",
+      "hiragana": "でんき:を:けす",
+      "romaji": "denki:wo:kesu",
+      "meaning": "关掉灯",
+      "type": "split",
+      "answers": "でんき:denki|を:wo|けす:kesu"
+    },
+    {
+      "character": "つける",
+      "hiragana": "つける",
+      "romaji": "tsukeru",
+      "meaning": "打开（电器），挂上",
+      "type": "normal",
+      "answers": "つける:tsukeru"
+    },
+    {
+      "character": "電気をつける",
+      "hiragana": "でんき:を:つける",
+      "romaji": "denki:wo:tsukeru",
+      "meaning": "打开灯",
+      "type": "split",
+      "answers": "でんき:denki|を:wo|つける:tsukeru"
+    },
+    {
+      "character": "つく",
+      "hiragana": "つく",
+      "romaji": "tsuku",
+      "meaning": "到达",
+      "type": "normal",
+      "answers": "つく:tsuku"
+    },
+    {
+      "character": "電気がつく",
+      "hiragana": "でんき:が:つく",
+      "romaji": "denki:ga:tsuku",
+      "meaning": "电灯亮了（电力接通）",
+      "type": "split",
+      "answers": "でんき:denki|が:ga|つく:tsuku"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "切断，关闭",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "エアコン",
+      "hiragana": "エアコン",
+      "romaji": "eakon",
+      "meaning": "空调",
+      "type": "normal",
+      "answers": "エアコン:eakon"
+    },
+    {
+      "character": "効く",
+      "hiragana": "きく",
+      "romaji": "kiku",
+      "meaning": "有效（动词）",
+      "type": "normal",
+      "answers": "きく:kiku"
+    },
+    {
+      "character": "エアコンが効く",
+      "hiragana": "エアコン:が:きく",
+      "romaji": "eakon:ga:kiku",
+      "meaning": "空调工作（空调有用）",
+      "type": "split",
+      "answers": "エアコン:eakon|が:ga|きく:kiku"
+    },
+    {
+      "character": "エアコンがつく",
+      "hiragana": "エアコン:が:つく",
+      "romaji": "eakon:ga:tsuku",
+      "meaning": "空调已打开（状态）",
+      "type": "split",
+      "answers": "エアコン:eakon|が:ga|つく:tsuku"
+    },
+    {
+      "character": "入れる",
+      "hiragana": "いれる",
+      "romaji": "ireru",
+      "meaning": "闭合(开关)，接通(电路)。",
+      "type": "normal",
+      "answers": "いれる:ireru"
+    },
+    {
+      "character": "エアコンを入れる",
+      "hiragana": "エアコン:を:いれる",
+      "romaji": "eakon:wo:ireru",
+      "meaning": "打开空调（接通空调）",
+      "type": "split",
+      "answers": "エアコン:eakon|を:wo|いれる:ireru"
+    },
+    {
+      "character": "エアコンをかける",
+      "hiragana": "エアコン:を:かける",
+      "romaji": "eakon:wo:kakeru",
+      "meaning": "启动空调",
+      "type": "split",
+      "answers": "エアコン:eakon|を:wo|かける:kakeru"
+    },
+    {
+      "character": "エアコンを消す",
+      "hiragana": "エアコン:を:けす",
+      "romaji": "eakon:wo:kesu",
+      "meaning": "关掉空调",
+      "type": "split",
+      "answers": "エアコン:eakon|を:wo|けす:kesu"
+    },
+    {
+      "character": "エアコンをつける",
+      "hiragana": "エアコン:を:つける",
+      "romaji": "eakon:wo:tsukeru",
+      "meaning": "打开空调",
+      "type": "split",
+      "answers": "エアコン:eakon|を:wo|つける:tsukeru"
+    },
+    {
+      "character": "時計",
+      "hiragana": "とけい",
+      "romaji": "tokei",
+      "meaning": "钟",
+      "type": "normal",
+      "answers": "とけい:tokei"
+    },
+    {
+      "character": "動く",
+      "hiragana": "うごく",
+      "romaji": "ugoku",
+      "meaning": "移动、运行",
+      "type": "normal",
+      "answers": "うごく:ugoku"
+    },
+    {
+      "character": "時計が動く",
+      "hiragana": "とけい:が:うごく",
+      "romaji": "tokei:ga:ugoku",
+      "meaning": "时钟在工作（钟表在走）",
+      "type": "split",
+      "answers": "とけい:tokei|が:ga|うごく:ugoku"
+    },
+    {
+      "character": "遅れる",
+      "hiragana": "おくれる",
+      "romaji": "okureru",
+      "meaning": "迟到，晚点",
+      "type": "normal",
+      "answers": "おくれる:okureru"
+    },
+    {
+      "character": "時計が遅れる",
+      "hiragana": "とけい:が:おくれる",
+      "romaji": "tokei:ga:okureru",
+      "meaning": "表慢了",
+      "type": "split",
+      "answers": "とけい:tokei|が:ga|おくれる:okureru"
+    },
+    {
+      "character": "進む",
+      "hiragana": "すすむ",
+      "romaji": "susumu",
+      "meaning": "前进，向前",
+      "type": "normal",
+      "answers": "すすむ:susumu"
+    },
+    {
+      "character": "時計が進む",
+      "hiragana": "とけい:が:すすむ",
+      "romaji": "tokei:ga:susumu",
+      "meaning": "表快了（时钟向前移动）",
+      "type": "split",
+      "answers": "とけい:tokei|が:ga|すすむ:susumu"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "時計が止まる",
+      "hiragana": "とけい:が:とまる",
+      "romaji": "tokei:ga:tomaru",
+      "meaning": "表停止了",
+      "type": "split",
+      "answers": "とけい:tokei|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "鳴る",
+      "hiragana": "なる",
+      "romaji": "naru",
+      "meaning": "响（铃）",
+      "type": "normal",
+      "answers": "なる:naru"
+    },
+    {
+      "character": "時計が鳴る",
+      "hiragana": "とけい:が:なる",
+      "romaji": "tokei:ga:naru",
+      "meaning": "钟声响起",
+      "type": "split",
+      "answers": "とけい:tokei|が:ga|なる:naru"
+    },
+    {
+      "character": "合わせる",
+      "hiragana": "あわせる",
+      "romaji": "awaseru",
+      "meaning": "匹配",
+      "type": "normal",
+      "answers": "あわせる:awaseru"
+    },
+    {
+      "character": "時計を合わせる",
+      "hiragana": "とけい:を:あわせる",
+      "romaji": "tokei:wo:awaseru",
+      "meaning": "设置时间，对时间",
+      "type": "split",
+      "answers": "とけい:tokei|を:wo|あわせる:awaseru"
+    },
+    {
+      "character": "セット",
+      "hiragana": "セット",
+      "romaji": "setto",
+      "meaning": "设置，放置，set",
+      "type": "normal",
+      "answers": "セット:setto"
+    },
+    {
+      "character": "目覚まし時計をセットする",
+      "hiragana": "とけい:を:セットする",
+      "romaji": "mezamashitokei:wo:settosuru",
+      "meaning": "定闹钟",
+      "type": "split",
+      "answers": "とけい:mezamashitokei|を:wo|セットする:settosuru"
+    },
+    {
+      "character": "電話",
+      "hiragana": "でんわ",
+      "romaji": "denwa",
+      "meaning": "电话",
+      "type": "normal",
+      "answers": "でんわ:denwa"
+    },
+    {
+      "character": "電話がある",
+      "hiragana": "でんわ:が:ある",
+      "romaji": "denwa:ga:aru",
+      "meaning": "有电话",
+      "type": "split",
+      "answers": "でんわ:denwa|が:ga|ある:aru"
+    },
+    {
+      "character": "切れる",
+      "hiragana": "きれる",
+      "romaji": "kireru",
+      "meaning": "断开，断绝。",
+      "type": "normal",
+      "answers": "きれる:kireru"
+    },
+    {
+      "character": "電話が切れる",
+      "hiragana": "でんわ:が:きれる",
+      "romaji": "denwa:ga:kireru",
+      "meaning": "电话挂断",
+      "type": "split",
+      "answers": "でんわ:denwa|が:ga|きれる:kireru"
+    },
+    {
+      "character": "ない",
+      "hiragana": "ない",
+      "romaji": "nai",
+      "meaning": "没有",
+      "type": "normal",
+      "answers": "ない:nai"
+    },
+    {
+      "character": "電話がない",
+      "hiragana": "でんわ:が:ない",
+      "romaji": "denwa:ga:nai",
+      "meaning": "没有电话",
+      "type": "split",
+      "answers": "でんわ:denwa|が:ga|ない:nai"
+    },
+    {
+      "character": "電話が鳴る",
+      "hiragana": "でんわ:が:なる",
+      "romaji": "denwa:ga:naru",
+      "meaning": "电话响了",
+      "type": "split",
+      "answers": "でんわ:denwa|が:ga|なる:naru"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "電話に出る",
+      "hiragana": "でんわ:に:でる",
+      "romaji": "denwa:ni:deru",
+      "meaning": "（出来）接电话",
+      "type": "split",
+      "answers": "でんわ:denwa|に:ni|でる:deru"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "拨打，挂上",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "電話をかける",
+      "hiragana": "でんわ:を:かける",
+      "romaji": "denwa:wo:kakeru",
+      "meaning": "打电话",
+      "type": "split",
+      "answers": "でんわ:denwa|を:wo|かける:kakeru"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "切断",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "電話を切る",
+      "hiragana": "でんわ:を:きる",
+      "romaji": "denwa:wo:kiru",
+      "meaning": "挂电话",
+      "type": "split",
+      "answers": "でんわ:denwa|を:wo|きる:kiru"
+    },
+    {
+      "character": "する",
+      "hiragana": "する",
+      "romaji": "suru",
+      "meaning": "做，打，进行",
+      "type": "normal",
+      "answers": "する:suru"
+    },
+    {
+      "character": "電話をする",
+      "hiragana": "でんわ:を:する",
+      "romaji": "denwa:wo:suru",
+      "meaning": "打电话",
+      "type": "split",
+      "answers": "でんわ:denwa|を:wo|する:suru"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "拿",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "電話を取る",
+      "hiragana": "でんわ:を:とる",
+      "romaji": "denwa:wo:toru",
+      "meaning": "拿起电话",
+      "type": "split",
+      "answers": "でんわ:denwa|を:wo|とる:toru"
+    }
+  ]
+}

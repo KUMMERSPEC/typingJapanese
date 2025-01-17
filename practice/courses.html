@@ -1,0 +1,337 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Japanese</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/courses.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>日本語コース選択</h1>
+            <button onclick="window.location.href='../index.html'" style="padding: 8px 16px; border-radius: 4px; background-color: #4a90e2; color: white; border: none; cursor: pointer;">返回首页</button>
+        </div>
+        
+        <!-- 第一本书 -->
+        <div class="book-container">
+            <div class="book-header" onclick="this.parentElement.querySelector('.book-content').style.display = this.parentElement.querySelector('.book-content').style.display === 'none' ? 'block' : 'none'">
+                <h2>写给无法说出一句完整日语的人</h2>
+                <span>▼</span>
+            </div>
+            <div class="book-content" style="display: none;">
+                <div class="course-grid">
+                    <div class="course-card" data-course="kimochi" data-lesson="lesson1">
+                        <h2>気持ち</h2>
+                        <p>好き・嫌い</p>
+                    </div>
+                    <div class="course-card" data-course="gimon" data-lesson="lesson1">
+                        <h2>疑問</h2>
+                        <p>尋ねる</p>
+                    </div>
+                    <div class="course-card" data-course="hitei" data-lesson="lesson1">
+                        <h2>否定</h2>
+                        <p>読解と会話練習</p>
+                    </div>
+                    <div class="course-card" data-course="katei" data-lesson="lesson1">
+                        <h2>假设</h2>
+                        <p>読解と会話練習</p>
+                    </div>
+                    <div class="course-card" data-course="kantan" data-lesson="lesson1">
+                        <h2>感叹</h2>
+                        <p>読解と会話練習</p>
+                    </div>
+                    <div class="course-card" data-course="ajiwai" data-lesson="lesson1">
+                        <h2>味道</h2>
+                        <p>読解と会話練習</p>
+                    </div>
+                    <div class="course-card" data-course="kanjou" data-lesson="lesson1">
+                        <h2>负面感情</h2>
+                        <p>読解と会話練習</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二本书 -->
+        <div class="book-container">
+            <div class="book-header" onclick="this.parentElement.querySelector('.book-content').style.display = this.parentElement.querySelector('.book-content').style.display === 'none' ? 'block' : 'none'">
+                <h2>词组记单词</h2>
+                <span>▼</span>
+            </div>
+            <div class="book-content" style="display: none;">
+                <div class="course-grid">
+                    <div class="course-card" data-course="huku" data-lesson="lesson1">
+                        <h2>服</h2>
+                        <p>服装相关表达</p>
+                    </div>
+        
+                    <div class="course-card" data-course="syoku" data-lesson="lesson1">
+                        <h2>食</h2>
+                        <p>吃，饮食方面</p>
+                    </div>
+        
+                    <div class="course-card" data-course="sumu" data-lesson="lesson1">
+                        <h2>住</h2>
+                        <p>房屋居家行为</p>
+                    </div>
+        
+                    <div class="course-card" data-course="koutsuu" data-lesson="lesson1">
+                        <h2>交通</h2>
+                        <p>交通出行</p>
+                    </div>
+        
+                    <div class="course-card" data-course="gakkou" data-lesson="lesson1">
+                        <h2>学校</h2>
+                        <p>学校</p>
+                    </div>
+        
+                    <div class="course-card" data-course="shigoto" data-lesson="lesson1">
+                        <h2>工作</h2>
+                        <p>工作</p>
+                    </div>
+        
+                    <div class="course-card" data-course="okane" data-lesson="lesson1">
+                        <h2>钱、购物</h2>
+                        <p>钱、购物</p>
+                    </div>
+        
+                    <div class="course-card" data-course="tsuushin" data-lesson="lesson1">
+                        <h2>情报通信</h2>
+                        <p>情报通信</p>
+                    </div>
+        
+                    <div class="course-card" data-course="jikan" data-lesson="lesson1">
+                        <h2>计划</h2>
+                        <p>计划</p>
+                    </div>
+        
+                    <div class="course-card" data-course="tomodachi" data-lesson="lesson1">
+                        <h2>人际交往</h2>
+                        <p>人际交往</p>
+                    </div>
+        
+                    <div class="course-card" data-course="kyoumi" data-lesson="lesson1">
+                        <h2>兴趣爱好</h2>
+                        <p>兴趣爱好</p>
+                    </div>
+        
+                    <div class="course-card" data-course="tenki" data-lesson="lesson1">
+                        <h2>天气</h2>
+                        <p>天气</p>
+                    </div>
+        
+                    <div class="course-card" data-course="saigai" data-lesson="lesson1">
+                        <h2>自然灾害</h2>
+                        <p>自然灾害</p>
+                    </div>
+        
+                    <div class="course-card" data-course="karada" data-lesson="lesson1">
+                        <h2>身体</h2>
+                        <p>身体</p>
+                    </div>
+        
+                    <div class="course-card" data-course="byouki" data-lesson="lesson1">
+                        <h2>生病健康</h2>
+                        <p>生病健康</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加课时选择弹窗 -->
+    <div class="lesson-modal" id="lessonModal">
+        <div class="lesson-modal-content">
+            <div class="lesson-modal-header">
+                <h2 class="lesson-modal-title"></h2>
+                <button class="lesson-modal-close">&times;</button>
+            </div>
+            <div class="lesson-list">
+                <!-- 课时列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { courseData } from '../../js/courseData.js';
+
+        // 获取DOM元素
+        const modal = document.getElementById('lessonModal');
+        const modalTitle = modal.querySelector('.lesson-modal-title');
+        const lessonList = modal.querySelector('.lesson-list');
+        const closeBtn = modal.querySelector('.lesson-modal-close');
+
+        // 获取已完成课程的数据
+        function getCompletedLessons() {
+            const completedLessons = localStorage.getItem('completedLessons');
+            return completedLessons ? JSON.parse(completedLessons) : {};
+        }
+
+        // 检查课程完成状态并添加标记
+        function checkAndMarkCompletedCourses() {
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            const courseCards = document.querySelectorAll('.course-card');
+
+            courseCards.forEach(card => {
+                const courseId = card.dataset.course;
+                if (courseId) {
+                    // 检查该课程的所有句子是否都已掌握
+                    const isCompleted = checkCourseCompletion(courseId, masteredSentences);
+                    if (isCompleted) {
+                        // 添加完成标记
+                        if (!card.querySelector('.completion-mark')) {
+                            const mark = document.createElement('span');
+                            mark.className = 'completion-mark';
+                            mark.innerHTML = '✓';
+                            mark.style.cssText = `
+                                position: absolute;
+                                top: 10px;
+                                right: 10px;
+                                color: #4CAF50;
+                                font-size: 20px;
+                                font-weight: bold;
+                            `;
+                            card.style.position = 'relative';
+                            card.appendChild(mark);
+                        }
+                    }
+                }
+            });
+        }
+
+        // 检查课程完成状态
+        function checkCourseCompletion(courseId, masteredSentences) {
+            // 获取课程数据
+            let course;
+            let bookId;
+            
+            // 遍历所有书籍查找课程
+            for (const [id, book] of Object.entries(courseData)) {
+                if (book.courses && book.courses[courseId]) {
+                    course = book.courses[courseId];
+                    bookId = id;
+                    break;
+                }
+            }
+
+            if (!course) return false;
+
+            // 检查每个课时是否都已完成
+            return Object.keys(course.lessons).every(lessonId => {
+                const lessonData = localStorage.getItem(`course_${courseId}_${lessonId}`);
+                if (!lessonData) return false;
+
+                try {
+                    const data = JSON.parse(lessonData);
+                    if (!data.questions) return false;
+
+                    return data.questions.every(question => {
+                        const questionKey = `${courseId}:${lessonId}:${question.character}`;
+                        return masteredSentences[questionKey];
+                    });
+                } catch (error) {
+                    console.error('Error checking course completion:', error);
+                    return false;
+                }
+            });
+        }
+
+        // 显示课时选择弹窗
+        function showLessonModal(courseId) {
+            // 找到对应的课程数据
+            let course;
+            let bookId;
+            
+            // 遍历所有书籍查找课程
+            for (const [id, book] of Object.entries(courseData)) {
+                if (book.courses && book.courses[courseId]) {
+                    course = book.courses[courseId];
+                    bookId = id;
+                    break;
+                }
+            }
+
+            if (!course) {
+                console.error('Course not found:', courseId);
+                return;
+            }
+
+            modalTitle.textContent = `${course.name} - 课时选择`;
+            lessonList.innerHTML = '';
+
+            // 获取已完成课程数据
+            const completedLessons = getCompletedLessons();
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+
+            // 生成课时列表
+            Object.entries(course.lessons).forEach(([lessonId, lesson]) => {
+                const lessonElement = document.createElement('div');
+                lessonElement.className = 'lesson-item';
+                
+                // 检查课时是否已完成
+                const isCompleted = checkLessonCompletion(courseId, lessonId, masteredSentences);
+                if (isCompleted) {
+                    lessonElement.classList.add('completed');
+                }
+
+                lessonElement.innerHTML = `
+                    <h3>${lesson.title}${isCompleted ? ' <span style="color: #4CAF50; margin-left: 10px;">✓</span>' : ''}</h3>
+                    <p>${lesson.description}</p>
+                `;
+                lessonElement.addEventListener('click', () => {
+                    window.location.href = `practice.html?book=${bookId}&course=${courseId}&lesson=${lessonId}`;
+                });
+                lessonList.appendChild(lessonElement);
+            });
+
+            modal.classList.add('show');
+        }
+
+        // 检查课时完成状态
+        function checkLessonCompletion(courseId, lessonId, masteredSentences) {
+            const lessonData = localStorage.getItem(`course_${courseId}_${lessonId}`);
+            if (!lessonData) return false;
+
+            try {
+                const data = JSON.parse(lessonData);
+                if (!data.questions) return false;
+
+                return data.questions.every(question => {
+                    const questionKey = `${courseId}:${lessonId}:${question.character}`;
+                    return masteredSentences[questionKey];
+                });
+            } catch (error) {
+                console.error('Error checking lesson completion:', error);
+                return false;
+            }
+        }
+
+        // 关闭弹窗
+        function closeLessonModal() {
+            modal.classList.remove('show');
+        }
+
+        // 事件监听
+        document.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const courseId = card.dataset.course;
+                showLessonModal(courseId);
+            });
+        });
+
+        closeBtn.addEventListener('click', closeLessonModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeLessonModal();
+            }
+        });
+
+        // 页面加载时检查课程完成状态
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAndMarkCompletedCourses();
+        });
+    </script>
+</body>
+</html>

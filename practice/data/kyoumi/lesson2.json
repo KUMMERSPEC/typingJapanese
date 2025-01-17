@@ -1,0 +1,228 @@
+{
+  "questions": [
+    {
+      "character": "試合",
+      "hiragana": "しあい",
+      "romaji": "shiai",
+      "meaning": "游戏",
+      "type": "normal",
+      "answers": "しあい:shiai"
+    },
+    {
+      "character": "勝つ",
+      "hiragana": "かつ",
+      "romaji": "katsu",
+      "meaning": "赢",
+      "type": "normal",
+      "answers": "かつ:katsu"
+    },
+    {
+      "character": "試合に勝つ",
+      "hiragana": "しあい:に:かつ",
+      "romaji": "shiai:ni:katsu",
+      "meaning": "赢得比赛",
+      "type": "split",
+      "answers": "しあい:shiai|に:ni|かつ:katsu"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "試合に出る",
+      "hiragana": "しあい:に:でる",
+      "romaji": "shiai:ni:deru",
+      "meaning": "参加比赛",
+      "type": "split",
+      "answers": "しあい:shiai|に:ni|でる:deru"
+    },
+    {
+      "character": "負ける",
+      "hiragana": "まける",
+      "romaji": "makeru",
+      "meaning": "失去",
+      "type": "normal",
+      "answers": "まける:makeru"
+    },
+    {
+      "character": "試合に負ける",
+      "hiragana": "しあい:に:まける",
+      "romaji": "shiai:ni:makeru",
+      "meaning": "输掉比赛",
+      "type": "split",
+      "answers": "しあい:shiai|に:ni|まける:makeru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "試合に出す",
+      "hiragana": "しあい:に:だす",
+      "romaji": "shiai:ni:dasu",
+      "meaning": "让（别人）参加比赛",
+      "type": "split",
+      "answers": "しあい:shiai|に:ni|だす:dasu"
+    },
+    {
+      "character": "チケット",
+      "hiragana": "チケット",
+      "romaji": "chiketto",
+      "meaning": "票",
+      "type": "normal",
+      "answers": "チケット:chiketto"
+    },
+    {
+      "character": "売れる",
+      "hiragana": "うれる",
+      "romaji": "ureru",
+      "meaning": "畅销",
+      "type": "normal",
+      "answers": "うれる:ureru"
+    },
+    {
+      "character": "チケットが売れる",
+      "hiragana": "チケット:が:うれる",
+      "romaji": "chiketto:ga:ureru",
+      "meaning": "门票畅销",
+      "type": "split",
+      "answers": "チケット:chiketto|が:ga|うれる:ureru"
+    },
+    {
+      "character": "激しい",
+      "hiragana": "はげしい",
+      "romaji": "hageshii",
+      "meaning": "激烈的",
+      "type": "normal",
+      "answers": "はげしい:hageshii"
+    },
+    {
+      "character": "激しい試合",
+      "hiragana": "はげしいしあい",
+      "romaji": "hageshiishiai",
+      "meaning": "激烈的比赛",
+      "type": "split",
+      "answers": "はげしいしあい:hageshiishiai"
+    },
+    {
+      "character": "ホテル",
+      "hiragana": "ホテル",
+      "romaji": "hoteru",
+      "meaning": "酒店",
+      "type": "normal",
+      "answers": "ホテル:hoteru"
+    },
+    {
+      "character": "チェックインする",
+      "hiragana": "チェックイン",
+      "romaji": "chekkuinsuru",
+      "meaning": "(住旅馆的)订房登记",
+      "type": "normal",
+      "answers": "チェックイン:chekkuinsuru"
+    },
+    {
+      "character": "ホテルにチェックインする",
+      "hiragana": "ホテル:に:チェックインする",
+      "romaji": "hoteru:ni:chekkuinsuru",
+      "meaning": "入住酒店",
+      "type": "split",
+      "answers": "ホテル:hoteru|に:ni|チェックインする:chekkuinsuru"
+    },
+    {
+      "character": "泊まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停留",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "ホテルに泊まる",
+      "hiragana": "ホテル:に:とまる",
+      "romaji": "hoteru:ni:tomaru",
+      "meaning": "住在旅馆",
+      "type": "split",
+      "answers": "ホテル:hoteru|に:ni|とまる:tomaru"
+    },
+    {
+      "character": "押さえる",
+      "hiragana": "おさえる",
+      "romaji": "osaeru",
+      "meaning": "按住，預約",
+      "type": "normal",
+      "answers": "おさえる:osaeru"
+    },
+    {
+      "character": "ホテルを押さえる",
+      "hiragana": "ホテル:を:おさえる",
+      "romaji": "hoteru:wo:osaeru",
+      "meaning": "预约酒店",
+      "type": "split",
+      "answers": "ホテル:hoteru|を:wo|おさえる:osaeru"
+    },
+    {
+      "character": "チェックアウトする",
+      "hiragana": "チェックアウトする",
+      "romaji": "chekkuchekkuautosuru",
+      "meaning": "结账退房",
+      "type": "normal",
+      "answers": "チェックアウトする:chekkuchekkuautosuru"
+    },
+    {
+      "character": "ホテルをチェックアウトする",
+      "hiragana": "ホテル:を:チェックアウトする",
+      "romaji": "hoteru:wo:chekkuautosuru",
+      "meaning": "酒店退房间离开",
+      "type": "split",
+      "answers": "ホテル:hoteru|を:wo|チェックアウトする:chekkuautosuru"
+    },
+    {
+      "character": "予約する",
+      "hiragana": "よやくする",
+      "romaji": "yoyakusuru",
+      "meaning": "预订",
+      "type": "normal",
+      "answers": "よやくする:yoyakusuru"
+    },
+    {
+      "character": "ホテルを予約する",
+      "hiragana": "ホテル:を:よやくする",
+      "romaji": "hoteru:wo:yoyakusuru",
+      "meaning": "预订酒店",
+      "type": "split",
+      "answers": "ホテル:hoteru|を:wo|よやくする:yoyakusuru"
+    },
+    {
+      "character": "旅行",
+      "hiragana": "りょこう",
+      "romaji": "ryokou",
+      "meaning": "旅行",
+      "type": "normal",
+      "answers": "りょこう:ryokou"
+    },
+    {
+      "character": "出かける",
+      "hiragana": "でかける",
+      "romaji": "dekakeru",
+      "meaning": "出去",
+      "type": "normal",
+      "answers": "でかける:dekakeru"
+    },
+    {
+      "character": "旅行に出かける",
+      "hiragana": "りょこう:に:でかける",
+      "romaji": "ryokou:ni:dekakeru",
+      "meaning": "去旅行",
+      "type": "split",
+      "answers": "りょこう:ryokou|に:ni|でかける:dekakeru"
+    }
+  ]
+}

@@ -1,0 +1,452 @@
+{
+  "questions": [
+    {
+      "character": "興味",
+      "hiragana": "きょうみ",
+      "romaji": "kyoumi",
+      "meaning": "兴趣（一时兴起）",
+      "type": "normal",
+      "answers": "きょうみ:kyoumi"
+    },
+    {
+      "character": "興味がある",
+      "hiragana": "きょうみ:が:ある",
+      "romaji": "kyoumi:ga:aru",
+      "meaning": "我有兴趣",
+      "type": "split",
+      "answers": "きょうみ:kyoumi|が:ga|ある:aru"
+    },
+    {
+      "character": "興味がない",
+      "hiragana": "きょうみ:が:ない",
+      "romaji": "kyoumi:ga:nai",
+      "meaning": "不感兴趣",
+      "type": "split",
+      "answers": "きょうみ:kyoumi|が:ga|ない:nai"
+    },
+    {
+      "character": "趣味",
+      "hiragana": "しゅみ",
+      "romaji": "shumi",
+      "meaning": "爱好",
+      "type": "normal",
+      "answers": "しゅみ:shumi"
+    },
+    {
+      "character": "趣味がある",
+      "hiragana": "しゅみ:が:ある",
+      "romaji": "shumi:ga:aru",
+      "meaning": "有爱好",
+      "type": "split",
+      "answers": "しゅみ:shumi|が:ga|ある:aru"
+    },
+    {
+      "character": "多い",
+      "hiragana": "おおい",
+      "romaji": "ooi",
+      "meaning": "许多",
+      "type": "normal",
+      "answers": "おおい:ooi"
+    },
+    {
+      "character": "趣味が多い",
+      "hiragana": "しゅみ:が:おおい",
+      "romaji": "shumi:ga:ooi",
+      "meaning": "爱好很多",
+      "type": "split",
+      "answers": "しゅみ:shumi|が:ga|おおい:ooi"
+    },
+    {
+      "character": "少ない",
+      "hiragana": "すくない",
+      "romaji": "sukunai",
+      "meaning": "很少",
+      "type": "normal",
+      "answers": "すくない:sukunai"
+    },
+    {
+      "character": "趣味が少ない",
+      "hiragana": "しゅみ:が:すくない",
+      "romaji": "shumi:ga:sukunai",
+      "meaning": "爱好很少",
+      "type": "split",
+      "answers": "しゅみ:shumi|が:ga|すくない:sukunai"
+    },
+    {
+      "character": "趣味がない",
+      "hiragana": "しゅみ:が:ない",
+      "romaji": "shumi:ga:nai",
+      "meaning": "没有爱好",
+      "type": "split",
+      "answers": "しゅみ:shumi|が:ga|ない:nai"
+    },
+    {
+      "character": "持つ",
+      "hiragana": "もつ",
+      "romaji": "motsu",
+      "meaning": "有，持有",
+      "type": "normal",
+      "answers": "もつ:motsu"
+    },
+    {
+      "character": "趣味を持つ",
+      "hiragana": "しゅみ:を:もつ",
+      "romaji": "shumi:wo:motsu",
+      "meaning": "有爱好",
+      "type": "split",
+      "answers": "しゅみ:shumi|を:wo|もつ:motsu"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "強い興味",
+      "hiragana": "つよいきょうみ",
+      "romaji": "tsuyoikyoumi",
+      "meaning": "浓厚的兴趣",
+      "type": "split",
+      "answers": "つよいきょうみ:tsuyoikyoumi"
+    },
+    {
+      "character": "音楽",
+      "hiragana": "おんがく",
+      "romaji": "ongaku",
+      "meaning": "音乐",
+      "type": "normal",
+      "answers": "おんがく:ongaku"
+    },
+    {
+      "character": "音楽がかかる",
+      "hiragana": "おんがく:が:かかる",
+      "romaji": "ongaku:ga:kakaru",
+      "meaning": "音乐播放（状态）",
+      "type": "split",
+      "answers": "おんがく:ongaku|が:ga|かかる:kakaru"
+    },
+    {
+      "character": "流れる",
+      "hiragana": "ながれる",
+      "romaji": "nagareru",
+      "meaning": "流动，流逝",
+      "type": "normal",
+      "answers": "ながれる:nagareru"
+    },
+    {
+      "character": "音楽が流れる",
+      "hiragana": "おんがく:が:ながれる",
+      "romaji": "ongaku:ga:nagareru",
+      "meaning": "音乐播放（状态）",
+      "type": "split",
+      "answers": "おんがく:ongaku|が:ga|ながれる:nagareru"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "打开，挂上",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "音楽をかける",
+      "hiragana": "おんがく:を:かける",
+      "romaji": "ongaku:wo:kakeru",
+      "meaning": "打开播放音乐（动作）",
+      "type": "split",
+      "answers": "おんがく:ongaku|を:wo|かける:kakeru"
+    },
+    {
+      "character": "流す",
+      "hiragana": "ながす",
+      "romaji": "nagasu",
+      "meaning": "流动，使~流动",
+      "type": "normal",
+      "answers": "ながす:nagasu"
+    },
+    {
+      "character": "音楽を流す",
+      "hiragana": "おんがく:を:ながす",
+      "romaji": "ongaku:wo:nagasu",
+      "meaning": "播放音乐（动作）",
+      "type": "split",
+      "answers": "おんがく:ongaku|を:wo|ながす:nagasu"
+    },
+    {
+      "character": "楽器",
+      "hiragana": "がっき",
+      "romaji": "gakki",
+      "meaning": "乐器",
+      "type": "normal",
+      "answers": "がっき:gakki"
+    },
+    {
+      "character": "できる",
+      "hiragana": "できる",
+      "romaji": "dekiru",
+      "meaning": "能",
+      "type": "normal",
+      "answers": "できる:dekiru"
+    },
+    {
+      "character": "楽器ができる",
+      "hiragana": "がっき:が:できる",
+      "romaji": "gakki:ga:dekiru",
+      "meaning": "会演奏乐器",
+      "type": "split",
+      "answers": "がっき:gakki|が:ga|できる:dekiru"
+    },
+    {
+      "character": "ギター",
+      "hiragana": "ギター",
+      "romaji": "gitaa",
+      "meaning": "吉他",
+      "type": "normal",
+      "answers": "ギター:gitaa"
+    },
+    {
+      "character": "ギターができる",
+      "hiragana": "ギター:が:できる",
+      "romaji": "gitaa:ga:dekiru",
+      "meaning": "会弹吉他",
+      "type": "split",
+      "answers": "ギター:gitaa|が:ga|できる:dekiru"
+    },
+    {
+      "character": "弾く",
+      "hiragana": "ひく",
+      "romaji": "hiku",
+      "meaning": "弹奏，拨弄",
+      "type": "normal",
+      "answers": "ひく:hiku"
+    },
+    {
+      "character": "ギターを弾く",
+      "hiragana": "ギター:を:ひく",
+      "romaji": "gitaa:wo:hiku",
+      "meaning": "弹吉他",
+      "type": "split",
+      "answers": "ギター:gitaa|を:wo|ひく:hiku"
+    },
+    {
+      "character": "たいこ",
+      "hiragana": "たいこ",
+      "romaji": "taiko",
+      "meaning": "太鼓",
+      "type": "normal",
+      "answers": "たいこ:taiko"
+    },
+    {
+      "character": "たいこができる",
+      "hiragana": "たいこ:が:できる",
+      "romaji": "taiko:ga:dekiru",
+      "meaning": "我可以打太鼓",
+      "type": "split",
+      "answers": "たいこ:taiko|が:ga|できる:dekiru"
+    },
+    {
+      "character": "たたく",
+      "hiragana": "たたく",
+      "romaji": "tataku",
+      "meaning": "敲，拍打",
+      "type": "normal",
+      "answers": "たたく:tataku"
+    },
+    {
+      "character": "たいこをたたく",
+      "hiragana": "たいこ:を:たたく",
+      "romaji": "taiko:wo:tataku",
+      "meaning": "打太鼓",
+      "type": "split",
+      "answers": "たいこ:taiko|を:wo|たたく:tataku"
+    },
+    {
+      "character": "ドラム",
+      "hiragana": "ドラム",
+      "romaji": "doramu",
+      "meaning": "架子鼓",
+      "type": "normal",
+      "answers": "ドラム:doramu"
+    },
+    {
+      "character": "ドラムができる",
+      "hiragana": "ドラム:が:できる",
+      "romaji": "doramu:ga:dekiru",
+      "meaning": "会架子鼓",
+      "type": "split",
+      "answers": "ドラム:doramu|が:ga|できる:dekiru"
+    },
+    {
+      "character": "ドラムをたたく",
+      "hiragana": "ドラム:を:たたく",
+      "romaji": "doramu:wo:tataku",
+      "meaning": "敲鼓，打鼓",
+      "type": "split",
+      "answers": "ドラム:doramu|を:wo|たたく:tataku"
+    },
+    {
+      "character": "バイオリン",
+      "hiragana": "バイオリン",
+      "romaji": "baiorin",
+      "meaning": "小提琴",
+      "type": "normal",
+      "answers": "バイオリン:baiorin"
+    },
+    {
+      "character": "バイオリンができる",
+      "hiragana": "バイオリン:が:できる",
+      "romaji": "baiorin:ga:dekiru",
+      "meaning": "会拉小提琴",
+      "type": "split",
+      "answers": "バイオリン:baiorin|が:ga|できる:dekiru"
+    },
+    {
+      "character": "バイオリンを演奏する",
+      "hiragana": "バイオリン:を:えんそうする",
+      "romaji": "baiorin:wo:ensousuru",
+      "meaning": "拉小提琴",
+      "type": "split",
+      "answers": "バイオリン:baiorin|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "バイオリンを弾く",
+      "hiragana": "バイオリン:を:ひく",
+      "romaji": "baiorin:wo:hiku",
+      "meaning": "拉小提琴",
+      "type": "split",
+      "answers": "バイオリン:baiorin|を:wo|ひく:hiku"
+    },
+    {
+      "character": "ピアノ",
+      "hiragana": "ピアノ",
+      "romaji": "piano",
+      "meaning": "钢琴",
+      "type": "normal",
+      "answers": "ピアノ:piano"
+    },
+    {
+      "character": "ピアノができる",
+      "hiragana": "ピアノ:が:できる",
+      "romaji": "piano:ga:dekiru",
+      "meaning": "会弹钢琴",
+      "type": "split",
+      "answers": "ピアノ:piano|が:ga|できる:dekiru"
+    },
+    {
+      "character": "ピアノを弾く",
+      "hiragana": "ピアノ:を:ひく",
+      "romaji": "piano:wo:hiku",
+      "meaning": "弹钢琴",
+      "type": "split",
+      "answers": "ピアノ:piano|を:wo|ひく:hiku"
+    },
+    {
+      "character": "ピアノを演奏する",
+      "hiragana": "ピアノ:を:えんそうする",
+      "romaji": "piano:wo:ensousuru",
+      "meaning": "弹钢琴",
+      "type": "split",
+      "answers": "ピアノ:piano|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "笛ができる",
+      "hiragana": "ふえ:が:できる",
+      "romaji": "fue:ga:dekiru",
+      "meaning": "我会吹底子",
+      "type": "split",
+      "answers": "ふえ:fue|が:ga|できる:dekiru"
+    },
+    {
+      "character": "笛を吹く",
+      "hiragana": "ふえ:を:ふく",
+      "romaji": "fue:wo:fuku",
+      "meaning": "吹笛子",
+      "type": "split",
+      "answers": "ふえ:fue|を:wo|ふく:fuku"
+    },
+    {
+      "character": "フルート",
+      "hiragana": "フルート",
+      "romaji": "furuuto",
+      "meaning": "长笛",
+      "type": "normal",
+      "answers": "フルート:furuuto"
+    },
+    {
+      "character": "フルートができる",
+      "hiragana": "フルート:が:できる",
+      "romaji": "furuuto:ga:dekiru",
+      "meaning": "会吹长笛",
+      "type": "split",
+      "answers": "フルート:furuuto|が:ga|できる:dekiru"
+    },
+    {
+      "character": "フルートを吹く",
+      "hiragana": "フルート:を:ふく",
+      "romaji": "furuuto:wo:fuku",
+      "meaning": "吹长笛",
+      "type": "split",
+      "answers": "フルート:furuuto|を:wo|ふく:fuku"
+    },
+    {
+      "character": "演奏する",
+      "hiragana": "えんそうする",
+      "romaji": "ensousuru",
+      "meaning": "演奏",
+      "type": "normal",
+      "answers": "えんそうする:ensousuru"
+    },
+    {
+      "character": "楽器を演奏する",
+      "hiragana": "がっき:を:えんそうする",
+      "romaji": "gakki:wo:ensousuru",
+      "meaning": "演奏乐器",
+      "type": "split",
+      "answers": "がっき:gakki|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "ギターを演奏する",
+      "hiragana": "ギター:を:えんそうする",
+      "romaji": "gitaa:wo:ensousuru",
+      "meaning": "演奏吉他",
+      "type": "split",
+      "answers": "ギター:gitaa|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "たいこを演奏する",
+      "hiragana": "たいこ:を:えんそうする",
+      "romaji": "taiko:wo:ensousuru",
+      "meaning": "玩太鼓",
+      "type": "split",
+      "answers": "たいこ:taiko|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "ドラムを演奏する",
+      "hiragana": "ドラム:を:えんそうする",
+      "romaji": "doramu:wo:ensousuru",
+      "meaning": "打鼓",
+      "type": "split",
+      "answers": "ドラム:doramu|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "笛を演奏する",
+      "hiragana": "ふえ:を:えんそうする",
+      "romaji": "fue:wo:ensousuru",
+      "meaning": "吹长笛",
+      "type": "split",
+      "answers": "ふえ:fue|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "フルートを演奏する",
+      "hiragana": "フルート:を:えんそうする",
+      "romaji": "furuuto:wo:ensousuru",
+      "meaning": "吹长笛",
+      "type": "split",
+      "answers": "フルート:furuuto|を:wo|えんそうする:ensousuru"
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "questions": [
+    {
+      "character": "パソコン",
+      "hiragana": "パソコン",
+      "romaji": "pasokon",
+      "meaning": "电脑",
+      "type": "normal",
+      "answers": "パソコン:pasokon"
+    },
+    {
+      "character": "重い",
+      "hiragana": "おもい",
+      "romaji": "omoi",
+      "meaning": "重的",
+      "type": "normal",
+      "answers": "おもい:omoi"
+    },
+    {
+      "character": "パソコンが重い",
+      "hiragana": "パソコン:が:おもい",
+      "romaji": "pasokon:ga:omoi",
+      "meaning": "电脑很重",
+      "type": "split",
+      "answers": "パソコン:pasokon|が:ga|おもい:omoi"
+    },
+    {
+      "character": "固まる",
+      "hiragana": "かたまる",
+      "romaji": "katamaru",
+      "meaning": "僵硬，固定，死机",
+      "type": "normal",
+      "answers": "かたまる:katamaru"
+    },
+    {
+      "character": "パソコンが固まる",
+      "hiragana": "パソコン:が:かたまる",
+      "romaji": "pasokon:ga:katamaru",
+      "meaning": "电脑卡住，死机",
+      "type": "split",
+      "answers": "パソコン:pasokon|が:ga|かたまる:katamaru"
+    },
+    {
+      "character": "軽い",
+      "hiragana": "かるい",
+      "romaji": "karui",
+      "meaning": "轻的，重量小的",
+      "type": "normal",
+      "answers": "かるい:karui"
+    },
+    {
+      "character": "パソコンが軽い",
+      "hiragana": "パソコン:が:かるい",
+      "romaji": "pasokon:ga:karui",
+      "meaning": "电脑很轻",
+      "type": "split",
+      "answers": "パソコン:pasokon|が:ga|かるい:karui"
+    },
+    {
+      "character": "フリーズする",
+      "hiragana": "フリーズ",
+      "romaji": "furiizu",
+      "meaning": "冻结，死机",
+      "type": "normal",
+      "answers": "フリーズ:furiizu"
+    },
+    {
+      "character": "パソコンがフリーズする",
+      "hiragana": "パソコン:が:フリーズする",
+      "romaji": "pasokon:ga:furiizusuru",
+      "meaning": "电脑死机（外来词版）",
+      "type": "split",
+      "answers": "パソコン:pasokon|が:ga|フリーズする:furiizusuru"
+    },
+    {
+      "character": "ログインする",
+      "hiragana": "ログイン",
+      "romaji": "roguin",
+      "meaning": "登录",
+      "type": "normal",
+      "answers": "ログイン:roguin"
+    },
+    {
+      "character": "パソコンにログインする",
+      "hiragana": "パソコン:に:ログインする",
+      "romaji": "pasokon:ni:roguinsuru",
+      "meaning": "登录您的计算机",
+      "type": "split",
+      "answers": "パソコン:pasokon|に:ni|ログインする:roguinsuru"
+    },
+    {
+      "character": "開ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "パソコンを開ける",
+      "hiragana": "パソコン:を:あける",
+      "romaji": "pasokon:wo:akeru",
+      "meaning": "打开电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|あける:akeru"
+    },
+    {
+      "character": "打つ",
+      "hiragana": "うつ",
+      "romaji": "utsu",
+      "meaning": "打，拍。",
+      "type": "normal",
+      "answers": "うつ:utsu"
+    },
+    {
+      "character": "パソコンを打つ",
+      "hiragana": "パソコン:を:うつ",
+      "romaji": "pasokon:wo:utsu",
+      "meaning": "电脑打字",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|うつ:utsu"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "切断，关闭",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "パソコンを切る",
+      "hiragana": "パソコン:を:きる",
+      "romaji": "pasokon:wo:kiru",
+      "meaning": "关掉电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|きる:kiru"
+    },
+    {
+      "character": "シャットダウンする",
+      "hiragana": "シャット",
+      "romaji": "shattodaunsuru",
+      "meaning": "关闭，熄火，停车",
+      "type": "normal",
+      "answers": "シャット:shattodaunsuru"
+    },
+    {
+      "character": "パソコンをシャットダウンする",
+      "hiragana": "パソコン:を:シャットダウンする",
+      "romaji": "pasokon:wo:shattodaunsuru",
+      "meaning": "关闭你的电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|シャットダウンする:shattodaunsuru"
+    },
+    {
+      "character": "立ち上げる",
+      "hiragana": "たちあげる",
+      "romaji": "tachiageru",
+      "meaning": "启动（某事），启动，启动（计算机）",
+      "type": "normal",
+      "answers": "たちあげる:tachiageru"
+    },
+    {
+      "character": "パソコンを立ち上げる",
+      "hiragana": "パソコン:を:たちあげる",
+      "romaji": "pasokon:wo:tachiageru",
+      "meaning": "启动计算机",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|たちあげる:tachiageru"
+    },
+    {
+      "character": "つける",
+      "hiragana": "つける",
+      "romaji": "tsukeru",
+      "meaning": "打开（电器），挂上",
+      "type": "normal",
+      "answers": "つける:tsukeru"
+    },
+    {
+      "character": "パソコンをつける",
+      "hiragana": "パソコン:を:つける",
+      "romaji": "pasokon:wo:tsukeru",
+      "meaning": "打开电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|つける:tsukeru"
+    },
+    {
+      "character": "閉じる",
+      "hiragana": "とじる",
+      "romaji": "tojiru",
+      "meaning": "关闭（动作）",
+      "type": "normal",
+      "answers": "とじる:tojiru"
+    },
+    {
+      "character": "パソコンを閉じる",
+      "hiragana": "パソコン:を:とじる",
+      "romaji": "pasokon:wo:tojiru",
+      "meaning": "关闭你的电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|とじる:tojiru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开（动作）",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "パソコンを開く",
+      "hiragana": "パソコン:を:ひらく",
+      "romaji": "pasokon:wo:hiraku",
+      "meaning": "打开电脑",
+      "type": "split",
+      "answers": "パソコン:pasokon|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "携帯",
+      "hiragana": "けいたい",
+      "romaji": "keetai",
+      "meaning": "手机",
+      "type": "normal",
+      "answers": "けいたい:keetai"
+    },
+    {
+      "character": "鳴る",
+      "hiragana": "なる",
+      "romaji": "naru",
+      "meaning": "响（铃）",
+      "type": "normal",
+      "answers": "なる:naru"
+    },
+    {
+      "character": "けいたいが鳴る",
+      "hiragana": "けいたい:が:なる",
+      "romaji": "keitaidenwa(keetai):ga:naru",
+      "meaning": "手机响了",
+      "type": "split",
+      "answers": "けいたい:keitaidenwa(keetai)|が:ga|なる:naru"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "挂上，拨打",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "携帯にかける",
+      "hiragana": "けいたい:に:かける",
+      "romaji": "keetai:ni:kakeru",
+      "meaning": "拨打手机",
+      "type": "split",
+      "answers": "けいたい:keetai|に:ni|かける:kakeru"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "切断，关闭",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "携帯を切る",
+      "hiragana": "けいたい:を:きる",
+      "romaji": "keetai:ni:kakeru",
+      "meaning": "关闭手机",
+      "type": "split",
+      "answers": "けいたい:keetai|を:ni|きる:kakeru"
+    },
+    {
+      "character": "チェックする",
+      "hiragana": "チェックする",
+      "romaji": "chekkusuru",
+      "meaning": "查看",
+      "type": "normal",
+      "answers": "チェックする:chekkusuru"
+    },
+    {
+      "character": "けいたいをチェックする",
+      "hiragana": "けいたい:を:チェックする",
+      "romaji": "keetai:ni:kakeru",
+      "meaning": "检查手机",
+      "type": "split",
+      "answers": "けいたい:keetai|を:ni|チェックする:kakeru"
+    }
+  ]
+}

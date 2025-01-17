@@ -1,0 +1,548 @@
+{
+  "questions": [
+    {
+      "character": "雨",
+      "hiragana": "あめ",
+      "romaji": "ame ",
+      "meaning": "雨，下雨",
+      "type": "nan",
+      "answers": ""
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "表示事物结束、中断",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "雨が上がる",
+      "hiragana": "あめ:が:あがる",
+      "romaji": "ame:ga:agaru",
+      "meaning": "停止下雨，雨过天晴",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|あがる:agaru"
+    },
+    {
+      "character": "多い",
+      "hiragana": "おおい",
+      "romaji": "ooi",
+      "meaning": "许多，很多",
+      "type": "normal",
+      "answers": "おおい:ooi"
+    },
+    {
+      "character": "雨が多い",
+      "hiragana": "あめ:が:おおい",
+      "romaji": "ame:ga:ooi",
+      "meaning": "雨很大",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|おおい:ooi"
+    },
+    {
+      "character": "少ない",
+      "hiragana": "すくない",
+      "romaji": "sukunai",
+      "meaning": "很少",
+      "type": "normal",
+      "answers": "すくない:sukunai"
+    },
+    {
+      "character": "雨が少ない",
+      "hiragana": "あめ:が:すくない",
+      "romaji": "ame:ga:sukunai",
+      "meaning": "小雨",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|すくない:sukunai"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "雨が強い",
+      "hiragana": "あめ:が:つよい",
+      "romaji": "ame:ga:tsuyoi",
+      "meaning": "雨很大",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|つよい:tsuyoi"
+    },
+    {
+      "character": "降る",
+      "hiragana": "ふる",
+      "romaji": "furu",
+      "meaning": "落下",
+      "type": "normal",
+      "answers": "ふる:furu"
+    },
+    {
+      "character": "雨が降る",
+      "hiragana": "あめ:が:ふる",
+      "romaji": "ame:ga:furu",
+      "meaning": "下雨了",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|ふる:furu"
+    },
+    {
+      "character": "やむ",
+      "hiragana": "やむ",
+      "romaji": "yamu",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "やむ:yamu"
+    },
+    {
+      "character": "雨がやむ",
+      "hiragana": "あめ:が:やむ",
+      "romaji": "ame:ga:yamu",
+      "meaning": "雨停了",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|やむ:yamu"
+    },
+    {
+      "character": "弱い",
+      "hiragana": "よわい",
+      "romaji": "yowai",
+      "meaning": "虚弱的、弱小的",
+      "type": "normal",
+      "answers": "よわい:yowai"
+    },
+    {
+      "character": "雨が弱い",
+      "hiragana": "あめ:が:よわい",
+      "romaji": "ame:ga:yowai",
+      "meaning": "雨势弱",
+      "type": "split",
+      "answers": "あめ:ame|が:ga|よわい:yowai"
+    },
+    {
+      "character": "濡れる",
+      "hiragana": "ぬれる",
+      "romaji": "nureru",
+      "meaning": "弄湿",
+      "type": "normal",
+      "answers": "ぬれる:nureru"
+    },
+    {
+      "character": "雨に濡れる",
+      "hiragana": "あめ:に:ぬれる",
+      "romaji": "ame:ni:nureru",
+      "meaning": "被雨淋湿",
+      "type": "split",
+      "answers": "あめ:ame|に:ni|ぬれる:nureru"
+    },
+    {
+      "character": "急な雨",
+      "hiragana": "きゅうなあめ",
+      "romaji": "kyuunaame",
+      "meaning": "急雨，突然下雨",
+      "type": "split",
+      "answers": "きゅうなあめ:kyuunaame"
+    },
+    {
+      "character": "雪が多い",
+      "hiragana": "ゆき:が:おおい",
+      "romaji": "yuki:ga:ooi",
+      "meaning": "有很多雪",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|おおい:ooi"
+    },
+    {
+      "character": "雪が少ない",
+      "hiragana": "ゆき:が:すくない",
+      "romaji": "yuki:ga:sukunai",
+      "meaning": "小雪",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|すくない:sukunai"
+    },
+    {
+      "character": "風が強い",
+      "hiragana": "かぜ:が:つよい",
+      "romaji": "kaze:ga:tsuyoi",
+      "meaning": "大风",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|つよい:tsuyoi"
+    },
+    {
+      "character": "積もる",
+      "hiragana": "つもる",
+      "romaji": "tsumoru",
+      "meaning": "积累",
+      "type": "normal",
+      "answers": "つもる:tsumoru"
+    },
+    {
+      "character": "雪が積もる",
+      "hiragana": "ゆき:が:つもる",
+      "romaji": "yuki:ga:tsumoru",
+      "meaning": "雪堆积起来",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|つもる:tsumoru"
+    },
+    {
+      "character": "解ける",
+      "hiragana": "とける",
+      "romaji": "tokeru",
+      "meaning": "可以解决",
+      "type": "normal",
+      "answers": "とける:tokeru"
+    },
+    {
+      "character": "雪が解ける",
+      "hiragana": "ゆき:が:とける",
+      "romaji": "yuki:ga:tokeru",
+      "meaning": "雪融化了",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|とける:tokeru"
+    },
+    {
+      "character": "残る",
+      "hiragana": "のこる",
+      "romaji": "nokoru",
+      "meaning": "保持",
+      "type": "normal",
+      "answers": "のこる:nokoru"
+    },
+    {
+      "character": "雪が残る",
+      "hiragana": "ゆき:が:のこる",
+      "romaji": "yuki:ga:nokoru",
+      "meaning": "雪残留",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|のこる:nokoru"
+    },
+    {
+      "character": "深い",
+      "hiragana": "ふかい",
+      "romaji": "fukai",
+      "meaning": "深的",
+      "type": "normal",
+      "answers": "ふかい:fukai"
+    },
+    {
+      "character": "雪が深い",
+      "hiragana": "ゆき:が:ふかい",
+      "romaji": "yuki:ga:fukai",
+      "meaning": "雪很深",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|ふかい:fukai"
+    },
+    {
+      "character": "雪が降る",
+      "hiragana": "ゆき:が:ふる",
+      "romaji": "yuki:ga:furu",
+      "meaning": "下雪",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|ふる:furu"
+    },
+    {
+      "character": "雪がやむ",
+      "hiragana": "ゆき:が:やむ",
+      "romaji": "yuki:ga:yamu",
+      "meaning": "雪停了",
+      "type": "split",
+      "answers": "ゆき:yuki|が:ga|やむ:yamu"
+    },
+    {
+      "character": "雪をかく",
+      "hiragana": "ゆき:を:かく",
+      "romaji": "yuki:wo:kaku",
+      "meaning": "铲雪",
+      "type": "split",
+      "answers": "ゆき:yuki|を:wo|かく:kaku"
+    },
+    {
+      "character": "吹く",
+      "hiragana": "ふく",
+      "romaji": "fuku",
+      "meaning": "吹",
+      "type": "normal",
+      "answers": "ふく:fuku"
+    },
+    {
+      "character": "風が吹く",
+      "hiragana": "かぜ:が:ふく",
+      "romaji": "kaze:ga:fuku",
+      "meaning": "风吹过",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|ふく:fuku"
+    },
+    {
+      "character": "風がやむ",
+      "hiragana": "かぜ:が:やむ",
+      "romaji": "kaze:ga:yamu",
+      "meaning": "风停了",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|やむ:yamu"
+    },
+    {
+      "character": "風が弱い",
+      "hiragana": "かぜ:が:よわい",
+      "romaji": "kaze:ga:yowai",
+      "meaning": "风微弱",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|よわい:yowai"
+    },
+    {
+      "character": "天気",
+      "hiragana": "てんき",
+      "romaji": "tenki",
+      "meaning": "天气",
+      "type": "normal",
+      "answers": "てんき:tenki"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "天気がいい",
+      "hiragana": "てんき:が:いい",
+      "romaji": "tenki:ga:ii",
+      "meaning": "天气很好",
+      "type": "split",
+      "answers": "てんき:tenki|が:ga|いい:ii"
+    },
+    {
+      "character": "変わる",
+      "hiragana": "かわる",
+      "romaji": "kawaru",
+      "meaning": "改变",
+      "type": "normal",
+      "answers": "かわる:kawaru"
+    },
+    {
+      "character": "天気が変わる",
+      "hiragana": "てんき:が:かわる",
+      "romaji": "tenki:ga:kawaru",
+      "meaning": "天气变化",
+      "type": "split",
+      "answers": "てんき:tenki|が:ga|かわる:kawaru"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "天気が悪い",
+      "hiragana": "てんき:が:わるい",
+      "romaji": "tenki:ga:warui",
+      "meaning": "恶劣天气",
+      "type": "split",
+      "answers": "てんき:tenki|が:ga|わるい:warui"
+    },
+    {
+      "character": "明るい",
+      "hiragana": "あかるい",
+      "romaji": "akarui",
+      "meaning": "明亮的",
+      "type": "normal",
+      "answers": "あかるい:akarui"
+    },
+    {
+      "character": "空が明るい",
+      "hiragana": "そら:が:あかるい",
+      "romaji": "sora:ga:akarui",
+      "meaning": "天空很亮",
+      "type": "split",
+      "answers": "そら:sora|が:ga|あかるい:akarui"
+    },
+    {
+      "character": "曇る",
+      "hiragana": "くもる",
+      "romaji": "kumoru",
+      "meaning": "多云",
+      "type": "normal",
+      "answers": "くもる:kumoru"
+    },
+    {
+      "character": "空が曇る",
+      "hiragana": "そら:が:くもる",
+      "romaji": "sora:ga:kumoru",
+      "meaning": "天空多云",
+      "type": "split",
+      "answers": "そら:sora|が:ga|くもる:kumoru"
+    },
+    {
+      "character": "暗い",
+      "hiragana": "くらい",
+      "romaji": "kurai",
+      "meaning": "黑暗的",
+      "type": "normal",
+      "answers": "くらい:kurai"
+    },
+    {
+      "character": "空が暗い",
+      "hiragana": "そら:が:くらい",
+      "romaji": "sora:ga:kurai",
+      "meaning": "天色暗了",
+      "type": "split",
+      "answers": "そら:sora|が:ga|くらい:kurai"
+    },
+    {
+      "character": "晴れる",
+      "hiragana": "はれる",
+      "romaji": "hareru",
+      "meaning": "今天是晴天",
+      "type": "normal",
+      "answers": "はれる:hareru"
+    },
+    {
+      "character": "空が晴れる",
+      "hiragana": "そら:が:はれる",
+      "romaji": "sora:ga:hareru",
+      "meaning": "天空放晴",
+      "type": "split",
+      "answers": "そら:sora|が:ga|はれる:hareru"
+    },
+    {
+      "character": "落ちる",
+      "hiragana": "おちる",
+      "romaji": "ochiru",
+      "meaning": "下拉",
+      "type": "normal",
+      "answers": "おちる:ochiru"
+    },
+    {
+      "character": "雷が落ちる",
+      "hiragana": "かみなり:が:おちる",
+      "romaji": "kaminari:ga:ochiru",
+      "meaning": "雷击",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|おちる:ochiru"
+    },
+    {
+      "character": "近い",
+      "hiragana": "ちかい",
+      "romaji": "chikai",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "ちかい:chikai"
+    },
+    {
+      "character": "雷が近い",
+      "hiragana": "かみなり:が:ちかい",
+      "romaji": "kaminari:ga:chikai",
+      "meaning": "雷声近了",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|ちかい:chikai"
+    },
+    {
+      "character": "遠い",
+      "hiragana": "とおい",
+      "romaji": "tooi",
+      "meaning": "远的",
+      "type": "normal",
+      "answers": "とおい:tooi"
+    },
+    {
+      "character": "雷が遠い",
+      "hiragana": "かみなり:が:とおい",
+      "romaji": "kaminari:ga:tooi",
+      "meaning": "雷声很远",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|とおい:tooi"
+    },
+    {
+      "character": "鳴る",
+      "hiragana": "なる",
+      "romaji": "naru",
+      "meaning": "戒指",
+      "type": "normal",
+      "answers": "なる:naru"
+    },
+    {
+      "character": "雷が鳴る",
+      "hiragana": "かみなり:が:なる",
+      "romaji": "kaminari:ga:naru",
+      "meaning": "雷",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|なる:naru"
+    },
+    {
+      "character": "光る",
+      "hiragana": "ひかる",
+      "romaji": "hikaru",
+      "meaning": "闪耀",
+      "type": "normal",
+      "answers": "ひかる:hikaru"
+    },
+    {
+      "character": "雷が光る",
+      "hiragana": "かみなり:が:ひかる",
+      "romaji": "kaminari:ga:hikaru",
+      "meaning": "闪电闪耀",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|ひかる:hikaru"
+    },
+    {
+      "character": "雷がやむ",
+      "hiragana": "かみなり:が:やむ",
+      "romaji": "kaminari:ga:yamu",
+      "meaning": "雷声停止了",
+      "type": "split",
+      "answers": "かみなり:kaminari|が:ga|やむ:yamu"
+    },
+    {
+      "character": "豊か",
+      "hiragana": "ゆたか",
+      "romaji": "yutaka",
+      "meaning": "富有的",
+      "type": "normal",
+      "answers": "ゆたか:yutaka"
+    },
+    {
+      "character": "自然が豊かだ",
+      "hiragana": "しぜん:が:ゆたかだ",
+      "romaji": "shizen:ga:yutakada",
+      "meaning": "大自然是丰富的",
+      "type": "split",
+      "answers": "しぜん:shizen|が:ga|ゆたかだ:yutakada"
+    },
+    {
+      "character": "壊す",
+      "hiragana": "こわす",
+      "romaji": "kowasu",
+      "meaning": "休息",
+      "type": "normal",
+      "answers": "こわす:kowasu"
+    },
+    {
+      "character": "自然を壊す",
+      "hiragana": "しぜん:を:こわす",
+      "romaji": "shizen:wo:kowasu",
+      "meaning": "破坏自然",
+      "type": "split",
+      "answers": "しぜん:shizen|を:wo|こわす:kowasu"
+    },
+    {
+      "character": "守る",
+      "hiragana": "まもる",
+      "romaji": "mamoru",
+      "meaning": "保护",
+      "type": "normal",
+      "answers": "まもる:mamoru"
+    },
+    {
+      "character": "自然を守る",
+      "hiragana": "しぜん:を:まもる",
+      "romaji": "shizen:wo:mamoru",
+      "meaning": "保护自然",
+      "type": "split",
+      "answers": "しぜん:shizen|を:wo|まもる:mamoru"
+    }
+  ]
+}

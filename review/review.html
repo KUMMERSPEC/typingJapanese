@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复习练习 - Typing-Japanese</title>
+    <!-- 修改CSS路径 -->
+    <link rel="stylesheet" href="../css/practice.css">
+    <link rel="stylesheet" href="../css/review.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="practice-container">
+        <div class="lesson-info">
+            <span>复习练习</span>
+            <div class="progress">
+                <span class="current">1</span>/<span class="total">10</span>
+            </div>
+        </div>
+
+        <div class="question-area">
+            <div class="character"></div>
+            <div class="input-area">
+                <input type="text" class="split-input" autocomplete="off" placeholder="输入假名...">
+            </div>
+            <div class="answer-display">
+                <div class="kanji-text"></div>
+                <div class="kana-text"></div>
+                <div class="romaji-text"></div>
+                <div class="meaning-text"></div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <button class="hint-btn" onclick="reviewManager.showHint()">提示</button>
+            <button class="sound-btn" onclick="reviewManager.playSound()">朗读</button>
+            <button class="back-btn" onclick="window.location.href='../'">返回首页</button>
+        </div>
+    </div>
+
+    <!-- 修改脚本路径 -->
+    <script type="module" src="../js/review/review.js"></script>
+</body>
+</html> 

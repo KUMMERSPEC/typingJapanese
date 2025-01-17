@@ -1,0 +1,324 @@
+{
+  "questions": [
+    {
+      "character": "学校",
+      "hiragana": "がっこう",
+      "romaji": "gakkou",
+      "meaning": "学校",
+      "type": "normal",
+      "answers": "がっこう:gakkou"
+    },
+    {
+      "character": "通う",
+      "hiragana": "かよう",
+      "romaji": "kayou",
+      "meaning": "上学,走读;上班,通勤",
+      "type": "normal",
+      "answers": "かよう:kayou"
+    },
+    {
+      "character": "学校に通う",
+      "hiragana": "がっこう:に:かよう",
+      "romaji": "gakkou:ni:kayou",
+      "meaning": "上学，去学校",
+      "type": "split",
+      "answers": "がっこう:gakkou|に:ni|かよう:kayou"
+    },
+    {
+      "character": "進学する",
+      "hiragana": "しんがくする",
+      "romaji": "shingakusuru",
+      "meaning": "继续接受高等教育",
+      "type": "normal",
+      "answers": "しんがくする:shingakusuru"
+    },
+    {
+      "character": "学校に進学する",
+      "hiragana": "がっこう:に:しんがくする",
+      "romaji": "gakkou:ni:shingakusuru",
+      "meaning": "升学",
+      "type": "split",
+      "answers": "がっこう:gakkou|に:ni|しんがくする:shingakusuru"
+    },
+    {
+      "character": "進む",
+      "hiragana": "すすむ",
+      "romaji": "susumu",
+      "meaning": "继续前行",
+      "type": "normal",
+      "answers": "すすむ:susumu"
+    },
+    {
+      "character": "学校に進む",
+      "hiragana": "がっこう:に:すすむ",
+      "romaji": "gakkou:ni:susumu",
+      "meaning": "上学",
+      "type": "split",
+      "answers": "がっこう:gakkou|に:ni|すすむ:susumu"
+    },
+    {
+      "character": "入学する",
+      "hiragana": "にゅうがくする",
+      "romaji": "nyuugakusuru",
+      "meaning": "入学",
+      "type": "normal",
+      "answers": "にゅうがくする:nyuugakusuru"
+    },
+    {
+      "character": "学校に入学する",
+      "hiragana": "がっこう:に:にゅうがくする",
+      "romaji": "gakkou:ni:nyuugakusuru",
+      "meaning": "入学",
+      "type": "split",
+      "answers": "がっこう:gakkou|に:ni|にゅうがくする:nyuugakusuru"
+    },
+    {
+      "character": "入る",
+      "hiragana": "はいる",
+      "romaji": "hairu",
+      "meaning": "进入",
+      "type": "normal",
+      "answers": "はいる:hairu"
+    },
+    {
+      "character": "学校に入る",
+      "hiragana": "がっこう:に:はいる",
+      "romaji": "gakkou:ni:hairu",
+      "meaning": "进入学校",
+      "type": "split",
+      "answers": "がっこう:gakkou|に:ni|はいる:hairu"
+    },
+    {
+      "character": "欠席する",
+      "hiragana": "けっせきする",
+      "romaji": "kessekisuru",
+      "meaning": "缺席",
+      "type": "normal",
+      "answers": "けっせきする:kessekisuru"
+    },
+    {
+      "character": "学校を欠席する",
+      "hiragana": "がっこう:を:けっせきする",
+      "romaji": "gakkou:wo:kessekisuru",
+      "meaning": "旷课（学校缺席）",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|けっせきする:kessekisuru"
+    },
+    {
+      "character": "サボる",
+      "hiragana": "さぼる",
+      "romaji": "saboru",
+      "meaning": "懈怠，逃课，旷工",
+      "type": "normal",
+      "answers": "さぼる:saboru"
+    },
+    {
+      "character": "学校をサボる",
+      "hiragana": "がっこう:を:さぼる",
+      "romaji": "gakkou:wo:saboru",
+      "meaning": "逃学",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|さぼる:saboru"
+    },
+    {
+      "character": "卒業する",
+      "hiragana": "そつぎょうする",
+      "romaji": "sotsugyousuru",
+      "meaning": "毕业",
+      "type": "normal",
+      "answers": "そつぎょうする:sotsugyousuru"
+    },
+    {
+      "character": "学校を卒業する",
+      "hiragana": "がっこう:を:そつぎょうする",
+      "romaji": "gakkou:wo:sotsugyousuru",
+      "meaning": "从学校毕业",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|そつぎょうする:sotsugyousuru"
+    },
+    {
+      "character": "退学する",
+      "hiragana": "たいがくする",
+      "romaji": "taigakusuru",
+      "meaning": "辍学",
+      "type": "normal",
+      "answers": "たいがくする:taigakusuru"
+    },
+    {
+      "character": "学校を退学する",
+      "hiragana": "がっこう:を:たいがくする",
+      "romaji": "gakkou:wo:taigakusuru",
+      "meaning": "从学校退学",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|たいがくする:taigakusuru"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "学校を出る",
+      "hiragana": "がっこう:を:でる",
+      "romaji": "gakkou:wo:deru",
+      "meaning": "离校（从学校出来）",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|でる:deru"
+    },
+    {
+      "character": "休む",
+      "hiragana": "やすむ",
+      "romaji": "yasumu",
+      "meaning": "休息",
+      "type": "normal",
+      "answers": "やすむ:yasumu"
+    },
+    {
+      "character": "学校を休む",
+      "hiragana": "がっこう:を:やすむ",
+      "romaji": "gakkou:wo:yasumu",
+      "meaning": "向学校请假",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|やすむ:yasumu"
+    },
+    {
+      "character": "やめる",
+      "hiragana": "やめる",
+      "romaji": "yameru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "やめる:yameru"
+    },
+    {
+      "character": "学校をやめる",
+      "hiragana": "がっこう:を:やめる",
+      "romaji": "gakkou:wo:yameru",
+      "meaning": "停课（停止在学校学习）",
+      "type": "split",
+      "answers": "がっこう:gakkou|を:wo|やめる:yameru"
+    },
+    {
+      "character": "授業",
+      "hiragana": "じゅぎょう",
+      "romaji": "jugyou",
+      "meaning": "课程，课业",
+      "type": "normal",
+      "answers": "じゅぎょう:jugyou"
+    },
+    {
+      "character": "授業がある",
+      "hiragana": "じゅぎょう:が:ある",
+      "romaji": "jugyou:ga:aru",
+      "meaning": "有课",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|が:ga|ある:aru"
+    },
+    {
+      "character": "授業がない",
+      "hiragana": "じゅぎょう:が:ない",
+      "romaji": "jugyou:ga:nai",
+      "meaning": "没有课程",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|が:ga|ない:nai"
+    },
+    {
+      "character": "出席する",
+      "hiragana": "しゅっせきする",
+      "romaji": "shussekisuru",
+      "meaning": "出席",
+      "type": "normal",
+      "answers": "しゅっせきする:shussekisuru"
+    },
+    {
+      "character": "授業に出席する",
+      "hiragana": "じゅぎょう:に:しゅっせきする",
+      "romaji": "jugyou:ni:shussekisuru",
+      "meaning": "上课",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|に:ni|しゅっせきする:shussekisuru"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "授業に出る",
+      "hiragana": "じゅぎょう:に:でる",
+      "romaji": "jugyou:ni:deru",
+      "meaning": "去上课",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|に:ni|でる:deru"
+    },
+    {
+      "character": "受ける",
+      "hiragana": "うける",
+      "romaji": "ukeru",
+      "meaning": "收到，接受",
+      "type": "normal",
+      "answers": "うける:ukeru"
+    },
+    {
+      "character": "授業を受ける",
+      "hiragana": "じゅぎょう:を:うける",
+      "romaji": "jugyou:wo:ukeru",
+      "meaning": "上课（接受上课）",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|うける:ukeru"
+    },
+    {
+      "character": "授業を欠席する",
+      "hiragana": "じゅぎょう:を:けっせきする",
+      "romaji": "jugyou:wo:kessekisuru",
+      "meaning": "缺课（在课上缺席）",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|けっせきする:kessekisuru"
+    },
+    {
+      "character": "授業をサボる",
+      "hiragana": "じゅぎょう:を:さぼる",
+      "romaji": "jugyou:wo:saboru",
+      "meaning": "逃课",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|さぼる:saboru"
+    },
+    {
+      "character": "授業をする",
+      "hiragana": "じゅぎょう:を:する",
+      "romaji": "jugyou:wo:suru",
+      "meaning": "上课（老师方授课）",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|する:suru"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "取得",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "授業を取る",
+      "hiragana": "じゅぎょう:を:とる",
+      "romaji": "jugyou:wo:toru",
+      "meaning": "选课（登记了很多选修课的感觉）",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|とる:toru"
+    },
+    {
+      "character": "授業を休む",
+      "hiragana": "じゅぎょう:を:やすむ",
+      "romaji": "jugyou:wo:yasumu",
+      "meaning": "请假不上课",
+      "type": "split",
+      "answers": "じゅぎょう:jugyou|を:wo|やすむ:yasumu"
+    }
+  ]
+}

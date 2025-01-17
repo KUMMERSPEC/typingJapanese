@@ -1,0 +1,1046 @@
+import DataLoader from './dataLoader.js';
+import statsData from '../../js/common/statsData.js';
+
+class PracticeManager {
+    constructor() {
+        this.currentQuestionIndex = 0;
+        this.questions = [];
+        this.score = 0;
+        
+        // 初始化语音合成
+        this.speechSynthesis = window.speechSynthesis;
+        // 获取日语语音
+        this.japaneseVoice = null;
+        this.initVoice();
+        
+        // 初始化侧边栏状态
+        this.isSidebarOpen = false;
+        
+        // 获取当前课程信息
+        const urlParams = new URLSearchParams(window.location.search);
+        this.currentCourse = urlParams.get('course');
+        this.currentLesson = urlParams.get('lesson');
+        
+        this.totalSentences = 0;
+        this.completedSentences = 0;
+        
+        this.init();
+    }
+
+    async init() {
+        try {
+            console.log('Starting initialization...');
+            
+            // 从 URL 获取课程参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const course = urlParams.get('course');
+            const lesson = urlParams.get('lesson');
+
+            console.log('URL parameters:', { course, lesson });
+
+            if (!course || !lesson) {
+                throw new Error('Course or lesson parameter is missing');
+            }
+
+            // 保存课程和课程名到实例中
+            this.course = course;
+            this.lesson = lesson;
+
+            // 加载课程数据
+            console.log('Loading course data...');
+            const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
+            console.log('Loaded lesson data:', lessonData);
+            
+            // 确保题目数组正确加载
+            if (!lessonData.questions || !Array.isArray(lessonData.questions)) {
+                throw new Error('Invalid questions data');
+            }
+
+            // 获取已掌握的句子
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            
+            // 过滤掉已掌握的句子
+            this.questions = lessonData.questions.filter(question => {
+                const questionKey = `${course}:${lesson}:${question.character}`;
+                return !masteredSentences[questionKey];
+            });
+            
+            // 确保题目数组不为空
+            if (this.questions.length === 0) {
+                // 如果所有题目都已掌握，显示提示并返回课程列表
+                alert('恭喜！本课程的所有内容你都已掌握！');
+                window.location.href = '/practice/courses.html';
+                return;
+            }
+
+            // 重置当前题目索引
+            this.currentQuestionIndex = 0;
+
+            // 更新页面标题和进度
+            document.querySelector('.lesson-info span').textContent = `${lessonData.title} (1/${this.questions.length})`;
+            
+            // 显示第一个题目
+            this.showQuestion();
+
+            this.totalSentences = this.questions.length;
+            this.completedSentences = 0;
+
+            // 绑定事件监听器
+            this.bindEvents();
+
+        } catch (error) {
+            console.error('Error in init:', error);
+            alert('加载课程失败，请返回重试');
+        }
+    }
+
+    // 初始化日语语音
+    async initVoice() {
+        // 等待语音列表加载
+        if (this.speechSynthesis.getVoices().length === 0) {
+            await new Promise(resolve => {
+                this.speechSynthesis.addEventListener('voiceschanged', resolve, { once: true });
+            });
+        }
+        
+        // 获取日语语音
+        const voices = this.speechSynthesis.getVoices();
+        this.japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.lang.includes('JP')
+        );
+        
+        if (!this.japaneseVoice) {
+            console.warn('No Japanese voice found, using default voice');
+        }
+    }
+
+    // 朗读文本
+    speak(text) {
+        // 如果正在朗读，先停止
+        this.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1; // 语速稍慢
+        utterance.pitch = 1;
+        
+        if (this.japaneseVoice) {
+            utterance.voice = this.japaneseVoice;
+        }
+        utterance.lang = 'ja-JP';
+
+        this.speechSynthesis.speak(utterance);
+    }
+
+    showQuestion() {
+        console.log('=== showQuestion START ===');
+        
+        const question = this.questions[this.currentQuestionIndex];
+        if (!question) {
+            console.error('No question found at index:', this.currentQuestionIndex);
+            return;
+        }
+
+        const characterElement = document.querySelector('.character');
+        const inputArea = document.querySelector('.input-area');
+        const answerDisplay = document.querySelector('.answer-display');
+        
+        if (!characterElement || !inputArea) {
+            console.error('Required elements not found');
+            return;
+        }
+
+        if (answerDisplay) {
+            answerDisplay.classList.remove('show');
+        }
+
+        characterElement.textContent = question.meaning;
+        inputArea.innerHTML = '';
+        inputArea.style.display = 'flex';
+        characterElement.style.display = 'block';
+
+        // 检测是否为移动设备
+        const userAgent = navigator.userAgent;
+        console.log('User Agent:', userAgent);
+        
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent) || 
+                        ('ontouchstart' in window) ||
+                        (navigator.maxTouchPoints > 0);
+        
+        console.log('Is Mobile Device:', isMobile);
+
+        // 创建主容器
+        const mainContainer = document.createElement('div');
+        mainContainer.className = 'main-input-container';
+        mainContainer.style.display = 'flex';
+        mainContainer.style.flexDirection = 'column';
+        mainContainer.style.alignItems = 'center';
+        mainContainer.style.gap = '15px';
+        mainContainer.style.width = '100%';
+
+        if (question.type === 'split') {
+            const words = question.hiragana.split(':');
+            
+            // 创建输入框容器
+            const inputsContainer = document.createElement('div');
+            inputsContainer.style.display = 'flex';
+            inputsContainer.style.flexWrap = 'wrap';
+            inputsContainer.style.justifyContent = 'center';
+            inputsContainer.style.gap = '10px';
+            
+            words.forEach((word, index) => {
+                const inputWrapper = document.createElement('div');
+                inputWrapper.className = 'split-input-wrapper';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'split-input';
+                input.dataset.index = index;
+                
+                this.adjustInputWidth(input);
+
+                // 添加输入法事件监听
+                let isComposing = false;
+                input.addEventListener('compositionstart', () => {
+                    isComposing = true;
+                });
+                input.addEventListener('compositionend', () => {
+                    isComposing = false;
+                });
+
+                // 桌面端处理
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        this.showCorrectAnswer(question);
+                    } else if (!isMobile && e.code === 'Space') {
+                        // 检查是否正在使用输入法
+                        if (isComposing) {
+                            return; // 如果正在使用输入法，不阻止默认行为
+                        }
+                        // 立即阻止空格输入并跳转
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (index < words.length - 1) {
+                            const nextInput = inputsContainer.querySelector(`input[data-index="${index + 1}"]`);
+                            if (nextInput) {
+                                nextInput.focus({preventScroll: true});
+                                nextInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (index < words.length - 1) {
+                            const nextInput = inputsContainer.querySelector(`input[data-index="${index + 1}"]`);
+                            if (nextInput) {
+                                input.value = input.value.trim();
+                                nextInput.focus({preventScroll: true});
+                                nextInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        } else {
+                            // 检查所有输入是否已完成
+                            const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                            const allFilled = allInputs.every(input => input.value.trim() !== '');
+                            if (allFilled) {
+                                this.checkSplitAnswer();
+                            }
+                        }
+                    }
+                });
+
+                // 阻止空格键的默认行为
+                input.addEventListener('keypress', (e) => {
+                    if (!isComposing && e.code === 'Space') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                });
+
+                inputWrapper.appendChild(input);
+                inputsContainer.appendChild(inputWrapper);
+            });
+
+            mainContainer.appendChild(inputsContainer);
+        } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'split-input';
+            
+            this.adjustInputWidth(input);
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.showCorrectAnswer(question);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const answer = input.value.trim();
+                    if (answer) {
+                        if (question.answers.includes(answer)) {
+                            input.classList.remove('error');
+                            input.classList.add('correct');
+                            this.showCorrectAnswer(question);
+                            this.updateHistory(question);
+                            setTimeout(() => this.nextQuestion(), 2000);
+                        } else {
+                            input.classList.add('error');
+                            setTimeout(() => input.classList.remove('error'), 500);
+                        }
+                    }
+                }
+            });
+
+            mainContainer.appendChild(input);
+        }
+
+        // 添加显示答案按钮
+        console.log('Adding show answer button...');
+        const showAnswerButton = document.createElement('button');
+        showAnswerButton.className = 'show-answer-btn';
+        showAnswerButton.innerHTML = '显示答案';
+        showAnswerButton.style.cssText = `
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            min-width: 120px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        `;
+        
+        showAnswerButton.addEventListener('click', () => {
+            this.showCorrectAnswer(question, true);
+        });
+        
+        mainContainer.appendChild(showAnswerButton);
+        console.log('Show answer button added');
+
+        // 将主容器添加到输入区域
+        inputArea.appendChild(mainContainer);
+        console.log('Main container added to input area');
+
+        // 自动聚焦第一个输入框
+        const firstInput = mainContainer.querySelector('input');
+        if (firstInput) {
+            setTimeout(() => {
+                firstInput.focus();
+                if (isMobile) {
+                    firstInput.click();
+                }
+            }, 200);
+        }
+
+        this.updateProgress();
+    }
+
+    updateProgress() {
+        const total = this.questions.length;
+        const current = this.currentQuestionIndex + 1;
+        // 只更新课程标题中的进度
+        document.querySelector('.lesson-info span').textContent = `第一课 (${current}/${total})`;
+    }
+
+    bindEvents() {
+        document.addEventListener('keydown', (e) => {
+            // Control 键播放声音
+            if (e.key === 'Control') {
+                e.preventDefault();
+                this.playSound();
+            }
+            // Alt + M 键标记已掌握
+            else if ((e.key === 'm' || e.key === 'M') && e.altKey) {
+                e.preventDefault();
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                if (currentQuestion) {
+                    this.markAsMastered(currentQuestion);
+                }
+            }
+            // Tab 键显示答案
+            else if (e.key === 'Tab') {
+                e.preventDefault();
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                if (currentQuestion) {
+                    this.showCorrectAnswer(currentQuestion, true); // true 表示是 Tab 键触发
+                }
+            }
+        });
+    }
+
+    checkAnswer(answer) {
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        if (currentQuestion.answers.includes(answer)) {
+            console.log('Correct answer!');
+            this.showCorrectAnswer(currentQuestion);
+            // 延迟 2 秒后进入下一题
+            setTimeout(() => {
+                console.log('Moving to next question');
+                this.nextQuestion();
+            }, 2000);
+        } else {
+            this.showError();
+        }
+    }
+
+    showCorrectAnswer(question, isTabPress = false) {
+        // 清除任何现有的定时器
+        if (this.nextQuestionTimer) {
+            clearTimeout(this.nextQuestionTimer);
+            this.nextQuestionTimer = null;
+        }
+
+        const answerDisplay = document.querySelector('.answer-display');
+        const inputArea = document.querySelector('.input-area');
+        const character = document.querySelector('.character');
+        
+        if (!answerDisplay || !inputArea || !character) {
+            console.error('Required elements not found');
+            return;
+        }
+
+        // 隐藏输入区域和字符
+        inputArea.style.display = 'none';
+        character.style.display = 'none';
+
+        // 清空并显示答案区域
+        answerDisplay.innerHTML = '';
+        answerDisplay.style.display = 'block';
+        answerDisplay.classList.add('show');
+        
+        // 创建答案内容区域
+        const answerContent = document.createElement('div');
+        answerContent.className = 'answer-content';
+        
+        // 更新答案内容
+        answerContent.innerHTML = `
+            <div class="kanji-text">${question.character}</div>
+            <div class="kana-text">${question.hiragana}</div>
+            <div class="romaji-text">${question.romaji}</div>
+            <div class="meaning-text">${question.meaning}</div>
+        `;
+
+        // 添加标记按钮
+        const masteryButton = document.createElement('button');
+        masteryButton.className = 'mastery-button';
+        masteryButton.innerHTML = '✓ 标记为已掌握 (Alt+M)';
+        masteryButton.onclick = () => this.markAsMastered(question);
+
+        // 检查是否已掌握
+        const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+        const questionKey = `${this.currentCourse}:${this.currentLesson}:${question.character}`;
+        if (masteredSentences[questionKey]) {
+            masteryButton.classList.add('mastered');
+            masteryButton.innerHTML = '✓ 已掌握 (Alt+M)';
+        }
+
+        answerContent.appendChild(masteryButton);
+        answerDisplay.appendChild(answerContent);
+        
+        // 播放声音
+        this.speak(question.character);
+        
+        if (isTabPress) {
+            // Tab键显示答案：2秒后返回原题
+            this.nextQuestionTimer = setTimeout(() => {
+                // 隐藏答案显示
+                answerDisplay.classList.remove('show');
+                answerDisplay.style.display = 'none';
+                // 显示输入区域
+                inputArea.style.display = 'flex';
+                character.style.display = 'block';
+                // 聚焦到第一个输入框
+                const firstInput = inputArea.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 2000);
+        } else {
+            // 答对后显示答案：2秒后进入下一题
+            this.nextQuestionTimer = setTimeout(() => {
+                this.nextQuestion();
+            }, 2000);
+        }
+    }
+
+    // 添加标记为已掌握的方法
+    markAsMastered(question) {
+        console.log('=== markAsMastered START ===');
+        const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+        const questionKey = `${this.course}:${this.lesson}:${question.character}`;
+        const wasMarked = !!masteredSentences[questionKey];
+        
+        console.log('Current state:', {
+            questionKey,
+            wasMarked,
+            course: this.course,
+            lesson: this.lesson
+        });
+
+        // 先更新状态
+        if (wasMarked) {
+            delete masteredSentences[questionKey];
+            console.log('Unmarking as mastered');
+        } else {
+            masteredSentences[questionKey] = {
+                timestamp: Date.now(),
+                meaning: question.meaning
+            };
+            console.log('Marking as mastered');
+
+            // 只有split类型的句子才添加到复习区
+            if (question.type === 'split') {
+                console.log('Adding split sentence to review history');
+                const stats = statsData.getStatistics();
+                if (!stats.reviewHistory) {
+                    stats.reviewHistory = {};
+                }
+                
+                // 使用包含课程和课时信息的唯一key
+                const reviewKey = `${this.course}:${this.lesson}:${question.character}`;
+                
+                // 检查是否已存在相同的句子
+                let isDuplicate = false;
+                Object.keys(stats.reviewHistory).forEach(key => {
+                    if (stats.reviewHistory[key].japanese === question.character &&
+                        stats.reviewHistory[key].course === this.course &&
+                        stats.reviewHistory[key].lesson === this.lesson) {
+                        isDuplicate = true;
+                    }
+                });
+
+                // 只有不是重复的句子才添加
+                if (!isDuplicate) {
+                    const now = new Date();
+                    stats.reviewHistory[reviewKey] = {
+                        japanese: question.character,
+                        hiragana: question.hiragana,
+                        meaning: question.meaning,
+                        course: this.course,
+                        lesson: this.lesson,
+                        lastReview: now.toISOString(),
+                        nextReviewDate: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+                        proficiency: 'high',
+                        reviewCount: 1
+                    };
+                    
+                    try {
+                        // 保存统计数据
+                        statsData.saveStatistics(stats);
+                        console.log('Statistics saved successfully:', stats);
+                    } catch (error) {
+                        console.error('Error saving statistics:', error);
+                    }
+                }
+            }
+        }
+
+        localStorage.setItem('masteredSentences', JSON.stringify(masteredSentences));
+        
+        // 更新按钮状态和动画
+        const updateButton = (button, isMarked) => {
+            if (!button) {
+                console.log('Button not found for update');
+                return;
+            }
+            
+            console.log('Updating button:', {
+                buttonClass: button.className,
+                currentHTML: button.innerHTML,
+                willBeMarked: isMarked
+            });
+
+            // 先更新类和文本
+            if (isMarked) {
+                button.classList.add('mastered');
+                button.innerHTML = '✓ 已掌握 (Alt+M)';
+            } else {
+                button.classList.remove('mastered');
+                button.innerHTML = '✓ 标记为已掌握 (Alt+M)';
+            }
+            
+            // 然后添加动画
+            button.style.transform = isMarked ? 'scale(1.1)' : 'scale(0.9)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+                // 确保动画结束后按钮状态正确
+                if (isMarked) {
+                    button.classList.add('mastered');
+                } else {
+                    button.classList.remove('mastered');
+                }
+            }, 200);
+        };
+
+        // 更新问题界面的按钮
+        const questionMasteryButton = document.querySelector('.question-mastery-button');
+        console.log('Found question mastery button:', !!questionMasteryButton);
+        updateButton(questionMasteryButton, !wasMarked);
+        
+        // 更新答案界面的按钮
+        const answerMasteryButton = document.querySelector('.mastery-button');
+        console.log('Found answer mastery button:', !!answerMasteryButton);
+        updateButton(answerMasteryButton, !wasMarked);
+
+        console.log('Updated mastered status:', {
+            questionKey,
+            isMastered: !wasMarked,
+            masteredSentences
+        });
+        console.log('=== markAsMastered END ===');
+    }
+
+    nextQuestion() {
+        console.log('=== nextQuestion START ===');
+        
+        // 防止快速连续调用
+        if (this.isTransitioning) {
+            console.log('Already transitioning to next question, ignoring call');
+            return;
+        }
+        this.isTransitioning = true;
+        
+        // 获取必要的DOM元素
+        const answerDisplay = document.querySelector('.answer-display');
+        const inputArea = document.querySelector('.input-area');
+        const character = document.querySelector('.character');
+        
+        if (!answerDisplay || !inputArea || !character) {
+            console.error('Required elements not found in nextQuestion');
+            this.isTransitioning = false;
+            return;
+        }
+
+        // 隐藏答案显示区域
+        answerDisplay.classList.remove('show');
+        answerDisplay.style.display = 'none';
+        answerDisplay.innerHTML = '';
+        
+        // 检查是否是最后一个问题
+        if (this.currentQuestionIndex >= this.questions.length - 1) {
+            console.log('Course complete, showing completion screen');
+            this.showComplete();
+            this.isTransitioning = false;
+            return;
+        }
+        
+        // 增加题目索引并显示下一题
+        this.currentQuestionIndex++;
+        console.log('Moving to next question:', this.currentQuestionIndex);
+        
+        // 显示下一题
+        this.showQuestion();
+        
+        // 重置转换状态
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, 500);
+        
+        console.log('=== nextQuestion END ===');
+    }
+
+    showError() {
+        const input = document.querySelector('.input-area input');
+        input.classList.add('error');
+        setTimeout(() => input.classList.remove('error'), 500);
+    }
+
+    showHint() {
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        const input = document.querySelector('.input-area input');
+        input.value = currentQuestion.hiragana;
+    }
+
+    playSound() {
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        if (currentQuestion) {
+            this.speak(currentQuestion.character);
+        }
+    }
+  
+
+    showComplete() {
+        try {
+            // 只统计 split 类型的题目数量
+            const splitQuestions = this.questions.filter(q => q.type === 'split');
+            const splitCount = splitQuestions.length;
+            
+            console.log('Course completion details:', {
+                course: this.course,
+                lesson: this.lesson,
+                totalQuestions: this.questions.length,
+                splitCount: splitCount
+            });
+
+            // 保存课程数据到 localStorage
+            const courseKey = `course_${this.course}_${this.lesson}`;
+            localStorage.setItem(courseKey, JSON.stringify({
+                questions: this.questions,
+                title: document.querySelector('.lesson-info span')?.textContent || ''
+            }));
+            
+            // 更新统计，只传递 split 类型的题目
+            const lessonId = `${this.course}:${this.lesson}`;
+            const updatedTotal = statsData.updateDailyStats(lessonId, splitCount, splitQuestions);
+            
+            // 验证数据保存
+            console.log('Statistics updated:', {
+                lessonId,
+                splitCount,
+                updatedTotal
+            });
+
+            // 清除答题区和历史记录区
+            const practiceContainer = document.querySelector('.practice-container');
+            const historyPanel = document.querySelector('.history-panel');
+            if (practiceContainer) practiceContainer.style.display = 'none';
+            if (historyPanel) historyPanel.style.display = 'none';
+            
+            // 创建完成界面
+            const completeScreen = document.createElement('div');
+            completeScreen.className = 'completion-screen';
+            completeScreen.innerHTML = `
+                <h1>おめでとう！</h1>
+                <p>课程完成！</p>
+                <p>今日已学习: ${splitCount} 个句子</p>
+                <p>连续学习: ${statsData.getLearningDays()} 天</p>
+                <div class="button-group">
+                    <button class="restart-btn" onclick="location.reload()">重新开始</button>
+                    <button class="next-lesson-btn">下一课</button>
+                    <button class="return-btn" onclick="window.location.href='/?update=true'">返回首页</button>
+                </div>
+            `;
+
+            document.body.appendChild(completeScreen);
+
+            // 绑定返回首页按钮事件
+            const returnBtn = completeScreen.querySelector('.return-btn');
+            if (returnBtn) {
+                returnBtn.addEventListener('click', () => {
+                    window.location.href = '/';
+                });
+            }
+
+            // 创建彩花和星星效果
+            this.createConfetti(completeScreen);
+            this.createStars(completeScreen);
+
+            // 绑定下一课按钮事件
+            const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
+            if (nextLessonBtn) {
+                nextLessonBtn.addEventListener('click', () => {
+                    const nextLessonNumber = parseInt(this.lesson.replace('Lesson', '')) + 1;
+                    const nextLessonUrl = `practice.html?course=${this.course}&lesson=Lesson${nextLessonNumber}`;
+                    window.location.href = nextLessonUrl;
+                });
+            }
+
+            // 播放掌声和祝贺音效
+            const applause = new Audio('assets/audio/applause.mp3');
+            applause.play().catch(error => {
+                console.warn('Failed to play applause:', error);
+            });
+
+            // 朗读祝贺语
+            setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance('おめでとうございます');
+                utterance.lang = 'ja-JP';
+                window.speechSynthesis.speak(utterance);
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error in showComplete:', error);
+            alert('完成界面显示出错，但您已完成本课程！');
+        }
+    }
+
+    // 创建彩花效果
+    createConfetti(container) {
+        const colors = ['#ff66ff', '#6b6bff', '#66ff66', '#ffeb3b', '#ff4444'];
+        const confettiCount = 50;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animation = `confettiFall ${1 + Math.random() * 2}s linear forwards`;
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(confetti);
+        }
+    }
+
+    // 创建星星效果
+    createStars(container) {
+        const starCount = 20;
+        const positions = [
+            { top: '20%', left: '20%' },
+            { top: '20%', right: '20%' },
+            { top: '40%', left: '10%' },
+            { top: '40%', right: '10%' },
+            { top: '60%', left: '15%' },
+            { top: '60%', right: '15%' }
+        ];
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // 随机位置
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            
+            // 随机大小
+            const size = 10 + Math.random() * 20;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            
+            // 添加动画
+            star.style.animation = `starTwinkle ${1 + Math.random() * 2}s ease-in-out infinite`;
+            star.style.animationDelay = Math.random() * 2 + 's';
+            
+            container.appendChild(star);
+        }
+    }
+
+    checkSplitAnswer() {
+        const question = this.questions[this.currentQuestionIndex];
+        const inputs = document.querySelectorAll('.split-input');
+        const answers = Array.from(inputs).map(input => input.value.trim());
+        
+        // 获取正确答案数组
+        const correctAnswers = question.answers.split('|').map(answer => {
+            const [kana, romaji] = answer.split(':');
+            return kana;
+        });
+
+        console.log('Checking answers:', {
+            userAnswers: answers,
+            correctAnswers: correctAnswers
+        });
+
+        // 检查每个答案并标记
+        const allCorrect = answers.every((answer, index) => {
+            const correctAnswer = correctAnswers[index];
+            const input = inputs[index];
+            const isCorrect = answer === correctAnswer;
+
+            // 根据正确与否设置样式
+            if (isCorrect) {
+                input.classList.remove('error');
+                input.classList.add('correct');
+            } else {
+                input.classList.add('error');
+                input.classList.remove('correct');
+                console.log(`Answer at index ${index} is wrong:`, {
+                    userAnswer: answer,
+                    correctAnswer: correctAnswer
+                });
+            }
+
+            return isCorrect;
+        });
+
+        if (allCorrect) {
+            // 更新历史记录
+            this.updateHistory(question);
+            
+            // 显示答案区域
+            const answerDisplay = document.querySelector('.answer-display');
+            const inputArea = document.querySelector('.input-area');
+            const character = document.querySelector('.character');
+            
+            // 隐藏输入区域和字符
+            inputArea.style.display = 'none';
+            character.style.display = 'none';
+
+            // 清空并显示答案区域
+            answerDisplay.innerHTML = '';
+            answerDisplay.style.display = 'block';
+            answerDisplay.classList.add('show');
+            
+            // 创建答案内容区域
+            const answerContent = document.createElement('div');
+            answerContent.className = 'answer-content';
+            
+            // 更新答案内容
+            answerContent.innerHTML = `
+                <div class="kanji-text">${question.character}</div>
+                <div class="kana-text">${question.hiragana}</div>
+                <div class="romaji-text">${question.romaji}</div>
+                <div class="meaning-text">${question.meaning}</div>
+            `;
+
+            // 添加标记按钮
+            const masteryButton = document.createElement('button');
+            masteryButton.className = 'mastery-button';
+            masteryButton.innerHTML = '✓ 标记为已掌握 (Alt+M)';
+            masteryButton.onclick = () => this.markAsMastered(question);
+
+            // 检查是否已掌握
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            const questionKey = `${this.currentCourse}:${this.currentLesson}:${question.character}`;
+            if (masteredSentences[questionKey]) {
+                masteryButton.classList.add('mastered');
+                masteryButton.innerHTML = '✓ 已掌握 (Alt+M)';
+            }
+
+            answerContent.appendChild(masteryButton);
+            answerDisplay.appendChild(answerContent);
+            
+            // 播放声音
+            this.speak(question.character);
+
+            // 防止重复调用nextQuestion
+            if (this.nextQuestionTimer) {
+                clearTimeout(this.nextQuestionTimer);
+            }
+            
+            // 2秒后进入下一题
+            this.nextQuestionTimer = setTimeout(() => {
+                this.nextQuestion();
+            }, 2000);
+        } else {
+            // 显示错误动画
+            inputs.forEach(input => {
+                if (input.classList.contains('error')) {
+                    input.classList.add('shake');
+                    setTimeout(() => input.classList.remove('shake'), 500);
+                }
+            });
+        }
+    }
+
+    // 在 PracticeManager 类中添加新方法
+    adjustInputWidth(input) {
+        // 创建一个隐藏的 span 来测量文本宽度
+        const measureSpan = document.createElement('span');
+        measureSpan.style.visibility = 'hidden';
+        measureSpan.style.position = 'absolute';
+        measureSpan.style.whiteSpace = 'pre';
+        measureSpan.style.font = window.getComputedStyle(input).font;
+        document.body.appendChild(measureSpan);
+
+        // 更新测量 span 的内容并获取宽度
+        const updateWidth = () => {
+            const value = input.value || input.placeholder;
+            measureSpan.textContent = value || 'ああああ';  // 默认5个字符宽度
+            const width = measureSpan.offsetWidth;
+            input.style.width = `${Math.max(width + 16, 80)}px`; // 最小宽度改为80px
+        };
+
+        // 初始化宽度
+        updateWidth();
+
+        // 监听输入事件
+        input.addEventListener('input', updateWidth);
+        
+        // 清理函数
+        return () => {
+            document.body.removeChild(measureSpan);
+            input.removeEventListener('input', updateWidth);
+        };
+    }
+
+    // 切换侧边栏显示状态
+    toggleSplitList() {
+        const sidebar = document.getElementById('splitListSidebar');
+        if (!sidebar) return;
+
+        this.isSidebarOpen = !this.isSidebarOpen;
+        if (this.isSidebarOpen) {
+            sidebar.classList.add('show');
+            this.updateSplitList();
+        } else {
+            sidebar.classList.remove('show');
+        }
+    }
+
+    // 更新分句列表内容
+    updateSplitList() {
+        const sidebarContent = document.querySelector('.sidebar-content');
+        if (!sidebarContent) return;
+
+        // 清空现有内容
+        sidebarContent.innerHTML = '';
+
+        // 筛选所有分句练习题目
+        const splitQuestions = this.questions.filter(q => q.type === 'split');
+        
+        // 创建列表内容
+        splitQuestions.forEach((question, index) => {
+            const item = document.createElement('div');
+            item.className = 'split-item';
+            item.innerHTML = `
+                <div class="japanese">${question.character}</div>
+                <div class="meaning">${question.meaning}</div>
+            `;
+
+            // 点击跳转到对应题目
+            item.addEventListener('click', () => {
+                this.currentQuestionIndex = this.questions.indexOf(question);
+                this.showQuestion();
+                this.toggleSplitList(); // 关闭侧边栏
+            });
+
+            sidebarContent.appendChild(item);
+        });
+
+        // 如果没有分句练习
+        if (splitQuestions.length === 0) {
+            sidebarContent.innerHTML = '<div class="split-item">当前课程没有分句练习</div>';
+        }
+    }
+
+    // 添加更新历史记录的方法
+    updateHistory(question) {
+        const historyContent = document.querySelector('.history-content');
+        // 清空之前的历史记录
+        historyContent.innerHTML = '';
+        
+        // 创建新的历史记录项
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        
+        const japanese = document.createElement('div');
+        japanese.className = 'japanese';
+        japanese.textContent = question.character || question.hiragana;
+        
+        const meaning = document.createElement('div');
+        meaning.className = 'meaning';
+        meaning.textContent = question.meaning;
+        
+        historyItem.appendChild(japanese);
+        historyItem.appendChild(meaning);
+        
+        // 添加到历史记录区域
+        historyContent.appendChild(historyItem);
+    }
+}
+
+// 修改初始化方式
+window.addEventListener('DOMContentLoaded', () => {
+    window.practiceManager = new PracticeManager();
+});
+
+// 检查题目数据结构
+function generateQuestion(data, index, courseKey) {
+    // 使用课程标识+序号作为ID
+    const questionId = data.id || `${courseKey}_q${index + 1}`;
+    return {
+        id: questionId,
+        type: 'split',
+        character: data.character,
+        hiragana: data.hiragana,
+        meaning: data.meaning,
+        romaji: data.romaji
+    };
+}
+
+// 在加载课程时使用
+function loadLesson(course, lesson) {
+    const questions = lessonData.questions.map(q => generateQuestion(q));
+    // ... 其他代码 ...
+}

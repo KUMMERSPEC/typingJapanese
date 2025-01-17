@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing-Japanese</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/statistics.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 添加遮罩层 -->
+        <div class="overlay"></div>
+        
+        <header>
+            <h1>Typing-Japanese</h1>
+        </header>
+
+        <main>
+            <!-- 添加统计信息区域 -->
+            <div class="stats-section">
+                <div class="stats-card">
+                    <div class="stats-header">
+                        <h2>今日</h2>
+                        <span class="today-date">2025/1/13</span>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-item">
+                            <span class="label">学习天数</span>
+                            <span class="value learning-days">1</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="label">已学句子</span>
+                            <span class="value learned-sentences">1</span>
+                        </div>
+                        <div class="stats-item" data-action="review">
+                            <span class="label">待复习</span>
+                            <span class="value review-items">0</span>
+                        </div>
+                        <div class="stats-item" data-action="stats">
+                            <span class="label">统计</span>
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-section">
+                <h2>课程列表</h2>
+                <div class="course-list">
+                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=kimochi&lesson=Lesson1'">
+                        <h3>気持ち</h3>
+                        <p>表达感受的词汇</p>
+                    </div>
+                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=gimon&lesson=Lesson1'">
+                        <h3>疑問詞</h3>
+                        <p>疑问词练习</p>
+                    </div>
+                </div>
+                <a href="practice/courses.html" class="course-select-btn">查看全部课程 →</a>
+            </div>
+
+            <!-- 添加复习面板 -->
+            <div id="reviewPanel" class="review-panel">
+                <div class="review-header">
+                    <select id="reviewFilter">
+                        <option value="all">全部句子</option>
+                        <option value="today">今日待复习</option>
+                        <option value="weak">需要加强</option>
+                    </select>
+                    <button class="close-btn">×</button>
+                </div>
+                <div class="review-count">待复习：0</div>
+                <div class="review-list"></div>
+                <div class="review-options">
+                    <label><input type="checkbox" id="randomOrder"> 随机顺序</label>
+                    <label><input type="checkbox" id="focusWeak"> 专注薄弱项</label>
+                </div>
+                <div class="review-actions">
+                    <button onclick="startReview('typing')">打字练习</button>
+                    <button onclick="startReview('flashcard')">闪卡记忆</button>
+                </div>
+            </div>
+
+            <!-- 统计面板 -->
+            <div id="statsPanel" class="stats-panel" style="display: none;">
+                <div class="stats-header">
+                    <h2>学习统计</h2>
+                    <button class="stats-close" onclick="closeStatsPanel()">&times;</button>
+                </div>
+                <div class="stats-content">
+                    <!-- 学习记录卡片 -->
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <span class="stats-card-title">学习趋势</span>
+                        </div>
+                        <div class="trend-chart-container">
+                            <canvas id="learningTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- 掌握情况卡片 -->
+                    <div class="stats-card">
+                        <div class="stats-card-header">
+                            <span class="stats-card-title">掌握情况</span>
+                        </div>
+                        <div class="mastery-indicators">
+                            <div class="mastery-item">
+                                <div class="mastery-icon mastery-high">高</div>
+                                <div class="mastery-info">
+                                    <div class="mastery-label">完全掌握</div>
+                                    <div class="mastery-value" id="masteryHigh">0</div>
+                                </div>
+                            </div>
+                            <div class="mastery-item">
+                                <div class="mastery-icon mastery-medium">中</div>
+                                <div class="mastery-info">
+                                    <div class="mastery-label">基本掌握</div>
+                                    <div class="mastery-value" id="masteryMedium">0</div>
+                                </div>
+                            </div>
+                            <div class="mastery-item">
+                                <div class="mastery-icon mastery-low">低</div>
+                                <div class="mastery-info">
+                                    <div class="mastery-label">需要加强</div>
+                                    <div class="mastery-value" id="masteryLow">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+    <!-- 使用 ES6 模块方式导入脚本 -->
+    <script type="module" src="js/common/statsData.js"></script>
+    <script type="module" src="js/index.js"></script>
+    <!-- 引入脚本 -->
+    <script src="js/common/statistics.js" type="module"></script>
+    <!-- 将脚本移到body末尾并添加defer属性 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <script type="module" src="js/statsChart.js"></script>
+    <script type="module" src="js/statistics.js"></script>
+</body>
+</html> 

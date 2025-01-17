@@ -1,0 +1,220 @@
+{
+  "questions": [
+    {
+      "character": "ネット",
+      "hiragana": "ネット",
+      "romaji": "netto",
+      "meaning": "网，网络",
+      "type": "normal",
+      "answers": "ネット:netto"
+    },
+    {
+      "character": "遅い",
+      "hiragana": "おそい",
+      "romaji": "osoi",
+      "meaning": "慢的",
+      "type": "normal",
+      "answers": "おそい:osoi"
+    },
+    {
+      "character": "ネットが遅い",
+      "hiragana": "ネット:が:おそい",
+      "romaji": "netto:ga:osoi",
+      "meaning": "网速很慢",
+      "type": "split",
+      "answers": "ネット:netto|が:ga|おそい:osoi"
+    },
+    {
+      "character": "つながる",
+      "hiragana": "つながる",
+      "romaji": "tsunagaru",
+      "meaning": "连接",
+      "type": "normal",
+      "answers": "つながる:tsunagaru"
+    },
+    {
+      "character": "ネットがつながる",
+      "hiragana": "ネット:が:つながる",
+      "romaji": "netto:ga:tsunagaru",
+      "meaning": "连接到互联网",
+      "type": "split",
+      "answers": "ネット:netto|が:ga|つながる:tsunagaru"
+    },
+    {
+      "character": "速い",
+      "hiragana": "はやい",
+      "romaji": "hayai",
+      "meaning": "快速地",
+      "type": "normal",
+      "answers": "はやい:hayai"
+    },
+    {
+      "character": "ネットが速い",
+      "hiragana": "ネット:が:はやい",
+      "romaji": "netto:ga:hayai",
+      "meaning": "网速很快",
+      "type": "split",
+      "answers": "ネット:netto|が:ga|はやい:hayai"
+    },
+    {
+      "character": "ネットからダウンロードする",
+      "hiragana": "ネット:から:ダウンロードする",
+      "romaji": "netto:kara:daunroodosuru",
+      "meaning": "从互联网上下载",
+      "type": "split",
+      "answers": "ネット:netto|から:kara|ダウンロードする:daunroodosuru"
+    },
+    {
+      "character": "アクセスする",
+      "hiragana": "アクセス",
+      "romaji": "akusesu",
+      "meaning": "访问，使用",
+      "type": "normal",
+      "answers": "アクセス:akusesu"
+    },
+    {
+      "character": "ネットにアクセスする",
+      "hiragana": "ネット:に:アクセスする",
+      "romaji": "netto:ni:akusesusuru",
+      "meaning": "访问网络",
+      "type": "split",
+      "answers": "ネット:netto|に:ni|アクセスする:akusesusuru"
+    },
+    {
+      "character": "つながる",
+      "hiragana": "つながる",
+      "romaji": "tsunagaru",
+      "meaning": "连接",
+      "type": "normal",
+      "answers": "つながる:tsunagaru"
+    },
+    {
+      "character": "ネットにつながる",
+      "hiragana": "ネット:に:つながる",
+      "romaji": "netto:ni:tsunagaru",
+      "meaning": "连接到互联网",
+      "type": "split",
+      "answers": "ネット:netto|に:ni|つながる:tsunagaru"
+    },
+    {
+      "character": "メール",
+      "hiragana": "メール",
+      "romaji": "meeru",
+      "meaning": "电子邮件",
+      "type": "normal",
+      "answers": "メール:meeru"
+    },
+    {
+      "character": "届く",
+      "hiragana": "とどく",
+      "romaji": "todoku",
+      "meaning": "抵达",
+      "type": "normal",
+      "answers": "とどく:todoku"
+    },
+    {
+      "character": "メールが届く",
+      "hiragana": "メール:が:とどく",
+      "romaji": "meeru:ga:todoku",
+      "meaning": "收到一封电子邮件（邮件抵达）",
+      "type": "split",
+      "answers": "メール:meeru|が:ga|とどく:todoku"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "メールが開く",
+      "hiragana": "メール:が:ひらく",
+      "romaji": "meeru:ga:hiraku",
+      "meaning": "电子邮件打开",
+      "type": "split",
+      "answers": "メール:meeru|が:ga|ひらく:hiraku"
+    },
+    {
+      "character": "打つ",
+      "hiragana": "うつ",
+      "romaji": "utsu",
+      "meaning": "打字，打",
+      "type": "normal",
+      "answers": "うつ:utsu"
+    },
+    {
+      "character": "メールを打つ",
+      "hiragana": "メール:を:うつ",
+      "romaji": "meeru:wo:utsu",
+      "meaning": "写邮件（打邮件）",
+      "type": "split",
+      "answers": "メール:meeru|を:wo|うつ:utsu"
+    },
+    {
+      "character": "送る",
+      "hiragana": "おくる",
+      "romaji": "okuru",
+      "meaning": "发送",
+      "type": "normal",
+      "answers": "おくる:okuru"
+    },
+    {
+      "character": "メールを送る",
+      "hiragana": "メール:を:おくる",
+      "romaji": "meeru:wo:okuru",
+      "meaning": "发送电子邮件",
+      "type": "split",
+      "answers": "メール:meeru|を:wo|おくる:okuru"
+    },
+    {
+      "character": "消す",
+      "hiragana": "けす",
+      "romaji": "kesu",
+      "meaning": "擦除",
+      "type": "normal",
+      "answers": "けす:kesu"
+    },
+    {
+      "character": "メールを消す",
+      "hiragana": "メール:を:けす",
+      "romaji": "meeru:wo:kesu",
+      "meaning": "删除电子邮件",
+      "type": "split",
+      "answers": "メール:meeru|を:wo|けす:kesu"
+    },
+    {
+      "character": "チェックする",
+      "hiragana": "チェック",
+      "romaji": "chekkusuru",
+      "meaning": "查看",
+      "type": "normal",
+      "answers": "チェック:chekkusuru"
+    },
+    {
+      "character": "メールをチェックする",
+      "hiragana": "メール:を:チェックする",
+      "romaji": "meeru:wo:chekkusuru",
+      "meaning": "检查电子邮件",
+      "type": "split",
+      "answers": "メール:meeru|を:wo|チェックする:chekkusuru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "メールを開く",
+      "hiragana": "メール:を:ひらく",
+      "romaji": "meeru:wo:hiraku",
+      "meaning": "打开电子邮件",
+      "type": "split",
+      "answers": "メール:meeru|を:wo|ひらく:hiraku"
+    }
+  ]
+}

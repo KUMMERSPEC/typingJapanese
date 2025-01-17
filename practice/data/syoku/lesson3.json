@@ -1,0 +1,228 @@
+{
+  "questions": [
+    {
+      "character": "火",
+      "hiragana": "ひ",
+      "romaji": "hi",
+      "meaning": "火，火焰",
+      "type": "nan",
+      "answers": ""
+    },
+    {
+      "character": "消える",
+      "hiragana": "きえる",
+      "romaji": "kieru",
+      "meaning": "消失，熄灭",
+      "type": "normal",
+      "answers": "きえる:kieru"
+    },
+    {
+      "character": "火が消える",
+      "hiragana": "ひ:が:きえる",
+      "romaji": "hi:ga:kieru",
+      "meaning": "火熄灭了",
+      "type": "split",
+      "answers": "ひ:hi|が:ga|きえる:kieru"
+    },
+    {
+      "character": "火がつく",
+      "hiragana": "ひ:が:つく",
+      "romaji": "hi:ga:tsuku",
+      "meaning": "引起, 着火, 被点燃",
+      "type": "split",
+      "answers": "ひ:hi|が:ga|つく:tsuku"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "火が強い",
+      "hiragana": "ひ:が:つよい",
+      "romaji": "hi:ga:tsuyoi",
+      "meaning": "火势很强",
+      "type": "split",
+      "answers": "ひ:hi|が:ga|つよい:tsuyoi"
+    },
+    {
+      "character": "弱い",
+      "hiragana": "よわい",
+      "romaji": "yowai",
+      "meaning": "虚弱的",
+      "type": "normal",
+      "answers": "よわい:yowai"
+    },
+    {
+      "character": "火が弱い",
+      "hiragana": "ひ:が:よわい",
+      "romaji": "hi:ga:yowai",
+      "meaning": "火势较弱",
+      "type": "split",
+      "answers": "ひ:hi|が:ga|よわい:yowai"
+    },
+    {
+      "character": "下ろす",
+      "hiragana": "おろす",
+      "romaji": "orosu",
+      "meaning": "放下、卸货",
+      "type": "normal",
+      "answers": "おろす:orosu"
+    },
+    {
+      "character": "火からおろす",
+      "hiragana": "ひ:から:おろす",
+      "romaji": "hi:kara:orosu",
+      "meaning": "从火上移开",
+      "type": "split",
+      "answers": "ひ:hi|から:kara|おろす:orosu"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "点燃，挂上",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "火にかける",
+      "hiragana": "ひ:に:かける",
+      "romaji": "hi:ni:kakeru",
+      "meaning": "放火上（加热）",
+      "type": "split",
+      "answers": "ひ:hi|に:ni|かける:kakeru"
+    },
+    {
+      "character": "消す",
+      "hiragana": "けす",
+      "romaji": "kesu",
+      "meaning": "擦除，消除",
+      "type": "normal",
+      "answers": "けす:kesu"
+    },
+    {
+      "character": "火を消す",
+      "hiragana": "ひ:を:けす",
+      "romaji": "hi:wo:kesu",
+      "meaning": "扑灭火",
+      "type": "split",
+      "answers": "ひ:hi|を:wo|けす:kesu"
+    },
+    {
+      "character": "つける",
+      "hiragana": "つける",
+      "romaji": "tsukeru",
+      "meaning": "打开，点燃",
+      "type": "normal",
+      "answers": "つける:tsukeru"
+    },
+    {
+      "character": "火をつける",
+      "hiragana": "ひ:を:つける",
+      "romaji": "hi:wo:tsukeru",
+      "meaning": "生火，点火",
+      "type": "split",
+      "answers": "ひ:hi|を:wo|つける:tsukeru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止，阻止",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "火を止める",
+      "hiragana": "ひ:を:とめる",
+      "romaji": "hi:wo:tomeru",
+      "meaning": "关过（停火）",
+      "type": "split",
+      "answers": "ひ:hi|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "水が出る",
+      "hiragana": "みず:が:でる",
+      "romaji": "mizu:ga:deru",
+      "meaning": "水出来了",
+      "type": "split",
+      "answers": "みず:mizu|が:ga|でる:deru"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态描述）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "水が止まる",
+      "hiragana": "みず:が:とまる",
+      "romaji": "mizu:ga:tomaru",
+      "meaning": "停水",
+      "type": "split",
+      "answers": "みず:mizu|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "水を出す",
+      "hiragana": "みず:を:だす",
+      "romaji": "mizu:wo:dasu",
+      "meaning": "拿出水",
+      "type": "split",
+      "answers": "みず:mizu|を:wo|だす:dasu"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止（动作行为）",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "水を止める",
+      "hiragana": "みず:を:とめる",
+      "romaji": "mizu:wo:tomeru",
+      "meaning": "停止水",
+      "type": "split",
+      "answers": "みず:mizu|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "流す",
+      "hiragana": "ながす",
+      "romaji": "nagasu",
+      "meaning": "流动，冲，冲洗。",
+      "type": "normal",
+      "answers": "ながす:nagasu"
+    },
+    {
+      "character": "水を流す",
+      "hiragana": "みず:を:ながす",
+      "romaji": "mizu:wo:nagasu",
+      "meaning": "冲水，放水",
+      "type": "split",
+      "answers": "みず:mizu|を:wo|ながす:nagasu"
+    }
+  ]
+}

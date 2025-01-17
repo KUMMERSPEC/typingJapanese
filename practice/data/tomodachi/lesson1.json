@@ -1,0 +1,212 @@
+{
+  "questions": [
+    {
+      "character": "彼女",
+      "hiragana": "かのじょ",
+      "romaji": "kanojo",
+      "meaning": "她，女朋友",
+      "type": "normal",
+      "answers": "かのじょ:kanojo"
+    },
+    {
+      "character": "いる",
+      "hiragana": "いる",
+      "romaji": "iru",
+      "meaning": "有，存在",
+      "type": "normal",
+      "answers": "いる:iru"
+    },
+    {
+      "character": "彼女がいる",
+      "hiragana": "かのじょ:が:いる",
+      "romaji": "kanojo:ga:iru",
+      "meaning": "有女朋友",
+      "type": "split",
+      "answers": "かのじょ:kanojo|が:ga|いる:iru"
+    },
+    {
+      "character": "できる",
+      "hiragana": "できる",
+      "romaji": "dekiru",
+      "meaning": "人与人直接结成朋友，伴侣关系。",
+      "type": "normal",
+      "answers": "できる:dekiru"
+    },
+    {
+      "character": "彼女ができる",
+      "hiragana": "かのじょ:が:できる",
+      "romaji": "kanojo:ga:dekiru",
+      "meaning": "交到女朋友",
+      "type": "split",
+      "answers": "かのじょ:kanojo|が:ga|できる:dekiru"
+    },
+    {
+      "character": "別れる",
+      "hiragana": "わかれる",
+      "romaji": "wakareru",
+      "meaning": "分手，分开",
+      "type": "normal",
+      "answers": "わかれる:wakareru"
+    },
+    {
+      "character": "彼女と別れる",
+      "hiragana": "かのじょ:と:わかれる",
+      "romaji": "kanojo:to:wakareru",
+      "meaning": "和女朋友分手",
+      "type": "split",
+      "answers": "かのじょ:kanojo|と:to|わかれる:wakareru"
+    },
+    {
+      "character": "なる",
+      "hiragana": "なる",
+      "romaji": "naru",
+      "meaning": "变得，成为",
+      "type": "normal",
+      "answers": "なる:naru"
+    },
+    {
+      "character": "彼女になる",
+      "hiragana": "かのじょ:に:なる",
+      "romaji": "kanojo:ni:naru",
+      "meaning": "成为女朋友",
+      "type": "split",
+      "answers": "かのじょ:kanojo|に:ni|なる:naru"
+    },
+    {
+      "character": "作る",
+      "hiragana": "つくる",
+      "romaji": "tsukuru",
+      "meaning": "制作，人與人之間的關係產生的親密的變",
+      "type": "normal",
+      "answers": "つくる:tsukuru"
+    },
+    {
+      "character": "彼女を作る",
+      "hiragana": "かのじょ:を:つくる",
+      "romaji": "kanojo:wo:tsukuru",
+      "meaning": "交个女朋友",
+      "type": "split",
+      "answers": "かのじょ:kanojo|を:wo|つくる:tsukuru"
+    },
+    {
+      "character": "ふる",
+      "hiragana": "ふる",
+      "romaji": "furu",
+      "meaning": "丧生，丢掉。甩开",
+      "type": "normal",
+      "answers": "ふる:furu"
+    },
+    {
+      "character": "彼女をふる",
+      "hiragana": "かのじょ:を:ふる",
+      "romaji": "kanojo:wo:furu",
+      "meaning": "甩掉女朋友",
+      "type": "split",
+      "answers": "かのじょ:kanojo|を:wo|ふる:furu"
+    },
+    {
+      "character": "彼氏がいる",
+      "hiragana": "かれし:が:いる",
+      "romaji": "kareshi:ga:iru",
+      "meaning": "有男朋友",
+      "type": "split",
+      "answers": "かれし:kareshi|が:ga|いる:iru"
+    },
+    {
+      "character": "彼氏ができる",
+      "hiragana": "かれし:が:できる",
+      "romaji": "kareshi:ga:dekiru",
+      "meaning": "交到男朋友",
+      "type": "split",
+      "answers": "かれし:kareshi|が:ga|できる:dekiru"
+    },
+    {
+      "character": "彼氏と別れる",
+      "hiragana": "かれし:と:わかれる",
+      "romaji": "kareshi:to:wakareru",
+      "meaning": "和男朋友分手",
+      "type": "split",
+      "answers": "かれし:kareshi|と:to|わかれる:wakareru"
+    },
+    {
+      "character": "彼氏になる",
+      "hiragana": "かれし:に:なる",
+      "romaji": "kareshi:ni:naru",
+      "meaning": "变成男朋友",
+      "type": "split",
+      "answers": "かれし:kareshi|に:ni|なる:naru"
+    },
+    {
+      "character": "彼氏を作る",
+      "hiragana": "かれし:を:つくる",
+      "romaji": "kareshi:wo:tsukuru",
+      "meaning": "交到男朋友",
+      "type": "split",
+      "answers": "かれし:kareshi|を:wo|つくる:tsukuru"
+    },
+    {
+      "character": "彼氏をふる",
+      "hiragana": "かれし:を:ふる",
+      "romaji": "kareshi:wo:furu",
+      "meaning": "甩掉男朋友",
+      "type": "split",
+      "answers": "かれし:kareshi|を:wo|ふる:furu"
+    },
+    {
+      "character": "恋人",
+      "hiragana": "こいびと",
+      "romaji": "koibito",
+      "meaning": "恋人",
+      "type": "normal",
+      "answers": "こいびと:koibito"
+    },
+    {
+      "character": "恋人がいる",
+      "hiragana": "こいびと:が:いる",
+      "romaji": "koibito:ga:iru",
+      "meaning": "有恋人",
+      "type": "split",
+      "answers": "こいびと:koibito|が:ga|いる:iru"
+    },
+    {
+      "character": "恋人ができる",
+      "hiragana": "こいびと:が:できる",
+      "romaji": "koibito:ga:dekiru",
+      "meaning": "交到了对象",
+      "type": "split",
+      "answers": "こいびと:koibito|が:ga|できる:dekiru"
+    },
+    {
+      "character": "恋人と別れる",
+      "hiragana": "こいびと:と:わかれる",
+      "romaji": "koibito:to:wakareru",
+      "meaning": "和恋人分手",
+      "type": "split",
+      "answers": "こいびと:koibito|と:to|わかれる:wakareru"
+    },
+    {
+      "character": "恋人になる",
+      "hiragana": "こいびと:に:なる",
+      "romaji": "koibito:ni:naru",
+      "meaning": "成为恋人",
+      "type": "split",
+      "answers": "こいびと:koibito|に:ni|なる:naru"
+    },
+    {
+      "character": "恋人を作る",
+      "hiragana": "こいびと:を:つくる",
+      "romaji": "koibito:wo:tsukuru",
+      "meaning": "交到了恋人",
+      "type": "split",
+      "answers": "こいびと:koibito|を:wo|つくる:tsukuru"
+    },
+    {
+      "character": "恋人をふる",
+      "hiragana": "こいびと:を:ふる",
+      "romaji": "koibito:wo:furu",
+      "meaning": "甩了恋人",
+      "type": "split",
+      "answers": "こいびと:koibito|を:wo|ふる:furu"
+    }
+  ]
+}

@@ -1,0 +1,516 @@
+{
+  "questions": [
+    {
+      "character": "お金",
+      "hiragana": "おかね",
+      "romaji": "okane",
+      "meaning": "钱",
+      "type": "normal",
+      "answers": "おかね:okane"
+    },
+    {
+      "character": "お金がある",
+      "hiragana": "おかね:が:ある",
+      "romaji": "okane:ga:aru",
+      "meaning": "有钱",
+      "type": "split",
+      "answers": "おかね:okane|が:ga|ある:aru"
+    },
+    {
+      "character": "足りる",
+      "hiragana": "たりる",
+      "romaji": "tariru",
+      "meaning": "足够的",
+      "type": "normal",
+      "answers": "たりる:tariru"
+    },
+    {
+      "character": "お金が足りる",
+      "hiragana": "おかね:が:たりる",
+      "romaji": "okane:ga:tariru",
+      "meaning": "钱足够，有足够的钱",
+      "type": "split",
+      "answers": "おかね:okane|が:ga|たりる:tariru"
+    },
+    {
+      "character": "お金がない",
+      "hiragana": "おかね:が:ない",
+      "romaji": "okane:ga:nai",
+      "meaning": "没有钱",
+      "type": "split",
+      "answers": "おかね:okane|が:ga|ない:nai"
+    },
+    {
+      "character": "下ろす",
+      "hiragana": "おろす",
+      "romaji": "orosu",
+      "meaning": "放下、卸货",
+      "type": "normal",
+      "answers": "おろす:orosu"
+    },
+    {
+      "character": "お金を下ろす",
+      "hiragana": "おかね:を:おろす",
+      "romaji": "okane:wo:orosu",
+      "meaning": "取款(把钱从取款机放下来）",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|おろす:orosu"
+    },
+    {
+      "character": "返す",
+      "hiragana": "かえす",
+      "romaji": "kaesu",
+      "meaning": "返回，退回",
+      "type": "normal",
+      "answers": "かえす:kaesu"
+    },
+    {
+      "character": "お金を返す",
+      "hiragana": "おかね:を:かえす",
+      "romaji": "okane:wo:kaesu",
+      "meaning": "还钱",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|かえす:kaesu"
+    },
+    {
+      "character": "換える",
+      "hiragana": "かえる",
+      "romaji": "kaeru",
+      "meaning": "交换",
+      "type": "normal",
+      "answers": "かえる:kaeru"
+    },
+    {
+      "character": "お金を換える",
+      "hiragana": "おかね:を:かえる",
+      "romaji": "okane:wo:kaeru",
+      "meaning": "兑换货币",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|かえる:kaeru"
+    },
+    {
+      "character": "貸す",
+      "hiragana": "かす",
+      "romaji": "kasu",
+      "meaning": "借（借进来）",
+      "type": "normal",
+      "answers": "かす:kasu"
+    },
+    {
+      "character": "お金を貸す",
+      "hiragana": "おかね:を:かす",
+      "romaji": "okane:wo:kasu",
+      "meaning": "借钱（借给自己）",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|かす:kasu"
+    },
+    {
+      "character": "借りる",
+      "hiragana": "かりる",
+      "romaji": "kariru",
+      "meaning": "借(借出去）",
+      "type": "normal",
+      "answers": "かりる:kariru"
+    },
+    {
+      "character": "お金を借りる",
+      "hiragana": "おかね:を:かりる",
+      "romaji": "okane:wo:kariru",
+      "meaning": "借钱（借给别人）",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|かりる:kariru"
+    },
+    {
+      "character": "払う",
+      "hiragana": "はらう",
+      "romaji": "harau",
+      "meaning": "支付",
+      "type": "normal",
+      "answers": "はらう:harau"
+    },
+    {
+      "character": "お金を払う",
+      "hiragana": "おかね:を:はらう",
+      "romaji": "okane:wo:harau",
+      "meaning": "付钱",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|はらう:harau"
+    },
+    {
+      "character": "おつり",
+      "hiragana": "おつり",
+      "romaji": "otsuri",
+      "meaning": "零钱",
+      "type": "normal",
+      "answers": "おつり:otsuri"
+    },
+    {
+      "character": "おつりがある",
+      "hiragana": "おつり:が:ある",
+      "romaji": "otsuri:ga:aru",
+      "meaning": "我有零钱",
+      "type": "split",
+      "answers": "おつり:otsuri|が:ga|ある:aru"
+    },
+    {
+      "character": "おつりがない",
+      "hiragana": "おつり:が:ない",
+      "romaji": "otsuri:ga:nai",
+      "meaning": "我没有零钱",
+      "type": "split",
+      "answers": "おつり:otsuri|が:ga|ない:nai"
+    },
+    {
+      "character": "受け取る",
+      "hiragana": "うけとる",
+      "romaji": "uketoru",
+      "meaning": "收到，取得",
+      "type": "normal",
+      "answers": "うけとる:uketoru"
+    },
+    {
+      "character": "おつりを受け取る",
+      "hiragana": "おつり:を:うけとる",
+      "romaji": "otsuri:wo:uketoru",
+      "meaning": "收到零钱",
+      "type": "split",
+      "answers": "おつり:otsuri|を:wo|うけとる:uketoru"
+    },
+    {
+      "character": "もらう",
+      "hiragana": "もらう",
+      "romaji": "morau",
+      "meaning": "得到（带有恩惠）",
+      "type": "normal",
+      "answers": "もらう:morau"
+    },
+    {
+      "character": "おつりをもらう",
+      "hiragana": "おつり:を:もらう",
+      "romaji": "otsuri:wo:morau",
+      "meaning": "找零钱",
+      "type": "split",
+      "answers": "おつり:otsuri|を:wo|もらう:morau"
+    },
+    {
+      "character": "渡す",
+      "hiragana": "わたす",
+      "romaji": "watasu",
+      "meaning": "交出，传递",
+      "type": "normal",
+      "answers": "わたす:watasu"
+    },
+    {
+      "character": "おつりを渡す",
+      "hiragana": "おつり:を:わたす",
+      "romaji": "otsuri:wo:watasu",
+      "meaning": "找钱",
+      "type": "split",
+      "answers": "おつり:otsuri|を:wo|わたす:watasu"
+    },
+    {
+      "character": "値段",
+      "hiragana": "ねだん",
+      "romaji": "nedan",
+      "meaning": "价格",
+      "type": "normal",
+      "answers": "ねだん:nedan"
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "上涨，增加",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "値段が上がる",
+      "hiragana": "ねだん:が:あがる",
+      "romaji": "nedan:ga:agaru",
+      "meaning": "价格上涨",
+      "type": "split",
+      "answers": "ねだん:nedan|が:ga|あがる:agaru"
+    },
+    {
+      "character": "下がる",
+      "hiragana": "さがる",
+      "romaji": "sagaru",
+      "meaning": "下去，下降",
+      "type": "normal",
+      "answers": "さがる:sagaru"
+    },
+    {
+      "character": "値段が下がる",
+      "hiragana": "ねだん:が:さがる",
+      "romaji": "nedan:ga:sagaru",
+      "meaning": "价格下跌",
+      "type": "split",
+      "answers": "ねだん:nedan|が:ga|さがる:sagaru"
+    },
+    {
+      "character": "高い",
+      "hiragana": "たかい",
+      "romaji": "takai",
+      "meaning": "昂贵的",
+      "type": "normal",
+      "answers": "たかい:takai"
+    },
+    {
+      "character": "値段が高い",
+      "hiragana": "ねだん:が:たかい",
+      "romaji": "nedan:ga:takai",
+      "meaning": "昂贵的",
+      "type": "split",
+      "answers": "ねだん:nedan|が:ga|たかい:takai"
+    },
+    {
+      "character": "安い",
+      "hiragana": "やすい",
+      "romaji": "yasui",
+      "meaning": "便宜的",
+      "type": "normal",
+      "answers": "やすい:yasui"
+    },
+    {
+      "character": "値段が安い",
+      "hiragana": "ねだん:が:やすい",
+      "romaji": "nedan:ga:yasui",
+      "meaning": "价格便宜",
+      "type": "split",
+      "answers": "ねだん:nedan|が:ga|やすい:yasui"
+    },
+    {
+      "character": "かかる",
+      "hiragana": "かかる",
+      "romaji": "kakaru",
+      "meaning": "花费，挂上（状态）",
+      "type": "normal",
+      "answers": "かかる:kakaru"
+    },
+    {
+      "character": "お金がかかる",
+      "hiragana": "おかね:が:かかる",
+      "romaji": "okane:ga:kakaru",
+      "meaning": "花钱（结果）",
+      "type": "split",
+      "answers": "おかね:okane|が:ga|かかる:kakaru"
+    },
+    {
+      "character": "たまる",
+      "hiragana": "たまる",
+      "romaji": "tamaru",
+      "meaning": "积累，储蓄（状态）",
+      "type": "normal",
+      "answers": "たまる:tamaru"
+    },
+    {
+      "character": "お金がたまる",
+      "hiragana": "おかね:が:たまる",
+      "romaji": "okane:ga:tamaru",
+      "meaning": "省钱",
+      "type": "split",
+      "answers": "おかね:okane|が:ga|たまる:tamaru"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "挂上，花费（动作）",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "お金をかける",
+      "hiragana": "おかね:を:かける",
+      "romaji": "okane:wo:kakeru",
+      "meaning": "花钱（动作）",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|かける:kakeru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "お金を出す",
+      "hiragana": "おかね:を:だす",
+      "romaji": "okane:wo:dasu",
+      "meaning": "给钱",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|だす:dasu"
+    },
+    {
+      "character": "ためる",
+      "hiragana": "ためる",
+      "romaji": "tameru",
+      "meaning": "存起来（动作）",
+      "type": "normal",
+      "answers": "ためる:tameru"
+    },
+    {
+      "character": "お金をためる",
+      "hiragana": "おかね:を:ためる",
+      "romaji": "okane:wo:tameru",
+      "meaning": "省钱",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|ためる:tameru"
+    },
+    {
+      "character": "使う",
+      "hiragana": "つかう",
+      "romaji": "tsukau",
+      "meaning": "使用",
+      "type": "normal",
+      "answers": "つかう:tsukau"
+    },
+    {
+      "character": "お金を使う",
+      "hiragana": "おかね:を:つかう",
+      "romaji": "okane:wo:tsukau",
+      "meaning": "使用金钱",
+      "type": "split",
+      "answers": "おかね:okane|を:wo|つかう:tsukau"
+    },
+    {
+      "character": "貯金",
+      "hiragana": "ちょきん",
+      "romaji": "chokin",
+      "meaning": "保存",
+      "type": "normal",
+      "answers": "ちょきん:chokin"
+    },
+    {
+      "character": "貯金がある",
+      "hiragana": "ちょきん:が:ある",
+      "romaji": "chokin:ga:aru",
+      "meaning": "有积蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|ある:aru"
+    },
+    {
+      "character": "多い",
+      "hiragana": "おおい",
+      "romaji": "ooi",
+      "meaning": "许多",
+      "type": "normal",
+      "answers": "おおい:ooi"
+    },
+    {
+      "character": "貯金が多い",
+      "hiragana": "ちょきん:が:おおい",
+      "romaji": "chokin:ga:ooi",
+      "meaning": "有很多积蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|おおい:ooi"
+    },
+    {
+      "character": "少ない",
+      "hiragana": "すくない",
+      "romaji": "sukunai",
+      "meaning": "很少",
+      "type": "normal",
+      "answers": "すくない:sukunai"
+    },
+    {
+      "character": "貯金が少ない",
+      "hiragana": "ちょきん:が:すくない",
+      "romaji": "chokin:ga:sukunai",
+      "meaning": "我没有太多积蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|すくない:sukunai"
+    },
+    {
+      "character": "貯金がない",
+      "hiragana": "ちょきん:が:ない",
+      "romaji": "chokin:ga:nai",
+      "meaning": "我没有任何积蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|ない:nai"
+    },
+    {
+      "character": "なくなる",
+      "hiragana": "なくなる",
+      "romaji": "nakunaru",
+      "meaning": "消失",
+      "type": "normal",
+      "answers": "なくなる:nakunaru"
+    },
+    {
+      "character": "貯金がなくなる",
+      "hiragana": "ちょきん:が:なくなる",
+      "romaji": "chokin:ga:nakunaru",
+      "meaning": "我的积蓄用完了",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|なくなる:nakunaru"
+    },
+    {
+      "character": "増える",
+      "hiragana": "ふえる",
+      "romaji": "fueru",
+      "meaning": "增加",
+      "type": "normal",
+      "answers": "ふえる:fueru"
+    },
+    {
+      "character": "貯金が増える",
+      "hiragana": "ちょきん:が:ふえる",
+      "romaji": "chokin:ga:fueru",
+      "meaning": "储蓄增加",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|ふえる:fueru"
+    },
+    {
+      "character": "減る",
+      "hiragana": "へる",
+      "romaji": "heru",
+      "meaning": "减少",
+      "type": "normal",
+      "answers": "へる:heru"
+    },
+    {
+      "character": "貯金が減る",
+      "hiragana": "ちょきん:が:へる",
+      "romaji": "chokin:ga:heru",
+      "meaning": "储蓄减少",
+      "type": "split",
+      "answers": "ちょきん:chokin|が:ga|へる:heru"
+    },
+    {
+      "character": "貯金を下ろす",
+      "hiragana": "ちょきん:を:おろす",
+      "romaji": "chokin:wo:orosu",
+      "meaning": "提取储蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|を:wo|おろす:orosu"
+    },
+    {
+      "character": "する",
+      "hiragana": "する",
+      "romaji": "suru",
+      "meaning": "做",
+      "type": "normal",
+      "answers": "する:suru"
+    },
+    {
+      "character": "貯金をする",
+      "hiragana": "ちょきん:を:する",
+      "romaji": "chokin:wo:suru",
+      "meaning": "省钱",
+      "type": "split",
+      "answers": "ちょきん:chokin|を:wo|する:suru"
+    },
+    {
+      "character": "貯金を使う",
+      "hiragana": "ちょきん:を:つかう",
+      "romaji": "chokin:wo:tsukau",
+      "meaning": "使用储蓄",
+      "type": "split",
+      "answers": "ちょきん:chokin|を:wo|つかう:tsukau"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+/* 基础样式 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.practice-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 15px;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 练习区域 */
+.practice-area {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.meaning {
+    font-size: 1.8em;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 输入区域样式 */
+.input-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px auto;
+    max-width: 90%;
+    padding: 15px;
+}
+
+.split-input {
+    min-width: 80px;
+    height: 45px;
+    font-size: 1.3em;
+    padding: 6px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s;
+    background-color: #f8f8f8;
+}
+
+.split-input:focus {
+    border-color: #4f46e5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background-color: white;
+}
+
+.split-input.error {
+    border-color: #dc2626;
+    background-color: #fee2e2;
+    animation: shake 0.5s;
+}
+
+/* 顶部信息栏 */
+.practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 10px;
+}
+
+.progress {
+    font-size: 1.3em;
+    color: #4f46e5;
+    font-weight: 500;
+}
+
+.status-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.proficiency {
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+.proficiency.low {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.proficiency.medium {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.proficiency.high {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.proficiency.master {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.last-review {
+    color: #666;
+    font-size: 0.95em;
+}
+
+/* 答案显示区域 */
+.answer-display {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f8f8f8;
+}
+
+.answer-display.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.kanji-text {
+    font-size: 2em;
+    margin-bottom: 12px;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.kana-text {
+    font-size: 1.4em;
+    color: #4b5563;
+    margin-bottom: 10px;
+}
+
+.romaji-text {
+    font-size: 1.2em;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.meaning-text {
+    font-size: 1.3em;
+    color: #374151;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* 完成界面样式 */
+.completion-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 1000;
+    text-align: center;
+}
+
+.completion-screen h1 {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin-bottom: 1rem;
+    animation: popIn 0.5s ease-out;
+}
+
+.completion-screen p {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 0.5rem 0;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    animation: slideIn 0.5s ease-out;
+}
+
+.button-group button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #4CAF50;
+    color: white;
+}
+
+.button-group button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+/* 动画效果 */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 彩花效果 */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+    }
+}
+
+/* 星星效果 */
+.star {
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1); }
+} 

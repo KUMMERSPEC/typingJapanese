@@ -1,0 +1,60 @@
+{
+  "questions": [
+    {
+      "character": "見て",
+      "hiragana": "みて",
+      "romaji": "mite",
+      "meaning": "看",
+      "type": "normal",
+      "answers": "みて:mite"
+    },
+    {
+      "character": "くれて",
+      "hiragana": "くれて",
+      "romaji": "kurete",
+      "meaning": "把它给我",
+      "type": "normal",
+      "answers": "くれて:kurete"
+    },
+    {
+      "character": "ありがとう",
+      "hiragana": "ありがとう",
+      "romaji": "arigatou",
+      "meaning": "谢谢",
+      "type": "normal",
+      "answers": "ありがとう:arigatou"
+    },
+    {
+      "character": "見てくれてありがとう",
+      "hiragana": "みて:くれて:ありがとう",
+      "romaji": "mite:kurete:arigatou",
+      "meaning": "感谢您的观看",
+      "type": "split",
+      "answers": "みて:mite|くれて:kurete|ありがとう:arigatou"
+    },
+    {
+      "character": "助けて",
+      "hiragana": "たすけて",
+      "romaji": "tasukete",
+      "meaning": "帮忙",
+      "type": "normal",
+      "answers": "たすけて:tasukete"
+    },
+    {
+      "character": "くれて",
+      "hiragana": "くれて",
+      "romaji": "kurete",
+      "meaning": "把它给我",
+      "type": "normal",
+      "answers": "くれて:kurete"
+    },
+    {
+      "character": "助けてくれてありがとう",
+      "hiragana": "たすけて:くれて:ありがとう",
+      "romaji": "tasukete:kurete:arigatou",
+      "meaning": "感谢您的帮助",
+      "type": "split",
+      "answers": "たすけて:tasukete|くれて:kurete|ありがとう:arigatou"
+    }
+  ]
+}

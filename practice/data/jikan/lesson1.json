@@ -1,0 +1,308 @@
+{
+  "questions": [
+    {
+      "character": "時間",
+      "hiragana": "じかん",
+      "romaji": "jikan",
+      "meaning": "时间",
+      "type": "normal",
+      "answers": "じかん:jikan"
+    },
+    {
+      "character": "遅い",
+      "hiragana": "おそい",
+      "romaji": "osoi",
+      "meaning": "慢的",
+      "type": "normal",
+      "answers": "おそい:osoi"
+    },
+    {
+      "character": "時間が遅い",
+      "hiragana": "じかん:が:おそい",
+      "romaji": "jikan:ga:osoi",
+      "meaning": "时间很慢",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|おそい:osoi"
+    },
+    {
+      "character": "過ぎる",
+      "hiragana": "すぎる",
+      "romaji": "sugiru",
+      "meaning": "(时间)过去，经过。",
+      "type": "normal",
+      "answers": "すぎる:sugiru"
+    },
+    {
+      "character": "時間が過ぎる",
+      "hiragana": "じかん:が:すぎる",
+      "romaji": "jikan:ga:sugiru",
+      "meaning": "时间流逝",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|すぎる:sugiru"
+    },
+    {
+      "character": "早い",
+      "hiragana": "はやい",
+      "romaji": "hayai",
+      "meaning": "早期的",
+      "type": "normal",
+      "answers": "はやい:hayai"
+    },
+    {
+      "character": "時間が早い",
+      "hiragana": "じかん:が:はやい",
+      "romaji": "jikan:ga:hayai",
+      "meaning": "时间还早",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|はやい:hayai"
+    },
+    {
+      "character": "遅れる",
+      "hiragana": "おくれる",
+      "romaji": "okureru",
+      "meaning": "迟到，晚点",
+      "type": "normal",
+      "answers": "おくれる:okureru"
+    },
+    {
+      "character": "時間に遅れる",
+      "hiragana": "じかん:に:おくれる",
+      "romaji": "jikan:ni:okureru",
+      "meaning": "迟到（比约定时间迟了）",
+      "type": "split",
+      "answers": "じかん:jikan|に:ni|おくれる:okureru"
+    },
+    {
+      "character": "間に合う",
+      "hiragana": "まにあう",
+      "romaji": "maniau",
+      "meaning": "准时，赶上了",
+      "type": "normal",
+      "answers": "まにあう:maniau"
+    },
+    {
+      "character": "時間に間に合う",
+      "hiragana": "じかん:に:まにあう",
+      "romaji": "jikan:ni:maniau",
+      "meaning": "赶上了时间",
+      "type": "split",
+      "answers": "じかん:jikan|に:ni|まにあう:maniau"
+    },
+    {
+      "character": "遅らせる",
+      "hiragana": "おくらせる",
+      "romaji": "okuraseru",
+      "meaning": "延迟",
+      "type": "normal",
+      "answers": "おくらせる:okuraseru"
+    },
+    {
+      "character": "時間を遅らせる",
+      "hiragana": "じかん:を:おくらせる",
+      "romaji": "jikan:wo:okuraseru",
+      "meaning": "延迟时间",
+      "type": "split",
+      "answers": "じかん:jikan|を:wo|おくらせる:okuraseru"
+    },
+    {
+      "character": "早める",
+      "hiragana": "はやめる",
+      "romaji": "hayameru",
+      "meaning": "提早",
+      "type": "normal",
+      "answers": "はやめる:hayameru"
+    },
+    {
+      "character": "時間を早める",
+      "hiragana": "じかん:を:はやめる",
+      "romaji": "jikan:wo:hayameru",
+      "meaning": "加快时间",
+      "type": "split",
+      "answers": "じかん:jikan|を:wo|はやめる:hayameru"
+    },
+    {
+      "character": "間違える",
+      "hiragana": "まちがえる",
+      "romaji": "machigaeru",
+      "meaning": "错误",
+      "type": "normal",
+      "answers": "まちがえる:machigaeru"
+    },
+    {
+      "character": "時間を間違える",
+      "hiragana": "じかん:を:まちがえる",
+      "romaji": "jikan:wo:machigaeru",
+      "meaning": "把时间搞错了",
+      "type": "split",
+      "answers": "じかん:jikan|を:wo|まちがえる:machigaeru"
+    },
+    {
+      "character": "締め切り",
+      "hiragana": "しめきり",
+      "romaji": "shimekiri",
+      "meaning": "最后期限",
+      "type": "normal",
+      "answers": "しめきり:shimekiri"
+    },
+    {
+      "character": "締め切りが過ぎる",
+      "hiragana": "しめきり:が:すぎる",
+      "romaji": "shimekiri:ga:sugiru",
+      "meaning": "截止日期已过",
+      "type": "split",
+      "answers": "しめきり:shimekiri|が:ga|すぎる:sugiru"
+    },
+    {
+      "character": "延びる",
+      "hiragana": "のびる",
+      "romaji": "nobiru",
+      "meaning": "延长（状态结果）",
+      "type": "normal",
+      "answers": "のびる:nobiru"
+    },
+    {
+      "character": "締め切りが延びる",
+      "hiragana": "しめきり:が:のびる",
+      "romaji": "shimekiri:ga:nobiru",
+      "meaning": "截止日期延长",
+      "type": "split",
+      "answers": "しめきり:shimekiri|が:ga|のびる:nobiru"
+    },
+    {
+      "character": "遅れる",
+      "hiragana": "おくれる",
+      "romaji": "okureru",
+      "meaning": "迟到",
+      "type": "normal",
+      "answers": "おくれる:okureru"
+    },
+    {
+      "character": "締め切りに遅れる",
+      "hiragana": "しめきり:に:おくれる",
+      "romaji": "shimekiri:ni:okureru",
+      "meaning": "没赶上截止日期",
+      "type": "split",
+      "answers": "しめきり:shimekiri|に:ni|おくれる:okureru"
+    },
+    {
+      "character": "締め切りに間に合う",
+      "hiragana": "しめきり:に:まにあう",
+      "romaji": "shimekiri:ni:maniau",
+      "meaning": "赶上最后期限",
+      "type": "split",
+      "answers": "しめきり:shimekiri|に:ni|まにあう:maniau"
+    },
+    {
+      "character": "延ばす",
+      "hiragana": "のばす",
+      "romaji": "nobasu",
+      "meaning": "延长（动作行为）",
+      "type": "normal",
+      "answers": "のばす:nobasu"
+    },
+    {
+      "character": "締め切りを延ばす",
+      "hiragana": "しめきり:を:のばす",
+      "romaji": "shimekiri:wo:nobasu",
+      "meaning": "延长期限",
+      "type": "split",
+      "answers": "しめきり:shimekiri|を:wo|のばす:nobasu"
+    },
+    {
+      "character": "早める",
+      "hiragana": "はやめる",
+      "romaji": "hayameru",
+      "meaning": "提早，加快",
+      "type": "normal",
+      "answers": "はやめる:hayameru"
+    },
+    {
+      "character": "締め切りを早める",
+      "hiragana": "しめきり:を:はやめる",
+      "romaji": "shimekiri:wo:hayameru",
+      "meaning": "提早期限，把期限提前",
+      "type": "split",
+      "answers": "しめきり:shimekiri|を:wo|はやめる:hayameru"
+    },
+    {
+      "character": "余る",
+      "hiragana": "あまる",
+      "romaji": "amaru",
+      "meaning": "剩余",
+      "type": "normal",
+      "answers": "あまる:amaru"
+    },
+    {
+      "character": "経つ",
+      "hiragana": "たつ",
+      "romaji": "tatsu",
+      "meaning": "通过，失效",
+      "type": "normal",
+      "answers": "たつ:tatsu"
+    },
+    {
+      "character": "時間が経つ",
+      "hiragana": "じかん:が:たつ",
+      "romaji": "jikan:ga:tatsu",
+      "meaning": "时间流逝",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|たつ:tatsu"
+    },
+    {
+      "character": "足りる",
+      "hiragana": "たりる",
+      "romaji": "tariru",
+      "meaning": "足够的",
+      "type": "normal",
+      "answers": "たりる:tariru"
+    },
+    {
+      "character": "時間が足りる",
+      "hiragana": "じかん:が:たりる",
+      "romaji": "jikan:ga:tariru",
+      "meaning": "我有足够的时间",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|たりる:tariru"
+    },
+    {
+      "character": "時間がない",
+      "hiragana": "じかん:が:ない",
+      "romaji": "jikan:ga:nai",
+      "meaning": "我没有时间",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|ない:nai"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "挂上，花费（动作）",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "時間をかける",
+      "hiragana": "じかん:を:かける",
+      "romaji": "jikan:wo:kakeru",
+      "meaning": "花点时间（动作行为）",
+      "type": "split",
+      "answers": "じかん:jikan|を:wo|かける:kakeru"
+    },
+    {
+      "character": "かかる",
+      "hiragana": "かかる",
+      "romaji": "kakeru",
+      "meaning": "花费，挂上（状态）",
+      "type": "normal",
+      "answers": "かかる:kakeru"
+    },
+    {
+      "character": "時間がかかる",
+      "hiragana": "じかん:が:かかる",
+      "romaji": "jikan:ga:kakaru",
+      "meaning": "花点时间（状态结果）",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|かかる:kakaru"
+    }
+  ]
+}

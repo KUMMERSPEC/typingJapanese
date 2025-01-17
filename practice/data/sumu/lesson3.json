@@ -1,0 +1,252 @@
+{
+  "questions": [
+    {
+      "character": "ガス",
+      "hiragana": "ガス",
+      "romaji": "gasu",
+      "meaning": "燃气，气体",
+      "type": "normal",
+      "answers": "ガス:gasu"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态描述）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "ガスが止まる",
+      "hiragana": "ガス:が:とまる",
+      "romaji": "gasu:ga:tomaru",
+      "meaning": "天然气停了（没气）",
+      "type": "split",
+      "answers": "ガス:gasu|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "もれる",
+      "hiragana": "もれる",
+      "romaji": "moreru",
+      "meaning": "泄露",
+      "type": "normal",
+      "answers": "もれる:moreru"
+    },
+    {
+      "character": "ガスがもれる",
+      "hiragana": "ガス:が:もれる",
+      "romaji": "gasu:ga:moreru",
+      "meaning": "煤气泄漏",
+      "type": "split",
+      "answers": "ガス:gasu|が:ga|もれる:moreru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止（动作行为）",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "ガスを止める",
+      "hiragana": "ガス:を:とめる",
+      "romaji": "gasu:wo:tomeru",
+      "meaning": "关掉煤气",
+      "type": "split",
+      "answers": "ガス:gasu|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "水道",
+      "hiragana": "すいどう",
+      "romaji": "suidou",
+      "meaning": "自来水",
+      "type": "normal",
+      "answers": "すいどう:suidou"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "水道が止まる",
+      "hiragana": "すいどう:が:とまる",
+      "romaji": "suidou:ga:tomaru",
+      "meaning": "供水停止",
+      "type": "split",
+      "answers": "すいどう:suidou|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "水道",
+      "hiragana": "すいどう",
+      "romaji": "suidou",
+      "meaning": "供水",
+      "type": "normal",
+      "answers": "すいどう:suidou"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "水道を止める",
+      "hiragana": "すいどう:を:とめる",
+      "romaji": "suidou:wo:tomeru",
+      "meaning": "停止供水（要搬家的时候跟街道办联系）",
+      "type": "split",
+      "answers": "すいどう:suidou|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "電気",
+      "hiragana": "でんき",
+      "romaji": "denki",
+      "meaning": "电",
+      "type": "normal",
+      "answers": "でんき:denki"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态描述）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "電気が止まる",
+      "hiragana": "でんき:が:とまる",
+      "romaji": "denki:ga:tomaru",
+      "meaning": "停电（没电）",
+      "type": "split",
+      "answers": "でんき:denki|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "ごみ",
+      "hiragana": "ごみ",
+      "romaji": "gomi",
+      "meaning": "垃圾",
+      "type": "normal",
+      "answers": "ごみ:gomi"
+    },
+    {
+      "character": "集める",
+      "hiragana": "あつめる",
+      "romaji": "atsumeru",
+      "meaning": "收集",
+      "type": "normal",
+      "answers": "あつめる:atsumeru"
+    },
+    {
+      "character": "ごみを集める",
+      "hiragana": "ごみ:を:あつめる",
+      "romaji": "gomi:wo:atsumeru",
+      "meaning": "收集垃圾",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|あつめる:atsumeru"
+    },
+    {
+      "character": "片づける",
+      "hiragana": "かたづける",
+      "romaji": "katazukeru",
+      "meaning": "清理,收拾",
+      "type": "normal",
+      "answers": "かたづける:katazukeru"
+    },
+    {
+      "character": "ごみを片づける",
+      "hiragana": "ごみ:を:かたづける",
+      "romaji": "gomi:wo:katazukeru",
+      "meaning": "清理垃圾",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|かたづける:katazukeru"
+    },
+    {
+      "character": "捨てる",
+      "hiragana": "すてる",
+      "romaji": "suteru",
+      "meaning": "扔掉",
+      "type": "normal",
+      "answers": "すてる:suteru"
+    },
+    {
+      "character": "ごみを捨てる",
+      "hiragana": "ごみ:を:すてる",
+      "romaji": "gomi:wo:suteru",
+      "meaning": "扔掉垃圾",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|すてる:suteru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "ごみを出す",
+      "hiragana": "ごみ:を:だす",
+      "romaji": "gomi:wo:dasu",
+      "meaning": "把垃圾倒掉",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|だす:dasu"
+    },
+    {
+      "character": "拾う",
+      "hiragana": "ひろう",
+      "romaji": "hirou",
+      "meaning": "捡起",
+      "type": "normal",
+      "answers": "ひろう:hirou"
+    },
+    {
+      "character": "ごみを拾う",
+      "hiragana": "ごみ:を:ひろう",
+      "romaji": "gomi:wo:hirou",
+      "meaning": "捡起垃圾",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|ひろう:hirou"
+    },
+    {
+      "character": "燃やす",
+      "hiragana": "もやす",
+      "romaji": "moyasu",
+      "meaning": "燃烧，焚烧",
+      "type": "normal",
+      "answers": "もやす:moyasu"
+    },
+    {
+      "character": "ごみを燃やす",
+      "hiragana": "ごみ:を:もやす",
+      "romaji": "gomi:wo:moyasu",
+      "meaning": "焚烧垃圾",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|もやす:moyasu"
+    },
+    {
+      "character": "分ける",
+      "hiragana": "わける",
+      "romaji": "wakeru",
+      "meaning": "划分",
+      "type": "normal",
+      "answers": "わける:wakeru"
+    },
+    {
+      "character": "ごみを分ける",
+      "hiragana": "ごみ:を:わける",
+      "romaji": "gomi:wo:wakeru",
+      "meaning": "将垃圾分类",
+      "type": "split",
+      "answers": "ごみ:gomi|を:wo|わける:wakeru"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>学习统计 - Typing Japanese</title>
+    <link rel="stylesheet" href="../css/statistics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="stats-container">
+        <!-- 总览面板 -->
+        <div class="overview-panel">
+            <div class="stat-card">
+                <h3>总学习天数</h3>
+                <div class="value" id="totalDays">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>已学句子</h3>
+                <div class="value" id="totalSentences">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>平均正确率</h3>
+                <div class="value" id="avgAccuracy">0%</div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="charts-panel">
+            <div class="chart-container">
+                <canvas id="dailyProgressChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="proficiencyChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="responseTimeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

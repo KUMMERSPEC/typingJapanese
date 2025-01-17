@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "character": "カーディガン",
+      "hiragana": "カーディガン",
+      "romaji": "kaadhigan",
+      "meaning": "开襟衫",
+      "type": "normal",
+      "answers": "カーディガン:kaadhigan"
+    },
+    {
+      "character": "着物",
+      "hiragana": "きもの",
+      "romaji": "kimono",
+      "meaning": "和服",
+      "type": "normal",
+      "answers": "きもの:kimono"
+    },
+    {
+      "character": "靴下",
+      "hiragana": "くつした",
+      "romaji": "kutsushita",
+      "meaning": "袜子",
+      "type": "normal",
+      "answers": "くつした:kutsushita"
+    },
+    {
+      "character": "コート",
+      "hiragana": "コート",
+      "romaji": "kooto",
+      "meaning": "外套",
+      "type": "normal",
+      "answers": "コート:kooto"
+    },
+    {
+      "character": "ジャケット",
+      "hiragana": "ジャケット",
+      "romaji": "jaketto",
+      "meaning": "夹克",
+      "type": "normal",
+      "answers": "ジャケット:jaketto"
+    },
+    {
+      "character": "ジーンズ",
+      "hiragana": "ジーンズ",
+      "romaji": "jiinzu",
+      "meaning": "牛仔裤",
+      "type": "normal",
+      "answers": "ジーンズ:jiinzu"
+    },
+    {
+      "character": "ジャージ",
+      "hiragana": "ジャージ",
+      "romaji": "jaaji",
+      "meaning": "球衣",
+      "type": "normal",
+      "answers": "ジャージ:jaaji"
+    },
+    {
+      "character": "スーツ",
+      "hiragana": "スーツ",
+      "romaji": "suutsu",
+      "meaning": "套装",
+      "type": "normal",
+      "answers": "スーツ:suutsu"
+    },
+    {
+      "character": "制服",
+      "hiragana": "せいふく",
+      "romaji": "seifuku",
+      "meaning": "制服",
+      "type": "normal",
+      "answers": "せいふく:seifuku"
+    },
+    {
+      "character": "セーター",
+      "hiragana": "セーター",
+      "romaji": "seetaa",
+      "meaning": "毛衣",
+      "type": "normal",
+      "answers": "セーター:seetaa"
+    },
+    {
+      "character": "Tシャツ",
+      "hiragana": "Tしゃつ",
+      "romaji": "Tshatsu",
+      "meaning": "T恤",
+      "type": "normal",
+      "answers": "Tしゃつ:Tshatsu"
+    },
+    {
+      "character": "パジャマ",
+      "hiragana": "パジャマ",
+      "romaji": "pajama",
+      "meaning": "睡衣",
+      "type": "normal",
+      "answers": "パジャマ:pajama"
+    },
+    {
+      "character": "ポロシャツ",
+      "hiragana": "ポロシャツ",
+      "romaji": "poroshatsu",
+      "meaning": "马球衫",
+      "type": "normal",
+      "answers": "ポロシャツ:poroshatsu"
+    },
+    {
+      "character": "浴衣",
+      "hiragana": "ゆかた",
+      "romaji": "yukata",
+      "meaning": "浴衣",
+      "type": "normal",
+      "answers": "ゆかた:yukata"
+    },
+    {
+      "character": "サンダル",
+      "hiragana": "サンダル",
+      "romaji": "sandaru",
+      "meaning": "凉鞋",
+      "type": "normal",
+      "answers": "サンダル:sandaru"
+    },
+    {
+      "character": "スニーカー",
+      "hiragana": "スニーカー",
+      "romaji": "suniikaa",
+      "meaning": "运动鞋",
+      "type": "normal",
+      "answers": "スニーカー:suniikaa"
+    },
+    {
+      "character": "スリッパ",
+      "hiragana": "スリッパ",
+      "romaji": "surippa",
+      "meaning": "拖鞋",
+      "type": "normal",
+      "answers": "スリッパ:surippa"
+    },
+    {
+      "character": "ハイヒール",
+      "hiragana": "ハイヒール",
+      "romaji": "haihiiru",
+      "meaning": "高跟鞋",
+      "type": "normal",
+      "answers": "ハイヒール:haihiiru"
+    },
+    {
+      "character": "ブーツ",
+      "hiragana": "ブーツ",
+      "romaji": "buutsu",
+      "meaning": "靴子",
+      "type": "normal",
+      "answers": "ブーツ:buutsu"
+    },
+    {
+      "character": "キャップ",
+      "hiragana": "キャップ",
+      "romaji": "kyappu",
+      "meaning": "帽",
+      "type": "normal",
+      "answers": "キャップ:kyappu"
+    },
+    {
+      "character": "ニット帽",
+      "hiragana": "ニットぼう",
+      "romaji": "nittobou",
+      "meaning": "针织帽",
+      "type": "normal",
+      "answers": "ニットぼう:nittobou"
+    },
+    {
+      "character": "ベレー帽",
+      "hiragana": "ベレーぼう",
+      "romaji": "bereebou",
+      "meaning": "贝雷帽",
+      "type": "normal",
+      "answers": "ベレーぼう:bereebou"
+    },
+    {
+      "character": "イヤリング",
+      "hiragana": "イヤリング",
+      "romaji": "iyaringu",
+      "meaning": "耳环",
+      "type": "normal",
+      "answers": "イヤリング:iyaringu"
+    },
+    {
+      "character": "ネックレス",
+      "hiragana": "ネックレス",
+      "romaji": "nekkuresu",
+      "meaning": "项链",
+      "type": "normal",
+      "answers": "ネックレス:nekkuresu"
+    },
+    {
+      "character": "ピアス",
+      "hiragana": "ピアス",
+      "romaji": "piasu",
+      "meaning": "耳环",
+      "type": "normal",
+      "answers": "ピアス:piasu"
+    },
+    {
+      "character": "ブレスレット",
+      "hiragana": "ブレスレット",
+      "romaji": "buresuretto",
+      "meaning": "手镯",
+      "type": "normal",
+      "answers": "ブレスレット:buresuretto"
+    },
+    {
+      "character": "ブローチ",
+      "hiragana": "ブローチ",
+      "romaji": "buroochi",
+      "meaning": "胸针",
+      "type": "normal",
+      "answers": "ブローチ:buroochi"
+    },
+    {
+      "character": "サングラス",
+      "hiragana": "サングラス",
+      "romaji": "sangurasu",
+      "meaning": "太阳镜",
+      "type": "normal",
+      "answers": "サングラス:sangurasu"
+    },
+    {
+      "character": "ベルト",
+      "hiragana": "ベルト",
+      "romaji": "beruto",
+      "meaning": "腰带",
+      "type": "normal",
+      "answers": "ベルト:beruto"
+    },
+    {
+      "character": "マフラー",
+      "hiragana": "マフラー",
+      "romaji": "mafuraa",
+      "meaning": "围巾",
+      "type": "normal",
+      "answers": "マフラー:mafuraa"
+    }
+  ]
+}

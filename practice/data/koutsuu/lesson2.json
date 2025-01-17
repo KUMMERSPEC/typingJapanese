@@ -1,0 +1,140 @@
+{
+  "questions": [
+    {
+      "character": "ルール",
+      "hiragana": "ルール",
+      "romaji": "ruuru",
+      "meaning": "规则",
+      "type": "normal",
+      "answers": "ルール:ruuru"
+    },
+    {
+      "character": "ルールがある",
+      "hiragana": "ルール:が:ある",
+      "romaji": "ruuru:ga:aru",
+      "meaning": "有规则",
+      "type": "split",
+      "answers": "ルール:ruuru|が:ga|ある:aru"
+    },
+    {
+      "character": "厳しい",
+      "hiragana": "きびしい",
+      "romaji": "kibishii",
+      "meaning": "严格的",
+      "type": "normal",
+      "answers": "きびしい:kibishii"
+    },
+    {
+      "character": "ルールが厳しい",
+      "hiragana": "ルール:が:きびしい",
+      "romaji": "ruuru:ga:kibishii",
+      "meaning": "规则很严格",
+      "type": "split",
+      "answers": "ルール:ruuru|が:ga|きびしい:kibishii"
+    },
+    {
+      "character": "電車",
+      "hiragana": "でんしゃ",
+      "romaji": "densha",
+      "meaning": "火车，电车",
+      "type": "normal",
+      "answers": "でんしゃ:densha"
+    },
+    {
+      "character": "遅れる",
+      "hiragana": "おくれる",
+      "romaji": "okureru",
+      "meaning": "迟到、晚点",
+      "type": "normal",
+      "answers": "おくれる:okureru"
+    },
+    {
+      "character": "電車が遅れる",
+      "hiragana": "でんしゃ:が:おくれる",
+      "romaji": "densha:ga:okureru",
+      "meaning": "火车晚点了",
+      "type": "split",
+      "answers": "でんしゃ:densha|が:ga|おくれる:okureru"
+    },
+    {
+      "character": "混む",
+      "hiragana": "こむ",
+      "romaji": "komu",
+      "meaning": "挤，拥挤",
+      "type": "normal",
+      "answers": "こむ:komu"
+    },
+    {
+      "character": "電車が混む",
+      "hiragana": "でんしゃ:が:こむ",
+      "romaji": "densha:ga:komu",
+      "meaning": "火车很拥挤",
+      "type": "split",
+      "answers": "でんしゃ:densha|が:ga|こむ:komu"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态描述）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "電車が止まる",
+      "hiragana": "でんしゃ:が:とまる",
+      "romaji": "densha:ga:tomaru",
+      "meaning": "火车停了",
+      "type": "split",
+      "answers": "でんしゃ:densha|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "乗り遅れる",
+      "hiragana": "のりおくれる",
+      "romaji": "noriokureru",
+      "meaning": "错过",
+      "type": "normal",
+      "answers": "のりおくれる:noriokureru"
+    },
+    {
+      "character": "電車に乗り遅れる",
+      "hiragana": "でんしゃ:に:のりおくれる",
+      "romaji": "densha:ni:noriokureru",
+      "meaning": "错过火车",
+      "type": "split",
+      "answers": "でんしゃ:densha|に:ni|のりおくれる:noriokureru"
+    },
+    {
+      "character": "間に合う",
+      "hiragana": "まにあう",
+      "romaji": "maniau",
+      "meaning": "准时，赶上了",
+      "type": "normal",
+      "answers": "まにあう:maniau"
+    },
+    {
+      "character": "電車に間に合う",
+      "hiragana": "でんしゃ:に:まにあう",
+      "romaji": "densha:ni:maniau",
+      "meaning": "准时赶火车",
+      "type": "split",
+      "answers": "でんしゃ:densha|に:ni|まにあう:maniau"
+    },
+    {
+      "character": "乗り換える",
+      "hiragana": "のりかえる",
+      "romaji": "norikaeru",
+      "meaning": "换乘",
+      "type": "normal",
+      "answers": "のりかえる:norikaeru"
+    },
+    {
+      "character": "電車を乗り換える",
+      "hiragana": "でんしゃ:を:のりかえる",
+      "romaji": "densha:wo:norikaeru",
+      "meaning": "换乘火车",
+      "type": "split",
+      "answers": "でんしゃ:densha|を:wo|のりかえる:norikaeru"
+    }
+  ]
+}

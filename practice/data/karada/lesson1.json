@@ -1,0 +1,812 @@
+{
+  "questions": [
+    {
+      "character": "頭",
+      "hiragana": "あたま",
+      "romaji": "atama",
+      "meaning": "头，脑袋",
+      "type": "nan",
+      "answers": ""
+    },
+    {
+      "character": "ふる",
+      "hiragana": "ふる",
+      "romaji": "furu",
+      "meaning": "摇动，摆动",
+      "type": "normal",
+      "answers": "ふる:furu"
+    },
+    {
+      "character": "頭をふる",
+      "hiragana": "あたま:を:ふる",
+      "romaji": "atama:wo:furu",
+      "meaning": "摇头",
+      "type": "split",
+      "answers": "あたま:atama|を:wo|ふる:furu"
+    },
+    {
+      "character": "こる",
+      "hiragana": "こる",
+      "romaji": "koru",
+      "meaning": "僵硬",
+      "type": "normal",
+      "answers": "こる:koru"
+    },
+    {
+      "character": "肩がこる",
+      "hiragana": "かた:が:こる",
+      "romaji": "kata:ga:koru",
+      "meaning": "肩膀僵硬",
+      "type": "split",
+      "answers": "かた:kata|が:ga|こる:koru"
+    },
+    {
+      "character": "組む",
+      "hiragana": "くむ",
+      "romaji": "kumu",
+      "meaning": "把…交叉",
+      "type": "normal",
+      "answers": "くむ:kumu"
+    },
+    {
+      "character": "肩を組む",
+      "hiragana": "かた:を:くむ",
+      "romaji": "kata:wo:kumu",
+      "meaning": "搭肩膀",
+      "type": "split",
+      "answers": "かた:kata|を:wo|くむ:kumu"
+    },
+    {
+      "character": "たたく",
+      "hiragana": "たたく",
+      "romaji": "tataku",
+      "meaning": "敲，拍打",
+      "type": "normal",
+      "answers": "たたく:tataku"
+    },
+    {
+      "character": "肩をたたく",
+      "hiragana": "かた:を:たたく",
+      "romaji": "kata:wo:tataku",
+      "meaning": "轻拍肩膀",
+      "type": "split",
+      "answers": "かた:kata|を:wo|たたく:tataku"
+    },
+    {
+      "character": "のど",
+      "hiragana": "のど",
+      "romaji": "nodo",
+      "meaning": "喉，喉咙",
+      "type": "normal",
+      "answers": "のど:nodo"
+    },
+    {
+      "character": "かわく",
+      "hiragana": "かわく",
+      "romaji": "kawaku",
+      "meaning": "渴，口干。",
+      "type": "normal",
+      "answers": "かわく:kawaku"
+    },
+    {
+      "character": "のどがかわく",
+      "hiragana": "のど:が:かわく",
+      "romaji": "nodo:ga:kawaku",
+      "meaning": "喉咙干咳",
+      "type": "split",
+      "answers": "のど:nodo|が:ga|かわく:kawaku"
+    },
+    {
+      "character": "抜ける",
+      "hiragana": "ぬける",
+      "romaji": "nukeru",
+      "meaning": "脱落",
+      "type": "normal",
+      "answers": "ぬける:nukeru"
+    },
+    {
+      "character": "髪が抜ける",
+      "hiragana": "かみ:が:ぬける",
+      "romaji": "kami:ga:nukeru",
+      "meaning": "头发脱落",
+      "type": "split",
+      "answers": "かみ:kami|が:ga|ぬける:nukeru"
+    },
+    {
+      "character": "伸びる",
+      "hiragana": "のびる",
+      "romaji": "nobiru",
+      "meaning": "延长",
+      "type": "normal",
+      "answers": "のびる:nobiru"
+    },
+    {
+      "character": "髪が伸びる",
+      "hiragana": "かみ:が:のびる",
+      "romaji": "kami:ga:nobiru",
+      "meaning": "头发生长",
+      "type": "split",
+      "answers": "かみ:kami|が:ga|のびる:nobiru"
+    },
+    {
+      "character": "生える",
+      "hiragana": "はえる",
+      "romaji": "haeru",
+      "meaning": "生长",
+      "type": "normal",
+      "answers": "はえる:haeru"
+    },
+    {
+      "character": "髪が生える",
+      "hiragana": "かみ:が:はえる",
+      "romaji": "kami:ga:haeru",
+      "meaning": "头发生长",
+      "type": "split",
+      "answers": "かみ:kami|が:ga|はえる:haeru"
+    },
+    {
+      "character": "カットする",
+      "hiragana": "カットする",
+      "romaji": "kattosuru",
+      "meaning": "切，剪断 cut",
+      "type": "normal",
+      "answers": "カットする:kattosuru"
+    },
+    {
+      "character": "髪をカットする",
+      "hiragana": "かみ:を:カットする",
+      "romaji": "kami:wo:kattosuru",
+      "meaning": "剪头发",
+      "type": "split",
+      "answers": "かみ:kami|を:wo|カットする:kattosuru"
+    },
+    {
+      "character": "切る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "切断，关闭",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "髪を切る",
+      "hiragana": "かみ:を:きる",
+      "romaji": "kami:wo:kiru",
+      "meaning": "剪头发",
+      "type": "split",
+      "answers": "かみ:kami|を:wo|きる:kiru"
+    },
+    {
+      "character": "染める",
+      "hiragana": "そめる",
+      "romaji": "someru",
+      "meaning": "染色，上色",
+      "type": "normal",
+      "answers": "そめる:someru"
+    },
+    {
+      "character": "髪を染める",
+      "hiragana": "かみ:を:そめる",
+      "romaji": "kami:wo:someru",
+      "meaning": "染发",
+      "type": "split",
+      "answers": "かみ:kami|を:wo|そめる:someru"
+    },
+    {
+      "character": "とかす",
+      "hiragana": "とかす",
+      "romaji": "tokasu",
+      "meaning": "梳，梳理",
+      "type": "normal",
+      "answers": "とかす:tokasu"
+    },
+    {
+      "character": "髪をとかす",
+      "hiragana": "かみ:を:とかす",
+      "romaji": "kami:wo:tokasu",
+      "meaning": "梳头发",
+      "type": "split",
+      "answers": "かみ:kami|を:wo|とかす:tokasu"
+    },
+    {
+      "character": "伸ばす",
+      "hiragana": "のばす",
+      "romaji": "nobasu",
+      "meaning": "延长。拉伸，",
+      "type": "normal",
+      "answers": "のばす:nobasu"
+    },
+    {
+      "character": "髪を伸ばす",
+      "hiragana": "かみ:を:のばす",
+      "romaji": "kami:wo:nobasu",
+      "meaning": "使头发长长",
+      "type": "split",
+      "answers": "かみ:kami|を:wo|のばす:nobasu"
+    },
+    {
+      "character": "つまる",
+      "hiragana": "つまる",
+      "romaji": "tsumaru",
+      "meaning": "堵住",
+      "type": "normal",
+      "answers": "つまる:tsumaru"
+    },
+    {
+      "character": "鼻がつまる",
+      "hiragana": "はな:が:つまる",
+      "romaji": "hana:ga:tsumaru",
+      "meaning": "鼻塞",
+      "type": "split",
+      "answers": "はな:hana|が:ga|つまる:tsumaru"
+    },
+    {
+      "character": "かむ",
+      "hiragana": "かむ",
+      "romaji": "kamu",
+      "meaning": "擤（鼻涕）",
+      "type": "normal",
+      "answers": "かむ:kamu"
+    },
+    {
+      "character": "鼻をかむ",
+      "hiragana": "はな:を:かむ",
+      "romaji": "hana:wo:kamu",
+      "meaning": "擤鼻涕",
+      "type": "split",
+      "answers": "はな:hana|を:wo|かむ:kamu"
+    },
+    {
+      "character": "耳がいい",
+      "hiragana": "みみ:が:いい",
+      "romaji": "mimi:ga:ii",
+      "meaning": "耳朵好",
+      "type": "split",
+      "answers": "みみ:mimi|が:ga|いい:ii"
+    },
+    {
+      "character": "聞こえる",
+      "hiragana": "きこえる",
+      "romaji": "kikoeru",
+      "meaning": "听到",
+      "type": "normal",
+      "answers": "きこえる:kikoeru"
+    },
+    {
+      "character": "耳が聞こえる",
+      "hiragana": "みみ:が:きこえる",
+      "romaji": "mimi:ga:kikoeru",
+      "meaning": "能听到",
+      "type": "split",
+      "answers": "みみ:mimi|が:ga|きこえる:kikoeru"
+    },
+    {
+      "character": "遠い",
+      "hiragana": "とおい",
+      "romaji": "tooi",
+      "meaning": "远的",
+      "type": "normal",
+      "answers": "とおい:tooi"
+    },
+    {
+      "character": "耳が遠い",
+      "hiragana": "みみ:が:とおい",
+      "romaji": "mimi:ga:tooi",
+      "meaning": "耳朵背，听力差",
+      "type": "split",
+      "answers": "みみ:mimi|が:ga|とおい:tooi"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "耳が悪い",
+      "hiragana": "みみ:が:わるい",
+      "romaji": "mimi:ga:warui",
+      "meaning": "听力不好",
+      "type": "split",
+      "answers": "みみ:mimi|が:ga|わるい:warui"
+    },
+    {
+      "character": "目がいい",
+      "hiragana": "め:が:いい",
+      "romaji": "me:ga:ii",
+      "meaning": "视力好",
+      "type": "split",
+      "answers": "め:me|が:ga|いい:ii"
+    },
+    {
+      "character": "覚める",
+      "hiragana": "さめる",
+      "romaji": "sameru",
+      "meaning": "唤醒，睁开",
+      "type": "normal",
+      "answers": "さめる:sameru"
+    },
+    {
+      "character": "目が覚める",
+      "hiragana": "め:が:さめる",
+      "romaji": "me:ga:sameru",
+      "meaning": "睁开眼睛",
+      "type": "split",
+      "answers": "め:me|が:ga|さめる:sameru"
+    },
+    {
+      "character": "目が悪い",
+      "hiragana": "め:が:わるい",
+      "romaji": "me:ga:warui",
+      "meaning": "视力不好",
+      "type": "split",
+      "answers": "め:me|が:ga|わるい:warui"
+    },
+    {
+      "character": "開ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "目を開ける",
+      "hiragana": "め:を:あける",
+      "romaji": "me:wo:akeru",
+      "meaning": "睁开你的眼睛",
+      "type": "split",
+      "answers": "め:me|を:wo|あける:akeru"
+    },
+    {
+      "character": "閉じる",
+      "hiragana": "とじる",
+      "romaji": "tojiru",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "とじる:tojiru"
+    },
+    {
+      "character": "目を閉じる",
+      "hiragana": "め:を:とじる",
+      "romaji": "me:wo:tojiru",
+      "meaning": "闭上你的眼睛",
+      "type": "split",
+      "answers": "め:me|を:wo|とじる:tojiru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "目を開く",
+      "hiragana": "め:を:ひらく",
+      "romaji": "me:wo:hiraku",
+      "meaning": "睁开你的眼睛",
+      "type": "split",
+      "answers": "め:me|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "抜ける",
+      "hiragana": "ぬける",
+      "romaji": "nukeru",
+      "meaning": "脱落",
+      "type": "normal",
+      "answers": "ぬける:nukeru"
+    },
+    {
+      "character": "歯が抜ける",
+      "hiragana": "は:が:ぬける",
+      "romaji": "ha:ga:nukeru",
+      "meaning": "牙齿脱落",
+      "type": "split",
+      "answers": "は:ha|が:ga|ぬける:nukeru"
+    },
+    {
+      "character": "生える",
+      "hiragana": "はえる",
+      "romaji": "haeru",
+      "meaning": "生长",
+      "type": "normal",
+      "answers": "はえる:haeru"
+    },
+    {
+      "character": "歯が生える",
+      "hiragana": "は:が:はえる",
+      "romaji": "ha:ga:haeru",
+      "meaning": "牙齿生长",
+      "type": "split",
+      "answers": "は:ha|が:ga|はえる:haeru"
+    },
+    {
+      "character": "しみる",
+      "hiragana": "しみる",
+      "romaji": "shimiru",
+      "meaning": "刺痛",
+      "type": "normal",
+      "answers": "しみる:shimiru"
+    },
+    {
+      "character": "歯がしみる",
+      "hiragana": "は:が:しみる",
+      "romaji": "ha:ga:shimiru",
+      "meaning": "牙齿痛",
+      "type": "split",
+      "answers": "は:ha|が:ga|しみる:shimiru"
+    },
+    {
+      "character": "抜く",
+      "hiragana": "ぬく",
+      "romaji": "nuku",
+      "meaning": "拔出",
+      "type": "normal",
+      "answers": "ぬく:nuku"
+    },
+    {
+      "character": "歯を抜く",
+      "hiragana": "は:を:ぬく",
+      "romaji": "ha:wo:nuku",
+      "meaning": "拔掉牙齿",
+      "type": "split",
+      "answers": "は:ha|を:wo|ぬく:nuku"
+    },
+    {
+      "character": "みがく",
+      "hiragana": "みがく",
+      "romaji": "migaku",
+      "meaning": "摩擦，刷，擦亮",
+      "type": "normal",
+      "answers": "みがく:migaku"
+    },
+    {
+      "character": "歯をみがく",
+      "hiragana": "は:を:みがく",
+      "romaji": "ha:wo:migaku",
+      "meaning": "刷牙",
+      "type": "split",
+      "answers": "は:ha|を:wo|みがく:migaku"
+    },
+    {
+      "character": "組む",
+      "hiragana": "くむ",
+      "romaji": "kumu",
+      "meaning": "把…交叉",
+      "type": "normal",
+      "answers": "くむ:kumu"
+    },
+    {
+      "character": "腕を組む",
+      "hiragana": "うで:を:くむ",
+      "romaji": "ude:wo:kumu",
+      "meaning": "交叉双臂，抱胸",
+      "type": "split",
+      "answers": "うで:ude|を:wo|くむ:kumu"
+    },
+    {
+      "character": "伸ばす",
+      "hiragana": "のばす",
+      "romaji": "nobasu",
+      "meaning": "伸展，拉长",
+      "type": "normal",
+      "answers": "のばす:nobasu"
+    },
+    {
+      "character": "腕を伸ばす",
+      "hiragana": "うで:を:のばす",
+      "romaji": "ude:wo:nobasu",
+      "meaning": "伸展手臂",
+      "type": "split",
+      "answers": "うで:ude|を:wo|のばす:nobasu"
+    },
+    {
+      "character": "曲げる",
+      "hiragana": "まげる",
+      "romaji": "mageru",
+      "meaning": "弯曲",
+      "type": "normal",
+      "answers": "まげる:mageru"
+    },
+    {
+      "character": "腕を曲げる",
+      "hiragana": "うで:を:まげる",
+      "romaji": "ude:wo:mageru",
+      "meaning": "弯曲手臂",
+      "type": "split",
+      "answers": "うで:ude|を:wo|まげる:mageru"
+    },
+    {
+      "character": "届く",
+      "hiragana": "とどく",
+      "romaji": "todoku",
+      "meaning": "抵达",
+      "type": "normal",
+      "answers": "とどく:todoku"
+    },
+    {
+      "character": "手が届く",
+      "hiragana": "て:が:とどく",
+      "romaji": "te:ga:todoku",
+      "meaning": "触手可及",
+      "type": "split",
+      "answers": "て:te|が:ga|とどく:todoku"
+    },
+    {
+      "character": "上げる",
+      "hiragana": "あげる",
+      "romaji": "ageru",
+      "meaning": "举起，抬起",
+      "type": "normal",
+      "answers": "あげる:ageru"
+    },
+    {
+      "character": "手を上げる",
+      "hiragana": "て:を:あげる",
+      "romaji": "te:wo:ageru",
+      "meaning": "举起手",
+      "type": "split",
+      "answers": "て:te|を:wo|あげる:ageru"
+    },
+    {
+      "character": "たたく",
+      "hiragana": "たたく",
+      "romaji": "tataku",
+      "meaning": "敲打，拍",
+      "type": "normal",
+      "answers": "たたく:tataku"
+    },
+    {
+      "character": "手をたたく",
+      "hiragana": "て:を:たたく",
+      "romaji": "te:wo:tataku",
+      "meaning": "拍拍手",
+      "type": "split",
+      "answers": "て:te|を:wo|たたく:tataku"
+    },
+    {
+      "character": "つなぐ",
+      "hiragana": "つなぐ",
+      "romaji": "tsunagu",
+      "meaning": "连接",
+      "type": "normal",
+      "answers": "つなぐ:tsunagu"
+    },
+    {
+      "character": "手をつなぐ",
+      "hiragana": "て:を:つなぐ",
+      "romaji": "te:wo:tsunagu",
+      "meaning": "牵手",
+      "type": "split",
+      "answers": "て:te|を:wo|つなぐ:tsunagu"
+    },
+    {
+      "character": "握る",
+      "hiragana": "にぎる",
+      "romaji": "nigiru",
+      "meaning": "握住，抓住",
+      "type": "normal",
+      "answers": "にぎる:nigiru"
+    },
+    {
+      "character": "手を握る",
+      "hiragana": "て:を:にぎる",
+      "romaji": "te:wo:nigiru",
+      "meaning": "牵手",
+      "type": "split",
+      "answers": "て:te|を:wo|にぎる:nigiru"
+    },
+    {
+      "character": "ふる",
+      "hiragana": "ふる",
+      "romaji": "furu",
+      "meaning": "挥动，摆动",
+      "type": "normal",
+      "answers": "ふる:furu"
+    },
+    {
+      "character": "手をふる",
+      "hiragana": "て:を:ふる",
+      "romaji": "te:wo:furu",
+      "meaning": "挥挥手",
+      "type": "split",
+      "answers": "て:te|を:wo|ふる:furu"
+    },
+    {
+      "character": "指す",
+      "hiragana": "さす",
+      "romaji": "sasu",
+      "meaning": "向，朝向。",
+      "type": "normal",
+      "answers": "さす:sasu"
+    },
+    {
+      "character": "指を指す",
+      "hiragana": "ゆび:を:さす",
+      "romaji": "yubi:wo:sasu",
+      "meaning": "用手指指着",
+      "type": "split",
+      "answers": "ゆび:yubi|を:wo|さす:sasu"
+    },
+    {
+      "character": "伸ばす",
+      "hiragana": "のばす",
+      "romaji": "nobasu",
+      "meaning": "伸展，拉长",
+      "type": "normal",
+      "answers": "のばす:nobasu"
+    },
+    {
+      "character": "指を伸ばす",
+      "hiragana": "ゆび:を:のばす",
+      "romaji": "yubi:wo:nobasu",
+      "meaning": "伸展你的手指",
+      "type": "split",
+      "answers": "ゆび:yubi|を:wo|のばす:nobasu"
+    },
+    {
+      "character": "曲げる",
+      "hiragana": "まげる",
+      "romaji": "mageru",
+      "meaning": "弯曲",
+      "type": "normal",
+      "answers": "まげる:mageru"
+    },
+    {
+      "character": "指を曲げる",
+      "hiragana": "ゆび:を:まげる",
+      "romaji": "yubi:wo:mageru",
+      "meaning": "弯曲你的手指",
+      "type": "split",
+      "answers": "ゆび:yubi|を:wo|まげる:mageru"
+    },
+    {
+      "character": "遅い",
+      "hiragana": "おそい",
+      "romaji": "osoi",
+      "meaning": "慢的",
+      "type": "normal",
+      "answers": "おそい:osoi"
+    },
+    {
+      "character": "足が遅い",
+      "hiragana": "あし:が:おそい",
+      "romaji": "ashi:ga:osoi",
+      "meaning": "腿脚慢",
+      "type": "split",
+      "answers": "あし:ashi|が:ga|おそい:osoi"
+    },
+    {
+      "character": "しびれる",
+      "hiragana": "しびれる",
+      "romaji": "shibireru",
+      "meaning": "麻痹，麻",
+      "type": "normal",
+      "answers": "しびれる:shibireru"
+    },
+    {
+      "character": "足がしびれる",
+      "hiragana": "あし:が:しびれる",
+      "romaji": "ashi:ga:shibireru",
+      "meaning": "腿麻了",
+      "type": "split",
+      "answers": "あし:ashi|が:ga|しびれる:shibireru"
+    },
+    {
+      "character": "速い",
+      "hiragana": "はやい",
+      "romaji": "hayai",
+      "meaning": "快速地",
+      "type": "normal",
+      "answers": "はやい:hayai"
+    },
+    {
+      "character": "足が速い",
+      "hiragana": "あし:が:はやい",
+      "romaji": "ashi:ga:hayai",
+      "meaning": "跑得快",
+      "type": "split",
+      "answers": "あし:ashi|が:ga|はやい:hayai"
+    },
+    {
+      "character": "脚を組む",
+      "hiragana": "あし:を:くむ",
+      "romaji": "ashi:wo:kumu",
+      "meaning": "交叉双腿",
+      "type": "split",
+      "answers": "あし:ashi|を:wo|くむ:kumu"
+    },
+    {
+      "character": "脚を伸ばす",
+      "hiragana": "あし:を:のばす",
+      "romaji": "ashi:wo:nobasu",
+      "meaning": "伸展你的腿",
+      "type": "split",
+      "answers": "あし:ashi|を:wo|のばす:nobasu"
+    },
+    {
+      "character": "脚を曲げる",
+      "hiragana": "あし:を:まげる",
+      "romaji": "ashi:wo:mageru",
+      "meaning": "弯曲你的腿",
+      "type": "split",
+      "answers": "あし:ashi|を:wo|まげる:mageru"
+    },
+    {
+      "character": "おなか",
+      "hiragana": "おなか",
+      "romaji": "onaka",
+      "meaning": "胃，肚子",
+      "type": "normal",
+      "answers": "おなか:onaka"
+    },
+    {
+      "character": "いっぱい",
+      "hiragana": "いっぱい",
+      "romaji": "ippai",
+      "meaning": "满的",
+      "type": "normal",
+      "answers": "いっぱい:ippai"
+    },
+    {
+      "character": "おなかがいっぱいだ",
+      "hiragana": "おなか:が:いっぱいだ",
+      "romaji": "onaka:ga:ippaida",
+      "meaning": "肚子满满的（吃饱了）",
+      "type": "split",
+      "answers": "おなか:onaka|が:ga|いっぱいだ:ippaida"
+    },
+    {
+      "character": "すく",
+      "hiragana": "すく",
+      "romaji": "suku",
+      "meaning": "变得空虚",
+      "type": "normal",
+      "answers": "すく:suku"
+    },
+    {
+      "character": "おなかがすく",
+      "hiragana": "おなか:が:すく",
+      "romaji": "onaka:ga:suku",
+      "meaning": "肚子空的（饿了）",
+      "type": "split",
+      "answers": "おなか:onaka|が:ga|すく:suku"
+    },
+    {
+      "character": "減る",
+      "hiragana": "へる",
+      "romaji": "heru",
+      "meaning": "减少",
+      "type": "normal",
+      "answers": "へる:heru"
+    },
+    {
+      "character": "おなかが減る",
+      "hiragana": "おなか:が:へる",
+      "romaji": "onaka:ga:heru",
+      "meaning": "肚子里（东西）减少（饿了）",
+      "type": "split",
+      "answers": "おなか:onaka|が:ga|へる:heru"
+    },
+    {
+      "character": "壊す",
+      "hiragana": "こわす",
+      "romaji": "kowasu",
+      "meaning": "破坏",
+      "type": "normal",
+      "answers": "こわす:kowasu"
+    },
+    {
+      "character": "おなかを壊す",
+      "hiragana": "おなか:を:こわす",
+      "romaji": "onaka:wo:kowasu",
+      "meaning": "吃坏肚子",
+      "type": "split",
+      "answers": "おなか:onaka|を:wo|こわす:kowasu"
+    }
+  ]
+}

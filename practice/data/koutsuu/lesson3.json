@@ -1,0 +1,180 @@
+{
+  "questions": [
+    {
+      "character": "狭い",
+      "hiragana": "せまい",
+      "romaji": "semai",
+      "meaning": "狭窄的",
+      "type": "normal",
+      "answers": "せまい:semai"
+    },
+    {
+      "character": "道が狭い",
+      "hiragana": "みち:が:せまい",
+      "romaji": "michi:ga:semai",
+      "meaning": "路很窄",
+      "type": "split",
+      "answers": "みち:michi|が:ga|せまい:semai"
+    },
+    {
+      "character": "広い",
+      "hiragana": "ひろい",
+      "romaji": "hiroi",
+      "meaning": "宽的",
+      "type": "normal",
+      "answers": "ひろい:hiroi"
+    },
+    {
+      "character": "道が広い",
+      "hiragana": "みち:が:ひろい",
+      "romaji": "michi:ga:hiroi",
+      "meaning": "路很宽",
+      "type": "split",
+      "answers": "みち:michi|が:ga|ひろい:hiroi"
+    },
+    {
+      "character": "曲がっている",
+      "hiragana": "まがっている",
+      "romaji": "michi:ga:magatte:iru",
+      "meaning": "弯曲, 扭曲",
+      "type": "normal",
+      "answers": "まがっている:michi:ga:magatte:iru"
+    },
+    {
+      "character": "道が曲がっている",
+      "hiragana": "みち:が:まがっ:て:いる",
+      "romaji": "michi:ga:magatte:iru",
+      "meaning": "路是弯道",
+      "type": "split",
+      "answers": "みち:michi|が:ga|まがっ:magatte|て:iru"
+    },
+    {
+      "character": "まっすぐ",
+      "hiragana": "まっすぐ",
+      "romaji": "massugu",
+      "meaning": "直的",
+      "type": "normal",
+      "answers": "まっすぐ:massugu"
+    },
+    {
+      "character": "道がまっすぐだ",
+      "hiragana": "みち:が:まっすぐだ",
+      "romaji": "michi:ga:massuguda",
+      "meaning": "路是直的",
+      "type": "split",
+      "answers": "みち:michi|が:ga|まっすぐだ:massuguda"
+    },
+    {
+      "character": "迷う",
+      "hiragana": "まよう",
+      "romaji": "mayou",
+      "meaning": "迷失，迷茫",
+      "type": "normal",
+      "answers": "まよう:mayou"
+    },
+    {
+      "character": "道に迷う",
+      "hiragana": "みち:に:まよう",
+      "romaji": "michi:ni:mayou",
+      "meaning": "迷路",
+      "type": "split",
+      "answers": "みち:michi|に:ni|まよう:mayou"
+    },
+    {
+      "character": "教える",
+      "hiragana": "おしえる",
+      "romaji": "oshieru",
+      "meaning": "教，告诉",
+      "type": "normal",
+      "answers": "おしえる:oshieru"
+    },
+    {
+      "character": "道を教える",
+      "hiragana": "みち:を:おしえる",
+      "romaji": "michi:wo:oshieru",
+      "meaning": "告诉路（怎么走）",
+      "type": "split",
+      "answers": "みち:michi|を:wo|おしえる:oshieru"
+    },
+    {
+      "character": "聞く",
+      "hiragana": "きく",
+      "romaji": "kiku",
+      "meaning": "听，询问",
+      "type": "normal",
+      "answers": "きく:kiku"
+    },
+    {
+      "character": "道を聞く",
+      "hiragana": "みち:を:きく",
+      "romaji": "michi:wo:kiku",
+      "meaning": "询问路线",
+      "type": "split",
+      "answers": "みち:michi|を:wo|きく:kiku"
+    },
+    {
+      "character": "探す",
+      "hiragana": "さがす",
+      "romaji": "sagasu",
+      "meaning": "搜索，寻找",
+      "type": "normal",
+      "answers": "さがす:sagasu"
+    },
+    {
+      "character": "道を探す",
+      "hiragana": "みち:を:さがす",
+      "romaji": "michi:wo:sagasu",
+      "meaning": "找到路",
+      "type": "split",
+      "answers": "みち:michi|を:wo|さがす:sagasu"
+    },
+    {
+      "character": "通る",
+      "hiragana": "とおる",
+      "romaji": "tooru",
+      "meaning": "通过",
+      "type": "normal",
+      "answers": "とおる:tooru"
+    },
+    {
+      "character": "道を通る",
+      "hiragana": "みち:を:とおる",
+      "romaji": "michi:wo:tooru",
+      "meaning": "在路上经过",
+      "type": "split",
+      "answers": "みち:michi|を:wo|とおる:tooru"
+    },
+    {
+      "character": "間違える",
+      "hiragana": "まちがえる",
+      "romaji": "machigaeru",
+      "meaning": "搞错，弄错",
+      "type": "normal",
+      "answers": "まちがえる:machigaeru"
+    },
+    {
+      "character": "道を間違える",
+      "hiragana": "みち:を:まちがえる",
+      "romaji": "michi:wo:machigaeru",
+      "meaning": "走错路",
+      "type": "split",
+      "answers": "みち:michi|を:wo|まちがえる:machigaeru"
+    },
+    {
+      "character": "渡る",
+      "hiragana": "わたる",
+      "romaji": "wataru",
+      "meaning": "穿过，度过",
+      "type": "normal",
+      "answers": "わたる:wataru"
+    },
+    {
+      "character": "道を渡る",
+      "hiragana": "みち:を:わたる",
+      "romaji": "michi:wo:wataru",
+      "meaning": "过马路",
+      "type": "split",
+      "answers": "みち:michi|を:wo|わたる:wataru"
+    }
+  ]
+}

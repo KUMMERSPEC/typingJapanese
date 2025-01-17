@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复习练习 - Typing-Japanese</title>
+    <link rel="stylesheet" href="../css/typing-review.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="practice-container">
+        <!-- 顶部信息栏 -->
+        <div class="practice-header">
+            <div class="progress">
+                <span class="current">1</span>/<span class="total">10</span>
+            </div>
+            <div class="status-info">
+                <div class="proficiency low">生疏</div>
+                <div class="last-review">上次：今天</div>
+            </div>
+            <button class="toggle-sound-btn" onclick="reviewManager.playSound()">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <a href="../" class="back-btn"><i class="fas fa-times"></i></a>
+        </div>
+
+        <!-- 练习区域 -->
+        <div class="practice-area">
+            <div class="meaning"></div>
+            <div class="input-area"></div>
+            <div class="answer-display">
+                <div class="kanji-text"></div>
+                <div class="kana-text"></div>
+                <div class="romaji-text"></div>
+                <div class="meaning-text"></div>
+            </div>
+        </div>
+
+        <!-- 完成界面将通过JavaScript动态添加 -->
+    </div>
+
+    <script type="module" src="../js/review/typing.js"></script>
+</body>
+</html> 

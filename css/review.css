@@ -1,0 +1,62 @@
+/* 复习练习特有的样式 */
+.practice-container {
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+.review-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.proficiency-indicator {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.proficiency-indicator.low {
+    background: #ffe0e0;
+    color: #d32f2f;
+}
+
+.proficiency-indicator.medium {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.proficiency-indicator.high {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+/* 复习结果样式 */
+.review-result {
+    text-align: center;
+    padding: 20px;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #6366f1;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9em;
+} 

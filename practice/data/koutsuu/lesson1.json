@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "character": "自動車",
+      "hiragana": "じどうしゃ",
+      "romaji": "jidousha",
+      "meaning": "汽车",
+      "type": "normal",
+      "answers": "じどうしゃ:jidousha"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态描述）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "自動車が止まる",
+      "hiragana": "じどうしゃ:が:とまる",
+      "romaji": "jidousha:ga:tomaru",
+      "meaning": "汽车停着",
+      "type": "split",
+      "answers": "じどうしゃ:jidousha|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "ひかれる",
+      "hiragana": "ひかれる",
+      "romaji": "hikareru",
+      "meaning": "被碾过，被撞",
+      "type": "normal",
+      "answers": "ひかれる:hikareru"
+    },
+    {
+      "character": "自動車にひかれる",
+      "hiragana": "じどうしゃ:に:ひかれる",
+      "romaji": "jidousha:ni:hikareru",
+      "meaning": "被车撞",
+      "type": "split",
+      "answers": "じどうしゃ:jidousha|に:ni|ひかれる:hikareru"
+    },
+    {
+      "character": "運転する",
+      "hiragana": "うんてんする",
+      "romaji": "untensuru",
+      "meaning": "驾驶",
+      "type": "normal",
+      "answers": "うんてんする:untensuru"
+    },
+    {
+      "character": "自動車を運転する",
+      "hiragana": "じどうしゃ:を:うんてんする",
+      "romaji": "jidousha:wo:untensuru",
+      "meaning": "开车（驾驶汽车）",
+      "type": "split",
+      "answers": "じどうしゃ:jidousha|を:wo|うんてんする:untensuru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止（动作行为）",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "自動車を止める",
+      "hiragana": "じどうしゃ:を:とめる",
+      "romaji": "jidousha:wo:tomeru",
+      "meaning": "停车（把车停住）",
+      "type": "split",
+      "answers": "じどうしゃ:jidousha|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "ぶつける",
+      "hiragana": "ぶつける",
+      "romaji": "butsukeru",
+      "meaning": "撞，碰撞",
+      "type": "normal",
+      "answers": "ぶつける:butsukeru"
+    },
+    {
+      "character": "自動車をぶつける",
+      "hiragana": "じどうしゃ:を:ぶつける",
+      "romaji": "jidousha:wo:butsukeru",
+      "meaning": "撞车（把车撞了）",
+      "type": "split",
+      "answers": "じどうしゃ:jidousha|を:wo|ぶつける:butsukeru"
+    },
+    {
+      "character": "タクシー",
+      "hiragana": "タクシー",
+      "romaji": "takushii",
+      "meaning": "出租车",
+      "type": "normal",
+      "answers": "タクシー:takushii"
+    },
+    {
+      "character": "タクシーが止まる",
+      "hiragana": "タクシー:が:とまる",
+      "romaji": "takushii:ga:tomaru",
+      "meaning": "出租车停住",
+      "type": "split",
+      "answers": "タクシー:takushii|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "ひかれる",
+      "hiragana": "ひかれる",
+      "romaji": "hikareru",
+      "meaning": "被碾过，被撞",
+      "type": "normal",
+      "answers": "ひかれる:hikareru"
+    },
+    {
+      "character": "タクシーにひかれる",
+      "hiragana": "タクシー:に:ひかれる",
+      "romaji": "takushii:ni:hikareru",
+      "meaning": "被出租车撞了",
+      "type": "split",
+      "answers": "タクシー:takushii|に:ni|ひかれる:hikareru"
+    },
+    {
+      "character": "タクシーを運転する",
+      "hiragana": "タクシー:を:うんてんする",
+      "romaji": "takushii:wo:untensuru",
+      "meaning": "开出租车",
+      "type": "split",
+      "answers": "タクシー:takushii|を:wo|うんてんする:untensuru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止（动作行为）",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "タクシーを止める",
+      "hiragana": "タクシー:を:とめる",
+      "romaji": "takushii:wo:tomeru",
+      "meaning": "拦出租车",
+      "type": "split",
+      "answers": "タクシー:takushii|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "拾う",
+      "hiragana": "ひろう",
+      "romaji": "hirou",
+      "meaning": "捡起，在路上雇(汽车等)。",
+      "type": "normal",
+      "answers": "ひろう:hirou"
+    },
+    {
+      "character": "タクシーを拾う",
+      "hiragana": "タクシー:を:ひろう",
+      "romaji": "takushii:wo:hirou",
+      "meaning": "雇一辆出租车",
+      "type": "split",
+      "answers": "タクシー:takushii|を:wo|ひろう:hirou"
+    },
+    {
+      "character": "呼ぶ",
+      "hiragana": "よぶ",
+      "romaji": "yobu",
+      "meaning": "呼喊，呼唤",
+      "type": "normal",
+      "answers": "よぶ:yobu"
+    },
+    {
+      "character": "タクシーを呼ぶ",
+      "hiragana": "タクシー:を:よぶ",
+      "romaji": "takushii:wo:yobu",
+      "meaning": "叫出租车",
+      "type": "split",
+      "answers": "タクシー:takushii|を:wo|よぶ:yobu"
+    },
+    {
+      "character": "自転車",
+      "hiragana": "じてんしゃ",
+      "romaji": "jitensha",
+      "meaning": "自行车",
+      "type": "normal",
+      "answers": "じてんしゃ:jitensha"
+    },
+    {
+      "character": "またがる",
+      "hiragana": "またがる",
+      "romaji": "matagaru",
+      "meaning": "跨骑",
+      "type": "normal",
+      "answers": "またがる:matagaru"
+    },
+    {
+      "character": "自転車にまたがる",
+      "hiragana": "じてんしゃ:に:またがる",
+      "romaji": "jitensha:ni:matagaru",
+      "meaning": "骑自行车",
+      "type": "split",
+      "answers": "じてんしゃ:jitensha|に:ni|またがる:matagaru"
+    },
+    {
+      "character": "押す",
+      "hiragana": "おす",
+      "romaji": "osu",
+      "meaning": "推",
+      "type": "normal",
+      "answers": "おす:osu"
+    },
+    {
+      "character": "自転車を押す",
+      "hiragana": "じてんしゃ:を:おす",
+      "romaji": "jitensha:wo:osu",
+      "meaning": "推自行车",
+      "type": "split",
+      "answers": "じてんしゃ:jitensha|を:wo|おす:osu"
+    },
+    {
+      "character": "こぐ",
+      "hiragana": "こぐ",
+      "romaji": "kogu",
+      "meaning": "蹬(自行车等)，打(秋千)",
+      "type": "normal",
+      "answers": "こぐ:kogu"
+    },
+    {
+      "character": "自転車をこぐ",
+      "hiragana": "じてんしゃ:を:こぐ",
+      "romaji": "jitensha:wo:kogu",
+      "meaning": "骑自行车",
+      "type": "split",
+      "answers": "じてんしゃ:jitensha|を:wo|こぐ:kogu"
+    },
+    {
+      "character": "自転車を止める",
+      "hiragana": "じてんしゃ:を:とめる",
+      "romaji": "jitensha:wo:tomeru",
+      "meaning": "停下自行车",
+      "type": "split",
+      "answers": "じてんしゃ:jitensha|を:wo|とめる:tomeru"
+    }
+  ]
+}

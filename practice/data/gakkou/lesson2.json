@@ -1,0 +1,180 @@
+{
+  "questions": [
+    {
+      "character": "宿題",
+      "hiragana": "しゅくだい",
+      "romaji": "shukudai",
+      "meaning": "家庭作业",
+      "type": "normal",
+      "answers": "しゅくだい:shukudai"
+    },
+    {
+      "character": "宿題がある",
+      "hiragana": "しゅくだい:が:ある",
+      "romaji": "shukudai:ga:aru",
+      "meaning": "我有作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|が:ga|ある:aru"
+    },
+    {
+      "character": "宿題がない",
+      "hiragana": "しゅくだい:が:ない",
+      "romaji": "shukudai:ga:nai",
+      "meaning": "没有作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|が:ga|ない:nai"
+    },
+    {
+      "character": "する",
+      "hiragana": "する",
+      "romaji": "suru",
+      "meaning": "做，干",
+      "type": "normal",
+      "answers": "する:suru"
+    },
+    {
+      "character": "宿題をする",
+      "hiragana": "しゅくだい:を:する",
+      "romaji": "shukudai:wo:suru",
+      "meaning": "做作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|を:wo|する:suru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "宿題を出す",
+      "hiragana": "しゅくだい:を:だす",
+      "romaji": "shukudai:wo:dasu",
+      "meaning": "布置作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|を:wo|だす:dasu"
+    },
+    {
+      "character": "やる",
+      "hiragana": "やる",
+      "romaji": "yaru",
+      "meaning": "做",
+      "type": "normal",
+      "answers": "やる:yaru"
+    },
+    {
+      "character": "宿題をやる",
+      "hiragana": "しゅくだい:を:やる",
+      "romaji": "shukudai:wo:yaru",
+      "meaning": "做作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|を:wo|やる:yaru"
+    },
+    {
+      "character": "忘れる",
+      "hiragana": "わすれる",
+      "romaji": "wasureru",
+      "meaning": "忘记",
+      "type": "normal",
+      "answers": "わすれる:wasureru"
+    },
+    {
+      "character": "宿題を忘れる",
+      "hiragana": "しゅくだい:を:わすれる",
+      "romaji": "shukudai:wo:wasureru",
+      "meaning": "忘记作业",
+      "type": "split",
+      "answers": "しゅくだい:shukudai|を:wo|わすれる:wasureru"
+    },
+    {
+      "character": "ノート",
+      "hiragana": "ノート",
+      "romaji": "nooto",
+      "meaning": "笔记",
+      "type": "normal",
+      "answers": "ノート:nooto"
+    },
+    {
+      "character": "閉じる",
+      "hiragana": "とじる",
+      "romaji": "tojiru",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "とじる:tojiru"
+    },
+    {
+      "character": "ノートを閉じる",
+      "hiragana": "ノート:を:とじる",
+      "romaji": "nooto:wo:tojiru",
+      "meaning": "合上笔记",
+      "type": "split",
+      "answers": "ノート:nooto|を:wo|とじる:tojiru"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "拿，取得",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "ノートを取る",
+      "hiragana": "ノート:を:とる",
+      "romaji": "nooto:wo:toru",
+      "meaning": "做笔记",
+      "type": "split",
+      "answers": "ノート:nooto|を:wo|とる:toru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "ノートを開く",
+      "hiragana": "ノート:を:ひらく",
+      "romaji": "nooto:wo:hiraku",
+      "meaning": "打开笔记",
+      "type": "split",
+      "answers": "ノート:nooto|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "めくる",
+      "hiragana": "めくる",
+      "romaji": "mekuru",
+      "meaning": "翻开，翻动",
+      "type": "normal",
+      "answers": "めくる:mekuru"
+    },
+    {
+      "character": "ノートをめくる",
+      "hiragana": "ノート:を:めくる",
+      "romaji": "nooto:wo:mekuru",
+      "meaning": "翻阅笔记",
+      "type": "split",
+      "answers": "ノート:nooto|を:wo|めくる:mekuru"
+    },
+    {
+      "character": "本を開く",
+      "hiragana": "ほん:を:ひらく",
+      "romaji": "hon:wo:hiraku",
+      "meaning": "打开书本",
+      "type": "split",
+      "answers": "ほん:hon|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "本をめくる",
+      "hiragana": "ほん:を:めくる",
+      "romaji": "hon:wo:mekuru",
+      "meaning": "翻阅书本",
+      "type": "split",
+      "answers": "ほん:hon|を:wo|めくる:mekuru"
+    }
+  ]
+}

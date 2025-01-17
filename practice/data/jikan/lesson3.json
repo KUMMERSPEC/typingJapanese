@@ -1,0 +1,252 @@
+{
+  "questions": [
+    {
+      "character": "用事",
+      "hiragana": "ようじ",
+      "romaji": "youji",
+      "meaning": "事情",
+      "type": "normal",
+      "answers": "ようじ:youji"
+    },
+    {
+      "character": "急な用事",
+      "hiragana": "きゅうなようじ",
+      "romaji": "kyuunayouji",
+      "meaning": "很突然的事情",
+      "type": "split",
+      "answers": "きゅうなようじ:kyuunayouji"
+    },
+    {
+      "character": "用事がある",
+      "hiragana": "ようじ:が:ある",
+      "romaji": "youji:ga:aru",
+      "meaning": "有有事情（拒绝邀约，有事）",
+      "type": "split",
+      "answers": "ようじ:youji|が:ga|ある:aru"
+    },
+    {
+      "character": "用事ができる",
+      "hiragana": "ようじ:が:できる",
+      "romaji": "youji:ga:dekiru",
+      "meaning": "有事情（已有约定，但现在有事）",
+      "type": "split",
+      "answers": "ようじ:youji|が:ga|できる:dekiru"
+    },
+    {
+      "character": "用事がない",
+      "hiragana": "ようじ:が:ない",
+      "romaji": "youji:ga:nai",
+      "meaning": "没有事情",
+      "type": "split",
+      "answers": "ようじ:youji|が:ga|ない:nai"
+    },
+    {
+      "character": "都合",
+      "hiragana": "つごう",
+      "romaji": "tsugou",
+      "meaning": "情况（方便，合适）",
+      "type": "normal",
+      "answers": "つごう:tsugou"
+    },
+    {
+      "character": "合う",
+      "hiragana": "あう",
+      "romaji": "au",
+      "meaning": "合适，配合",
+      "type": "normal",
+      "answers": "あう:au"
+    },
+    {
+      "character": "都合が合う",
+      "hiragana": "つごう:が:あう",
+      "romaji": "tsugou:ga:au",
+      "meaning": "很方便",
+      "type": "split",
+      "answers": "つごう:tsugou|が:ga|あう:au"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "都合がいい",
+      "hiragana": "つごう:が:いい",
+      "romaji": "tsugou:ga:ii",
+      "meaning": "情况好（很方便）",
+      "type": "split",
+      "answers": "つごう:tsugou|が:ga|いい:ii"
+    },
+    {
+      "character": "都合がつく",
+      "hiragana": "つごう:が:つく",
+      "romaji": "tsugou:ga:tsuku",
+      "meaning": "(在时间、金钱等方面)方便 つく",
+      "type": "split",
+      "answers": "つごう:tsugou|が:ga|つく:tsuku"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "都合が悪い",
+      "hiragana": "つごう:が:わるい",
+      "romaji": "tsugou:ga:warui",
+      "meaning": "不方便",
+      "type": "split",
+      "answers": "つごう:tsugou|が:ga|わるい:warui"
+    },
+    {
+      "character": "約束",
+      "hiragana": "やくそく",
+      "romaji": "yakusoku",
+      "meaning": "承诺",
+      "type": "normal",
+      "answers": "やくそく:yakusoku"
+    },
+    {
+      "character": "約束がある",
+      "hiragana": "やくそく:が:ある",
+      "romaji": "yakusoku:ga:aru",
+      "meaning": "有约定",
+      "type": "split",
+      "answers": "やくそく:yakusoku|が:ga|ある:aru"
+    },
+    {
+      "character": "約束がない",
+      "hiragana": "やくそく:が:ない",
+      "romaji": "yakusoku:ga:nai",
+      "meaning": "没有约定",
+      "type": "split",
+      "answers": "やくそく:yakusoku|が:ga|ない:nai"
+    },
+    {
+      "character": "守る",
+      "hiragana": "まもる",
+      "romaji": "mamoru",
+      "meaning": "守护，保护",
+      "type": "normal",
+      "answers": "まもる:mamoru"
+    },
+    {
+      "character": "約束を守る",
+      "hiragana": "やくそく:を:まもる",
+      "romaji": "yakusoku:wo:mamoru",
+      "meaning": "信守承诺（守护约定）",
+      "type": "split",
+      "answers": "やくそく:yakusoku|を:wo|まもる:mamoru"
+    },
+    {
+      "character": "破る",
+      "hiragana": "やぶる",
+      "romaji": "yaburu",
+      "meaning": "破坏",
+      "type": "normal",
+      "answers": "やぶる:yaburu"
+    },
+    {
+      "character": "約束を破る",
+      "hiragana": "やくそく:を:やぶる",
+      "romaji": "yakusoku:wo:yaburu",
+      "meaning": "食言（破坏约定）",
+      "type": "split",
+      "answers": "やくそく:yakusoku|を:wo|やぶる:yaburu"
+    },
+    {
+      "character": "休み",
+      "hiragana": "やすみ",
+      "romaji": "yasumi",
+      "meaning": "假期",
+      "type": "normal",
+      "answers": "やすみ:yasumi"
+    },
+    {
+      "character": "明ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "一定的时间或状态结束。",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "休みが明ける",
+      "hiragana": "やすみ:が:あける",
+      "romaji": "yasumi:ga:akeru",
+      "meaning": "假期结束了",
+      "type": "split",
+      "answers": "やすみ:yasumi|が:ga|あける:akeru"
+    },
+    {
+      "character": "休みがある",
+      "hiragana": "やすみ:が:ある",
+      "romaji": "yasumi:ga:aru",
+      "meaning": "有假期",
+      "type": "split",
+      "answers": "やすみ:yasumi|が:ga|ある:aru"
+    },
+    {
+      "character": "休みがない",
+      "hiragana": "やすみ:が:ない",
+      "romaji": "yasumi:ga:nai",
+      "meaning": "没有假期",
+      "type": "split",
+      "answers": "やすみ:yasumi|が:ga|ない:nai"
+    },
+    {
+      "character": "休みになる",
+      "hiragana": "やすみ:に:なる",
+      "romaji": "yasumi:ni:naru",
+      "meaning": "我要休息一天",
+      "type": "split",
+      "answers": "やすみ:yasumi|に:ni|なる:naru"
+    },
+    {
+      "character": "過ごす",
+      "hiragana": "すごす",
+      "romaji": "sugosu",
+      "meaning": "花费",
+      "type": "normal",
+      "answers": "すごす:sugosu"
+    },
+    {
+      "character": "休みを過ごす",
+      "hiragana": "やすみ:を:すごす",
+      "romaji": "yasumi:wo:sugosu",
+      "meaning": "度过假期",
+      "type": "split",
+      "answers": "やすみ:yasumi|を:wo|すごす:sugosu"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "拿，取得",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "休みを取る",
+      "hiragana": "やすみ:を:とる",
+      "romaji": "yasumi:wo:toru",
+      "meaning": "请一天假",
+      "type": "split",
+      "answers": "やすみ:yasumi|を:wo|とる:toru"
+    },
+    {
+      "character": "休みをもらう",
+      "hiragana": "やすみ:を:もらう",
+      "romaji": "yasumi:wo:morau",
+      "meaning": "请一天假",
+      "type": "split",
+      "answers": "やすみ:yasumi|を:wo|もらう:morau"
+    }
+  ]
+}

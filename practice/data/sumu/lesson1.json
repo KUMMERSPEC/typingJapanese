@@ -1,0 +1,332 @@
+{
+  "questions": [
+    {
+      "character": "ドア",
+      "hiragana": "ドア",
+      "romaji": "doa",
+      "meaning": "门",
+      "type": "normal",
+      "answers": "ドア:doa"
+    },
+    {
+      "character": "開く",
+      "hiragana": "あく",
+      "romaji": "aku",
+      "meaning": "开着，打开（状态）",
+      "type": "normal",
+      "answers": "あく:aku"
+    },
+    {
+      "character": "ドアが開く",
+      "hiragana": "ドア:が:あく",
+      "romaji": "doa:ga:aku",
+      "meaning": "门开着",
+      "type": "split",
+      "answers": "ドア:doa|が:ga|あく:aku"
+    },
+    {
+      "character": "閉まる",
+      "hiragana": "しまる",
+      "romaji": "shimaru",
+      "meaning": "关闭（状态）",
+      "type": "normal",
+      "answers": "しまる:shimaru"
+    },
+    {
+      "character": "ドアが閉まる",
+      "hiragana": "ドア:が:しまる",
+      "romaji": "doa:ga:shimaru",
+      "meaning": "门关着",
+      "type": "split",
+      "answers": "ドア:doa|が:ga|しまる:shimaru"
+    },
+    {
+      "character": "開ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "打开（动作）",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "ドアを開ける",
+      "hiragana": "ドア:を:あける",
+      "romaji": "doa:wo:akeru",
+      "meaning": "打开门",
+      "type": "split",
+      "answers": "ドア:doa|を:wo|あける:akeru"
+    },
+    {
+      "character": "閉める",
+      "hiragana": "しめる",
+      "romaji": "shimeru",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "しめる:shimeru"
+    },
+    {
+      "character": "ドアを閉める",
+      "hiragana": "ドア:を:しめる",
+      "romaji": "doa:wo:shimeru",
+      "meaning": "关门（动作",
+      "type": "split",
+      "answers": "ドア:doa|を:wo|しめる:shimeru"
+    },
+    {
+      "character": "部屋",
+      "hiragana": "へや",
+      "romaji": "heya",
+      "meaning": "房间",
+      "type": "normal",
+      "answers": "へや:heya"
+    },
+    {
+      "character": "大きい",
+      "hiragana": "おおきい",
+      "romaji": "ookii",
+      "meaning": "大的",
+      "type": "normal",
+      "answers": "おおきい:ookii"
+    },
+    {
+      "character": "部屋が大きい",
+      "hiragana": "へや:が:おおきい",
+      "romaji": "heya:ga:ookii",
+      "meaning": "房间很大",
+      "type": "split",
+      "answers": "へや:heya|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "狭い",
+      "hiragana": "せまい",
+      "romaji": "semai",
+      "meaning": "狭窄的",
+      "type": "normal",
+      "answers": "せまい:semai"
+    },
+    {
+      "character": "部屋が狭い",
+      "hiragana": "へや:が:せまい",
+      "romaji": "heya:ga:semai",
+      "meaning": "房间很小",
+      "type": "split",
+      "answers": "へや:heya|が:ga|せまい:semai"
+    },
+    {
+      "character": "小さい",
+      "hiragana": "ちいさい",
+      "romaji": "chiisai",
+      "meaning": "小的",
+      "type": "normal",
+      "answers": "ちいさい:chiisai"
+    },
+    {
+      "character": "部屋が小さい",
+      "hiragana": "へや:が:ちいさい",
+      "romaji": "heya:ga:chiisai",
+      "meaning": "房间很小",
+      "type": "split",
+      "answers": "へや:heya|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "広い",
+      "hiragana": "ひろい",
+      "romaji": "hiroi",
+      "meaning": "宽的",
+      "type": "normal",
+      "answers": "ひろい:hiroi"
+    },
+    {
+      "character": "部屋が広い",
+      "hiragana": "へや:が:ひろい",
+      "romaji": "heya:ga:hiroi",
+      "meaning": "宽敞的房间",
+      "type": "split",
+      "answers": "へや:heya|が:ga|ひろい:hiroi"
+    },
+    {
+      "character": "片づける",
+      "hiragana": "かたづける",
+      "romaji": "katazukeru",
+      "meaning": "清理，打扫，收拾",
+      "type": "normal",
+      "answers": "かたづける:katazukeru"
+    },
+    {
+      "character": "部屋を片づける",
+      "hiragana": "へや:を:かたづける",
+      "romaji": "heya:wo:katazukeru",
+      "meaning": "收拾房间",
+      "type": "split",
+      "answers": "へや:heya|を:wo|かたづける:katazukeru"
+    },
+    {
+      "character": "借りる",
+      "hiragana": "かりる",
+      "romaji": "kariru",
+      "meaning": "借（借进来）",
+      "type": "normal",
+      "answers": "かりる:kariru"
+    },
+    {
+      "character": "部屋を借りる",
+      "hiragana": "へや:を:かりる",
+      "romaji": "heya:wo:kariru",
+      "meaning": "租一个房间",
+      "type": "split",
+      "answers": "へや:heya|を:wo|かりる:kariru"
+    },
+    {
+      "character": "階段",
+      "hiragana": "かいだん",
+      "romaji": "kaidan",
+      "meaning": "楼梯",
+      "type": "normal",
+      "answers": "かいだん:kaidan"
+    },
+    {
+      "character": "階段が急だ",
+      "hiragana": "かいだん:が:きゅうだ",
+      "romaji": "kaidan:ga:kyuuda",
+      "meaning": "楼梯很陡",
+      "type": "split",
+      "answers": "かいだん:kaidan|が:ga|きゅうだ:kyuuda"
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "上去",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "階段を上がる",
+      "hiragana": "かいだん:を:あがる",
+      "romaji": "kaidan:wo:agaru",
+      "meaning": "上楼梯",
+      "type": "split",
+      "answers": "かいだん:kaidan|を:wo|あがる:agaru"
+    },
+    {
+      "character": "下りる",
+      "hiragana": "おりる",
+      "romaji": "oriru",
+      "meaning": "下去",
+      "type": "normal",
+      "answers": "おりる:oriru"
+    },
+    {
+      "character": "階段を下りる",
+      "hiragana": "かいだん:を:おりる",
+      "romaji": "kaidan:wo:oriru",
+      "meaning": "下楼梯",
+      "type": "split",
+      "answers": "かいだん:kaidan|を:wo|おりる:oriru"
+    },
+    {
+      "character": "上る",
+      "hiragana": "のぼる",
+      "romaji": "noboru",
+      "meaning": "攀爬",
+      "type": "normal",
+      "answers": "のぼる:noboru"
+    },
+    {
+      "character": "階段を上る",
+      "hiragana": "かいだん:を:のぼる",
+      "romaji": "kaidan:wo:noboru",
+      "meaning": "爬楼梯",
+      "type": "split",
+      "answers": "かいだん:kaidan|を:wo|のぼる:noboru"
+    },
+    {
+      "character": "鍵が開く",
+      "hiragana": "かぎ:が:あく",
+      "romaji": "kagi:ga:aku",
+      "meaning": "锁打开了",
+      "type": "split",
+      "answers": "かぎ:kagi|が:ga|あく:aku"
+    },
+    {
+      "character": "かかる",
+      "hiragana": "かかる",
+      "romaji": "kakaru",
+      "meaning": "花费，挂上（状态）",
+      "type": "normal",
+      "answers": "かかる:kakaru"
+    },
+    {
+      "character": "鍵がかかる",
+      "hiragana": "かぎ:が:かかる",
+      "romaji": "kagi:ga:kakaru",
+      "meaning": "锁锁上了（状态）",
+      "type": "split",
+      "answers": "かぎ:kagi|が:ga|かかる:kakaru"
+    },
+    {
+      "character": "閉まる",
+      "hiragana": "しまる",
+      "romaji": "shimaru",
+      "meaning": "关闭（状态）",
+      "type": "normal",
+      "answers": "しまる:shimaru"
+    },
+    {
+      "character": "鍵が閉まる",
+      "hiragana": "かぎ:が:しまる",
+      "romaji": "kagi:ga:shimaru",
+      "meaning": "锁锁上了（状态）",
+      "type": "split",
+      "answers": "かぎ:kagi|が:ga|しまる:shimaru"
+    },
+    {
+      "character": "開ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "打开（动作）",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "鍵を開ける",
+      "hiragana": "かぎ:を:あける",
+      "romaji": "kagi:wo:akeru",
+      "meaning": "开锁（动作）",
+      "type": "split",
+      "answers": "かぎ:kagi|を:wo|あける:akeru"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "挂上，花费",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "鍵をかける",
+      "hiragana": "かぎ:を:かける",
+      "romaji": "kagi:wo:kakeru",
+      "meaning": "挂上锁（关锁）",
+      "type": "split",
+      "answers": "かぎ:kagi|を:wo|かける:kakeru"
+    },
+    {
+      "character": "閉める",
+      "hiragana": "しめる",
+      "romaji": "shimeru",
+      "meaning": "关闭（动作）",
+      "type": "normal",
+      "answers": "しめる:shimeru"
+    },
+    {
+      "character": "鍵を閉める",
+      "hiragana": "かぎ:を:しめる",
+      "romaji": "kagi:wo:shimeru",
+      "meaning": "锁上门（动作）",
+      "type": "split",
+      "answers": "かぎ:kagi|を:wo|しめる:shimeru"
+    }
+  ]
+}

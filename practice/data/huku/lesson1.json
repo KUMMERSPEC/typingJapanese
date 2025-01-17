@@ -1,0 +1,252 @@
+{
+  "questions": [
+    {
+      "character": "シャツ",
+      "hiragana": "シャツ",
+      "romaji": "shatsu",
+      "meaning": "衬衫",
+      "type": "normal",
+      "answers": "シャツ:shatsu"
+    },
+    {
+      "character": "大きい",
+      "hiragana": "おおきい",
+      "romaji": "ookii",
+      "meaning": "大的",
+      "type": "normal",
+      "answers": "おおきい:ookii"
+    },
+    {
+      "character": "シャツが大きい",
+      "hiragana": "シャツ:が:おおきい",
+      "romaji": "shatsu:ga:ookii",
+      "meaning": "衬衫很大",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "きつい",
+      "hiragana": "きつい",
+      "romaji": "kitsui",
+      "meaning": "紧的",
+      "type": "normal",
+      "answers": "きつい:kitsui"
+    },
+    {
+      "character": "シャツがきつい",
+      "hiragana": "シャツ:が:きつい",
+      "romaji": "shatsu:ga:kitsui",
+      "meaning": "衬衫很紧",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|きつい:kitsui"
+    },
+    {
+      "character": "地味",
+      "hiragana": "じみ",
+      "romaji": "jimi",
+      "meaning": "土气的，朴素的",
+      "type": "normal",
+      "answers": "じみ:jimi"
+    },
+    {
+      "character": "シャツが地味だ",
+      "hiragana": "シャツ:が:じみだ",
+      "romaji": "shatsu:ga:jimida",
+      "meaning": "衬衫很土气",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|じみだ:jimida"
+    },
+    {
+      "character": "小さい",
+      "hiragana": "ちいさい",
+      "romaji": "chiisai",
+      "meaning": "小的",
+      "type": "normal",
+      "answers": "ちいさい:chiisai"
+    },
+    {
+      "character": "シャツが小さい",
+      "hiragana": "シャツ:が:ちいさい",
+      "romaji": "shatsu:ga:chiisai",
+      "meaning": "衬衫很小",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "似合う",
+      "hiragana": "にあう",
+      "romaji": "niau",
+      "meaning": "合适",
+      "type": "normal",
+      "answers": "にあう:niau"
+    },
+    {
+      "character": "シャツが似合う",
+      "hiragana": "シャツ:が:にあう",
+      "romaji": "shatsu:ga:niau",
+      "meaning": "这件衬衫适合你",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|にあう:niau"
+    },
+    {
+      "character": "派手",
+      "hiragana": "はで",
+      "romaji": "hade",
+      "meaning": "华丽的",
+      "type": "normal",
+      "answers": "はで:hade"
+    },
+    {
+      "character": "シャツが派手だ",
+      "hiragana": "シャツ:が:はでだ",
+      "romaji": "shatsu:ga:hadeda",
+      "meaning": "衬衫很华丽",
+      "type": "split",
+      "answers": "シャツ:shatsu|が:ga|はでだ:hadeda"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "悬挂",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "シャツをかける",
+      "hiragana": "シャツ:を:かける",
+      "romaji": "shatsu:wo:kakeru",
+      "meaning": "挂一件衬衫",
+      "type": "split",
+      "answers": "シャツ:shatsu|を:wo|かける:kakeru"
+    },
+    {
+      "character": "ハンガー",
+      "hiragana": "ハンガー",
+      "romaji": "hanngaa",
+      "meaning": "衣架",
+      "type": "normal",
+      "answers": "ハンガー:hanngaa"
+    },
+    {
+      "character": "ハンガーにシャツをかける",
+      "hiragana": "ハンガー:に:シャツ:を:かける",
+      "romaji": "hanngaa:ni:shatsu:wo:kakeru",
+      "meaning": "在衣架上挂衬衫",
+      "type": "split",
+      "answers": "ハンガー:hanngaa|に:ni|シャツ:shatsu|を:wo|かける:kakeru"
+    },
+    {
+      "character": "着替える",
+      "hiragana": "きがえる",
+      "romaji": "kigaeru",
+      "meaning": "更换（衣服等）",
+      "type": "normal",
+      "answers": "きがえる:kigaeru"
+    },
+    {
+      "character": "シャツを着替える",
+      "hiragana": "シャツ:を:きがえる",
+      "romaji": "shatsu:wo:kigaeru",
+      "meaning": "换衬衫",
+      "type": "split",
+      "answers": "シャツ:shatsu|を:wo|きがえる:kigaeru"
+    },
+    {
+      "character": "着る",
+      "hiragana": "きる",
+      "romaji": "kiru",
+      "meaning": "穿",
+      "type": "normal",
+      "answers": "きる:kiru"
+    },
+    {
+      "character": "シャツを着る",
+      "hiragana": "シャツ:を:きる",
+      "romaji": "shatsu:wo:kiru",
+      "meaning": "穿一件衬衫",
+      "type": "split",
+      "answers": "シャツ:shatsu|を:wo|きる:kiru"
+    },
+    {
+      "character": "服が大きい",
+      "hiragana": "ふく:が:おおきい",
+      "romaji": "fuku:ga:ookii",
+      "meaning": "衣服很大",
+      "type": "split",
+      "answers": "ふく:fuku|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "服がきつい",
+      "hiragana": "ふく:が:きつい",
+      "romaji": "fuku:ga:kitsui",
+      "meaning": "衣服太紧",
+      "type": "split",
+      "answers": "ふく:fuku|が:ga|きつい:kitsui"
+    },
+    {
+      "character": "服が地味だ",
+      "hiragana": "ふく:が:じみだ",
+      "romaji": "fuku:ga:jimida",
+      "meaning": "我的衣服很朴素",
+      "type": "split",
+      "answers": "ふく:fuku|が:ga|じみだ:jimida"
+    },
+    {
+      "character": "服が似合う",
+      "hiragana": "ふく:が:にあう",
+      "romaji": "fuku:ga:niau",
+      "meaning": "衣服适合我",
+      "type": "split",
+      "answers": "ふく:fuku|が:ga|にあう:niau"
+    },
+    {
+      "character": "服が派手だ",
+      "hiragana": "ふく:が:はでだ",
+      "romaji": "fuku:ga:hadeda",
+      "meaning": "衣服很花哨",
+      "type": "split",
+      "answers": "ふく:fuku|が:ga|はでだ:hadeda"
+    },
+    {
+      "character": "服をかける",
+      "hiragana": "ふく:を:かける",
+      "romaji": "fuku:wo:kakeru",
+      "meaning": "挂衣服",
+      "type": "split",
+      "answers": "ふく:fuku|を:wo|かける:kakeru"
+    },
+    {
+      "character": "服を着替える",
+      "hiragana": "ふく:を:きがえる",
+      "romaji": "fuku:wo:kigaeru",
+      "meaning": "换衣服",
+      "type": "split",
+      "answers": "ふく:fuku|を:wo|きがえる:kigaeru"
+    },
+    {
+      "character": "服を着る",
+      "hiragana": "ふく:を:きる",
+      "romaji": "fuku:wo:kiru",
+      "meaning": "穿衣服",
+      "type": "split",
+      "answers": "ふく:fuku|を:wo|きる:kiru"
+    },
+    {
+      "character": "脱ぐ",
+      "hiragana": "ぬぐ",
+      "romaji": "nugu",
+      "meaning": "脱",
+      "type": "normal",
+      "answers": "ぬぐ:nugu"
+    },
+    {
+      "character": "服を脱ぐ",
+      "hiragana": "ふく:を:ぬぐ",
+      "romaji": "fuku:wo:nugu",
+      "meaning": "脱衣服",
+      "type": "split",
+      "answers": "ふく:fuku|を:wo|ぬぐ:nugu"
+    }
+  ]
+}

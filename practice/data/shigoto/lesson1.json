@@ -1,0 +1,260 @@
+{
+  "questions": [
+    {
+      "character": "仕事",
+      "hiragana": "しごと",
+      "romaji": "shigoto",
+      "meaning": "工作",
+      "type": "normal",
+      "answers": "しごと:shigoto"
+    },
+    {
+      "character": "仕事がある",
+      "hiragana": "しごと:が:ある",
+      "romaji": "shigoto:ga:aru",
+      "meaning": "有工作",
+      "type": "split",
+      "answers": "しごと:shigoto|が:ga|ある:aru"
+    },
+    {
+      "character": "決まる",
+      "hiragana": "きまる",
+      "romaji": "kimaru",
+      "meaning": "决定（状态结果）",
+      "type": "normal",
+      "answers": "きまる:kimaru"
+    },
+    {
+      "character": "仕事が決まる",
+      "hiragana": "しごと:が:きまる",
+      "romaji": "shigoto:ga:kimaru",
+      "meaning": "工作决定了",
+      "type": "split",
+      "answers": "しごと:shigoto|が:ga|きまる:kimaru"
+    },
+    {
+      "character": "仕事がない",
+      "hiragana": "しごと:が:ない",
+      "romaji": "shigoto:ga:nai",
+      "meaning": "我没有工作",
+      "type": "split",
+      "answers": "しごと:shigoto|が:ga|ない:nai"
+    },
+    {
+      "character": "見つかる",
+      "hiragana": "みつかる",
+      "romaji": "mitsukaru",
+      "meaning": "寻找，找到（状态结果）",
+      "type": "normal",
+      "answers": "みつかる:mitsukaru"
+    },
+    {
+      "character": "仕事が見つかる",
+      "hiragana": "しごと:が:みつかる",
+      "romaji": "shigoto:ga:mitsukaru",
+      "meaning": "工作找到了",
+      "type": "split",
+      "answers": "しごと:shigoto|が:ga|みつかる:mitsukaru"
+    },
+    {
+      "character": "つく",
+      "hiragana": "つく",
+      "romaji": "tsuku",
+      "meaning": "到达",
+      "type": "normal",
+      "answers": "つく:tsuku"
+    },
+    {
+      "character": "仕事につく",
+      "hiragana": "しごと:に:つく",
+      "romaji": "shigoto:ni:tsuku",
+      "meaning": "就职，入职",
+      "type": "split",
+      "answers": "しごと:shigoto|に:ni|つく:tsuku"
+    },
+    {
+      "character": "変える",
+      "hiragana": "かえる",
+      "romaji": "kaeru",
+      "meaning": "改变，更换",
+      "type": "normal",
+      "answers": "かえる:kaeru"
+    },
+    {
+      "character": "仕事を変える",
+      "hiragana": "しごと:を:かえる",
+      "romaji": "shigoto:wo:kaeru",
+      "meaning": "换工作",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|かえる:kaeru"
+    },
+    {
+      "character": "探す",
+      "hiragana": "さがす",
+      "romaji": "sagasu",
+      "meaning": "搜索，搜寻",
+      "type": "normal",
+      "answers": "さがす:sagasu"
+    },
+    {
+      "character": "仕事を探す",
+      "hiragana": "しごと:を:さがす",
+      "romaji": "shigoto:wo:sagasu",
+      "meaning": "找工作（侧重过程）",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|さがす:sagasu"
+    },
+    {
+      "character": "仕事をする",
+      "hiragana": "しごと:を:する",
+      "romaji": "shigoto:wo:suru",
+      "meaning": "做工作",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|する:suru"
+    },
+    {
+      "character": "見つける",
+      "hiragana": "みつける",
+      "romaji": "mitsukeru",
+      "meaning": "寻找（动作状况）",
+      "type": "normal",
+      "answers": "みつける:mitsukeru"
+    },
+    {
+      "character": "仕事を見つける",
+      "hiragana": "しごと:を:みつける",
+      "romaji": "shigoto:wo:mitsukeru",
+      "meaning": "找工作（侧重结果）",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|みつける:mitsukeru"
+    },
+    {
+      "character": "休む",
+      "hiragana": "やすむ",
+      "romaji": "yasumu",
+      "meaning": "休息，请假",
+      "type": "normal",
+      "answers": "やすむ:yasumu"
+    },
+    {
+      "character": "仕事を休む",
+      "hiragana": "しごと:を:やすむ",
+      "romaji": "shigoto:wo:yasumu",
+      "meaning": "请假(不上班了）",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|やすむ:yasumu"
+    },
+    {
+      "character": "やめる",
+      "hiragana": "やめる",
+      "romaji": "yameru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "やめる:yameru"
+    },
+    {
+      "character": "仕事をやめる",
+      "hiragana": "しごと:を:やめる",
+      "romaji": "shigoto:wo:yameru",
+      "meaning": "辞掉工作",
+      "type": "split",
+      "answers": "しごと:shigoto|を:wo|やめる:yameru"
+    },
+    {
+      "character": "会社",
+      "hiragana": "かいしゃ",
+      "romaji": "kaisha",
+      "meaning": "公司",
+      "type": "normal",
+      "answers": "かいしゃ:kaisha"
+    },
+    {
+      "character": "つぶれる",
+      "hiragana": "つぶれる",
+      "romaji": "tsubureru",
+      "meaning": "坍塌，倒塌，破产",
+      "type": "normal",
+      "answers": "つぶれる:tsubureru"
+    },
+    {
+      "character": "会社がつぶれる",
+      "hiragana": "かいしゃ:が:つぶれる",
+      "romaji": "kaisha:ga:tsubureru",
+      "meaning": "公司破产",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|が:ga|つぶれる:tsubureru"
+    },
+    {
+      "character": "働く",
+      "hiragana": "はたらく",
+      "romaji": "hataraku",
+      "meaning": "工作，上班",
+      "type": "normal",
+      "answers": "はたらく:hataraku"
+    },
+    {
+      "character": "会社で働く",
+      "hiragana": "かいしゃ:で:はたらく",
+      "romaji": "kaisha:de:hataraku",
+      "meaning": "在公司工作",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|で:de|はたらく:hataraku"
+    },
+    {
+      "character": "勤める",
+      "hiragana": "つとめる",
+      "romaji": "tsutomeru",
+      "meaning": "就职，任职",
+      "type": "normal",
+      "answers": "つとめる:tsutomeru"
+    },
+    {
+      "character": "会社に勤める",
+      "hiragana": "かいしゃ:に:つとめる",
+      "romaji": "kaisha:ni:tsutomeru",
+      "meaning": "在公司就职",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|に:ni|つとめる:tsutomeru"
+    },
+    {
+      "character": "入る",
+      "hiragana": "はいる",
+      "romaji": "hairu",
+      "meaning": "进入",
+      "type": "normal",
+      "answers": "はいる:hairu"
+    },
+    {
+      "character": "会社に入る",
+      "hiragana": "かいしゃ:に:はいる",
+      "romaji": "kaisha:ni:hairu",
+      "meaning": "加入公司",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|に:ni|はいる:hairu"
+    },
+    {
+      "character": "会社をやめる",
+      "hiragana": "かいしゃ:を:やめる",
+      "romaji": "kaisha:wo:yameru",
+      "meaning": "从公司辞职",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|を:wo|やめる:yameru"
+    },
+    {
+      "character": "リストラされる",
+      "hiragana": "リストラされる",
+      "romaji": "risutorasareru",
+      "meaning": "企业）重组、裁员",
+      "type": "normal",
+      "answers": "リストラされる:risutorasareru"
+    },
+    {
+      "character": "会社をリストラされる",
+      "hiragana": "かいしゃ:を:リストラされる",
+      "romaji": "kaisha:wo:risutorasareru",
+      "meaning": "被公司裁员",
+      "type": "split",
+      "answers": "かいしゃ:kaisha|を:wo|リストラされる:risutorasareru"
+    }
+  ]
+}

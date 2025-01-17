@@ -1,0 +1,180 @@
+{
+  "questions": [
+    {
+      "character": "めがねが曇る",
+      "hiragana": "めがね:が:くもる",
+      "romaji": "megane:ga:kumoru",
+      "meaning": "眼镜起雾",
+      "type": "split",
+      "answers": "めがね:megane|が:ga|くもる:kumoru"
+    },
+    {
+      "character": "曇る",
+      "hiragana": "くもる",
+      "romaji": "kumoru",
+      "meaning": "多云",
+      "type": "normal",
+      "answers": "くもる:kumoru"
+    },
+    {
+      "character": "傘",
+      "hiragana": "かさ",
+      "romaji": "kasa",
+      "meaning": "伞",
+      "type": "nan",
+      "answers": ""
+    },
+    {
+      "character": "差す",
+      "hiragana": "さす",
+      "romaji": "sasu",
+      "meaning": "举起，插入",
+      "type": "normal",
+      "answers": "さす:sasu"
+    },
+    {
+      "character": "傘を差す",
+      "hiragana": "かさ:を:さす",
+      "romaji": "kasa:wo:sasu",
+      "meaning": "撑伞",
+      "type": "split",
+      "answers": "かさ:kasa|を:wo|さす:sasu"
+    },
+    {
+      "character": "閉じる",
+      "hiragana": "とじる",
+      "romaji": "tojiru",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "とじる:tojiru"
+    },
+    {
+      "character": "傘を閉じる",
+      "hiragana": "かさ:を:とじる",
+      "romaji": "kasa:wo:tojiru",
+      "meaning": "收起伞",
+      "type": "split",
+      "answers": "かさ:kasa|を:wo|とじる:tojiru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "傘を開く",
+      "hiragana": "かさ:を:ひらく",
+      "romaji": "kasa:wo:hiraku",
+      "meaning": "打开雨伞",
+      "type": "split",
+      "answers": "かさ:kasa|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "化粧",
+      "hiragana": "けしょう",
+      "romaji": "keshou",
+      "meaning": "化妆品",
+      "type": "normal",
+      "answers": "けしょう:keshou"
+    },
+    {
+      "character": "薄い",
+      "hiragana": "うすい",
+      "romaji": "usui",
+      "meaning": "薄的",
+      "type": "normal",
+      "answers": "うすい:usui"
+    },
+    {
+      "character": "化粧が薄い",
+      "hiragana": "けしょう:が:うすい",
+      "romaji": "keshou:ga:usui",
+      "meaning": "淡妆",
+      "type": "split",
+      "answers": "けしょう:keshou|が:ga|うすい:usui"
+    },
+    {
+      "character": "落ちる",
+      "hiragana": "おちる",
+      "romaji": "ochiru",
+      "meaning": "掉落（自动）",
+      "type": "normal",
+      "answers": "おちる:ochiru"
+    },
+    {
+      "character": "化粧が落ちる",
+      "hiragana": "けしょう:が:おちる",
+      "romaji": "keshou:ga:ochiru",
+      "meaning": "化妆品脱落",
+      "type": "split",
+      "answers": "けしょう:keshou|が:ga|おちる:ochiru"
+    },
+    {
+      "character": "くずれる",
+      "hiragana": "くずれる",
+      "romaji": "kuzureru",
+      "meaning": "崩坏，崩溃",
+      "type": "normal",
+      "answers": "くずれる:kuzureru"
+    },
+    {
+      "character": "化粧がくずれる",
+      "hiragana": "けしょう:が:くずれる",
+      "romaji": "keshou:ga:kuzureru",
+      "meaning": "妆脱落了",
+      "type": "split",
+      "answers": "けしょう:keshou|が:ga|くずれる:kuzureru"
+    },
+    {
+      "character": "濃い",
+      "hiragana": "こい",
+      "romaji": "koi",
+      "meaning": "浓的",
+      "type": "normal",
+      "answers": "こい:koi"
+    },
+    {
+      "character": "化粧が濃い",
+      "hiragana": "けしょう:が:こい",
+      "romaji": "keshou:ga:koi",
+      "meaning": "浓妆艳抹",
+      "type": "split",
+      "answers": "けしょう:keshou|が:ga|こい:koi"
+    },
+    {
+      "character": "落とす",
+      "hiragana": "おとす",
+      "romaji": "otosu",
+      "meaning": "降低",
+      "type": "normal",
+      "answers": "おとす:otosu"
+    },
+    {
+      "character": "化粧を落とす",
+      "hiragana": "けしょう:を:おとす",
+      "romaji": "keshou:wo:otosu",
+      "meaning": "卸妆",
+      "type": "split",
+      "answers": "けしょう:keshou|を:wo|おとす:otosu"
+    },
+    {
+      "character": "化粧をする",
+      "hiragana": "けしょう:を:する",
+      "romaji": "keshou:wo:suru",
+      "meaning": "化妆",
+      "type": "split",
+      "answers": "けしょう:keshou|を:wo|する:suru"
+    },
+    {
+      "character": "化粧を直す",
+      "hiragana": "けしょう:を:なおす",
+      "romaji": "keshou:wo:naosu",
+      "meaning": "补妆",
+      "type": "split",
+      "answers": "けしょう:keshou|を:wo|なおす:naosu"
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "questions": [
+    {
+      "character": "お茶",
+      "hiragana": "おちゃ",
+      "romaji": "ocha",
+      "meaning": "茶",
+      "type": "normal",
+      "answers": "おちゃ:ocha"
+    },
+    {
+      "character": "薄い",
+      "hiragana": "nan",
+      "romaji": "usui",
+      "meaning": "淡的，浅的",
+      "type": "normal",
+      "answers": "nan:usui"
+    },
+    {
+      "character": "お茶が薄い",
+      "hiragana": "おちゃ:が:うすい",
+      "romaji": "ocha:ga:usui",
+      "meaning": "茶淡了",
+      "type": "split",
+      "answers": "おちゃ:ocha|が:ga|うすい:usui"
+    },
+    {
+      "character": "濃い",
+      "hiragana": "こい",
+      "romaji": "koi",
+      "meaning": "黑暗的",
+      "type": "normal",
+      "answers": "こい:koi"
+    },
+    {
+      "character": "お茶が濃い",
+      "hiragana": "おちゃ:が:こい",
+      "romaji": "ocha:ga:koi",
+      "meaning": "茶很浓",
+      "type": "split",
+      "answers": "おちゃ:ocha|が:ga|こい:koi"
+    },
+    {
+      "character": "味",
+      "hiragana": "あじ",
+      "romaji": "aji",
+      "meaning": "味道",
+      "type": "normal",
+      "answers": "あじ:aji"
+    },
+    {
+      "character": "ある",
+      "hiragana": "ある",
+      "romaji": "aru",
+      "meaning": "是，有，存在",
+      "type": "normal",
+      "answers": "ある:aru"
+    },
+    {
+      "character": "味がある",
+      "hiragana": "あじ:が:ある",
+      "romaji": "aji:ga:aru",
+      "meaning": "有一种味道",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|ある:aru"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "味がいい",
+      "hiragana": "あじ:が:いい",
+      "romaji": "aji:ga:ii",
+      "meaning": "味道不错",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|いい:ii"
+    },
+    {
+      "character": "薄い",
+      "hiragana": "うすい",
+      "romaji": "usui",
+      "meaning": "薄的",
+      "type": "normal",
+      "answers": "うすい:usui"
+    },
+    {
+      "character": "味が薄い",
+      "hiragana": "あじ:が:うすい",
+      "romaji": "aji:ga:usui",
+      "meaning": "无味的，味淡",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|うすい:usui"
+    },
+    {
+      "character": "濃い",
+      "hiragana": "こい",
+      "romaji": "koi",
+      "meaning": "浓烈，厚重",
+      "type": "normal",
+      "answers": "こい:koi"
+    },
+    {
+      "character": "味が濃い",
+      "hiragana": "あじ:が:こい",
+      "romaji": "aji:ga:koi",
+      "meaning": "味道浓烈",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|こい:koi"
+    },
+    {
+      "character": "味がする",
+      "hiragana": "あじ:が:する",
+      "romaji": "aji:ga:suru",
+      "meaning": "嚐到……的味道",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|する:suru"
+    },
+    {
+      "character": "ない",
+      "hiragana": "ない",
+      "romaji": "nai",
+      "meaning": "没有",
+      "type": "normal",
+      "answers": "ない:nai"
+    },
+    {
+      "character": "味がない",
+      "hiragana": "あじ:が:ない",
+      "romaji": "aji:ga:nai",
+      "meaning": "没有味道",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|ない:nai"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "味が悪い",
+      "hiragana": "あじ:が:わるい",
+      "romaji": "aji:ga:warui",
+      "meaning": "口味很差",
+      "type": "split",
+      "answers": "あじ:aji|が:ga|わるい:warui"
+    },
+    {
+      "character": "つける",
+      "hiragana": "つける",
+      "romaji": "tsukeru",
+      "meaning": "增添，附上",
+      "type": "normal",
+      "answers": "つける:tsukeru"
+    },
+    {
+      "character": "味をつける",
+      "hiragana": "あじ:を:つける",
+      "romaji": "aji:wo:tsukeru",
+      "meaning": "添加风味",
+      "type": "split",
+      "answers": "あじ:aji|を:wo|つける:tsukeru"
+    },
+    {
+      "character": "みる",
+      "hiragana": "みる",
+      "romaji": "miru",
+      "meaning": "看，尝试",
+      "type": "normal",
+      "answers": "みる:miru"
+    },
+    {
+      "character": "味をみる",
+      "hiragana": "あじ:を:みる",
+      "romaji": "aji:wo:miru",
+      "meaning": "品尝味道",
+      "type": "split",
+      "answers": "あじ:aji|を:wo|みる:miru"
+    },
+    {
+      "character": "におい",
+      "hiragana": "におい",
+      "romaji": "nioi",
+      "meaning": "气味",
+      "type": "normal",
+      "answers": "におい:nioi"
+    },
+    {
+      "character": "ある",
+      "hiragana": "ある",
+      "romaji": "aru",
+      "meaning": "有，存在",
+      "type": "normal",
+      "answers": "ある:aru"
+    },
+    {
+      "character": "においがある",
+      "hiragana": "におい:が:ある",
+      "romaji": "nioi:ga:aru",
+      "meaning": "有气味",
+      "type": "split",
+      "answers": "におい:nioi|が:ga|ある:aru"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "におい",
+      "hiragana": "におい",
+      "romaji": "nioi",
+      "meaning": "味道，气味",
+      "type": "normal",
+      "answers": "におい:nioi"
+    },
+    {
+      "character": "においがする",
+      "hiragana": "におい:が:する",
+      "romaji": "nioi:ga:suru",
+      "meaning": "闻到……的味道",
+      "type": "split",
+      "answers": "におい:nioi|が:ga|する:suru"
+    },
+    {
+      "character": "ない",
+      "hiragana": "ない",
+      "romaji": "nai",
+      "meaning": "没有",
+      "type": "normal",
+      "answers": "ない:nai"
+    },
+    {
+      "character": "においがない",
+      "hiragana": "におい:が:ない",
+      "romaji": "nioi:ga:nai",
+      "meaning": "没有气味",
+      "type": "split",
+      "answers": "におい:nioi|が:ga|ない:nai"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的，不好的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "においが悪い",
+      "hiragana": "におい:が:わるい",
+      "romaji": "nioi:ga:warui",
+      "meaning": "闻起来很难闻（气味不好）",
+      "type": "split",
+      "answers": "におい:nioi|が:ga|わるい:warui"
+    },
+    {
+      "character": "かぐ",
+      "hiragana": "かぐ",
+      "romaji": "kagu",
+      "meaning": "闻，嗅",
+      "type": "normal",
+      "answers": "かぐ:kagu"
+    },
+    {
+      "character": "においをかぐ",
+      "hiragana": "におい:を:かぐ",
+      "romaji": "nioi:wo:kagu",
+      "meaning": "闻气味",
+      "type": "split",
+      "answers": "におい:nioi|を:wo|かぐ:kagu"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "お酒に強い",
+      "hiragana": "おさけ:に:つよい",
+      "romaji": "osake:ni:tsuyoi",
+      "meaning": "酒量好（在酒的方面很强）",
+      "type": "split",
+      "answers": "おさけ:osake|に:ni|つよい:tsuyoi"
+    },
+    {
+      "character": "弱い",
+      "hiragana": "よわい",
+      "romaji": "yowai",
+      "meaning": "虚弱的",
+      "type": "normal",
+      "answers": "よわい:yowai"
+    },
+    {
+      "character": "お酒に弱い",
+      "hiragana": "おさけ:に:よわい",
+      "romaji": "osake:ni:yowai",
+      "meaning": "不善饮酒（在酒的方面很弱）",
+      "type": "split",
+      "answers": "おさけ:osake|に:ni|よわい:yowai"
+    },
+    {
+      "character": "酔う",
+      "hiragana": "よう",
+      "romaji": "you",
+      "meaning": "醉倒，晕",
+      "type": "normal",
+      "answers": "よう:you"
+    },
+    {
+      "character": "お酒に酔う",
+      "hiragana": "おさけ:に:よう",
+      "romaji": "osake:ni:you",
+      "meaning": "醉酒",
+      "type": "split",
+      "answers": "おさけ:osake|に:ni|よう:you"
+    }
+  ]
+}

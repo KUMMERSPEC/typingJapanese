@@ -1,0 +1,260 @@
+{
+  "questions": [
+    {
+      "character": "日にち",
+      "hiragana": "ひにち",
+      "romaji": "hinichi",
+      "meaning": "日期",
+      "type": "normal",
+      "answers": "ひにち:hinichi"
+    },
+    {
+      "character": "変わる",
+      "hiragana": "かわる",
+      "romaji": "kawaru",
+      "meaning": "改变（状态结果）",
+      "type": "normal",
+      "answers": "かわる:kawaru"
+    },
+    {
+      "character": "日にちが変わる",
+      "hiragana": "ひにち:が:かわる",
+      "romaji": "hinichi:ga:kawaru",
+      "meaning": "日期变更（状态结果）",
+      "type": "split",
+      "answers": "ひにち:hinichi|が:ga|かわる:kawaru"
+    },
+    {
+      "character": "決まる",
+      "hiragana": "きまる",
+      "romaji": "kimaru",
+      "meaning": "决定（状态结果）",
+      "type": "normal",
+      "answers": "きまる:kimaru"
+    },
+    {
+      "character": "日にちが決まる",
+      "hiragana": "ひにち:が:きまる",
+      "romaji": "hinichi:ga:kimaru",
+      "meaning": "日期已定（状态结果）",
+      "type": "split",
+      "answers": "ひにち:hinichi|が:ga|きまる:kimaru"
+    },
+    {
+      "character": "変える",
+      "hiragana": "かえる",
+      "romaji": "kaeru",
+      "meaning": "改变（动作行为）",
+      "type": "normal",
+      "answers": "かえる:kaeru"
+    },
+    {
+      "character": "日にちを変える",
+      "hiragana": "ひにち:を:かえる",
+      "romaji": "hinichi:wo:kaeru",
+      "meaning": "更改日期",
+      "type": "split",
+      "answers": "ひにち:hinichi|を:wo|かえる:kaeru"
+    },
+    {
+      "character": "決める",
+      "hiragana": "きめる",
+      "romaji": "kimeru",
+      "meaning": "决定（动作行为）",
+      "type": "normal",
+      "answers": "きめる:kimeru"
+    },
+    {
+      "character": "日にちを決める",
+      "hiragana": "ひにち:を:きめる",
+      "romaji": "hinichi:wo:kimeru",
+      "meaning": "决定日期",
+      "type": "split",
+      "answers": "ひにち:hinichi|を:wo|きめる:kimeru"
+    },
+    {
+      "character": "予定",
+      "hiragana": "よてい",
+      "romaji": "yotei",
+      "meaning": "预定，计划",
+      "type": "normal",
+      "answers": "よてい:yotei"
+    },
+    {
+      "character": "遅れる",
+      "hiragana": "おくれる",
+      "romaji": "okureru",
+      "meaning": "迟到，晚点",
+      "type": "normal",
+      "answers": "おくれる:okureru"
+    },
+    {
+      "character": "予定が遅れる",
+      "hiragana": "よてい:が:おくれる",
+      "romaji": "yotei:ga:okureru",
+      "meaning": "计划推迟（状态结果）",
+      "type": "split",
+      "answers": "よてい:yotei|が:ga|おくれる:okureru"
+    },
+    {
+      "character": "予定が変わる",
+      "hiragana": "よてい:が:かわる",
+      "romaji": "yotei:ga:kawaru",
+      "meaning": "计划改变（状态结果）",
+      "type": "split",
+      "answers": "よてい:yotei|が:ga|かわる:kawaru"
+    },
+    {
+      "character": "予定がある",
+      "hiragana": "よてい:が:ある",
+      "romaji": "yotei:ga:aru",
+      "meaning": "我有计划",
+      "type": "split",
+      "answers": "よてい:yotei|が:ga|ある:aru"
+    },
+    {
+      "character": "予定がない",
+      "hiragana": "よてい:が:ない",
+      "romaji": "yotei:ga:nai",
+      "meaning": "我没有任何计划",
+      "type": "split",
+      "answers": "よてい:yotei|が:ga|ない:nai"
+    },
+    {
+      "character": "決まる",
+      "hiragana": "きまる",
+      "romaji": "kimaru",
+      "meaning": "决定（状态结果）",
+      "type": "normal",
+      "answers": "きまる:kimaru"
+    },
+    {
+      "character": "予定が決まる",
+      "hiragana": "よてい:が:きまる",
+      "romaji": "yotei:ga:kimaru",
+      "meaning": "日程已定（状态结果）",
+      "type": "split",
+      "answers": "よてい:yotei|が:ga|きまる:kimaru"
+    },
+    {
+      "character": "変える",
+      "hiragana": "かえる",
+      "romaji": "kaeru",
+      "meaning": "改变（动作行为）",
+      "type": "normal",
+      "answers": "かえる:kaeru"
+    },
+    {
+      "character": "予定を変える",
+      "hiragana": "よてい:を:かえる",
+      "romaji": "yotei:wo:kaeru",
+      "meaning": "改变计划（动作行为）",
+      "type": "split",
+      "answers": "よてい:yotei|を:wo|かえる:kaeru"
+    },
+    {
+      "character": "決める",
+      "hiragana": "きめる",
+      "romaji": "kimeru",
+      "meaning": "决定（动作行为）",
+      "type": "normal",
+      "answers": "きめる:kimeru"
+    },
+    {
+      "character": "予定を決める",
+      "hiragana": "よてい:を:きめる",
+      "romaji": "yotei:wo:kimeru",
+      "meaning": "决定计划（动作行为）",
+      "type": "split",
+      "answers": "よてい:yotei|を:wo|きめる:kimeru"
+    },
+    {
+      "character": "組む",
+      "hiragana": "くむ",
+      "romaji": "kumu",
+      "meaning": "组成，编，建立",
+      "type": "normal",
+      "answers": "くむ:kumu"
+    },
+    {
+      "character": "予定を組む",
+      "hiragana": "よてい:を:くむ",
+      "romaji": "yotei:wo:kumu",
+      "meaning": "组织计划（计划更复杂）",
+      "type": "split",
+      "answers": "よてい:yotei|を:wo|くむ:kumu"
+    },
+    {
+      "character": "立てる",
+      "hiragana": "たてる",
+      "romaji": "tateru",
+      "meaning": "立起来，定下",
+      "type": "normal",
+      "answers": "たてる:tateru"
+    },
+    {
+      "character": "予定を立てる",
+      "hiragana": "よてい:を:たてる",
+      "romaji": "yotei:wo:tateru",
+      "meaning": "定计划",
+      "type": "split",
+      "answers": "よてい:yotei|を:wo|たてる:tateru"
+    },
+    {
+      "character": "キャンセルする",
+      "hiragana": "キャンセル",
+      "romaji": "kyanserusuru",
+      "meaning": "取消",
+      "type": "normal",
+      "answers": "キャンセル:kyanserusuru"
+    },
+    {
+      "character": "予定をキャンセルする",
+      "hiragana": "よてい:を:キャンセルする",
+      "romaji": "yotei:wo:kyanserusuru",
+      "meaning": "取消预约",
+      "type": "split",
+      "answers": "よてい:yotei|を:wo|キャンセルする:kyanserusuru"
+    },
+    {
+      "character": "キャンセル",
+      "hiragana": "キャンセル",
+      "romaji": "kyanseru",
+      "meaning": "取消",
+      "type": "normal",
+      "answers": "キャンセル:kyanseru"
+    },
+    {
+      "character": "予約",
+      "hiragana": "よやく",
+      "romaji": "yoyaku",
+      "meaning": "预订",
+      "type": "normal",
+      "answers": "よやく:yoyaku"
+    },
+    {
+      "character": "キャンセルする",
+      "hiragana": "キャンセル",
+      "romaji": "kyanseru",
+      "meaning": "取消",
+      "type": "normal",
+      "answers": "キャンセル:kyanseru"
+    },
+    {
+      "character": "予約をキャンセルする",
+      "hiragana": "よやく:を:キャンセルする",
+      "romaji": "yoyaku:wo:kyanserusuru",
+      "meaning": "取消预订",
+      "type": "split",
+      "answers": "よやく:yoyaku|を:wo|キャンセルする:kyanserusuru"
+    },
+    {
+      "character": "予約をする",
+      "hiragana": "よやく:を:する",
+      "romaji": "yoyaku:wo:suru",
+      "meaning": "预约",
+      "type": "split",
+      "answers": "よやく:yoyaku|を:wo|する:suru"
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "questions": [
+    {
+      "character": "試験",
+      "hiragana": "しけん",
+      "romaji": "shiken",
+      "meaning": "测试",
+      "type": "normal",
+      "answers": "しけん:shiken"
+    },
+    {
+      "character": "試験がある",
+      "hiragana": "しけん:が:ある",
+      "romaji": "shiken:ga:aru",
+      "meaning": "我有考试",
+      "type": "split",
+      "answers": "しけん:shiken|が:ga|ある:aru"
+    },
+    {
+      "character": "試験がない",
+      "hiragana": "しけん:が:ない",
+      "romaji": "shiken:ga:nai",
+      "meaning": "没有考试",
+      "type": "split",
+      "answers": "しけん:shiken|が:ga|ない:nai"
+    },
+    {
+      "character": "受かる",
+      "hiragana": "うかる",
+      "romaji": "ukaru",
+      "meaning": "经过，接受（状态）",
+      "type": "normal",
+      "answers": "うかる:ukaru"
+    },
+    {
+      "character": "試験に受かる",
+      "hiragana": "しけん:に:うかる",
+      "romaji": "shiken:ni:ukaru",
+      "meaning": "通过考试",
+      "type": "split",
+      "answers": "しけん:shiken|に:ni|うかる:ukaru"
+    },
+    {
+      "character": "落ちる",
+      "hiragana": "おちる",
+      "romaji": "ochiru",
+      "meaning": "落下，掉下",
+      "type": "normal",
+      "answers": "おちる:ochiru"
+    },
+    {
+      "character": "試験に落ちる",
+      "hiragana": "しけん:に:おちる",
+      "romaji": "shiken:ni:ochiru",
+      "meaning": "考试不及格",
+      "type": "split",
+      "answers": "しけん:shiken|に:ni|おちる:ochiru"
+    },
+    {
+      "character": "合格する",
+      "hiragana": "ごうかくする",
+      "romaji": "goukakusuru",
+      "meaning": "经过",
+      "type": "normal",
+      "answers": "ごうかくする:goukakusuru"
+    },
+    {
+      "character": "試験に合格する",
+      "hiragana": "しけん:に:ごうかくする",
+      "romaji": "shiken:ni:goukakusuru",
+      "meaning": "通过考试",
+      "type": "split",
+      "answers": "しけん:shiken|に:ni|ごうかくする:goukakusuru"
+    },
+    {
+      "character": "受ける",
+      "hiragana": "うける",
+      "romaji": "ukeru",
+      "meaning": "收到，接受（动作）",
+      "type": "normal",
+      "answers": "うける:ukeru"
+    },
+    {
+      "character": "試験を受ける",
+      "hiragana": "しけん:を:うける",
+      "romaji": "shiken:wo:ukeru",
+      "meaning": "参加考试（学生接受考试）",
+      "type": "split",
+      "answers": "しけん:shiken|を:wo|うける:ukeru"
+    },
+    {
+      "character": "行う",
+      "hiragana": "おこなう",
+      "romaji": "okonau",
+      "meaning": "执行，举行，举办",
+      "type": "normal",
+      "answers": "おこなう:okonau"
+    },
+    {
+      "character": "試験を行う",
+      "hiragana": "しけん:を:おこなう",
+      "romaji": "shiken:wo:okonau",
+      "meaning": "进行测试",
+      "type": "split",
+      "answers": "しけん:shiken|を:wo|おこなう:okonau"
+    },
+    {
+      "character": "試験をする",
+      "hiragana": "しけん:を:する",
+      "romaji": "shiken:wo:suru",
+      "meaning": "进行测试（老师考学生）",
+      "type": "split",
+      "answers": "しけん:shiken|を:wo|する:suru"
+    },
+    {
+      "character": "テスト",
+      "hiragana": "テスト",
+      "romaji": "tesuto",
+      "meaning": "测试",
+      "type": "normal",
+      "answers": "テスト:tesuto"
+    },
+    {
+      "character": "テストがある",
+      "hiragana": "テスト:が:ある",
+      "romaji": "tesuto:ga:aru",
+      "meaning": "有一个测试",
+      "type": "split",
+      "answers": "テスト:tesuto|が:ga|ある:aru"
+    },
+    {
+      "character": "テストがない",
+      "hiragana": "テスト:が:ない",
+      "romaji": "tesuto:ga:nai",
+      "meaning": "没有测试",
+      "type": "split",
+      "answers": "テスト:tesuto|が:ga|ない:nai"
+    },
+    {
+      "character": "テストに受かる",
+      "hiragana": "テスト:に:うかる",
+      "romaji": "tesuto:ni:ukaru",
+      "meaning": "通过测试",
+      "type": "split",
+      "answers": "テスト:tesuto|に:ni|うかる:ukaru"
+    },
+    {
+      "character": "テストに落ちる",
+      "hiragana": "テスト:に:おちる",
+      "romaji": "tesuto:ni:ochiru",
+      "meaning": "考试失败",
+      "type": "split",
+      "answers": "テスト:tesuto|に:ni|おちる:ochiru"
+    },
+    {
+      "character": "テストに合格する",
+      "hiragana": "テスト:に:ごうかくする",
+      "romaji": "tesuto:ni:goukakusuru",
+      "meaning": "通过测试",
+      "type": "split",
+      "answers": "テスト:tesuto|に:ni|ごうかくする:goukakusuru"
+    },
+    {
+      "character": "テストを受ける",
+      "hiragana": "テスト:を:うける",
+      "romaji": "tesuto:wo:ukeru",
+      "meaning": "参加测试（学生接受考试）",
+      "type": "split",
+      "answers": "テスト:tesuto|を:wo|うける:ukeru"
+    },
+    {
+      "character": "テストを行う",
+      "hiragana": "テスト:を:おこなう",
+      "romaji": "tesuto:wo:okonau",
+      "meaning": "做一个测试（老师考学生）",
+      "type": "split",
+      "answers": "テスト:tesuto|を:wo|おこなう:okonau"
+    },
+    {
+      "character": "テストをする",
+      "hiragana": "テスト:を:する",
+      "romaji": "tesuto:wo:suru",
+      "meaning": "参加测试",
+      "type": "split",
+      "answers": "テスト:tesuto|を:wo|する:suru"
+    },
+    {
+      "character": "問題",
+      "hiragana": "もんだい",
+      "romaji": "mondai",
+      "meaning": "问题",
+      "type": "normal",
+      "answers": "もんだい:mondai"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来，出现",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "問題が出る",
+      "hiragana": "もんだい:が:でる",
+      "romaji": "mondai:ga:deru",
+      "meaning": "问题出现",
+      "type": "split",
+      "answers": "もんだい:mondai|が:ga|でる:deru"
+    },
+    {
+      "character": "問題",
+      "hiragana": "もんだい",
+      "romaji": "mondai",
+      "meaning": "问题",
+      "type": "normal",
+      "answers": "もんだい:mondai"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "提出，拿出",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "問題を出す",
+      "hiragana": "もんだい:を:だす",
+      "romaji": "mondai:wo:dasu",
+      "meaning": "问一个问题",
+      "type": "split",
+      "answers": "もんだい:mondai|を:wo|だす:dasu"
+    },
+    {
+      "character": "成績",
+      "hiragana": "せいせき",
+      "romaji": "seiseki",
+      "meaning": "成绩",
+      "type": "normal",
+      "answers": "せいせき:seiseki"
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "上",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "成績が上がる",
+      "hiragana": "せいせき:が:あがる",
+      "romaji": "seiseki:ga:agaru",
+      "meaning": "成绩上升",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|あがる:agaru"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "成績がいい",
+      "hiragana": "せいせき:が:いい",
+      "romaji": "seiseki:ga:ii",
+      "meaning": "成绩好",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|いい:ii"
+    },
+    {
+      "character": "下がる",
+      "hiragana": "さがる",
+      "romaji": "sagaru",
+      "meaning": "下去，下降",
+      "type": "normal",
+      "answers": "さがる:sagaru"
+    },
+    {
+      "character": "成績が下がる",
+      "hiragana": "せいせき:が:さがる",
+      "romaji": "seiseki:ga:sagaru",
+      "meaning": "成绩下降",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|さがる:sagaru"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "成績が出る",
+      "hiragana": "せいせき:が:でる",
+      "romaji": "seiseki:ga:deru",
+      "meaning": "出成绩（考试成绩出来了）",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|でる:deru"
+    },
+    {
+      "character": "伸びる",
+      "hiragana": "のびる",
+      "romaji": "nobiru",
+      "meaning": "延长。拉伸，",
+      "type": "normal",
+      "answers": "のびる:nobiru"
+    },
+    {
+      "character": "成績が伸びる",
+      "hiragana": "せいせき:が:のびる",
+      "romaji": "seiseki:ga:nobiru",
+      "meaning": "成绩提升",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|のびる:nobiru"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "成績が悪い",
+      "hiragana": "せいせき:が:わるい",
+      "romaji": "seiseki:ga:warui",
+      "meaning": "成绩差",
+      "type": "split",
+      "answers": "せいせき:seiseki|が:ga|わるい:warui"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "拿",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "成績を取る",
+      "hiragana": "せいせき:を:とる",
+      "romaji": "seiseki:wo:toru",
+      "meaning": "取得成绩",
+      "type": "split",
+      "answers": "せいせき:seiseki|を:wo|とる:toru"
+    }
+  ]
+}

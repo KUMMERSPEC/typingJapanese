@@ -1,0 +1,204 @@
+{
+  "questions": [
+    {
+      "character": "給料",
+      "hiragana": "きゅうりょう",
+      "romaji": "kyuuryou",
+      "meaning": "薪水，工资",
+      "type": "normal",
+      "answers": "きゅうりょう:kyuuryou"
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "上涨，增加",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "給料が上がる",
+      "hiragana": "きゅうりょう:が:あがる",
+      "romaji": "kyuuryou:ga:agaru",
+      "meaning": "加薪",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|あがる:agaru"
+    },
+    {
+      "character": "いい",
+      "hiragana": "いい",
+      "romaji": "ii",
+      "meaning": "好的",
+      "type": "normal",
+      "answers": "いい:ii"
+    },
+    {
+      "character": "給料がいい",
+      "hiragana": "きゅうりょう:が:いい",
+      "romaji": "kyuuryou:ga:ii",
+      "meaning": "薪水不错",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|いい:ii"
+    },
+    {
+      "character": "多い",
+      "hiragana": "おおい",
+      "romaji": "ooi",
+      "meaning": "很多，多的",
+      "type": "normal",
+      "answers": "おおい:ooi"
+    },
+    {
+      "character": "給料が多い",
+      "hiragana": "きゅうりょう:が:おおい",
+      "romaji": "kyuuryou:ga:ooi",
+      "meaning": "工资很多",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|おおい:ooi"
+    },
+    {
+      "character": "下がる",
+      "hiragana": "さがる",
+      "romaji": "sagaru",
+      "meaning": "下降",
+      "type": "normal",
+      "answers": "さがる:sagaru"
+    },
+    {
+      "character": "給料が下がる",
+      "hiragana": "きゅうりょう:が:さがる",
+      "romaji": "kyuuryou:ga:sagaru",
+      "meaning": "工资下降",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|さがる:sagaru"
+    },
+    {
+      "character": "少ない",
+      "hiragana": "すくない",
+      "romaji": "sukunai",
+      "meaning": "很少，少的",
+      "type": "normal",
+      "answers": "すくない:sukunai"
+    },
+    {
+      "character": "給料が少ない",
+      "hiragana": "きゅうりょう:が:すくない",
+      "romaji": "kyuuryou:ga:sukunai",
+      "meaning": "工资低",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|すくない:sukunai"
+    },
+    {
+      "character": "高い",
+      "hiragana": "たかい",
+      "romaji": "takai",
+      "meaning": "高的，贵的",
+      "type": "normal",
+      "answers": "たかい:takai"
+    },
+    {
+      "character": "給料が高い",
+      "hiragana": "きゅうりょう:が:たかい",
+      "romaji": "kyuuryou:ga:takai",
+      "meaning": "高薪",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|たかい:takai"
+    },
+    {
+      "character": "低い",
+      "hiragana": "ひくい",
+      "romaji": "hikui",
+      "meaning": "低的",
+      "type": "normal",
+      "answers": "ひくい:hikui"
+    },
+    {
+      "character": "給料が低い",
+      "hiragana": "きゅうりょう:が:ひくい",
+      "romaji": "kyuuryou:ga:hikui",
+      "meaning": "工资低",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|ひくい:hikui"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "給料が出る",
+      "hiragana": "きゅうりょう:が:でる",
+      "romaji": "kyuuryou:ga:deru",
+      "meaning": "工资（发）出来",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|でる:deru"
+    },
+    {
+      "character": "安い",
+      "hiragana": "やすい",
+      "romaji": "yasui",
+      "meaning": "便宜的",
+      "type": "normal",
+      "answers": "やすい:yasui"
+    },
+    {
+      "character": "給料が安い",
+      "hiragana": "きゅうりょう:が:やすい",
+      "romaji": "kyuuryou:ga:yasui",
+      "meaning": "工资低",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|やすい:yasui"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的",
+      "type": "normal",
+      "answers": "わるい:warui"
+    },
+    {
+      "character": "給料が悪い",
+      "hiragana": "きゅうりょう:が:わるい",
+      "romaji": "kyuuryou:ga:warui",
+      "meaning": "工资不好",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|が:ga|わるい:warui"
+    },
+    {
+      "character": "払う",
+      "hiragana": "はらう",
+      "romaji": "harau",
+      "meaning": "支付",
+      "type": "normal",
+      "answers": "はらう:harau"
+    },
+    {
+      "character": "給料を払う",
+      "hiragana": "きゅうりょう:を:はらう",
+      "romaji": "kyuuryou:wo:harau",
+      "meaning": "支付工资（公司方）",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|を:wo|はらう:harau"
+    },
+    {
+      "character": "もらう",
+      "hiragana": "もらう",
+      "romaji": "morau",
+      "meaning": "得到",
+      "type": "normal",
+      "answers": "もらう:morau"
+    },
+    {
+      "character": "給料をもらう",
+      "hiragana": "きゅうりょう:を:もらう",
+      "romaji": "kyuuryou:wo:morau",
+      "meaning": "得到报酬",
+      "type": "split",
+      "answers": "きゅうりょう:kyuuryou|を:wo|もらう:morau"
+    }
+  ]
+}

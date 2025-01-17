@@ -1,0 +1,252 @@
+{
+  "questions": [
+    {
+      "character": "スカート",
+      "hiragana": "スカート",
+      "romaji": "sukaーto",
+      "meaning": "裙子",
+      "type": "normal",
+      "answers": "スカート:sukaーto"
+    },
+    {
+      "character": "ぶかぶか",
+      "hiragana": "ぶかぶか",
+      "romaji": "bukabuka",
+      "meaning": "太大了",
+      "type": "normal",
+      "answers": "ぶかぶか:bukabuka"
+    },
+    {
+      "character": "スカートがぶかぶかだ",
+      "hiragana": "スカート:が:ぶかぶかだ",
+      "romaji": "sukaーto:ga:bukabukada",
+      "meaning": "裙子是宽松的",
+      "type": "split",
+      "answers": "スカート:sukaーto|が:ga|ぶかぶかだ:bukabukada"
+    },
+    {
+      "character": "スカートを脱ぐ",
+      "hiragana": "スカート:を:ぬぐ",
+      "romaji": "sukaーto:wo:nugu",
+      "meaning": "脱掉裙子",
+      "type": "split",
+      "answers": "スカート:sukaーto|を:wo|ぬぐ:nugu"
+    },
+    {
+      "character": "はき替える",
+      "hiragana": "はきかえる",
+      "romaji": "hakikaeru",
+      "meaning": "换衣服（下装）",
+      "type": "normal",
+      "answers": "はきかえる:hakikaeru"
+    },
+    {
+      "character": "スカートをは着替える",
+      "hiragana": "スカート:を:はきかえる",
+      "romaji": "sukaーto:wo:hakikaeru",
+      "meaning": "换裙子",
+      "type": "split",
+      "answers": "スカート:sukaーto|を:wo|はきかえる:hakikaeru"
+    },
+    {
+      "character": "はく",
+      "hiragana": "はく",
+      "romaji": "haku",
+      "meaning": "挫败",
+      "type": "normal",
+      "answers": "はく:haku"
+    },
+    {
+      "character": "スカートをはく",
+      "hiragana": "スカート:を:はく",
+      "romaji": "sukaーto:wo:haku",
+      "meaning": "穿裙子",
+      "type": "split",
+      "answers": "スカート:sukaーto|を:wo|はく:haku"
+    },
+    {
+      "character": "ズボン",
+      "hiragana": "ズボン",
+      "romaji": "zubon",
+      "meaning": "裤子",
+      "type": "normal",
+      "answers": "ズボン:zubon"
+    },
+    {
+      "character": "ズボンがぶかぶかだ",
+      "hiragana": "ズボン:が:ぶかぶかだ",
+      "romaji": "zubon:ga:bukabukada",
+      "meaning": "我的裤子很宽松",
+      "type": "split",
+      "answers": "ズボン:zubon|が:ga|ぶかぶかだ:bukabukada"
+    },
+    {
+      "character": "ズボンを脱ぐ",
+      "hiragana": "ズボン:を:ぬぐ",
+      "romaji": "zubon:wo:nugu",
+      "meaning": "脱掉你的裤子",
+      "type": "split",
+      "answers": "ズボン:zubon|を:wo|ぬぐ:nugu"
+    },
+    {
+      "character": "ズボンをはき替える",
+      "hiragana": "ズボン:を:はきかえる",
+      "romaji": "zubon:wo:hakikaeru",
+      "meaning": "换裤子",
+      "type": "split",
+      "answers": "ズボン:zubon|を:wo|はきかえる:hakikaeru"
+    },
+    {
+      "character": "ズボンをはく",
+      "hiragana": "ズボン:を:はく",
+      "romaji": "zubon:wo:haku",
+      "meaning": "穿上裤子",
+      "type": "split",
+      "answers": "ズボン:zubon|を:wo|はく:haku"
+    },
+    {
+      "character": "手袋",
+      "hiragana": "てぶくろ",
+      "romaji": "tebukuro",
+      "meaning": "手套",
+      "type": "normal",
+      "answers": "てぶくろ:tebukuro"
+    },
+    {
+      "character": "手袋をする",
+      "hiragana": "てぶくろ:を:する",
+      "romaji": "tebukuro:wo:suru",
+      "meaning": "戴手套",
+      "type": "split",
+      "answers": "てぶくろ:tebukuro|を:wo|する:suru"
+    },
+    {
+      "character": "取る",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "拿",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "手袋を取る",
+      "hiragana": "てぶくろ:を:とる",
+      "romaji": "tebukuro:wo:toru",
+      "meaning": "脱掉手套（取下）",
+      "type": "split",
+      "answers": "てぶくろ:tebukuro|を:wo|とる:toru"
+    },
+    {
+      "character": "はずす",
+      "hiragana": "はずす",
+      "romaji": "hazusu",
+      "meaning": "移除（配件）",
+      "type": "normal",
+      "answers": "はずす:hazusu"
+    },
+    {
+      "character": "手袋をはずす",
+      "hiragana": "てぶくろ:を:はずす",
+      "romaji": "tebukuro:wo:hazusu",
+      "meaning": "脱掉手套（移除）",
+      "type": "split",
+      "answers": "てぶくろ:tebukuro|を:wo|はずす:hazusu"
+    },
+    {
+      "character": "はめる",
+      "hiragana": "はめる",
+      "romaji": "hameru",
+      "meaning": "扣上，戴上（包裹的东西，例如手套，戒指）",
+      "type": "normal",
+      "answers": "はめる:hameru"
+    },
+    {
+      "character": "手袋をはめる",
+      "hiragana": "てぶくろ:を:はめる",
+      "romaji": "tebukuro:wo:hameru",
+      "meaning": "戴上手套",
+      "type": "split",
+      "answers": "てぶくろ:tebukuro|を:wo|はめる:hameru"
+    },
+    {
+      "character": "帽子",
+      "hiragana": "ぼうし",
+      "romaji": "boushi",
+      "meaning": "帽子",
+      "type": "normal",
+      "answers": "ぼうし:boushi"
+    },
+    {
+      "character": "かぶる",
+      "hiragana": "かぶる",
+      "romaji": "kaburu",
+      "meaning": "戴，盖",
+      "type": "normal",
+      "answers": "かぶる:kaburu"
+    },
+    {
+      "character": "帽子をかぶる",
+      "hiragana": "ぼうし:を:かぶる",
+      "romaji": "boushi:wo:kaburu",
+      "meaning": "戴帽子",
+      "type": "split",
+      "answers": "ぼうし:boushi|を:wo|かぶる:kaburu"
+    },
+    {
+      "character": "帽子を取る",
+      "hiragana": "ぼうし:を:とる",
+      "romaji": "boushi:wo:toru",
+      "meaning": "脱掉帽子（取下）",
+      "type": "split",
+      "answers": "ぼうし:boushi|を:wo|とる:toru"
+    },
+    {
+      "character": "帽子を脱ぐ",
+      "hiragana": "ぼうし:を:ぬぐ",
+      "romaji": "boushi:wo:nugu",
+      "meaning": "脱掉帽子",
+      "type": "split",
+      "answers": "ぼうし:boushi|を:wo|ぬぐ:nugu"
+    },
+    {
+      "character": "めがねをかける",
+      "hiragana": "めがね:を:かける",
+      "romaji": "megane:wo:kakeru",
+      "meaning": "戴眼镜",
+      "type": "split",
+      "answers": "めがね:megane|を:wo|かける:kakeru"
+    },
+    {
+      "character": "めがね",
+      "hiragana": "めがね",
+      "romaji": "megane",
+      "meaning": "眼镜",
+      "type": "normal",
+      "answers": "めがね:megane"
+    },
+    {
+      "character": "めがねをする",
+      "hiragana": "めがね:を:する",
+      "romaji": "megane:wo:suru",
+      "meaning": "戴眼镜",
+      "type": "split",
+      "answers": "めがね:megane|を:wo|する:suru"
+    },
+    {
+      "character": "めがねを取る",
+      "hiragana": "めがね:を:とる",
+      "romaji": "megane:wo:toru",
+      "meaning": "摘下眼镜",
+      "type": "split",
+      "answers": "めがね:megane|を:wo|とる:toru"
+    },
+    {
+      "character": "めがねをはずす",
+      "hiragana": "めがね:を:はずす",
+      "romaji": "megane:wo:hazusu",
+      "meaning": "摘下眼镜",
+      "type": "split",
+      "answers": "めがね:megane|を:wo|はずす:hazusu"
+    }
+  ]
+}

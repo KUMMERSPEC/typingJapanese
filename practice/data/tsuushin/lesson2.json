@@ -1,0 +1,348 @@
+{
+  "questions": [
+    {
+      "character": "データ",
+      "hiragana": "データ",
+      "romaji": "deeta",
+      "meaning": "数据",
+      "type": "normal",
+      "answers": "データ:deeta"
+    },
+    {
+      "character": "大きい",
+      "hiragana": "おおきい",
+      "romaji": "ookii",
+      "meaning": "大的",
+      "type": "normal",
+      "answers": "おおきい:ookii"
+    },
+    {
+      "character": "データが大きい",
+      "hiragana": "データ:が:おおきい",
+      "romaji": "deeta:ga:ookii",
+      "meaning": "数据量大",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "データが重い",
+      "hiragana": "データ:が:おもい",
+      "romaji": "deeta:ga:omoi",
+      "meaning": "数据很多（很重）",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|おもい:omoi"
+    },
+    {
+      "character": "データが軽い",
+      "hiragana": "データ:が:かるい",
+      "romaji": "deeta:ga:karui",
+      "meaning": "数据很轻",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|かるい:karui"
+    },
+    {
+      "character": "消える",
+      "hiragana": "きえる",
+      "romaji": "kieru",
+      "meaning": "消失",
+      "type": "normal",
+      "answers": "きえる:kieru"
+    },
+    {
+      "character": "データが消える",
+      "hiragana": "データ:が:きえる",
+      "romaji": "deeta:ga:kieru",
+      "meaning": "数据消失",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|きえる:kieru"
+    },
+    {
+      "character": "壊れる",
+      "hiragana": "こわれる",
+      "romaji": "kowareru",
+      "meaning": "损坏，崩坏",
+      "type": "normal",
+      "answers": "こわれる:kowareru"
+    },
+    {
+      "character": "データが壊れる",
+      "hiragana": "データ:が:こわれる",
+      "romaji": "deeta:ga:kowareru",
+      "meaning": "数据已损坏",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|こわれる:kowareru"
+    },
+    {
+      "character": "小さい",
+      "hiragana": "ちいさい",
+      "romaji": "chiisai",
+      "meaning": "小的",
+      "type": "normal",
+      "answers": "ちいさい:chiisai"
+    },
+    {
+      "character": "データが小さい",
+      "hiragana": "データ:が:ちいさい",
+      "romaji": "deeta:ga:chiisai",
+      "meaning": "数据量小",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "送る",
+      "hiragana": "おくる",
+      "romaji": "okuru",
+      "meaning": "发送",
+      "type": "normal",
+      "answers": "おくる:okuru"
+    },
+    {
+      "character": "データを送る",
+      "hiragana": "データ:を:おくる",
+      "romaji": "deeta:wo:okuru",
+      "meaning": "发送数据",
+      "type": "split",
+      "answers": "データ:deeta|を:wo|おくる:okuru"
+    },
+    {
+      "character": "消す",
+      "hiragana": "けす",
+      "romaji": "kesu",
+      "meaning": "清除，擦除，删除",
+      "type": "normal",
+      "answers": "けす:kesu"
+    },
+    {
+      "character": "データを消す",
+      "hiragana": "データ:を:けす",
+      "romaji": "deeta:wo:kesu",
+      "meaning": "删除数据",
+      "type": "split",
+      "answers": "データ:deeta|を:wo|けす:kesu"
+    },
+    {
+      "character": "ダウンロードする",
+      "hiragana": "ダウンロード",
+      "romaji": "daunroodosuru",
+      "meaning": "下载",
+      "type": "normal",
+      "answers": "ダウンロード:daunroodosuru"
+    },
+    {
+      "character": "データをダウンロードする",
+      "hiragana": "データ:を:ダウンロードする",
+      "romaji": "deeta:wo:daunroodosuru",
+      "meaning": "下载数据",
+      "type": "split",
+      "answers": "データ:deeta|を:wo|ダウンロードする:daunroodosuru"
+    },
+    {
+      "character": "バックアップする",
+      "hiragana": "バックアップ",
+      "romaji": "bakkuappusuru",
+      "meaning": "备份",
+      "type": "normal",
+      "answers": "バックアップ:bakkuappusuru"
+    },
+    {
+      "character": "データをバックアップする",
+      "hiragana": "データ:を:バックアップする",
+      "romaji": "deeta:wo:bakkuappusuru",
+      "meaning": "备份您的数据",
+      "type": "split",
+      "answers": "データ:deeta|を:wo|バックアップする:bakkuappusuru"
+    },
+    {
+      "character": "保存する",
+      "hiragana": "ほぞんする",
+      "romaji": "hozonsuru",
+      "meaning": "保存，存储",
+      "type": "normal",
+      "answers": "ほぞんする:hozonsuru"
+    },
+    {
+      "character": "データを保存する",
+      "hiragana": "データ:を:ほぞんする",
+      "romaji": "deeta:wo:hozonsuru",
+      "meaning": "保存数据",
+      "type": "split",
+      "answers": "データ:deeta|を:wo|ほぞんする:hozonsuru"
+    },
+    {
+      "character": "ファイル",
+      "hiragana": "ファイル",
+      "romaji": "fairu",
+      "meaning": "文件",
+      "type": "normal",
+      "answers": "ファイル:fairu"
+    },
+    {
+      "character": "ファイルが大きい",
+      "hiragana": "ファイル:が:おおきい",
+      "romaji": "fairu:ga:ookii",
+      "meaning": "文件很大",
+      "type": "split",
+      "answers": "ファイル:fairu|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "ファイルが重い",
+      "hiragana": "ファイル:が:おもい",
+      "romaji": "fairu:ga:omoi",
+      "meaning": "文件很重",
+      "type": "split",
+      "answers": "ファイル:fairu|が:ga|おもい:omoi"
+    },
+    {
+      "character": "ファイルが軽い",
+      "hiragana": "ファイル:が:かるい",
+      "romaji": "fairu:ga:karui",
+      "meaning": "文件很轻",
+      "type": "split",
+      "answers": "ファイル:fairu|が:ga|かるい:karui"
+    },
+    {
+      "character": "ファイルが壊れる",
+      "hiragana": "ファイル:が:こわれる",
+      "romaji": "fairu:ga:kowareru",
+      "meaning": "文件损坏",
+      "type": "split",
+      "answers": "ファイル:fairu|が:ga|こわれる:kowareru"
+    },
+    {
+      "character": "ファイルが小さい",
+      "hiragana": "ファイル:が:ちいさい",
+      "romaji": "fairu:ga:chiisai",
+      "meaning": "文件很小",
+      "type": "split",
+      "answers": "ファイル:fairu|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "開ける",
+      "hiragana": "あける",
+      "romaji": "akeru",
+      "meaning": "打开（动作）",
+      "type": "normal",
+      "answers": "あける:akeru"
+    },
+    {
+      "character": "ファイルを開ける",
+      "hiragana": "ファイル:を:あける",
+      "romaji": "fairu:wo:akeru",
+      "meaning": "打开文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|あける:akeru"
+    },
+    {
+      "character": "送る",
+      "hiragana": "おくる",
+      "romaji": "okuru",
+      "meaning": "发送",
+      "type": "normal",
+      "answers": "おくる:okuru"
+    },
+    {
+      "character": "ファイルを送る",
+      "hiragana": "ファイル:を:おくる",
+      "romaji": "fairu:wo:okuru",
+      "meaning": "发送文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|おくる:okuru"
+    },
+    {
+      "character": "消す",
+      "hiragana": "けす",
+      "romaji": "kesu",
+      "meaning": "清除，擦除，删除",
+      "type": "normal",
+      "answers": "けす:kesu"
+    },
+    {
+      "character": "ファイルを消す",
+      "hiragana": "ファイル:を:けす",
+      "romaji": "fairu:wo:kesu",
+      "meaning": "删除文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|けす:kesu"
+    },
+    {
+      "character": "ダウンロードする",
+      "hiragana": "ダウンロードする",
+      "romaji": "daunroodosuru",
+      "meaning": "下载",
+      "type": "normal",
+      "answers": "ダウンロードする:daunroodosuru"
+    },
+    {
+      "character": "ファイルをダウンロードする",
+      "hiragana": "ファイル:を:ダウンロードする",
+      "romaji": "fairu:wo:daunroodosuru",
+      "meaning": "下载文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|ダウンロードする:daunroodosuru"
+    },
+    {
+      "character": "添付する",
+      "hiragana": "てんぷする",
+      "romaji": "tenpusuru",
+      "meaning": "附上，添上",
+      "type": "normal",
+      "answers": "てんぷする:tenpusuru"
+    },
+    {
+      "character": "ファイルを添付する",
+      "hiragana": "ファイル:を:てんぷする",
+      "romaji": "fairu:wo:tenpusuru",
+      "meaning": "附上文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|てんぷする:tenpusuru"
+    },
+    {
+      "character": "閉じる",
+      "hiragana": "とじる",
+      "romaji": "tojiru",
+      "meaning": "关闭",
+      "type": "normal",
+      "answers": "とじる:tojiru"
+    },
+    {
+      "character": "ファイルを閉じる",
+      "hiragana": "ファイル:を:とじる",
+      "romaji": "fairu:wo:tojiru",
+      "meaning": "关闭文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|とじる:tojiru"
+    },
+    {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
+      "character": "ファイルを開く",
+      "hiragana": "ファイル:を:ひらく",
+      "romaji": "fairu:wo:hiraku",
+      "meaning": "打开文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "保存する",
+      "hiragana": "ほぞんする",
+      "romaji": "hozonsuru",
+      "meaning": "节省",
+      "type": "normal",
+      "answers": "ほぞんする:hozonsuru"
+    },
+    {
+      "character": "ファイルを保存する",
+      "hiragana": "ファイル:を:ほぞんする",
+      "romaji": "fairu:wo:hozonsuru",
+      "meaning": "保存文件",
+      "type": "split",
+      "answers": "ファイル:fairu|を:wo|ほぞんする:hozonsuru"
+    }
+  ]
+}

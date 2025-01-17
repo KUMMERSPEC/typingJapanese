@@ -1,0 +1,337 @@
+/**
+ * 用户学习统计功能模块
+ */
+import { getProgress, getHistory } from './storage.js';
+
+const STATS_STORAGE_KEY = 'typing_statistics';
+
+// 间隔复习算法配置
+const REVIEW_INTERVALS = {
+    low: {
+        success: 1,     // 1天后复习
+        failure: 0.5    // 12小时后复习
+    },
+    medium: {
+        success: 3,     // 3天后复习
+        failure: 1      // 1天后复习
+    },
+    high: {
+        success: 7,     // 7天后复习
+        failure: 3      // 3天后复习
+    },
+    master: {
+        success: 14,    // 14天后复习
+        failure: 7      // 7天后复习
+    }
+};
+
+/* 后续优化可能会用到的配置
+const INTERVAL_ADJUSTMENTS = {
+    consecutiveCorrect: {
+        3: 1.2,  // 连续正确3次，间隔延长20%
+        5: 1.5,  // 连续正确5次，间隔延长50%
+        7: 2.0   // 连续正确7次，间隔延长100%
+    },
+    responseTime: {
+        fast: 1.2,    // 快速回答，间隔延长20%
+        normal: 1.0,  // 正常速度
+        slow: 0.8     // 慢速回答，间隔缩短20%
+    },
+    hintUsage: {
+        none: 1.2,    // 不使用提示，间隔延长20%
+        some: 1.0,    // 偶尔使用提示
+        frequent: 0.8  // 频繁使用提示，间隔缩短20%
+    }
+};
+*/
+
+class Statistics {
+    constructor() {
+        this.initializeStats();
+    }
+
+    initializeStats() {
+        const stats = localStorage.getItem(STATS_STORAGE_KEY);
+        if (!stats) {
+            const initialStats = {
+                firstUseDate: new Date().toISOString(),
+                lastStudyDate: new Date().toLocaleDateString(),
+                consecutiveDays: 1,
+                dailyStats: {},
+                completedQuestions: {},
+                totalSentences: 0,
+                reviewHistory: {}
+            };
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(initialStats));
+        }
+    }
+
+    // 获取学习天数
+    getLearningDays() {
+        const stats = this.getStatistics();
+        console.log('Getting learning days:', {
+            stats,
+            consecutiveDays: stats.consecutiveDays
+        });
+        return stats.consecutiveDays || 0;
+    }
+
+    // 获取已学习的句子总数
+    getLearnedSentences() {
+        const stats = this.getStatistics();
+        return stats.totalSentences || 0;
+    }
+
+    // 获取待复习数量
+    getReviewItems(options = {}) {
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory) return [];
+
+            const now = new Date();
+            let items = Object.entries(stats.reviewHistory)
+                .filter(([_, item]) => new Date(item.nextReviewDate) <= now)
+                .map(([id, item]) => ({
+                    id,
+                    ...item
+                }));
+
+            // 如果设置了专注薄弱项
+            if (options.focusWeak) {
+                items.sort((a, b) => {
+                    const proficiencyOrder = { low: 0, medium: 1, high: 2, master: 3 };
+                    return proficiencyOrder[a.proficiency] - proficiencyOrder[b.proficiency];
+                });
+            }
+
+            // 如果设置了随机顺序
+            if (options.random) {
+                items.sort(() => Math.random() - 0.5);
+            }
+
+            return items;
+        } catch (error) {
+            console.error('Error getting review items:', error);
+            return [];
+        }
+    }
+
+    // 更新今日学习统计
+    updateDailyStats(lessonId, splitCount, questions) {
+        try {
+            console.log('Updating daily stats:', {
+                lessonId,
+                splitCount,
+                questions
+            });
+            
+            let stats = this.getStatistics();
+            const today = new Date().toLocaleDateString();
+            
+            // 初始化今日统计
+            if (!stats.dailyStats[today]) {
+                stats.dailyStats[today] = {
+                    sentencesLearned: 0,
+                    completedLessons: {},
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            // 更新学习天数
+            if (stats.lastStudyDate !== today) {
+                stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? stats.consecutiveDays + 1 : 1;
+                stats.lastStudyDate = today;
+            }
+
+            // 检查课程是否已经计数过
+            if (!stats.dailyStats[today].completedLessons[lessonId]) {
+                // 只有在这个课程今天第一次完成时才增加计数
+                stats.dailyStats[today].sentencesLearned = (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
+                stats.totalSentences = (stats.totalSentences || 0) + splitCount;
+                
+                // 记录课程完成情况
+                stats.dailyStats[today].completedLessons[lessonId] = {
+                    timestamp: new Date().toISOString(),
+                    questionCount: splitCount
+                };
+            }
+
+            // 更新复习记录
+            if (questions && Array.isArray(questions)) {
+                if (!stats.reviewHistory) stats.reviewHistory = {};
+                
+                questions.forEach((question, index) => {
+                    // 使用句子内容作为唯一标识，而不是位置索引
+                    const questionId = `${question.character}:${question.hiragana}`;
+                    if (!stats.reviewHistory[questionId]) {
+                        const [courseId, lessonName] = lessonId.split(':');
+                        const courseNames = {
+                            'kimochi': '気持ち',
+                            'gimon': '疑問詞',
+                            'hitei': '否定',
+                            'katei': '假设',
+                            'kantan': '感叹',
+                            'ajiwai': '味道',
+                            'kanjou': '负面感情'
+                        };
+                        stats.reviewHistory[questionId] = {
+                            japanese: question.character,
+                            hiragana: question.hiragana,
+                            meaning: question.meaning,
+                            course: courseNames[courseId] || courseId,
+                            lesson: lessonName,
+                            lastReview: new Date().toISOString(),
+                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                            proficiency: question.proficiency || 'low',  // 使用问题自带的掌握度，如果没有则默认为'low'
+                            reviewCount: 0
+                        };
+                    }
+                });
+            }
+
+            // 保存更新后的统计数据
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            console.log('Updated stats:', stats);
+
+            return stats;
+        } catch (error) {
+            console.error('Error updating daily stats:', error);
+            return null;
+        }
+    }
+
+    // 获取掌握情况统计
+    getMasteryStats() {
+        const stats = localStorage.getItem(STATS_STORAGE_KEY);
+        if (!stats) {
+            return { low: 0, medium: 0, high: 0, master: 0 };
+        }
+        const parsedStats = JSON.parse(stats);
+        let low = 0, medium = 0, high = 0, master = 0;
+
+        // 从复习历史中统计掌握情况
+        if (parsedStats.reviewHistory) {
+            Object.values(parsedStats.reviewHistory).forEach(item => {
+                switch (item.proficiency) {
+                    case 'low':
+                        low++;
+                        break;
+                    case 'medium':
+                        medium++;
+                        break;
+                    case 'high':
+                        high++;
+                        break;
+                    case 'master':
+                        master++;
+                        break;
+                }
+            });
+        }
+
+        return { low, medium, high, master };
+    }
+
+    // 获取统计数据
+    getStatistics() {
+        const stats = localStorage.getItem(STATS_STORAGE_KEY);
+        if (!stats) {
+            return this.initializeStats();
+        }
+        const parsedStats = JSON.parse(stats);
+        
+        // 更新掌握情况统计
+        parsedStats.masteryStats = this.getMasteryStats();
+        
+        return parsedStats;
+    }
+
+    // 检查是否是连续天数
+    isConsecutiveDay(lastDate) {
+        if (!lastDate) return false;
+        const last = new Date(lastDate);
+        const today = new Date();
+        const diffTime = Math.abs(today - last);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays === 1;
+    }
+
+    // 添加更新复习进度的方法
+    updateReviewProgress(questionId, isCorrect) {
+        try {
+            let stats = this.getStatistics();
+            if (!stats.reviewHistory || !stats.reviewHistory[questionId]) {
+                return;
+            }
+
+            const item = stats.reviewHistory[questionId];
+            const now = new Date();
+
+            // 更新复习次数
+            item.reviewCount = (item.reviewCount || 0) + 1;
+
+            // 根据答题结果更新熟练度
+            if (isCorrect) {
+                switch (item.proficiency) {
+                    case 'low':
+                        item.proficiency = 'medium';
+                        break;
+                    case 'medium':
+                        item.proficiency = 'high';
+                        break;
+                    case 'high':
+                        item.proficiency = 'master';
+                        break;
+                }
+            } else {
+                // 答错时降低熟练度
+                switch (item.proficiency) {
+                    case 'master':
+                        item.proficiency = 'high';
+                        break;
+                    case 'high':
+                        item.proficiency = 'medium';
+                        break;
+                    case 'medium':
+                        item.proficiency = 'low';
+                        break;
+                }
+            }
+
+            // 计算下次复习时间
+            const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
+            item.lastReview = now.toISOString();
+            item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+
+            // 保存更新后的统计数据
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            
+            return item;
+        } catch (error) {
+            console.error('Error updating review progress:', error);
+            return null;
+        }
+    }
+
+    // 添加获取待复习数量的方法
+    getReviewCount() {
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory) return 0;
+
+            const now = new Date();
+            return Object.values(stats.reviewHistory)
+                .filter(item => new Date(item.nextReviewDate) <= now)
+                .length;
+        } catch (error) {
+            console.error('Error getting review count:', error);
+            return 0;
+        }
+    }
+
+    saveStatistics(stats) {
+        localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+    }
+}
+
+export default new Statistics(); 

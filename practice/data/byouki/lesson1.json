@@ -1,0 +1,572 @@
+{
+  "questions": [
+    {
+      "character": "風邪",
+      "hiragana": "かぜ",
+      "romaji": "kaze",
+      "meaning": "感冒",
+      "type": "normal",
+      "answers": "かぜ:kaze"
+    },
+    {
+      "character": "うつる",
+      "hiragana": "うつる",
+      "romaji": "utsuru",
+      "meaning": "移动，转移，传染",
+      "type": "normal",
+      "answers": "うつる:utsuru"
+    },
+    {
+      "character": "風邪がうつる",
+      "hiragana": "かぜ:が:うつる",
+      "romaji": "kaze:ga:utsuru",
+      "meaning": "感冒传染",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|うつる:utsuru"
+    },
+    {
+      "character": "重い",
+      "hiragana": "おもい",
+      "romaji": "omoi",
+      "meaning": "重的",
+      "type": "normal",
+      "answers": "おもい:omoi"
+    },
+    {
+      "character": "風邪が重い",
+      "hiragana": "かぜ:が:おもい",
+      "romaji": "kaze:ga:omoi",
+      "meaning": "重感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|おもい:omoi"
+    },
+    {
+      "character": "軽い",
+      "hiragana": "かるい",
+      "romaji": "karui",
+      "meaning": "轻的，重量小的",
+      "type": "normal",
+      "answers": "かるい:karui"
+    },
+    {
+      "character": "風邪が軽い",
+      "hiragana": "かぜ:が:かるい",
+      "romaji": "kaze:ga:karui",
+      "meaning": "有点感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|かるい:karui"
+    },
+    {
+      "character": "治る",
+      "hiragana": "なおる",
+      "romaji": "naoru",
+      "meaning": "治愈，治好（结果状态）",
+      "type": "normal",
+      "answers": "なおる:naoru"
+    },
+    {
+      "character": "風邪が治る",
+      "hiragana": "かぜ:が:なおる",
+      "romaji": "kaze:ga:naoru",
+      "meaning": "感冒治好了",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|なおる:naoru"
+    },
+    {
+      "character": "はやる",
+      "hiragana": "はやる",
+      "romaji": "hayaru",
+      "meaning": "病気などが流行,蔓延.",
+      "type": "normal",
+      "answers": "はやる:hayaru"
+    },
+    {
+      "character": "風邪がはやる",
+      "hiragana": "かぜ:が:はやる",
+      "romaji": "kaze:ga:hayaru",
+      "meaning": "感冒流行",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|はやる:hayaru"
+    },
+    {
+      "character": "ひどい",
+      "hiragana": "ひどい",
+      "romaji": "hidoi",
+      "meaning": "糟糕的，严重的",
+      "type": "normal",
+      "answers": "ひどい:hidoi"
+    },
+    {
+      "character": "風邪がひどい",
+      "hiragana": "かぜ:が:ひどい",
+      "romaji": "kaze:ga:hidoi",
+      "meaning": "重感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|ひどい:hidoi"
+    },
+    {
+      "character": "治す",
+      "hiragana": "なおす",
+      "romaji": "naosu",
+      "meaning": "治愈（动作）",
+      "type": "normal",
+      "answers": "なおす:naosu"
+    },
+    {
+      "character": "風邪を治す",
+      "hiragana": "かぜ:を:なおす",
+      "romaji": "kaze:wo:naosu",
+      "meaning": "治感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|を:wo|なおす:naosu"
+    },
+    {
+      "character": "風邪をひく",
+      "hiragana": "かぜ:を:ひく",
+      "romaji": "kaze:wo:hiku",
+      "meaning": "感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|を:wo|ひく:hiku"
+    },
+    {
+      "character": "せき",
+      "hiragana": "せき",
+      "romaji": "seki",
+      "meaning": "咳嗽",
+      "type": "normal",
+      "answers": "せき:seki"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "せきが出る",
+      "hiragana": "せき:が:でる",
+      "romaji": "seki:ga:deru",
+      "meaning": "咳嗽出来（一直咳嗽）",
+      "type": "split",
+      "answers": "せき:seki|が:ga|でる:deru"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止（状态结果）",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "せきが止まる",
+      "hiragana": "せき:が:とまる",
+      "romaji": "seki:ga:tomaru",
+      "meaning": "咳嗽停止（状态结果）",
+      "type": "split",
+      "answers": "せき:seki|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "让~停止",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "せきを止める",
+      "hiragana": "せき:を:とめる",
+      "romaji": "seki:wo:tomeru",
+      "meaning": "止咳（通过吃药等方式）",
+      "type": "split",
+      "answers": "せき:seki|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "上がる",
+      "hiragana": "あがる",
+      "romaji": "agaru",
+      "meaning": "提升，上涨",
+      "type": "normal",
+      "answers": "あがる:agaru"
+    },
+    {
+      "character": "熱が上がる",
+      "hiragana": "ねつ:が:あがる",
+      "romaji": "netsu:ga:agaru",
+      "meaning": "发烧",
+      "type": "split",
+      "answers": "ねつ:netsu|が:ga|あがる:agaru"
+    },
+    {
+      "character": "下がる",
+      "hiragana": "さがる",
+      "romaji": "sagaru",
+      "meaning": "下去，下降",
+      "type": "normal",
+      "answers": "さがる:sagaru"
+    },
+    {
+      "character": "熱が下がる",
+      "hiragana": "ねつ:が:さがる",
+      "romaji": "netsu:ga:sagaru",
+      "meaning": "发烧退下来",
+      "type": "split",
+      "answers": "ねつ:netsu|が:ga|さがる:sagaru"
+    },
+    {
+      "character": "下げる",
+      "hiragana": "さげる",
+      "romaji": "sageru",
+      "meaning": "使~降低",
+      "type": "normal",
+      "answers": "さげる:sageru"
+    },
+    {
+      "character": "熱を下げる",
+      "hiragana": "ねつ:を:さげる",
+      "romaji": "netsu:wo:sageru",
+      "meaning": "退烧",
+      "type": "split",
+      "answers": "ねつ:netsu|を:wo|さげる:sageru"
+    },
+    {
+      "character": "測る",
+      "hiragana": "はかる",
+      "romaji": "hakaru",
+      "meaning": "测量",
+      "type": "normal",
+      "answers": "はかる:hakaru"
+    },
+    {
+      "character": "熱を測る",
+      "hiragana": "ねつ:を:はかる",
+      "romaji": "netsu:wo:hakaru",
+      "meaning": "测量体温（热度）",
+      "type": "split",
+      "answers": "ねつ:netsu|を:wo|はかる:hakaru"
+    },
+    {
+      "character": "けが",
+      "hiragana": "けが",
+      "romaji": "kega",
+      "meaning": "伤口，商砼",
+      "type": "normal",
+      "answers": "けが:kega"
+    },
+    {
+      "character": "治る",
+      "hiragana": "なおる",
+      "romaji": "naoru",
+      "meaning": "治愈",
+      "type": "normal",
+      "answers": "なおる:naoru"
+    },
+    {
+      "character": "けがが治る",
+      "hiragana": "けが:が:なおる",
+      "romaji": "kega:ga:naoru",
+      "meaning": "伤势痊愈",
+      "type": "split",
+      "answers": "けが:kega|が:ga|なおる:naoru"
+    },
+    {
+      "character": "ひどい",
+      "hiragana": "ひどい",
+      "romaji": "hidoi",
+      "meaning": "糟糕的，严重的",
+      "type": "normal",
+      "answers": "ひどい:hidoi"
+    },
+    {
+      "character": "けががひどい",
+      "hiragana": "けが:が:ひどい",
+      "romaji": "kega:ga:hidoi",
+      "meaning": "重伤",
+      "type": "split",
+      "answers": "けが:kega|が:ga|ひどい:hidoi"
+    },
+    {
+      "character": "治す",
+      "hiragana": "なおす",
+      "romaji": "naosu",
+      "meaning": "治愈",
+      "type": "normal",
+      "answers": "なおす:naosu"
+    },
+    {
+      "character": "けがを治す",
+      "hiragana": "けが:を:なおす",
+      "romaji": "kega:wo:naosu",
+      "meaning": "治疗伤口",
+      "type": "split",
+      "answers": "けが:kega|を:wo|なおす:naosu"
+    },
+    {
+      "character": "出る",
+      "hiragana": "でる",
+      "romaji": "deru",
+      "meaning": "出来",
+      "type": "normal",
+      "answers": "でる:deru"
+    },
+    {
+      "character": "血が出る",
+      "hiragana": "ち:が:でる",
+      "romaji": "chi:ga:deru",
+      "meaning": "血出来了",
+      "type": "split",
+      "answers": "ち:chi|が:ga|でる:deru"
+    },
+    {
+      "character": "止まる",
+      "hiragana": "とまる",
+      "romaji": "tomaru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "とまる:tomaru"
+    },
+    {
+      "character": "血が止まる",
+      "hiragana": "ち:が:とまる",
+      "romaji": "chi:ga:tomaru",
+      "meaning": "血止住了",
+      "type": "split",
+      "answers": "ち:chi|が:ga|とまる:tomaru"
+    },
+    {
+      "character": "流れる",
+      "hiragana": "ながれる",
+      "romaji": "nagareru",
+      "meaning": "流动",
+      "type": "normal",
+      "answers": "ながれる:nagareru"
+    },
+    {
+      "character": "血が流れる",
+      "hiragana": "ち:が:ながれる",
+      "romaji": "chi:ga:nagareru",
+      "meaning": "血液流动",
+      "type": "split",
+      "answers": "ち:chi|が:ga|ながれる:nagareru"
+    },
+    {
+      "character": "止める",
+      "hiragana": "とめる",
+      "romaji": "tomeru",
+      "meaning": "停止",
+      "type": "normal",
+      "answers": "とめる:tomeru"
+    },
+    {
+      "character": "血を止める",
+      "hiragana": "ち:を:とめる",
+      "romaji": "chi:wo:tomeru",
+      "meaning": "止血",
+      "type": "split",
+      "answers": "ち:chi|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "浅い",
+      "hiragana": "あさい",
+      "romaji": "asai",
+      "meaning": "浅的",
+      "type": "normal",
+      "answers": "あさい:asai"
+    },
+    {
+      "character": "傷が浅い",
+      "hiragana": "きず:が:あさい",
+      "romaji": "kizu:ga:asai",
+      "meaning": "伤口很浅",
+      "type": "split",
+      "answers": "きず:kizu|が:ga|あさい:asai"
+    },
+    {
+      "character": "傷がある",
+      "hiragana": "きず:が:ある",
+      "romaji": "kizu:ga:aru",
+      "meaning": "有疤痕",
+      "type": "split",
+      "answers": "きず:kizu|が:ga|ある:aru"
+    },
+    {
+      "character": "傷が治る",
+      "hiragana": "きず:が:なおる",
+      "romaji": "kizu:ga:naoru",
+      "meaning": "伤口愈合",
+      "type": "split",
+      "answers": "きず:kizu|が:ga|なおる:naoru"
+    },
+    {
+      "character": "残る",
+      "hiragana": "のこる",
+      "romaji": "nokoru",
+      "meaning": "残留，留下",
+      "type": "normal",
+      "answers": "のこる:nokoru"
+    },
+    {
+      "character": "傷が残る",
+      "hiragana": "きず:が:のこる",
+      "romaji": "kizu:ga:nokoru",
+      "meaning": "留下疤痕",
+      "type": "split",
+      "answers": "きず:kizu|が:ga|のこる:nokoru"
+    },
+    {
+      "character": "深い",
+      "hiragana": "ふかい",
+      "romaji": "fukai",
+      "meaning": "深的",
+      "type": "normal",
+      "answers": "ふかい:fukai"
+    },
+    {
+      "character": "傷が深い",
+      "hiragana": "きず:が:ふかい",
+      "romaji": "kizu:ga:fukai",
+      "meaning": "深深的疤痕",
+      "type": "split",
+      "answers": "きず:kizu|が:ga|ふかい:fukai"
+    },
+    {
+      "character": "傷を治す",
+      "hiragana": "きず:を:なおす",
+      "romaji": "kizu:wo:naosu",
+      "meaning": "治愈伤口",
+      "type": "split",
+      "answers": "きず:kizu|を:wo|なおす:naosu"
+    },
+    {
+      "character": "やけど",
+      "hiragana": "やけど",
+      "romaji": "yakedo",
+      "meaning": "烧伤",
+      "type": "normal",
+      "answers": "やけど:yakedo"
+    },
+    {
+      "character": "重い",
+      "hiragana": "おもい",
+      "romaji": "omoi",
+      "meaning": "重的",
+      "type": "normal",
+      "answers": "おもい:omoi"
+    },
+    {
+      "character": "やけどが重い",
+      "hiragana": "やけど:が:おもい",
+      "romaji": "yakedo:ga:omoi",
+      "meaning": "烧伤很重",
+      "type": "split",
+      "answers": "やけど:yakedo|が:ga|おもい:omoi"
+    },
+    {
+      "character": "軽い",
+      "hiragana": "かるい",
+      "romaji": "karui",
+      "meaning": "光",
+      "type": "normal",
+      "answers": "かるい:karui"
+    },
+    {
+      "character": "やけどが軽い",
+      "hiragana": "やけど:が:かるい",
+      "romaji": "yakedo:ga:karui",
+      "meaning": "轻微烧伤",
+      "type": "split",
+      "answers": "やけど:yakedo|が:ga|かるい:karui"
+    },
+    {
+      "character": "やけどが治る",
+      "hiragana": "やけど:が:なおる",
+      "romaji": "yakedo:ga:naoru",
+      "meaning": "烧伤痊愈",
+      "type": "split",
+      "answers": "やけど:yakedo|が:ga|なおる:naoru"
+    },
+    {
+      "character": "ひどい",
+      "hiragana": "ひどい",
+      "romaji": "hidoi",
+      "meaning": "糟糕的",
+      "type": "normal",
+      "answers": "ひどい:hidoi"
+    },
+    {
+      "character": "やけどがひどい",
+      "hiragana": "やけど:が:ひどい",
+      "romaji": "yakedo:ga:hidoi",
+      "meaning": "烧伤情况很糟糕",
+      "type": "split",
+      "answers": "やけど:yakedo|が:ga|ひどい:hidoi"
+    },
+    {
+      "character": "やけどを治す",
+      "hiragana": "やけど:を:なおす",
+      "romaji": "yakedo:wo:naosu",
+      "meaning": "治愈烧伤",
+      "type": "split",
+      "answers": "やけど:yakedo|を:wo|なおす:naosu"
+    },
+    {
+      "character": "医者に行く",
+      "hiragana": "いしゃ:に:いく",
+      "romaji": "isha:ni:iku",
+      "meaning": "去看医生",
+      "type": "split",
+      "answers": "いしゃ:isha|に:ni|いく:iku"
+    },
+    {
+      "character": "見せる",
+      "hiragana": "みせる",
+      "romaji": "miseru",
+      "meaning": "展示，给~看，让~看",
+      "type": "normal",
+      "answers": "みせる:miseru"
+    },
+    {
+      "character": "医者に見せる",
+      "hiragana": "いしゃ:に:みせる",
+      "romaji": "isha:ni:miseru",
+      "meaning": "给医生看",
+      "type": "split",
+      "answers": "いしゃ:isha|に:ni|みせる:miseru"
+    },
+    {
+      "character": "医者に見てもらう",
+      "hiragana": "いしゃ:に:み:て:もらう",
+      "romaji": "isha:ni:mi:te:morau",
+      "meaning": "请医生看病",
+      "type": "split",
+      "answers": "いしゃ:isha|に:ni|み:mi|て:te|もらう:morau"
+    },
+    {
+      "character": "注射",
+      "hiragana": "ちゅうしゃ",
+      "romaji": "chuusha",
+      "meaning": "注射",
+      "type": "normal",
+      "answers": "ちゅうしゃ:chuusha"
+    },
+    {
+      "character": "打つ",
+      "hiragana": "うつ",
+      "romaji": "utsu",
+      "meaning": "罢工",
+      "type": "normal",
+      "answers": "うつ:utsu"
+    },
+    {
+      "character": "注射を打つ",
+      "hiragana": "ちゅうしゃ:を:うつ",
+      "romaji": "chuusha:wo:utsu",
+      "meaning": "打针",
+      "type": "split",
+      "answers": "ちゅうしゃ:chuusha|を:wo|うつ:utsu"
+    }
+  ]
+}

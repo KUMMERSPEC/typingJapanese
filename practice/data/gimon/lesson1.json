@@ -1,0 +1,68 @@
+{
+  "questions": [
+    {
+      "character": "何",
+      "hiragana": "なに",
+      "romaji": "nani",
+      "meaning": "什么",
+      "type": "normal",
+      "answers": "なに:nani"
+    },
+    {
+      "character": "が",
+      "hiragana": "が",
+      "romaji": "ga",
+      "meaning": "（助词）",
+      "type": "normal",
+      "answers": "が:ga"
+    },
+    {
+      "character": "好き",
+      "hiragana": "すき",
+      "romaji": "suki",
+      "meaning": "喜欢",
+      "type": "normal",
+      "answers": "すき:suki"
+    },
+    {
+      "character": "何が好き",
+      "hiragana": "なに:が:すき",
+      "romaji": "nani:ga:suki",
+      "meaning": "喜欢什么",
+      "type": "split",
+      "answers": "なに:nani|が:ga|すき:suki"
+    },
+    {
+      "character": "どこ",
+      "hiragana": "どこ",
+      "romaji": "doko",
+      "meaning": "哪里",
+      "type": "normal",
+      "answers": "どこ:doko"
+    },
+    {
+      "character": "に",
+      "hiragana": "に",
+      "romaji": "ni",
+      "meaning": "（助词）",
+      "type": "normal",
+      "answers": "に:ni"
+    },
+    {
+      "character": "行く",
+      "hiragana": "いく",
+      "romaji": "iku",
+      "meaning": "去",
+      "type": "normal",
+      "answers": "いく:iku"
+    },
+    {
+      "character": "どこに行く",
+      "hiragana": "どこ:に:いく",
+      "romaji": "doko:ni:iku",
+      "meaning": "去哪里",
+      "type": "split",
+      "answers": "どこ:doko|に:ni|いく:iku"
+    }
+  ]
+} 

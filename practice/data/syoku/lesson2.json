@@ -1,0 +1,252 @@
+{
+  "questions": [
+    {
+      "character": "お湯",
+      "hiragana": "おゆ",
+      "romaji": "oyu",
+      "meaning": "热水",
+      "type": "normal",
+      "answers": "おゆ:oyu"
+    },
+    {
+      "character": "入れる",
+      "hiragana": "いれる",
+      "romaji": "ireru",
+      "meaning": "放入，倒入",
+      "type": "normal",
+      "answers": "いれる:ireru"
+    },
+    {
+      "character": "お茶を入れる",
+      "hiragana": "おちゃ:を:いれる",
+      "romaji": "ocha:wo:ireru",
+      "meaning": "泡茶",
+      "type": "split",
+      "answers": "おちゃ:ocha|を:wo|いれる:ireru"
+    },
+    {
+      "character": "出す",
+      "hiragana": "だす",
+      "romaji": "dasu",
+      "meaning": "拿出来",
+      "type": "normal",
+      "answers": "だす:dasu"
+    },
+    {
+      "character": "お茶を出す",
+      "hiragana": "おちゃ:を:だす",
+      "romaji": "ocha:wo:dasu",
+      "meaning": "奉茶",
+      "type": "split",
+      "answers": "おちゃ:ocha|を:wo|だす:dasu"
+    },
+    {
+      "character": "つぐ",
+      "hiragana": "つぐ",
+      "romaji": "tsugu",
+      "meaning": "注入，倒入",
+      "type": "normal",
+      "answers": "つぐ:tsugu"
+    },
+    {
+      "character": "お茶をつぐ",
+      "hiragana": "おちゃ:を:つぐ",
+      "romaji": "ocha:wo:tsugu",
+      "meaning": "倒茶",
+      "type": "split",
+      "answers": "おちゃ:ocha|を:wo|つぐ:tsugu"
+    },
+    {
+      "character": "ごはん",
+      "hiragana": "ごはん",
+      "romaji": "gohan",
+      "meaning": "饭",
+      "type": "normal",
+      "answers": "ごはん:gohan"
+    },
+    {
+      "character": "炊ける",
+      "hiragana": "たける",
+      "romaji": "takeru",
+      "meaning": "能够煮",
+      "type": "normal",
+      "answers": "たける:takeru"
+    },
+    {
+      "character": "ごはんが炊ける",
+      "hiragana": "ごはん:が:たける",
+      "romaji": "gohan:ga:takeru",
+      "meaning": "可以煮米饭。",
+      "type": "split",
+      "answers": "ごはん:gohan|が:ga|たける:takeru"
+    },
+    {
+      "character": "炊く",
+      "hiragana": "たく",
+      "romaji": "taku",
+      "meaning": "煮（饭）",
+      "type": "normal",
+      "answers": "たく:taku"
+    },
+    {
+      "character": "ごはんを炊く",
+      "hiragana": "ごはん:を:たく",
+      "romaji": "gohan:wo:taku",
+      "meaning": "煮饭",
+      "type": "split",
+      "answers": "ごはん:gohan|を:wo|たく:taku"
+    },
+    {
+      "character": "作る",
+      "hiragana": "つくる",
+      "romaji": "tsukuru",
+      "meaning": "制作",
+      "type": "normal",
+      "answers": "つくる:tsukuru"
+    },
+    {
+      "character": "ごはんを作る",
+      "hiragana": "ごはん:を:つくる",
+      "romaji": "gohan:wo:tsukuru",
+      "meaning": "做饭",
+      "type": "split",
+      "answers": "ごはん:gohan|を:wo|つくる:tsukuru"
+    },
+    {
+      "character": "食事",
+      "hiragana": "しょくじ",
+      "romaji": "shokuji",
+      "meaning": "吃饭（名词）",
+      "type": "normal",
+      "answers": "しょくじ:shokuji"
+    },
+    {
+      "character": "食事をする",
+      "hiragana": "しょくじ:を:する",
+      "romaji": "shokuji:wo:suru",
+      "meaning": "吃饭（动词组合）",
+      "type": "split",
+      "answers": "しょくじ:shokuji|を:wo|する:suru"
+    },
+    {
+      "character": "食事を作る",
+      "hiragana": "しょくじ:を:つくる",
+      "romaji": "shokuji:wo:tsukuru",
+      "meaning": "做一顿饭",
+      "type": "split",
+      "answers": "しょくじ:shokuji|を:wo|つくる:tsukuru"
+    },
+    {
+      "character": "とる",
+      "hiragana": "とる",
+      "romaji": "toru",
+      "meaning": "摄取，取得",
+      "type": "normal",
+      "answers": "とる:toru"
+    },
+    {
+      "character": "食事をとる",
+      "hiragana": "しょくじ:を:とる",
+      "romaji": "shokuji:wo:toru",
+      "meaning": "吃饭（动词组合)",
+      "type": "split",
+      "answers": "しょくじ:shokuji|を:wo|とる:toru"
+    },
+    {
+      "character": "熱い",
+      "hiragana": "あつい",
+      "romaji": "atsui",
+      "meaning": "热的",
+      "type": "normal",
+      "answers": "あつい:atsui"
+    },
+    {
+      "character": "お湯が熱い",
+      "hiragana": "おゆ:が:あつい",
+      "romaji": "oyu:ga:atsui",
+      "meaning": "水很热",
+      "type": "split",
+      "answers": "おゆ:oyu|が:ga|あつい:atsui"
+    },
+    {
+      "character": "冷める",
+      "hiragana": "さめる",
+      "romaji": "sameru",
+      "meaning": "冷却",
+      "type": "normal",
+      "answers": "さめる:sameru"
+    },
+    {
+      "character": "お湯が冷める",
+      "hiragana": "おゆ:が:さめる",
+      "romaji": "oyu:ga:sameru",
+      "meaning": "水变冷了",
+      "type": "split",
+      "answers": "おゆ:oyu|が:ga|さめる:sameru"
+    },
+    {
+      "character": "ぬるい",
+      "hiragana": "ぬるい",
+      "romaji": "nurui",
+      "meaning": "温热",
+      "type": "normal",
+      "answers": "ぬるい:nurui"
+    },
+    {
+      "character": "お湯がぬるい",
+      "hiragana": "おゆ:が:ぬるい",
+      "romaji": "oyu:ga:nurui",
+      "meaning": "水是温的",
+      "type": "split",
+      "answers": "おゆ:oyu|が:ga|ぬるい:nurui"
+    },
+    {
+      "character": "沸く",
+      "hiragana": "わく",
+      "romaji": "waku",
+      "meaning": "沸腾",
+      "type": "normal",
+      "answers": "わく:waku"
+    },
+    {
+      "character": "お湯がわく",
+      "hiragana": "おゆ:が:わく",
+      "romaji": "oyu:ga:waku",
+      "meaning": "热水沸腾",
+      "type": "split",
+      "answers": "おゆ:oyu|が:ga|わく:waku"
+    },
+    {
+      "character": "冷ます",
+      "hiragana": "さます",
+      "romaji": "samasu",
+      "meaning": "弄凉，冷却",
+      "type": "normal",
+      "answers": "さます:samasu"
+    },
+    {
+      "character": "お湯を冷ます",
+      "hiragana": "おゆ:を:さます",
+      "romaji": "oyu:wo:samasu",
+      "meaning": "把水放凉，冷却水",
+      "type": "split",
+      "answers": "おゆ:oyu|を:wo|さます:samasu"
+    },
+    {
+      "character": "沸かす",
+      "hiragana": "わかす",
+      "romaji": "wakasu",
+      "meaning": "使~沸腾",
+      "type": "normal",
+      "answers": "わかす:wakasu"
+    },
+    {
+      "character": "お湯をわかす",
+      "hiragana": "おゆ:を:わかす",
+      "romaji": "oyu:wo:wakasu",
+      "meaning": "烧开水",
+      "type": "split",
+      "answers": "おゆ:oyu|を:wo|わかす:wakasu"
+    }
+  ]
+}

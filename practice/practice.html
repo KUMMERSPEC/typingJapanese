@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日本語練習</title>
+    <link rel="stylesheet" href="./css/practice.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">Typing-Japanese</div>
+        <div class="lesson-info-controls-wrapper">
+            <div class="lesson-info">
+                <span id="courseTitle">加载中...</span>
+            </div>
+            <div class="controls">
+                <button class="icon-button" onclick="window.practiceManager.playSound()">🔊</button>
+                <button class="icon-button" onclick="window.practiceManager.toggleSplitList()">📚</button>
+                <button class="icon-button" onclick="window.location.href='courses.html'">👈</button>
+                <button class="icon-button">☀️</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 添加侧边栏 -->
+    <div class="sidebar" id="splitListSidebar">
+        <div class="sidebar-header">
+            <h3>分句练习列表</h3>
+            <button class="close-button" onclick="window.practiceManager.toggleSplitList()">×</button>
+        </div>
+        <div class="sidebar-content">
+            <!-- 这里将通过 JavaScript 动态添加内容 -->
+        </div>
+    </div>
+    
+    <main>
+        <div class="practice-container">
+            <!-- 问题显示区域 -->
+            <div class="question-display">
+                <div class="character"></div>
+                <div class="input-area">
+                    <input type="text" placeholder="输入答案..." />
+                </div>
+            </div>
+            
+            <!-- 添加历史记录显示区域 -->
+            <div class="previous-question">
+                <div class="previous-japanese"></div>
+                <div class="previous-meaning"></div>
+            </div>
+
+            <!-- 答案显示区域 -->
+            <div class="answer-display">
+                <div class="answer-content">
+                    <div class="kanji-text"></div>
+                    <div class="kana-text"></div>
+                    <div class="romaji-text"></div>
+                    <div class="meaning-text"></div>
+                </div>
+            </div>
+
+            <!-- 提示区域 -->
+            <div class="hints">
+                <div class="hint-key">tab</div>
+                <span>- show answer</span>
+                <div class="hint-key">control</div>
+                <span>- play soundmark</span>
+                <div class="hint-key">alt+m</div>
+                <span>- mark as mastered</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- 添加答题历史面板 -->
+    <div class="history-panel">
+        <div class="history-content">
+            <!-- 历史记录将通过JavaScript动态添加 -->
+        </div>
+    </div>
+
+    <!-- 使用 ES6 模块方式导入脚本 -->
+    <script type="module" src="./js/common/utils.js"></script>
+    <script type="module" src="./js/common/storage.js"></script>
+    <script type="module" src="./js/dataLoader.js"></script>
+    <script type="module" src="./js/practice.js?v=1.0.2"></script>
+
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            return false;
+        };
+
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('course');
+        const lessonId = urlParams.get('lesson');
+
+        // 标记课程为已完成
+        function markLessonAsCompleted() {
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            if (!completedLessons[courseId]) {
+                completedLessons[courseId] = [];
+            }
+            if (!completedLessons[courseId].includes(lessonId)) {
+                completedLessons[courseId].push(lessonId);
+                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            }
+        }
+
+        // 在完成课程时调用标记函数
+        window.addEventListener('lessonCompleted', () => {
+            markLessonAsCompleted();
+        });
+
+        // 确保页面完全加载后再初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 从courses.html中获取课程数据
+            fetch('courses.html')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const scriptContent = Array.from(doc.scripts)
+                        .find(script => script.textContent.includes('courseData'))
+                        ?.textContent;
+                    
+                    if (scriptContent) {
+                        const courseDataMatch = scriptContent.match(/const courseData = ({[\s\S]*?});/);
+                        if (courseDataMatch) {
+                            const courseData = eval('(' + courseDataMatch[1] + ')');
+                            const course = courseData[courseId];
+                            if (course && course.lessons[lessonId]) {
+                                document.getElementById('courseTitle').textContent = 
+                                    `${course.name} - ${course.lessons[lessonId].title}`;
+                                document.title = `${course.name} - ${course.lessons[lessonId].title}`;
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading course data:', error);
+                    // 如果加载失败，显示基本信息
+                    document.getElementById('courseTitle').textContent = `${courseId} - ${lessonId}`;
+                });
+        });
+    </script>
+</body>
+</html> 

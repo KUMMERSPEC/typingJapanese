@@ -1,0 +1,380 @@
+{
+  "questions": [
+    {
+      "character": "台風",
+      "hiragana": "たいふう",
+      "romaji": "taifuu",
+      "meaning": "台风",
+      "type": "normal",
+      "answers": "たいふう:taifuu"
+    },
+    {
+      "character": "台風が来る",
+      "hiragana": "たいふう:が:くる",
+      "romaji": "taifuu:ga:kuru",
+      "meaning": "台风来了",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|くる:kuru"
+    },
+    {
+      "character": "上陸する",
+      "hiragana": "じょうりくする",
+      "romaji": "jourikusuru",
+      "meaning": "上岸",
+      "type": "normal",
+      "answers": "じょうりくする:jourikusuru"
+    },
+    {
+      "character": "台風が上陸する",
+      "hiragana": "たいふう:が:じょうりくする",
+      "romaji": "taifuu:ga:jourikusuru",
+      "meaning": "台风登陆",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|じょうりくする:jourikusuru"
+    },
+    {
+      "character": "近づく",
+      "hiragana": "ちかづく",
+      "romaji": "chikazuku",
+      "meaning": "靠近一点",
+      "type": "normal",
+      "answers": "ちかづく:chikazuku"
+    },
+    {
+      "character": "台風が近づく",
+      "hiragana": "たいふう:が:ちかづく",
+      "romaji": "taifuu:ga:chikazuku",
+      "meaning": "台风逼近",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|ちかづく:chikazuku"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "台風が強い",
+      "hiragana": "たいふう:が:つよい",
+      "romaji": "taifuu:ga:tsuyoi",
+      "meaning": "台风很强",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|つよい:tsuyoi"
+    },
+    {
+      "character": "通り過ぎる",
+      "hiragana": "とおりすぎる",
+      "romaji": "toorisugiru",
+      "meaning": "路过",
+      "type": "normal",
+      "answers": "とおりすぎる:toorisugiru"
+    },
+    {
+      "character": "台風が通り過ぎる",
+      "hiragana": "たいふう:が:とおりすぎる",
+      "romaji": "taifuu:ga:toorisugiru",
+      "meaning": "台风过境",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|とおりすぎる:toorisugiru"
+    },
+    {
+      "character": "弱い",
+      "hiragana": "よわい",
+      "romaji": "yowai",
+      "meaning": "虚弱的",
+      "type": "normal",
+      "answers": "よわい:yowai"
+    },
+    {
+      "character": "台風が弱い",
+      "hiragana": "たいふう:が:よわい",
+      "romaji": "taifuu:ga:yowai",
+      "meaning": "台风强度较弱",
+      "type": "split",
+      "answers": "たいふう:taifuu|が:ga|よわい:yowai"
+    },
+    {
+      "character": "台風の目",
+      "hiragana": "たいふう:の:め",
+      "romaji": "taifuu:no:me",
+      "meaning": "台风眼",
+      "type": "split",
+      "answers": "たいふう:taifuu|の:no|め:me"
+    },
+    {
+      "character": "地震",
+      "hiragana": "じしん",
+      "romaji": "jishin",
+      "meaning": "地震",
+      "type": "normal",
+      "answers": "じしん:jishin"
+    },
+    {
+      "character": "地震がある",
+      "hiragana": "じしん:が:ある",
+      "romaji": "jishin:ga:aru",
+      "meaning": "有地震",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|ある:aru"
+    },
+    {
+      "character": "大きい",
+      "hiragana": "おおきい",
+      "romaji": "ookii",
+      "meaning": "大的",
+      "type": "normal",
+      "answers": "おおきい:ookii"
+    },
+    {
+      "character": "地震が大きい",
+      "hiragana": "じしん:が:おおきい",
+      "romaji": "jishin:ga:ookii",
+      "meaning": "地震很大",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "起きる",
+      "hiragana": "おきる",
+      "romaji": "okiru",
+      "meaning": "发生",
+      "type": "normal",
+      "answers": "おきる:okiru"
+    },
+    {
+      "character": "地震が起きる",
+      "hiragana": "じしん:が:おきる",
+      "romaji": "jishin:ga:okiru",
+      "meaning": "发生地震",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|おきる:okiru"
+    },
+    {
+      "character": "おさまる",
+      "hiragana": "おさまる",
+      "romaji": "osamaru",
+      "meaning": "消退",
+      "type": "normal",
+      "answers": "おさまる:osamaru"
+    },
+    {
+      "character": "地震がおさまる",
+      "hiragana": "じしん:が:おさまる",
+      "romaji": "jishin:ga:osamaru",
+      "meaning": "地震消退",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|おさまる:osamaru"
+    },
+    {
+      "character": "地震が来る",
+      "hiragana": "じしん:が:くる",
+      "romaji": "jishin:ga:kuru",
+      "meaning": "地震即将来临",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|くる:kuru"
+    },
+    {
+      "character": "強い",
+      "hiragana": "つよい",
+      "romaji": "tsuyoi",
+      "meaning": "强的",
+      "type": "normal",
+      "answers": "つよい:tsuyoi"
+    },
+    {
+      "character": "地震が強い",
+      "hiragana": "じしん:が:つよい",
+      "romaji": "jishin:ga:tsuyoi",
+      "meaning": "地震强烈",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|つよい:tsuyoi"
+    },
+    {
+      "character": "弱い",
+      "hiragana": "よわい",
+      "romaji": "yowai",
+      "meaning": "虚弱的",
+      "type": "normal",
+      "answers": "よわい:yowai"
+    },
+    {
+      "character": "地震が弱い",
+      "hiragana": "じしん:が:よわい",
+      "romaji": "jishin:ga:yowai",
+      "meaning": "地震强度较弱",
+      "type": "split",
+      "answers": "じしん:jishin|が:ga|よわい:yowai"
+    },
+    {
+      "character": "洪水",
+      "hiragana": "こうずい",
+      "romaji": "kouzui",
+      "meaning": "洪水",
+      "type": "normal",
+      "answers": "こうずい:kouzui"
+    },
+    {
+      "character": "起きる",
+      "hiragana": "おきる",
+      "romaji": "okiru",
+      "meaning": "起床",
+      "type": "normal",
+      "answers": "おきる:okiru"
+    },
+    {
+      "character": "洪水が起きる",
+      "hiragana": "こうずい:が:おきる",
+      "romaji": "kouzui:ga:okiru",
+      "meaning": "发生洪水",
+      "type": "split",
+      "answers": "こうずい:kouzui|が:ga|おきる:okiru"
+    },
+    {
+      "character": "引く",
+      "hiragana": "ひく",
+      "romaji": "hiku",
+      "meaning": "拉，拉",
+      "type": "normal",
+      "answers": "ひく:hiku"
+    },
+    {
+      "character": "洪水が引く",
+      "hiragana": "こうずい:が:ひく",
+      "romaji": "kouzui:ga:hiku",
+      "meaning": "洪水退去",
+      "type": "split",
+      "answers": "こうずい:kouzui|が:ga|ひく:hiku"
+    },
+    {
+      "character": "津波",
+      "hiragana": "つなみ",
+      "romaji": "tsunami",
+      "meaning": "海啸",
+      "type": "normal",
+      "answers": "つなみ:tsunami"
+    },
+    {
+      "character": "大きい",
+      "hiragana": "おおきい",
+      "romaji": "ookii",
+      "meaning": "大的",
+      "type": "normal",
+      "answers": "おおきい:ookii"
+    },
+    {
+      "character": "津波が大きい",
+      "hiragana": "つなみ:が:おおきい",
+      "romaji": "tsunami:ga:ookii",
+      "meaning": "海啸很大",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|おおきい:ookii"
+    },
+    {
+      "character": "起きる",
+      "hiragana": "おきる",
+      "romaji": "okiru",
+      "meaning": "起床",
+      "type": "normal",
+      "answers": "おきる:okiru"
+    },
+    {
+      "character": "津波が起きる",
+      "hiragana": "つなみ:が:おきる",
+      "romaji": "tsunami:ga:okiru",
+      "meaning": "发生海啸",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|おきる:okiru"
+    },
+    {
+      "character": "おさまる",
+      "hiragana": "おさまる",
+      "romaji": "osamaru",
+      "meaning": "消退",
+      "type": "normal",
+      "answers": "おさまる:osamaru"
+    },
+    {
+      "character": "津波がおさまる",
+      "hiragana": "つなみ:が:おさまる",
+      "romaji": "tsunami:ga:osamaru",
+      "meaning": "海啸平息",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|おさまる:osamaru"
+    },
+    {
+      "character": "津波が来る",
+      "hiragana": "つなみ:が:くる",
+      "romaji": "tsunami:ga:kuru",
+      "meaning": "海啸即将来临",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|くる:kuru"
+    },
+    {
+      "character": "高い",
+      "hiragana": "たかい",
+      "romaji": "takai",
+      "meaning": "昂贵的",
+      "type": "normal",
+      "answers": "たかい:takai"
+    },
+    {
+      "character": "津波が高い",
+      "hiragana": "つなみ:が:たかい",
+      "romaji": "tsunami:ga:takai",
+      "meaning": "海啸强度很高",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|たかい:takai"
+    },
+    {
+      "character": "小さい",
+      "hiragana": "ちいさい",
+      "romaji": "chiisai",
+      "meaning": "小的",
+      "type": "normal",
+      "answers": "ちいさい:chiisai"
+    },
+    {
+      "character": "津波が小さい",
+      "hiragana": "つなみ:が:ちいさい",
+      "romaji": "tsunami:ga:chiisai",
+      "meaning": "海啸规模很小",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "引く",
+      "hiragana": "ひく",
+      "romaji": "hiku",
+      "meaning": "拉",
+      "type": "normal",
+      "answers": "ひく:hiku"
+    },
+    {
+      "character": "津波が引く",
+      "hiragana": "つなみ:が:ひく",
+      "romaji": "tsunami:ga:hiku",
+      "meaning": "海啸退去",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|ひく:hiku"
+    },
+    {
+      "character": "低い",
+      "hiragana": "ひくい",
+      "romaji": "hikui",
+      "meaning": "低的",
+      "type": "normal",
+      "answers": "ひくい:hikui"
+    },
+    {
+      "character": "津波が低い",
+      "hiragana": "つなみ:が:ひくい",
+      "romaji": "tsunami:ga:hikui",
+      "meaning": "海啸强度较低",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|ひくい:hikui"
+    }
+  ]
+}
