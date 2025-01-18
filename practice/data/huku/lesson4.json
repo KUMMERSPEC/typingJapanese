@@ -1,6 +1,14 @@
 {
   "questions": [
     {
+      "character": "曇る",
+      "hiragana": "くもる",
+      "romaji": "kumoru",
+      "meaning": "多云，起雾",
+      "type": "normal",
+      "answers": "くもる:kumoru"
+    },
+    {
       "character": "めがねが曇る",
       "hiragana": "めがね:が:くもる",
       "romaji": "megane:ga:kumoru",
@@ -8,21 +16,14 @@
       "type": "split",
       "answers": "めがね:megane|が:ga|くもる:kumoru"
     },
-    {
-      "character": "曇る",
-      "hiragana": "くもる",
-      "romaji": "kumoru",
-      "meaning": "多云",
-      "type": "normal",
-      "answers": "くもる:kumoru"
-    },
+   
     {
       "character": "傘",
       "hiragana": "かさ",
       "romaji": "kasa",
       "meaning": "伞",
-      "type": "nan",
-      "answers": ""
+      "type": "normal",
+      "answers": "かさ:kasa"
     },
     {
       "character": "差す",
@@ -76,7 +77,7 @@
       "character": "化粧",
       "hiragana": "けしょう",
       "romaji": "keshou",
-      "meaning": "化妆品",
+      "meaning": "化妆",
       "type": "normal",
       "answers": "けしょう:keshou"
     },
@@ -92,7 +93,7 @@
       "character": "化粧が薄い",
       "hiragana": "けしょう:が:うすい",
       "romaji": "keshou:ga:usui",
-      "meaning": "淡妆",
+      "meaning": "淡妆，妆很淡",
       "type": "split",
       "answers": "けしょう:keshou|が:ga|うすい:usui"
     },
@@ -100,7 +101,7 @@
       "character": "落ちる",
       "hiragana": "おちる",
       "romaji": "ochiru",
-      "meaning": "掉落（自动）",
+      "meaning": "掉落，脱落（自动）",
       "type": "normal",
       "answers": "おちる:ochiru"
     },
@@ -108,7 +109,7 @@
       "character": "化粧が落ちる",
       "hiragana": "けしょう:が:おちる",
       "romaji": "keshou:ga:ochiru",
-      "meaning": "化妆品脱落",
+      "meaning": "妆掉了，脱妆",
       "type": "split",
       "answers": "けしょう:keshou|が:ga|おちる:ochiru"
     },
@@ -124,7 +125,7 @@
       "character": "化粧がくずれる",
       "hiragana": "けしょう:が:くずれる",
       "romaji": "keshou:ga:kuzureru",
-      "meaning": "妆脱落了",
+      "meaning": "妆脱落了（妆崩了）",
       "type": "split",
       "answers": "けしょう:keshou|が:ga|くずれる:kuzureru"
     },
@@ -148,7 +149,7 @@
       "character": "落とす",
       "hiragana": "おとす",
       "romaji": "otosu",
-      "meaning": "降低",
+      "meaning": "扔下，弄掉，去掉",
       "type": "normal",
       "answers": "おとす:otosu"
     },
@@ -156,7 +157,7 @@
       "character": "化粧を落とす",
       "hiragana": "けしょう:を:おとす",
       "romaji": "keshou:wo:otosu",
-      "meaning": "卸妆",
+      "meaning": "卸妆（去掉妆）",
       "type": "split",
       "answers": "けしょう:keshou|を:wo|おとす:otosu"
     },
@@ -167,6 +168,14 @@
       "meaning": "化妆",
       "type": "split",
       "answers": "けしょう:keshou|を:wo|する:suru"
+    },
+    {
+      "character": "直す",
+      "hiragana": "なおす",
+      "romaji": "naosu",
+      "meaning": "补妆，整理，修理",
+      "type": "normal",
+      "answers": "なおす:naosu"
     },
     {
       "character": "化粧を直す",
