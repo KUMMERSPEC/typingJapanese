@@ -69,7 +69,7 @@ class PracticeManager {
             if (this.questions.length === 0) {
                 // 如果所有题目都已掌握，显示提示并返回课程列表
                 alert('恭喜！本课程的所有内容你都已掌握！');
-                window.location.href = '/practice/courses.html';
+                window.location.href = '../courses.html';
                 return;
             }
 
@@ -96,39 +96,142 @@ class PracticeManager {
 
     // 初始化日语语音
     async initVoice() {
-        // 等待语音列表加载
-        if (this.speechSynthesis.getVoices().length === 0) {
-            await new Promise(resolve => {
-                this.speechSynthesis.addEventListener('voiceschanged', resolve, { once: true });
-            });
-        }
-        
-        // 获取日语语音
-        const voices = this.speechSynthesis.getVoices();
-        this.japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.lang.includes('JP')
-        );
-        
-        if (!this.japaneseVoice) {
-            console.warn('No Japanese voice found, using default voice');
+        try {
+            // 检测是否支持语音合成
+            if (!('speechSynthesis' in window)) {
+                console.warn('浏览器不支持语音合成');
+                return;
+            }
+
+            this.speechSynthesis = window.speechSynthesis;
+            
+            // 在移动端，确保语音合成处于活动状态
+            if (this.isMobile) {
+                this.speechSynthesis.resume();
+            }
+
+            // 等待语音列表加载
+            if (this.speechSynthesis.getVoices().length === 0) {
+                await new Promise(resolve => {
+                    this.speechSynthesis.onvoiceschanged = () => {
+                        resolve();
+                    };
+                    // 添加超时处理
+                    setTimeout(resolve, 1000);
+                });
+            }
+
+            // 获取日语语音
+            const voices = this.speechSynthesis.getVoices();
+            console.log('Available voices:', voices.map(v => ({name: v.name, lang: v.lang})));
+            
+            this.japaneseVoice = voices.find(voice => 
+                voice.lang.includes('ja') || voice.lang.includes('JP')
+            );
+
+            if (!this.japaneseVoice) {
+                console.warn('未找到日语语音，将使用默认语音');
+                this.japaneseVoice = voices[0];
+            }
+
+            console.log('Selected voice:', this.japaneseVoice);
+
+            // 在移动设备上预加载一个空的语音
+            if (this.isMobile) {
+                const silence = new SpeechSynthesisUtterance('');
+                silence.volume = 0;
+                this.speechSynthesis.speak(silence);
+            }
+
+            // 定期检查并恢复语音合成状态（针对移动端）
+            if (this.isMobile) {
+                setInterval(() => {
+                    if (this.speechSynthesis.paused) {
+                        this.speechSynthesis.resume();
+                    }
+                }, 1000);
+            }
+
+        } catch (error) {
+            console.error('初始化语音失败:', error);
         }
     }
 
     // 朗读文本
-    speak(text) {
-        // 如果正在朗读，先停止
-        this.speechSynthesis.cancel();
+    async speak(text) {
+        try {
+            // 获取当前问题
+            const currentQuestion = this.questions[this.currentQuestionIndex];
+            
+            // 优先使用平假名版本
+            let textToSpeak = currentQuestion.hiragana || currentQuestion.character;
+            
+            // 如果是分词类型的问题，移除分隔符
+            if (currentQuestion.type === 'split') {
+                textToSpeak = textToSpeak.replace(/:/g, '');
+            }
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1; // 语速稍慢
-        utterance.pitch = 1;
-        
-        if (this.japaneseVoice) {
-            utterance.voice = this.japaneseVoice;
+            console.log('Speaking text:', textToSpeak);
+
+            // 使用有道词典 API
+            const audio = new Audio();
+            audio.src = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+            
+            // 添加错误处理
+            audio.onerror = (error) => {
+                console.error('Audio playback error:', error);
+            };
+
+            // 播放音频
+            try {
+                await audio.play();
+            } catch (error) {
+                console.error('Failed to play audio:', error);
+            }
+
+        } catch (error) {
+            console.error('播放语音失败:', error);
         }
-        utterance.lang = 'ja-JP';
+    }
 
-        this.speechSynthesis.speak(utterance);
+    // 使用 Web Speech API 作为后备方案
+    fallbackSpeak(text) {
+        try {
+            if (!('speechSynthesis' in window)) {
+                console.warn('浏览器不支持语音合成');
+                return;
+            }
+
+            // 取消所有正在进行的语音
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            utterance.lang = 'ja-JP';
+
+            // 获取日语语音
+            const voices = window.speechSynthesis.getVoices();
+            const japaneseVoice = voices.find(voice => 
+                voice.lang.includes('ja') || voice.lang.includes('JP')
+            );
+            
+            if (japaneseVoice) {
+                utterance.voice = japaneseVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('后备语音播放失败:', error);
+        }
+    }
+
+    // 检测是否为移动设备
+    get isMobile() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+               ('ontouchstart' in window) ||
+               (navigator.maxTouchPoints > 0);
     }
 
     showQuestion() {
@@ -143,6 +246,7 @@ class PracticeManager {
         const characterElement = document.querySelector('.character');
         const inputArea = document.querySelector('.input-area');
         const answerDisplay = document.querySelector('.answer-display');
+        const functionButtons = document.querySelector('.function-buttons');
         
         if (!characterElement || !inputArea) {
             console.error('Required elements not found');
@@ -157,6 +261,23 @@ class PracticeManager {
         inputArea.innerHTML = '';
         inputArea.style.display = 'flex';
         characterElement.style.display = 'block';
+
+        // 设置功能按钮的 data-question 属性
+        const questionKey = `${this.course}:${this.lesson}:${question.character}`;
+        const markMasteredBtn = document.querySelector('.function-buttons .mark-mastered-btn');
+        if (markMasteredBtn) {
+            markMasteredBtn.setAttribute('data-question', questionKey);
+            
+            // 检查是否已掌握
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            if (masteredSentences[questionKey]) {
+                markMasteredBtn.classList.add('mastered');
+                markMasteredBtn.innerHTML = `<span class="btn-icon">✓</span><span class="btn-text">已掌握</span><span class="btn-shortcut">Alt+M</span>`;
+            } else {
+                markMasteredBtn.classList.remove('mastered');
+                markMasteredBtn.innerHTML = `<span class="btn-icon">✓</span><span class="btn-text">标记掌握</span><span class="btn-shortcut">Alt+M</span>`;
+            }
+        }
 
         // 检测是否为移动设备
         const userAgent = navigator.userAgent;
@@ -293,34 +414,6 @@ class PracticeManager {
             mainContainer.appendChild(input);
         }
 
-        // 添加显示答案按钮
-        console.log('Adding show answer button...');
-        const showAnswerButton = document.createElement('button');
-        showAnswerButton.className = 'show-answer-btn';
-        showAnswerButton.innerHTML = '显示答案';
-        showAnswerButton.style.cssText = `
-            margin-top: 15px;
-            padding: 8px 20px;
-            background-color: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            min-width: 120px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        `;
-        
-        showAnswerButton.addEventListener('click', () => {
-            this.showCorrectAnswer(question, true);
-        });
-        
-        mainContainer.appendChild(showAnswerButton);
-        console.log('Show answer button added');
-
         // 将主容器添加到输入区域
         inputArea.appendChild(mainContainer);
         console.log('Main container added to input area');
@@ -374,7 +467,9 @@ class PracticeManager {
 
     checkAnswer(answer) {
         const currentQuestion = this.questions[this.currentQuestionIndex];
-        if (currentQuestion.answers.includes(answer)) {
+        // 将答案转换为数组并检查是否有完全匹配
+        const possibleAnswers = currentQuestion.answers.split('|');
+        if (possibleAnswers.some(possibleAnswer => answer === possibleAnswer)) {
             console.log('Correct answer!');
             this.showCorrectAnswer(currentQuestion);
             // 延迟 2 秒后进入下一题
@@ -397,6 +492,7 @@ class PracticeManager {
         const answerDisplay = document.querySelector('.answer-display');
         const inputArea = document.querySelector('.input-area');
         const character = document.querySelector('.character');
+        const functionButtons = document.querySelector('.function-buttons');
         
         if (!answerDisplay || !inputArea || !character) {
             console.error('Required elements not found');
@@ -406,6 +502,7 @@ class PracticeManager {
         // 隐藏输入区域和字符
         inputArea.style.display = 'none';
         character.style.display = 'none';
+        functionButtons.style.display = 'none'; // 隐藏功能按钮组
 
         // 清空并显示答案区域
         answerDisplay.innerHTML = '';
@@ -423,16 +520,19 @@ class PracticeManager {
             <div class="romaji-text">${question.romaji}</div>
             <div class="meaning-text">${question.meaning}</div>
         `;
-
+        
         // 添加标记按钮
         const masteryButton = document.createElement('button');
         masteryButton.className = 'mastery-button';
         masteryButton.innerHTML = '✓ 标记为已掌握 (Alt+M)';
         masteryButton.onclick = () => this.markAsMastered(question);
 
+        // 设置 data-question 属性
+        const questionKey = `${this.course}:${this.lesson}:${question.character}`;
+        masteryButton.setAttribute('data-question', questionKey);
+
         // 检查是否已掌握
         const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
-        const questionKey = `${this.currentCourse}:${this.currentLesson}:${question.character}`;
         if (masteredSentences[questionKey]) {
             masteryButton.classList.add('mastered');
             masteryButton.innerHTML = '✓ 已掌握 (Alt+M)';
@@ -450,9 +550,10 @@ class PracticeManager {
                 // 隐藏答案显示
                 answerDisplay.classList.remove('show');
                 answerDisplay.style.display = 'none';
-                // 显示输入区域
+                // 显示输入区域和功能按钮
                 inputArea.style.display = 'flex';
                 character.style.display = 'block';
+                functionButtons.style.display = 'flex'; // 恢复显示功能按钮组
                 // 聚焦到第一个输入框
                 const firstInput = inputArea.querySelector('input');
                 if (firstInput) firstInput.focus();
@@ -468,6 +569,11 @@ class PracticeManager {
     // 添加标记为已掌握的方法
     markAsMastered(question) {
         console.log('=== markAsMastered START ===');
+        if (!question) {
+            console.error('No question provided');
+            return;
+        }
+
         const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
         const questionKey = `${this.course}:${this.lesson}:${question.character}`;
         const wasMarked = !!masteredSentences[questionKey];
@@ -538,7 +644,7 @@ class PracticeManager {
         }
 
         localStorage.setItem('masteredSentences', JSON.stringify(masteredSentences));
-        
+
         // 更新按钮状态和动画
         const updateButton = (button, isMarked) => {
             if (!button) {
@@ -546,43 +652,39 @@ class PracticeManager {
                 return;
             }
             
-            console.log('Updating button:', {
-                buttonClass: button.className,
-                currentHTML: button.innerHTML,
-                willBeMarked: isMarked
-            });
-
-            // 先更新类和文本
-            if (isMarked) {
-                button.classList.add('mastered');
-                button.innerHTML = '✓ 已掌握 (Alt+M)';
-            } else {
-                button.classList.remove('mastered');
-                button.innerHTML = '✓ 标记为已掌握 (Alt+M)';
-            }
+            // 移除之前的动画类
+            button.classList.remove('success');
+            button.classList.remove('mastered');
             
-            // 然后添加动画
-            button.style.transform = isMarked ? 'scale(1.1)' : 'scale(0.9)';
-            setTimeout(() => {
-                button.style.transform = 'scale(1)';
-                // 确保动画结束后按钮状态正确
-                if (isMarked) {
-                    button.classList.add('mastered');
-                } else {
-                    button.classList.remove('mastered');
-                }
-            }, 200);
+            // 强制重绘以确保动画可以重新触发
+            void button.offsetWidth;
+            
+            if (isMarked) {
+                // 添加新的状态和动画类
+                button.classList.add('mastered');
+                button.classList.add('success');
+                button.innerHTML = `<span class="btn-icon">✓</span><span class="btn-text">已掌握</span><span class="btn-shortcut">Alt+M</span>`;
+                
+                // 500ms后移除动画类，但保留mastered状态
+                setTimeout(() => {
+                    button.classList.remove('success');
+                }, 500);
+            } else {
+                button.innerHTML = `<span class="btn-icon">✓</span><span class="btn-text">标记掌握</span><span class="btn-shortcut">Alt+M</span>`;
+            }
         };
 
-        // 更新问题界面的按钮
-        const questionMasteryButton = document.querySelector('.question-mastery-button');
-        console.log('Found question mastery button:', !!questionMasteryButton);
-        updateButton(questionMasteryButton, !wasMarked);
-        
-        // 更新答案界面的按钮
-        const answerMasteryButton = document.querySelector('.mastery-button');
-        console.log('Found answer mastery button:', !!answerMasteryButton);
-        updateButton(answerMasteryButton, !wasMarked);
+        // 只更新当前问题的按钮
+        const currentButton = document.querySelector(`.function-buttons .mark-mastered-btn[data-question="${questionKey}"]`);
+        if (currentButton) {
+            updateButton(currentButton, !wasMarked);
+        }
+
+        // 如果在答案显示区域也有按钮，也更新它
+        const answerButton = document.querySelector(`.answer-display .mastery-button[data-question="${questionKey}"]`);
+        if (answerButton) {
+            updateButton(answerButton, !wasMarked);
+        }
 
         console.log('Updated mastered status:', {
             questionKey,
@@ -601,11 +703,12 @@ class PracticeManager {
             return;
         }
         this.isTransitioning = true;
-        
+
         // 获取必要的DOM元素
         const answerDisplay = document.querySelector('.answer-display');
         const inputArea = document.querySelector('.input-area');
         const character = document.querySelector('.character');
+        const functionButtons = document.querySelector('.function-buttons');
         
         if (!answerDisplay || !inputArea || !character) {
             console.error('Required elements not found in nextQuestion');
@@ -625,10 +728,17 @@ class PracticeManager {
             this.isTransitioning = false;
             return;
         }
-        
+
         // 增加题目索引并显示下一题
         this.currentQuestionIndex++;
         console.log('Moving to next question:', this.currentQuestionIndex);
+        
+        // 显示输入区域和功能按钮
+        inputArea.style.display = 'flex';
+        character.style.display = 'block';
+        if (functionButtons) {
+            functionButtons.style.display = 'flex';
+        }
         
         // 显示下一题
         this.showQuestion();
@@ -673,13 +783,23 @@ class PracticeManager {
                 totalQuestions: this.questions.length,
                 splitCount: splitCount
             });
-
+            
             // 保存课程数据到 localStorage
             const courseKey = `course_${this.course}_${this.lesson}`;
             localStorage.setItem(courseKey, JSON.stringify({
                 questions: this.questions,
                 title: document.querySelector('.lesson-info span')?.textContent || ''
             }));
+
+            // 标记课程为已完成
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            if (!completedLessons[this.course]) {
+                completedLessons[this.course] = [];
+            }
+            if (!completedLessons[this.course].includes(this.lesson)) {
+                completedLessons[this.course].push(this.lesson);
+                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            }
             
             // 更新统计，只传递 split 类型的题目
             const lessonId = `${this.course}:${this.lesson}`;
@@ -692,12 +812,12 @@ class PracticeManager {
                 updatedTotal
             });
 
-            // 清除答题区和历史记录区
-            const practiceContainer = document.querySelector('.practice-container');
-            const historyPanel = document.querySelector('.history-panel');
-            if (practiceContainer) practiceContainer.style.display = 'none';
-            if (historyPanel) historyPanel.style.display = 'none';
-            
+            // 隐藏练习相关的元素
+            const practiceElements = document.querySelectorAll('.character, .input-area, .answer-display, .previous-question');
+            practiceElements.forEach(element => {
+                if (element) element.style.display = 'none';
+            });
+
             // 创建完成界面
             const completeScreen = document.createElement('div');
             completeScreen.className = 'completion-screen';
@@ -709,34 +829,40 @@ class PracticeManager {
                 <div class="button-group">
                     <button class="restart-btn" onclick="location.reload()">重新开始</button>
                     <button class="next-lesson-btn">下一课</button>
-                    <button class="return-btn" onclick="window.location.href='/?update=true'">返回首页</button>
+                    <button class="return-btn" onclick="window.location.href='../../'">返回首页</button>
                 </div>
             `;
 
-            document.body.appendChild(completeScreen);
-
-            // 绑定返回首页按钮事件
-            const returnBtn = completeScreen.querySelector('.return-btn');
-            if (returnBtn) {
-                returnBtn.addEventListener('click', () => {
-                    window.location.href = '/';
-                });
+            // 添加到页面
+            const practiceContainer = document.querySelector('.practice-container');
+            if (practiceContainer) {
+                practiceContainer.innerHTML = '';
+                practiceContainer.appendChild(completeScreen);
             }
-
             // 创建彩花和星星效果
             this.createConfetti(completeScreen);
             this.createStars(completeScreen);
-
             // 绑定下一课按钮事件
             const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
             if (nextLessonBtn) {
-                nextLessonBtn.addEventListener('click', () => {
-                    const nextLessonNumber = parseInt(this.lesson.replace('Lesson', '')) + 1;
-                    const nextLessonUrl = `practice.html?course=${this.course}&lesson=Lesson${nextLessonNumber}`;
-                    window.location.href = nextLessonUrl;
-                });
+                nextLessonBtn.onclick = () => {
+                    // 获取当前课程的所有课时
+                    const courseData = JSON.parse(localStorage.getItem('courseData') || '{}');
+                    const currentCourse = courseData[this.course];
+                    if (currentCourse && currentCourse.lessons) {
+                        const lessons = Object.keys(currentCourse.lessons);
+                        const currentIndex = lessons.indexOf(this.lesson);
+                        if (currentIndex < lessons.length - 1) {
+                            // 跳转到下一课
+                            const nextLesson = lessons[currentIndex + 1];
+                            window.location.href = `../practice.html?course=${this.course}&lesson=${nextLesson}`;
+                        } else {
+                            // 如果是最后一课，返回课程列表
+                            window.location.href = '../courses.html';
+                        }
+                    }
+                };
             }
-
             // 播放掌声和祝贺音效
             const applause = new Audio('assets/audio/applause.mp3');
             applause.play().catch(error => {
@@ -851,10 +977,12 @@ class PracticeManager {
             const answerDisplay = document.querySelector('.answer-display');
             const inputArea = document.querySelector('.input-area');
             const character = document.querySelector('.character');
+            const functionButtons = document.querySelector('.function-buttons');
             
             // 隐藏输入区域和字符
             inputArea.style.display = 'none';
             character.style.display = 'none';
+            functionButtons.style.display = 'none'; // 隐藏功能按钮组
 
             // 清空并显示答案区域
             answerDisplay.innerHTML = '';
@@ -873,21 +1001,7 @@ class PracticeManager {
                 <div class="meaning-text">${question.meaning}</div>
             `;
 
-            // 添加标记按钮
-            const masteryButton = document.createElement('button');
-            masteryButton.className = 'mastery-button';
-            masteryButton.innerHTML = '✓ 标记为已掌握 (Alt+M)';
-            masteryButton.onclick = () => this.markAsMastered(question);
-
-            // 检查是否已掌握
-            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
-            const questionKey = `${this.currentCourse}:${this.currentLesson}:${question.character}`;
-            if (masteredSentences[questionKey]) {
-                masteryButton.classList.add('mastered');
-                masteryButton.innerHTML = '✓ 已掌握 (Alt+M)';
-            }
-
-            answerContent.appendChild(masteryButton);
+            // 直接添加答案内容，不添加按钮
             answerDisplay.appendChild(answerContent);
             
             // 播放声音

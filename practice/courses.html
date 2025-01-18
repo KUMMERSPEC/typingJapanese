@@ -170,69 +170,54 @@
 
         // 检查课程完成状态并添加标记
         function checkAndMarkCompletedCourses() {
-            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
             const courseCards = document.querySelectorAll('.course-card');
 
             courseCards.forEach(card => {
                 const courseId = card.dataset.course;
-                if (courseId) {
-                    // 检查该课程的所有句子是否都已掌握
-                    const isCompleted = checkCourseCompletion(courseId, masteredSentences);
-                    if (isCompleted) {
-                        // 添加完成标记
-                        if (!card.querySelector('.completion-mark')) {
-                            const mark = document.createElement('span');
-                            mark.className = 'completion-mark';
-                            mark.innerHTML = '✓';
-                            mark.style.cssText = `
-                                position: absolute;
-                                top: 10px;
-                                right: 10px;
-                                color: #4CAF50;
-                                font-size: 20px;
-                                font-weight: bold;
-                            `;
-                            card.style.position = 'relative';
-                            card.appendChild(mark);
+                
+                // 如果是课程卡片（没有lessonId），检查该课程的所有课时是否都完成
+                if (courseId && !card.dataset.lesson) {
+                    // 找到该课程的数据
+                    let course;
+                    for (const book of Object.values(courseData)) {
+                        if (book.courses && book.courses[courseId]) {
+                            course = book.courses[courseId];
+                            break;
                         }
                     }
-                }
-            });
-        }
 
-        // 检查课程完成状态
-        function checkCourseCompletion(courseId, masteredSentences) {
-            // 获取课程数据
-            let course;
-            let bookId;
-            
-            // 遍历所有书籍查找课程
-            for (const [id, book] of Object.entries(courseData)) {
-                if (book.courses && book.courses[courseId]) {
-                    course = book.courses[courseId];
-                    bookId = id;
-                    break;
-                }
-            }
+                    if (course && course.lessons) {
+                        // 检查该课程的所有课时是否都完成
+                        const allLessonsCompleted = Object.keys(course.lessons).every(lessonId => 
+                            completedLessons[courseId] && completedLessons[courseId].includes(lessonId)
+                        );
 
-            if (!course) return false;
-
-            // 检查每个课时是否都已完成
-            return Object.keys(course.lessons).every(lessonId => {
-                const lessonData = localStorage.getItem(`course_${courseId}_${lessonId}`);
-                if (!lessonData) return false;
-
-                try {
-                    const data = JSON.parse(lessonData);
-                    if (!data.questions) return false;
-
-                    return data.questions.every(question => {
-                        const questionKey = `${courseId}:${lessonId}:${question.character}`;
-                        return masteredSentences[questionKey];
-                    });
-                } catch (error) {
-                    console.error('Error checking course completion:', error);
-                    return false;
+                        // 只有当所有课时都完成时，才添加完成标记
+                        if (allLessonsCompleted) {
+                            if (!card.querySelector('.completion-mark')) {
+                                const mark = document.createElement('span');
+                                mark.className = 'completion-mark';
+                                mark.innerHTML = '✓';
+                                mark.style.cssText = `
+                                    position: absolute;
+                                    top: 10px;
+                                    right: 10px;
+                                    color: #4CAF50;
+                                    font-size: 20px;
+                                    font-weight: bold;
+                                `;
+                                card.style.position = 'relative';
+                                card.appendChild(mark);
+                            }
+                        } else {
+                            // 如果不是所有课时都完成，移除完成标记
+                            const mark = card.querySelector('.completion-mark');
+                            if (mark) {
+                                mark.remove();
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -280,7 +265,7 @@
                     <p>${lesson.description}</p>
                 `;
                 lessonElement.addEventListener('click', () => {
-                    window.location.href = `practice.html?book=${bookId}&course=${courseId}&lesson=${lessonId}`;
+                    window.location.href = `./practice.html?book=${bookId}&course=${courseId}&lesson=${lessonId}`;
                 });
                 lessonList.appendChild(lessonElement);
             });
@@ -288,23 +273,10 @@
             modal.classList.add('show');
         }
 
-        // 检查课时完成状态
+        // 检查课时是否完成
         function checkLessonCompletion(courseId, lessonId, masteredSentences) {
-            const lessonData = localStorage.getItem(`course_${courseId}_${lessonId}`);
-            if (!lessonData) return false;
-
-            try {
-                const data = JSON.parse(lessonData);
-                if (!data.questions) return false;
-
-                return data.questions.every(question => {
-                    const questionKey = `${courseId}:${lessonId}:${question.character}`;
-                    return masteredSentences[questionKey];
-                });
-            } catch (error) {
-                console.error('Error checking lesson completion:', error);
-                return false;
-            }
+            const key = `${courseId}:${lessonId}`;
+            return Object.keys(masteredSentences).some(k => k.startsWith(key));
         }
 
         // 关闭弹窗

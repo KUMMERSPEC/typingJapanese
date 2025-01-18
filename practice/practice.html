@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>日本語練習</title>
-    <link rel="stylesheet" href="./css/practice.css">
+    <link rel="stylesheet" href="./css/practice.css?v=1.0.1">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -17,8 +17,8 @@
             <div class="controls">
                 <button class="icon-button" onclick="window.practiceManager.playSound()">🔊</button>
                 <button class="icon-button" onclick="window.practiceManager.toggleSplitList()">📚</button>
-                <button class="icon-button" onclick="window.location.href='courses.html'">👈</button>
                 <button class="icon-button">☀️</button>
+                <button class="icon-button" onclick="window.location.href='courses.html'">👈</button>
             </div>
         </div>
     </header>
@@ -44,6 +44,25 @@
                 </div>
             </div>
             
+            <!-- 功能按钮组 -->
+            <div class="function-buttons">
+                <button class="function-btn show-answer-btn" onclick="window.practiceManager.showCorrectAnswer(window.practiceManager.questions[window.practiceManager.currentQuestionIndex], true)">
+                    <span class="btn-icon">👁️</span>
+                    <span class="btn-text">显示答案</span>
+                    <span class="btn-shortcut">Tab</span>
+                </button>
+                <button class="function-btn play-sound-btn" onclick="window.practiceManager.playSound()">
+                    <span class="btn-icon">🔊</span>
+                    <span class="btn-text">播放声音</span>
+                    <span class="btn-shortcut">Ctrl</span>
+                </button>
+                <button class="function-btn mark-mastered-btn" onclick="window.practiceManager.markAsMastered(window.practiceManager.questions[window.practiceManager.currentQuestionIndex])">
+                    <span class="btn-icon">✓</span>
+                    <span class="btn-text">标记掌握</span>
+                    <span class="btn-shortcut">Alt+M</span>
+                </button>
+            </div>
+            
             <!-- 添加历史记录显示区域 -->
             <div class="previous-question">
                 <div class="previous-japanese"></div>
@@ -58,16 +77,6 @@
                     <div class="romaji-text"></div>
                     <div class="meaning-text"></div>
                 </div>
-            </div>
-
-            <!-- 提示区域 -->
-            <div class="hints">
-                <div class="hint-key">tab</div>
-                <span>- show answer</span>
-                <div class="hint-key">control</div>
-                <span>- play soundmark</span>
-                <div class="hint-key">alt+m</div>
-                <span>- mark as mastered</span>
             </div>
         </div>
     </main>
