@@ -2,32 +2,52 @@
 export default class DataLoader {
     static async getCourseWithLessonData(course, lesson) {
         try {
-            // 处理课程名，转换为小写
-            const lessonId = lesson.toLowerCase();
-            const path = `./data/${course}/${lessonId}.json`;
+            console.log(`Loading lesson data for ${course}/${lesson}`);
             
-            console.log('Loading course data:', {
-                course,
-                lesson: lessonId,
-                path
-            });
+            // 构建课程数据文件的路径
+            const lessonPath = `../data/${course}/${lesson}.json`;
+            console.log('Fetching from path:', lessonPath);
 
-            // 使用相对路径加载数据
-            const response = await fetch(path);
+            // 添加时间戳防止缓存
+            const response = await fetch(`${lessonPath}?t=${Date.now()}`);
+            
             if (!response.ok) {
-                console.error('Failed to load:', path, 'Status:', response.status);
-                throw new Error(`Failed to load course data (${response.status})`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
-            const data = await response.json();
-            console.log('Raw data loaded:', data);
-            
-            // 直接返回JSON数据
-            return {
-                questions: data.questions
-            };
+
+            const lessonData = await response.json();
+            console.log('Loaded lesson data:', lessonData);
+
+            // 验证数据结构
+            if (!lessonData || !Array.isArray(lessonData.questions)) {
+                throw new Error('Invalid lesson data format');
+            }
+
+            return lessonData;
+
         } catch (error) {
-            console.error('Error loading lesson:', error);
+            console.error('Error loading lesson data:', error);
+            console.error('Course:', course);
+            console.error('Lesson:', lesson);
+            throw new Error(`Failed to load lesson data: ${error.message}`);
+        }
+    }
+
+    static async getCourseData(course) {
+        try {
+            // 构建课程配置文件的路径
+            const coursePath = `../data/${course}/config.json`;
+            const response = await fetch(coursePath);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const courseData = await response.json();
+            return courseData;
+
+        } catch (error) {
+            console.error('Error loading course data:', error);
             throw error;
         }
     }
