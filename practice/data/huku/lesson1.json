@@ -188,7 +188,7 @@
       "character": "服が地味だ",
       "hiragana": "ふく:が:じみだ",
       "romaji": "fuku:ga:jimida",
-      "meaning": "我的衣服很朴素",
+      "meaning": "衣服很朴素",
       "type": "split",
       "answers": "ふく:fuku|が:ga|じみだ:jimida"
     },
@@ -236,7 +236,7 @@
       "character": "脱ぐ",
       "hiragana": "ぬぐ",
       "romaji": "nugu",
-      "meaning": "脱",
+      "meaning": "脱，脱掉",
       "type": "normal",
       "answers": "ぬぐ:nugu"
     },

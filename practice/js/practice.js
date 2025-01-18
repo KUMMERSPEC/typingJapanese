@@ -76,8 +76,10 @@ class PracticeManager {
             // 重置当前题目索引
             this.currentQuestionIndex = 0;
 
-            // 更新页面标题和进度
-            document.querySelector('.lesson-info span').textContent = `${lessonData.title} (1/${this.questions.length})`;
+            // 获取课程号并更新页面标题
+            const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
+            document.querySelector('.lesson-info span').textContent = 
+                `第${lessonNumber}课 (1/${this.questions.length})`;
             
             // 显示第一个题目
             this.showQuestion();
@@ -234,13 +236,22 @@ class PracticeManager {
                (navigator.maxTouchPoints > 0);
     }
 
-    showQuestion() {
+    async showQuestion() {
         console.log('=== showQuestion START ===');
         
         const question = this.questions[this.currentQuestionIndex];
         if (!question) {
             console.error('No question found at index:', this.currentQuestionIndex);
             return;
+        }
+
+        // 更新课程标题显示
+        const lessonInfo = document.querySelector('.lesson-info span');
+        if (lessonInfo) {
+            // 获取课程号并转换为数字
+            const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
+            // 更新标题，显示当前课程号和总进度
+            lessonInfo.textContent = `第${lessonNumber}课 (${this.currentQuestionIndex + 1}/${this.questions.length})`;
         }
 
         const characterElement = document.querySelector('.character');

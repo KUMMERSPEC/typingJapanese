@@ -12,7 +12,7 @@
       "character": "ぶかぶか",
       "hiragana": "ぶかぶか",
       "romaji": "bukabuka",
-      "meaning": "太大了",
+      "meaning": "太大，松垮",
       "type": "normal",
       "answers": "ぶかぶか:bukabuka"
     },
@@ -52,7 +52,7 @@
       "character": "はく",
       "hiragana": "はく",
       "romaji": "haku",
-      "meaning": "挫败",
+      "meaning": "穿（下装）",
       "type": "normal",
       "answers": "はく:haku"
     },
@@ -111,15 +111,7 @@
       "meaning": "手套",
       "type": "normal",
       "answers": "てぶくろ:tebukuro"
-    },
-    {
-      "character": "手袋をする",
-      "hiragana": "てぶくろ:を:する",
-      "romaji": "tebukuro:wo:suru",
-      "meaning": "戴手套",
-      "type": "split",
-      "answers": "てぶくろ:tebukuro|を:wo|する:suru"
-    },
+    }
     {
       "character": "取る",
       "hiragana": "とる",
@@ -224,19 +216,12 @@
       "type": "normal",
       "answers": "めがね:megane"
     },
-    {
-      "character": "めがねをする",
-      "hiragana": "めがね:を:する",
-      "romaji": "megane:wo:suru",
-      "meaning": "戴眼镜",
-      "type": "split",
-      "answers": "めがね:megane|を:wo|する:suru"
-    },
+
     {
       "character": "めがねを取る",
       "hiragana": "めがね:を:とる",
       "romaji": "megane:wo:toru",
-      "meaning": "摘下眼镜",
+      "meaning": "摘下眼镜（取下）",
       "type": "split",
       "answers": "めがね:megane|を:wo|とる:toru"
     },
@@ -244,7 +229,7 @@
       "character": "めがねをはずす",
       "hiragana": "めがね:を:はずす",
       "romaji": "megane:wo:hazusu",
-      "meaning": "摘下眼镜",
+      "meaning": "摘下眼镜（移除）",
       "type": "split",
       "answers": "めがね:megane|を:wo|はずす:hazusu"
     }
