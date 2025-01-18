@@ -845,21 +845,31 @@ class PracticeManager {
             // 绑定下一课按钮事件
             const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
             if (nextLessonBtn) {
-                nextLessonBtn.onclick = () => {
-                    // 获取当前课程的所有课时
-                    const courseData = JSON.parse(localStorage.getItem('courseData') || '{}');
-                    const currentCourse = courseData[this.course];
-                    if (currentCourse && currentCourse.lessons) {
-                        const lessons = Object.keys(currentCourse.lessons);
+                nextLessonBtn.onclick = async () => {
+                    try {
+                        // 从 DataLoader 获取课程数据
+                        const courseData = await DataLoader.getCourseData(this.course);
+                        if (!courseData || !courseData.lessons) {
+                            throw new Error('无法获取课程数据');
+                        }
+
+                        // 获取所有课时并排序
+                        const lessons = Object.keys(courseData.lessons).sort();
                         const currentIndex = lessons.indexOf(this.lesson);
+
                         if (currentIndex < lessons.length - 1) {
                             // 跳转到下一课
                             const nextLesson = lessons[currentIndex + 1];
-                            window.location.href = `../practice.html?course=${this.course}&lesson=${nextLesson}`;
+                            window.location.href = `practice.html?course=${this.course}&lesson=${nextLesson}`;
                         } else {
-                            // 如果是最后一课，返回课程列表
+                            // 如果是最后一课，提示用户并返回课程列表
+                            alert('恭喜！您已完成本课程的所有课时！');
                             window.location.href = '../courses.html';
                         }
+                    } catch (error) {
+                        console.error('Error navigating to next lesson:', error);
+                        alert('无法加载下一课，请返回课程列表重试');
+                        window.location.href = '../courses.html';
                     }
                 };
             }
