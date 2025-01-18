@@ -829,7 +829,7 @@ class PracticeManager {
                 <div class="button-group">
                     <button class="restart-btn" onclick="location.reload()">重新开始</button>
                     <button class="next-lesson-btn">下一课</button>
-                    <button class="return-btn" onclick="window.location.href='../../'">返回首页</button>
+                    <button class="return-btn" onclick="window.location.href='../courses.html'">返回首页</button>
                 </div>
             `;
 
@@ -854,13 +854,25 @@ class PracticeManager {
                         }
 
                         // 获取所有课时并排序
-                        const lessons = Object.keys(courseData.lessons).sort();
+                        const lessons = Object.keys(courseData.lessons).sort((a, b) => {
+                            // 确保按数字顺序排序（lesson1, lesson2, lesson3...）
+                            const numA = parseInt(a.replace('lesson', ''));
+                            const numB = parseInt(b.replace('lesson', ''));
+                            return numA - numB;
+                        });
+
                         const currentIndex = lessons.indexOf(this.lesson);
+                        console.log('Current lesson info:', {
+                            lessons,
+                            currentLesson: this.lesson,
+                            currentIndex
+                        });
 
                         if (currentIndex < lessons.length - 1) {
                             // 跳转到下一课
                             const nextLesson = lessons[currentIndex + 1];
-                            window.location.href = `practice.html?course=${this.course}&lesson=${nextLesson}`;
+                            // 使用相对路径
+                            window.location.href = `./practice.html?course=${this.course}&lesson=${nextLesson}`;
                         } else {
                             // 如果是最后一课，提示用户并返回课程列表
                             alert('恭喜！您已完成本课程的所有课时！');
