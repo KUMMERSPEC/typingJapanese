@@ -847,35 +847,28 @@ class PracticeManager {
             if (nextLessonBtn) {
                 nextLessonBtn.onclick = async () => {
                     try {
-                        // 从 DataLoader 获取课程数据
-                        const courseData = await DataLoader.getCourseData(this.course);
-                        if (!courseData || !courseData.lessons) {
-                            throw new Error('无法获取课程数据');
-                        }
+                        // 直接从当前课程信息构建下一课
+                        const currentLessonNumber = parseInt(this.lesson.replace('lesson', ''));
+                        const nextLessonNumber = currentLessonNumber + 1;
+                        const nextLesson = `lesson${nextLessonNumber}`;
 
-                        // 获取所有课时并排序
-                        const lessons = Object.keys(courseData.lessons).sort((a, b) => {
-                            // 确保按数字顺序排序（lesson1, lesson2, lesson3...）
-                            const numA = parseInt(a.replace('lesson', ''));
-                            const numB = parseInt(b.replace('lesson', ''));
-                            return numA - numB;
-                        });
-
-                        const currentIndex = lessons.indexOf(this.lesson);
-                        console.log('Current lesson info:', {
-                            lessons,
-                            currentLesson: this.lesson,
-                            currentIndex,
-                            courseData
-                        });
-
-                        if (currentIndex < lessons.length - 1) {
-                            // 跳转到下一课
-                            const nextLesson = lessons[currentIndex + 1];
+                        // 验证下一课是否存在
+                        try {
+                            // 尝试加载下一课的数据来验证其存在性
+                            await DataLoader.getCourseWithLessonData(this.course, nextLesson);
+                            
+                            // 如果成功加载，则跳转到下一课
+                            console.log('Navigating to next lesson:', {
+                                course: this.course,
+                                currentLesson: this.lesson,
+                                nextLesson: nextLesson
+                            });
+                            
                             // 使用基于域名的绝对路径
                             window.location.href = `/typingJapanese/practice/practice.html?course=${this.course}&lesson=${nextLesson}`;
-                        } else {
-                            // 如果是最后一课，提示用户并返回首页
+                        } catch (loadError) {
+                            // 如果无法加载下一课，说明已经是最后一课
+                            console.log('No more lessons available:', loadError);
                             alert('恭喜！您已完成本课程的所有课时！');
                             window.location.href = '/typingJapanese/';
                         }
