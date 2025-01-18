@@ -247,26 +247,31 @@
 
             // 获取已完成课程数据
             const completedLessons = getCompletedLessons();
-            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
 
             // 生成课时列表
             Object.entries(course.lessons).forEach(([lessonId, lesson]) => {
                 const lessonElement = document.createElement('div');
                 lessonElement.className = 'lesson-item';
+                lessonElement.setAttribute('data-course', courseId);
+                lessonElement.setAttribute('data-lesson', lessonId);
                 
                 // 检查课时是否已完成
-                const isCompleted = checkLessonCompletion(courseId, lessonId, masteredSentences);
+                const isCompleted = completedLessons[courseId] && 
+                                  completedLessons[courseId].includes(lessonId);
+                
                 if (isCompleted) {
                     lessonElement.classList.add('completed');
                 }
 
                 lessonElement.innerHTML = `
-                    <h3>${lesson.title}${isCompleted ? ' <span style="color: #4CAF50; margin-left: 10px;">✓</span>' : ''}</h3>
+                    <h3>${lesson.title}${isCompleted ? ' <span class="completion-mark">✓</span>' : ''}</h3>
                     <p>${lesson.description}</p>
                 `;
+                
                 lessonElement.addEventListener('click', () => {
                     window.location.href = `./practice.html?book=${bookId}&course=${courseId}&lesson=${lessonId}`;
                 });
+                
                 lessonList.appendChild(lessonElement);
             });
 
@@ -312,16 +317,23 @@
             // 遍历所有课程
             Object.keys(completedLessons).forEach(course => {
                 completedLessons[course].forEach(lesson => {
-                    // 找到对应的课程元素并添加勾选标记
-                    const lessonElement = document.querySelector(`[data-course="${course}"][data-lesson="${lesson}"]`);
-                    if (lessonElement) {
-                        lessonElement.classList.add('completed');
-                        // 添加勾选图标
-                        const checkmark = lessonElement.querySelector('.completion-mark') || document.createElement('span');
-                        checkmark.className = 'completion-mark';
-                        checkmark.textContent = '✓';
-                        lessonElement.appendChild(checkmark);
-                    }
+                    // 找到对应的课时元素并添加勾选标记
+                    const lessonElements = document.querySelectorAll(`.lesson-item[data-course="${course}"][data-lesson="${lesson}"]`);
+                    lessonElements.forEach(element => {
+                        element.classList.add('completed');
+                        // 检查是否已有勾选标记
+                        if (!element.querySelector('.completion-mark')) {
+                            const title = element.querySelector('h3');
+                            if (title) {
+                                const checkmark = document.createElement('span');
+                                checkmark.className = 'completion-mark';
+                                checkmark.textContent = '✓';
+                                checkmark.style.color = '#4CAF50';
+                                checkmark.style.marginLeft = '10px';
+                                title.appendChild(checkmark);
+                            }
+                        }
+                    });
                 });
             });
         }
