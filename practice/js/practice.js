@@ -829,7 +829,7 @@ class PracticeManager {
                 <div class="button-group">
                     <button class="restart-btn" onclick="location.reload()">重新开始</button>
                     <button class="next-lesson-btn">下一课</button>
-                    <button class="return-btn" onclick="window.location.href='../courses.html'">返回首页</button>
+                    <button class="return-btn" onclick="window.location.href='../../index.html'">返回首页</button>
                 </div>
             `;
 
@@ -865,23 +865,27 @@ class PracticeManager {
                         console.log('Current lesson info:', {
                             lessons,
                             currentLesson: this.lesson,
-                            currentIndex
+                            currentIndex,
+                            courseData
                         });
 
                         if (currentIndex < lessons.length - 1) {
                             // 跳转到下一课
                             const nextLesson = lessons[currentIndex + 1];
-                            // 使用相对路径
-                            window.location.href = `./practice.html?course=${this.course}&lesson=${nextLesson}`;
+                            // 使用完整的相对路径
+                            window.location.href = `../../practice/practice.html?course=${this.course}&lesson=${nextLesson}`;
                         } else {
-                            // 如果是最后一课，提示用户并返回课程列表
+                            // 如果是最后一课，提示用户并返回首页
                             alert('恭喜！您已完成本课程的所有课时！');
-                            window.location.href = '../courses.html';
+                            window.location.href = '../../index.html';
                         }
                     } catch (error) {
                         console.error('Error navigating to next lesson:', error);
-                        alert('无法加载下一课，请返回课程列表重试');
-                        window.location.href = '../courses.html';
+                        // 添加更多错误信息以便调试
+                        console.error('Course:', this.course);
+                        console.error('Current lesson:', this.lesson);
+                        alert('无法加载下一课，请返回首页重试');
+                        window.location.href = '../../index.html';
                     }
                 };
             }
