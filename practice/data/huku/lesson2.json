@@ -116,7 +116,7 @@
       "character": "取る",
       "hiragana": "とる",
       "romaji": "toru",
-      "meaning": "拿",
+      "meaning": "拿到，取下",
       "type": "normal",
       "answers": "とる:toru"
     },
@@ -132,7 +132,7 @@
       "character": "はずす",
       "hiragana": "はずす",
       "romaji": "hazusu",
-      "meaning": "移除（配件）",
+      "meaning": "移除（配饰等）",
       "type": "normal",
       "answers": "はずす:hazusu"
     },
