@@ -810,6 +810,15 @@ class PracticeManager {
             if (!completedLessons[this.course].includes(this.lesson)) {
                 completedLessons[this.course].push(this.lesson);
                 localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+                
+                // 触发自定义事件通知课程列表更新
+                const event = new CustomEvent('lessonCompleted', {
+                    detail: {
+                        course: this.course,
+                        lesson: this.lesson
+                    }
+                });
+                window.dispatchEvent(event);
             }
             
             // 更新统计，只传递 split 类型的题目

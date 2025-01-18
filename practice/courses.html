@@ -304,6 +304,35 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkAndMarkCompletedCourses();
         });
+
+        // 更新课程完成状态的函数
+        function updateCompletionStatus() {
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            
+            // 遍历所有课程
+            Object.keys(completedLessons).forEach(course => {
+                completedLessons[course].forEach(lesson => {
+                    // 找到对应的课程元素并添加勾选标记
+                    const lessonElement = document.querySelector(`[data-course="${course}"][data-lesson="${lesson}"]`);
+                    if (lessonElement) {
+                        lessonElement.classList.add('completed');
+                        // 添加勾选图标
+                        const checkmark = lessonElement.querySelector('.completion-mark') || document.createElement('span');
+                        checkmark.className = 'completion-mark';
+                        checkmark.textContent = '✓';
+                        lessonElement.appendChild(checkmark);
+                    }
+                });
+            });
+        }
+
+        // 页面加载时更新完成状态
+        document.addEventListener('DOMContentLoaded', updateCompletionStatus);
+
+        // 监听课程完成事件
+        window.addEventListener('lessonCompleted', (event) => {
+            updateCompletionStatus();
+        });
     </script>
 </body>
 </html>

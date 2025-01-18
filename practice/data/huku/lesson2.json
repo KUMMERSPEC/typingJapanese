@@ -193,20 +193,20 @@
       "answers": "ぼうし:boushi|を:wo|とる:toru"
     },
     {
+      "character": "脱ぐ",
+      "hiragana": "ぬぐ",
+      "romaji": "nugu",
+      "meaning": "脱掉，取下",
+      "type": "normal",
+      "answers": "ぬぐ:nugu"
+    },
+    {
       "character": "帽子を脱ぐ",
       "hiragana": "ぼうし:を:ぬぐ",
       "romaji": "boushi:wo:nugu",
       "meaning": "脱掉帽子",
       "type": "split",
       "answers": "ぼうし:boushi|を:wo|ぬぐ:nugu"
-    },
-    {
-      "character": "めがねをかける",
-      "hiragana": "めがね:を:かける",
-      "romaji": "megane:wo:kakeru",
-      "meaning": "戴眼镜",
-      "type": "split",
-      "answers": "めがね:megane|を:wo|かける:kakeru"
     },
     {
       "character": "めがね",
@@ -216,6 +216,23 @@
       "type": "normal",
       "answers": "めがね:megane"
     },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "戴，戴上，挂上",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "めがねをかける",
+      "hiragana": "めがね:を:かける",
+      "romaji": "megane:wo:kakeru",
+      "meaning": "戴眼镜",
+      "type": "split",
+      "answers": "めがね:megane|を:wo|かける:kakeru"
+    },
+  
     {
       "character": "めがねを取る",
       "hiragana": "めがね:を:とる",
