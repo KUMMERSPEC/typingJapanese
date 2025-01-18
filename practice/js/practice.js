@@ -48,51 +48,60 @@ class PracticeManager {
 
             // 加载课程数据
             console.log('Loading course data...');
-            const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
-            console.log('Loaded lesson data:', lessonData);
-            
-            // 确保题目数组正确加载
-            if (!lessonData.questions || !Array.isArray(lessonData.questions)) {
-                throw new Error('Invalid questions data');
+            try {
+                const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
+                console.log('Loaded lesson data:', lessonData);
+                
+                // 确保题目数组正确加载
+                if (!lessonData || !lessonData.questions || !Array.isArray(lessonData.questions)) {
+                    throw new Error('Invalid lesson data structure');
+                }
+
+                // 获取已掌握的句子
+                const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+                
+                // 过滤掉已掌握的句子
+                this.questions = lessonData.questions.filter(question => {
+                    const questionKey = `${course}:${lesson}:${question.character}`;
+                    return !masteredSentences[questionKey];
+                });
+                
+                // 确保题目数组不为空
+                if (this.questions.length === 0) {
+                    // 如果所有题目都已掌握，显示提示并返回课程列表
+                    alert('恭喜！本课程的所有内容你都已掌握！');
+                    window.location.href = '../courses.html';
+                    return;
+                }
+
+                // 重置当前题目索引
+                this.currentQuestionIndex = 0;
+
+                // 更新页面标题和进度
+                const titleElement = document.querySelector('.lesson-info span');
+                if (titleElement) {
+                    const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
+                    titleElement.textContent = `第${lessonNumber}课 (1/${this.questions.length})`;
+                }
+                
+                // 显示第一个题目
+                this.showQuestion();
+
+                this.totalSentences = this.questions.length;
+                this.completedSentences = 0;
+
+                // 绑定事件监听器
+                this.bindEvents();
+
+            } catch (loadError) {
+                console.error('Error loading lesson data:', loadError);
+                throw new Error(`Failed to load lesson data: ${loadError.message}`);
             }
-
-            // 获取已掌握的句子
-            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
-            
-            // 过滤掉已掌握的句子
-            this.questions = lessonData.questions.filter(question => {
-                const questionKey = `${course}:${lesson}:${question.character}`;
-                return !masteredSentences[questionKey];
-            });
-            
-            // 确保题目数组不为空
-            if (this.questions.length === 0) {
-                // 如果所有题目都已掌握，显示提示并返回课程列表
-                alert('恭喜！本课程的所有内容你都已掌握！');
-                window.location.href = '../courses.html';
-                return;
-            }
-
-            // 重置当前题目索引
-            this.currentQuestionIndex = 0;
-
-            // 获取课程号并更新页面标题
-            const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
-            document.querySelector('.lesson-info span').textContent = 
-                `第${lessonNumber}课 (1/${this.questions.length})`;
-            
-            // 显示第一个题目
-            this.showQuestion();
-
-            this.totalSentences = this.questions.length;
-            this.completedSentences = 0;
-
-            // 绑定事件监听器
-            this.bindEvents();
 
         } catch (error) {
             console.error('Error in init:', error);
             alert('加载课程失败，请返回重试');
+            window.location.href = '../courses.html';
         }
     }
 
@@ -236,22 +245,13 @@ class PracticeManager {
                (navigator.maxTouchPoints > 0);
     }
 
-    async showQuestion() {
+    showQuestion() {
         console.log('=== showQuestion START ===');
         
         const question = this.questions[this.currentQuestionIndex];
         if (!question) {
             console.error('No question found at index:', this.currentQuestionIndex);
             return;
-        }
-
-        // 更新课程标题显示
-        const lessonInfo = document.querySelector('.lesson-info span');
-        if (lessonInfo) {
-            // 获取课程号并转换为数字
-            const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
-            // 更新标题，显示当前课程号和总进度
-            lessonInfo.textContent = `第${lessonNumber}课 (${this.currentQuestionIndex + 1}/${this.questions.length})`;
         }
 
         const characterElement = document.querySelector('.character');
