@@ -441,6 +441,57 @@ class PracticeManager {
         }
 
         this.updateProgress();
+
+        // 修改语音播放逻辑
+        let isPlaying = false; // 添加标志位
+        const playAudio = () => {
+            if (isPlaying) return; // 如果正在播放，直接返回
+            isPlaying = true;
+
+            const text = question.character;
+            if (this.japaneseVoice && 'speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.voice = this.japaneseVoice;
+                utterance.lang = 'ja-JP';
+                
+                // 添加语音播放结束的处理
+                utterance.onend = () => {
+                    isPlaying = false;
+                };
+                
+                // 添加错误处理
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                    isPlaying = false;
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        };
+
+        // 绑定语音播放事件
+        const audioButton = document.querySelector('.play-audio');
+        if (audioButton) {
+            // 移除旧的事件监听器
+            const newAudioButton = audioButton.cloneNode(true);
+            audioButton.parentNode.replaceChild(newAudioButton, audioButton);
+            
+            // 添加新的事件监听器
+            newAudioButton.addEventListener('click', playAudio);
+        }
+
+        // 绑定 Tab 键语音播放
+        const handleKeydown = (event) => {
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                playAudio();
+            }
+        };
+
+        // 移除旧的事件监听器并添加新的
+        document.removeEventListener('keydown', this.currentKeydownHandler);
+        this.currentKeydownHandler = handleKeydown;
+        document.addEventListener('keydown', this.currentKeydownHandler);
     }
 
     updateProgress() {

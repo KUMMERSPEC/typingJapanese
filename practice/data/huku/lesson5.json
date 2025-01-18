@@ -28,7 +28,7 @@
       "character": "コート",
       "hiragana": "コート",
       "romaji": "kooto",
-      "meaning": "外套",
+      "meaning": "大衣，风衣",
       "type": "normal",
       "answers": "コート:kooto"
     },
@@ -52,7 +52,7 @@
       "character": "ジャージ",
       "hiragana": "ジャージ",
       "romaji": "jaaji",
-      "meaning": "球衣",
+      "meaning": "运动衫，紧身运动套衫",
       "type": "normal",
       "answers": "ジャージ:jaaji"
     },
@@ -100,7 +100,7 @@
       "character": "ポロシャツ",
       "hiragana": "ポロシャツ",
       "romaji": "poroshatsu",
-      "meaning": "马球衫",
+      "meaning": "polo衫",
       "type": "normal",
       "answers": "ポロシャツ:poroshatsu"
     },
@@ -156,7 +156,7 @@
       "character": "キャップ",
       "hiragana": "キャップ",
       "romaji": "kyappu",
-      "meaning": "帽",
+      "meaning": "帽子（cap）、无檐帽",
       "type": "normal",
       "answers": "キャップ:kyappu"
     },
@@ -164,7 +164,7 @@
       "character": "ニット帽",
       "hiragana": "ニットぼう",
       "romaji": "nittobou",
-      "meaning": "针织帽",
+      "meaning": "针织帽，毛线帽",
       "type": "normal",
       "answers": "ニットぼう:nittobou"
     },
@@ -180,7 +180,7 @@
       "character": "イヤリング",
       "hiragana": "イヤリング",
       "romaji": "iyaringu",
-      "meaning": "耳环",
+      "meaning": "耳环，耳夹（无需耳洞）",
       "type": "normal",
       "answers": "イヤリング:iyaringu"
     },
@@ -196,7 +196,7 @@
       "character": "ピアス",
       "hiragana": "ピアス",
       "romaji": "piasu",
-      "meaning": "耳环",
+      "meaning": "耳环（有耳洞）",
       "type": "normal",
       "answers": "ピアス:piasu"
     },
@@ -228,7 +228,7 @@
       "character": "ベルト",
       "hiragana": "ベルト",
       "romaji": "beruto",
-      "meaning": "腰带",
+      "meaning": "腰带，皮带",
       "type": "normal",
       "answers": "ベルト:beruto"
     },
