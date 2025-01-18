@@ -53,7 +53,7 @@
       "character": "曲がる",
       "hiragana": "まがる",
       "romaji": "magaru",
-      "meaning": "弯曲",
+      "meaning": "弯曲，歪斜",
       "type": "normal",
       "answers": "まがる:magaru"
     },
@@ -61,7 +61,7 @@
       "character": "ネクタイが曲がる",
       "hiragana": "ネクタイ:が:まがる",
       "romaji": "nekutai:ga:magaru",
-      "meaning": "领带弯曲了",
+      "meaning": "领带歪了",
       "type": "split",
       "answers": "ネクタイ:nekutai|が:ga|まがる:magaru"
     },
@@ -85,17 +85,25 @@
       "character": "ネクタイをする",
       "hiragana": "ネクタイ:を:する",
       "romaji": "nekutai:wo:suru",
-      "meaning": "打领带",
+      "meaning": "打领带（する）",
       "type": "split",
       "answers": "ネクタイ:nekutai|を:wo|する:suru"
     },
     {
-      "character": "ネクタイをつける",
-      "hiragana": "ネクタイ:を:つける",
-      "romaji": "nekutai:wo:tsukeru",
-      "meaning": "带上领带",
+      "character": "結ぶ",
+      "hiragana": "むすぶ",
+      "romaji": "musubu",
+      "meaning": "连接，系上",
+      "type": "normal",
+      "answers": "むすぶ:musubu"
+    },
+    {
+      "character": "ネクタイを結ぶ",
+      "hiragana": "ネクタイ:を:むすぶ",
+      "romaji": "nekutai:wo:musubu",
+      "meaning": "打领带，给领带打结",
       "type": "split",
-      "answers": "ネクタイ:nekutai|を:wo|つける:tsukeru"
+      "answers": "ネクタイ:nekutai|を:wo|むすぶ:musubu"
     },
     {
       "character": "直す",
@@ -122,22 +130,7 @@
       "type": "split",
       "answers": "ネクタイ:nekutai|を:wo|はずす:hazusu"
     },
-    {
-      "character": "結ぶ",
-      "hiragana": "むすぶ",
-      "romaji": "musubu",
-      "meaning": "连接，系上",
-      "type": "normal",
-      "answers": "むすぶ:musubu"
-    },
-    {
-      "character": "ネクタイを結ぶ",
-      "hiragana": "ネクタイ:を:むすぶ",
-      "romaji": "nekutai:wo:musubu",
-      "meaning": "打领带",
-      "type": "split",
-      "answers": "ネクタイ:nekutai|を:wo|むすぶ:musubu"
-    },
+  
     {
       "character": "指輪",
       "hiragana": "ゆびわ",
@@ -159,7 +152,7 @@
       "character": "指輪がはまる",
       "hiragana": "ゆびわ:が:はまる",
       "romaji": "yubiwa:ga:hamaru",
-      "meaning": "戒指合适",
+      "meaning": "戒指（大小）合适",
       "type": "split",
       "answers": "ゆびわ:yubiwa|が:ga|はまる:hamaru"
     },
@@ -188,6 +181,15 @@
       "type": "split",
       "answers": "ゆびわ:yubiwa|を:wo|はずす:hazusu"
     },
+    {
+      "character": "はめる",
+      "hiragana": "はめる",
+      "romaji": "hameru",
+      "meaning": "扣上，戴上（包裹的东西，例如手套，戒指",
+      "type": "normal",
+      "answers": "はめる:hameru"
+    },
+
     {
       "character": "指輪をはめる",
       "hiragana": "ゆびわ:を:はめる",
@@ -237,12 +239,28 @@
       "answers": "ボタン:botan|が:ga|はずれる:hazureru"
     },
     {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "戴，戴上，扣上",
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
       "character": "ボタンをかける",
       "hiragana": "ボタン:を:かける",
       "romaji": "botan:wo:kakeru",
       "meaning": "扣上纽扣",
-      "type": "split",
-      "answers": "ボタン:botan|を:wo|かける:kakeru"
+      "type": "normal",
+      "answers": "かける:kakeru"
+    },
+    {
+      "character": "はずす",
+      "hiragana": "はずす",
+      "romaji": "hazusu",
+      "meaning": "解开，脱下",
+      "type": "normal",
+      "answers": "はずす:hazusu"
     },
     {
       "character": "ボタンをはずす",
