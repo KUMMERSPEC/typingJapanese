@@ -443,9 +443,9 @@ class PracticeManager {
         this.updateProgress();
 
         // 修改语音播放逻辑
-        let isPlaying = false; // 添加标志位
+        let isPlaying = false;
         const playAudio = () => {
-            if (isPlaying) return; // 如果正在播放，直接返回
+            if (isPlaying) return;
             isPlaying = true;
 
             const text = question.character;
@@ -454,12 +454,10 @@ class PracticeManager {
                 utterance.voice = this.japaneseVoice;
                 utterance.lang = 'ja-JP';
                 
-                // 添加语音播放结束的处理
                 utterance.onend = () => {
                     isPlaying = false;
                 };
                 
-                // 添加错误处理
                 utterance.onerror = (event) => {
                     console.error('Speech synthesis error:', event);
                     isPlaying = false;
@@ -472,15 +470,12 @@ class PracticeManager {
         // 绑定语音播放事件
         const audioButton = document.querySelector('.play-audio');
         if (audioButton) {
-            // 移除旧的事件监听器
             const newAudioButton = audioButton.cloneNode(true);
             audioButton.parentNode.replaceChild(newAudioButton, audioButton);
-            
-            // 添加新的事件监听器
             newAudioButton.addEventListener('click', playAudio);
         }
 
-        // 绑定 Tab 键语音播放
+        // 绑定全局 Tab 键事件，只用于播放语音
         const handleKeydown = (event) => {
             if (event.key === 'Tab') {
                 event.preventDefault();
@@ -514,14 +509,6 @@ class PracticeManager {
                 const currentQuestion = this.questions[this.currentQuestionIndex];
                 if (currentQuestion) {
                     this.markAsMastered(currentQuestion);
-                }
-            }
-            // Tab 键显示答案
-            else if (e.key === 'Tab') {
-                e.preventDefault();
-                const currentQuestion = this.questions[this.currentQuestionIndex];
-                if (currentQuestion) {
-                    this.showCorrectAnswer(currentQuestion, true); // true 表示是 Tab 键触发
                 }
             }
         });
