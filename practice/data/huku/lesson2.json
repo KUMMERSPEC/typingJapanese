@@ -111,7 +111,7 @@
       "meaning": "手套",
       "type": "normal",
       "answers": "てぶくろ:tebukuro"
-    }
+    },
     {
       "character": "取る",
       "hiragana": "とる",
@@ -216,7 +216,6 @@
       "type": "normal",
       "answers": "めがね:megane"
     },
-
     {
       "character": "めがねを取る",
       "hiragana": "めがね:を:とる",
