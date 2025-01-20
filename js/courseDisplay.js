@@ -1,19 +1,28 @@
-import { courseConfig } from '../config/courseConfig.js';
+import { courseConfig } from './config/courseConfig.js';
 
 // 新建 courseDisplay.js 文件来处理课程显示逻辑
 export class CourseDisplay {
     constructor() {
-        this.courseData = {};
-        this.completedLessons = {};
-        this.courseOrder = courseConfig.courseOrder;
-        this.courseLessons = {};
-        
-        // 从配置文件初始化课程课时数
-        Object.entries(courseConfig.courses).forEach(([courseId, course]) => {
-            this.courseLessons[courseId] = course.lessonCount;
-        });
-        
-        this.loadData();
+        try {
+            if (!courseConfig || !courseConfig.courses) {
+                throw new Error('Course config not found');
+            }
+            
+            this.courseData = {};
+            this.completedLessons = {};
+            this.courseOrder = courseConfig.courseOrder;
+            this.courseLessons = {};
+            
+            // 从配置文件初始化课程课时数
+            Object.entries(courseConfig.courses).forEach(([courseId, course]) => {
+                this.courseLessons[courseId] = course.lessonCount;
+            });
+            
+            this.loadData();
+        } catch (error) {
+            console.error('Error in CourseDisplay constructor:', error);
+            throw error;
+        }
     }
 
     loadData() {
@@ -78,7 +87,6 @@ export class CourseDisplay {
             const currentCourses = this.getCurrentAndNextLessons();
             
             if (currentCourses.length === 0) {
-                // 使用已知可用的课程
                 const firstCourse = courseConfig.courses['huku'];
                 courseList.innerHTML = `
                     <div class="course-card" onclick="window.location.href='practice/practice.html?course=huku&lesson=lesson1'">
