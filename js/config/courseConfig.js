@@ -1,19 +1,26 @@
 export const courseConfig = {
     // 课程顺序
     courseOrder: [
-        'kimochi',
-        'gimon',
-        'hitei',
-        'katei',
-        'kantan',
-        'ajiwai',
-        'kanjou',
         'huku',
-        'syoku'
+        'syoku',
+        'sumu',
+        'koutsuu',
+        'gakkou',
+        'shigoto'
     ],
 
     // 课程信息
     courses: {
+        'huku': {
+            name: '服',
+            description: '服装相关表达',
+            lessonCount: 5
+        },
+        'syoku': {
+            name: '食',
+            description: '吃，饮食方面',
+            lessonCount: 5
+        },
         'kimochi': {
             name: '気持ち',
             description: '表达感受的词汇',
@@ -49,15 +56,25 @@ export const courseConfig = {
             description: '负面情感表达',
             lessonCount: 3
         },
-        'huku': {
+        'sumu': {
             name: '服装相关',
             description: '服装相关表达',
             lessonCount: 5
         },
-        'syoku': {
-            name: '饮食相关',
-            description: '饮食相关表达',
-            lessonCount: 4
+        'koutsuu': {
+            name: '服装相关',
+            description: '服装相关表达',
+            lessonCount: 5
+        },
+        'gakkou': {
+            name: '服装相关',
+            description: '服装相关表达',
+            lessonCount: 5
+        },
+        'shigoto': {
+            name: '服装相关',
+            description: '服装相关表达',
+            lessonCount: 5
         }
     }
 }; 
