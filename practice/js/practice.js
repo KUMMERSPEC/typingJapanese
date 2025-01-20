@@ -1,6 +1,5 @@
 import DataLoader from './dataLoader.js';
 import statsData from '../../js/common/statsData.js';
-import Statistics from '../js/common/statsData.js';
 
 class PracticeManager {
     constructor() {
@@ -1227,6 +1226,31 @@ class PracticeManager {
         
         // 添加到历史记录区域
         historyContent.appendChild(historyItem);
+    }
+
+    // 完成课程时调用
+    async completePractice() {
+        try {
+            // 更新统计数据
+            statsData.addLearningRecord(this.sentences.length);
+            
+            // 更新课程完成状态
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            if (!completedLessons[this.courseId]) {
+                completedLessons[this.courseId] = [];
+            }
+            if (!completedLessons[this.courseId].includes(this.lessonId)) {
+                completedLessons[this.courseId].push(this.lessonId);
+            }
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+
+            // 触发完成事件
+            window.dispatchEvent(new Event('lessonCompleted'));
+
+            // 其他完成逻辑...
+        } catch (error) {
+            console.error('Error completing practice:', error);
+        }
     }
 }
 
