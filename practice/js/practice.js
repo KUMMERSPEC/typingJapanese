@@ -1241,20 +1241,36 @@ class PracticeManager {
 
     async completePractice() {
         try {
-            // 添加调试日志
-            console.log('Starting completePractice with:', {
+            // 添加更详细的调试日志
+            console.log('Before completePractice:', {
                 sentences: this.sentences,
                 courseId: this.courseId,
-                lessonId: this.lessonId
+                lessonId: this.lessonId,
+                currentStats: JSON.parse(localStorage.getItem('typing_statistics'))
             });
 
-            // 更新统计数据
-            statsData.addLearningRecord(this.sentences.map(sentence => ({
-                id: `${this.courseId}_${this.lessonId}_${sentence.index}`,
+            // 检查 sentences 是否正确
+            if (!this.sentences || !Array.isArray(this.sentences)) {
+                console.error('Invalid sentences:', this.sentences);
+                return;
+            }
+
+            const formattedSentences = this.sentences.map((sentence, index) => ({
+                id: `${this.courseId}_${this.lessonId}_${index + 1}`,
                 text: sentence.japanese,
                 translation: sentence.chinese
-            })));
-            
+            }));
+
+            console.log('Formatted sentences:', formattedSentences);
+
+            // 更新统计数据
+            statsData.addLearningRecord(formattedSentences);
+
+            // 记录更新后的状态
+            console.log('After completePractice:', {
+                updatedStats: JSON.parse(localStorage.getItem('typing_statistics'))
+            });
+
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
             if (!completedLessons[this.courseId]) {
@@ -1275,7 +1291,7 @@ class PracticeManager {
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
         } catch (error) {
-            console.error('Error in completePractice:', error);
+            console.error('Error in completePractice:', error, error.stack);
         }
     }
 }
