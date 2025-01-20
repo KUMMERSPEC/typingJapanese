@@ -1241,6 +1241,13 @@ class PracticeManager {
 
     async completePractice() {
         try {
+            // 添加调试日志
+            console.log('Starting completePractice with:', {
+                sentences: this.sentences,
+                courseId: this.courseId,
+                lessonId: this.lessonId
+            });
+
             // 更新统计数据
             statsData.addLearningRecord(this.sentences.map(sentence => ({
                 id: `${this.courseId}_${this.lessonId}_${sentence.index}`,
@@ -1268,7 +1275,7 @@ class PracticeManager {
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
         } catch (error) {
-            console.error('Error completing practice:', error);
+            console.error('Error in completePractice:', error);
         }
     }
 }

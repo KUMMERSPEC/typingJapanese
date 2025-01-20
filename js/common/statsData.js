@@ -308,6 +308,11 @@ class Statistics {
 
     // 修改添加学习记录方法
     addLearningRecord(sentences) {
+        console.log('Starting addLearningRecord with:', {
+            sentences,
+            currentStats: this.getStatistics()
+        });
+
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
@@ -356,6 +361,7 @@ class Statistics {
         }
 
         // 保存更新后的统计数据
+        console.log('Saving updated stats:', stats);
         this.saveStatistics(stats);
 
         // 更新显示
