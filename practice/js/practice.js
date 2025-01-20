@@ -1231,8 +1231,12 @@ class PracticeManager {
     // 完成课程时调用
     async completePractice() {
         try {
-            // 更新统计数据
-            statsData.addLearningRecord(this.sentences.length);
+            // 更新统计数据，传递完整的句子数组而不是仅传递长度
+            statsData.addLearningRecord(this.sentences.map(sentence => ({
+                id: sentence.id || `${this.courseId}_${this.lessonId}_${sentence.index}`,
+                text: sentence.japanese,
+                translation: sentence.chinese
+            })));
             
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
@@ -1247,7 +1251,12 @@ class PracticeManager {
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
 
-            // 其他完成逻辑...
+            // 添加调试日志
+            console.log('Practice completed:', {
+                sentencesCount: this.sentences.length,
+                courseId: this.courseId,
+                lessonId: this.lessonId
+            });
         } catch (error) {
             console.error('Error completing practice:', error);
         }

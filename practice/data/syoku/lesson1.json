@@ -225,12 +225,20 @@
       "answers": "におい:nioi"
     },
     {
-      "character": "においがする",
-      "hiragana": "におい:が:する",
-      "romaji": "nioi:ga:suru",
-      "meaning": "闻到……的味道",
+      "character": "においがいい",
+      "hiragana": "におい:が:いい",
+      "romaji": "nioi:ga:ii",
+      "meaning": "味道不错",
       "type": "split",
-      "answers": "におい:nioi|が:ga|する:suru"
+      "answers": "におい:nioi|が:ga|いい:ii"
+    },
+    {
+      "character": "悪い",
+      "hiragana": "わるい",
+      "romaji": "warui",
+      "meaning": "坏的，不好的",
+      "type": "normal",
+      "answers": "わるい:warui"
     },
     {
       "character": "ない",
@@ -249,14 +257,6 @@
       "answers": "におい:nioi|が:ga|ない:nai"
     },
     {
-      "character": "悪い",
-      "hiragana": "わるい",
-      "romaji": "warui",
-      "meaning": "坏的，不好的",
-      "type": "normal",
-      "answers": "わるい:warui"
-    },
-    {
       "character": "においが悪い",
       "hiragana": "におい:が:わるい",
       "romaji": "nioi:ga:warui",
@@ -264,6 +264,15 @@
       "type": "split",
       "answers": "におい:nioi|が:ga|わるい:warui"
     },
+    {
+      "character": "においがする",
+      "hiragana": "におい:が:する",
+      "romaji": "nioi:ga:suru",
+      "meaning": "闻到……的味道",
+      "type": "split",
+      "answers": "におい:nioi|が:ga|する:suru"
+    },
+   
     {
       "character": "嗅ぐ",
       "hiragana": "かぐ",
@@ -279,6 +288,14 @@
       "meaning": "闻气味",
       "type": "split",
       "answers": "におい:nioi|を:wo|かぐ:kagu"
+    },
+    {
+      "character": "お酒",
+      "hiragana": "おさけ",
+      "romaji": "osake",
+      "meaning": "酒",
+      "type": "normal",
+      "answers": "おさけ:osake"
     },
     {
       "character": "強い",
