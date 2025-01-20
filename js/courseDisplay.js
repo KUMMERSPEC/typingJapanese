@@ -78,27 +78,27 @@ export class CourseDisplay {
             const currentCourses = this.getCurrentAndNextLessons();
             
             if (currentCourses.length === 0) {
-                // 修改为显示 huku 课程作为默认课程，因为它已经确认可以工作
+                // 使用已知可用的课程
                 const firstCourse = courseConfig.courses['huku'];
-                if (!firstCourse) throw new Error('No course config found');
-                
                 courseList.innerHTML = `
                     <div class="course-card" onclick="window.location.href='practice/practice.html?course=huku&lesson=lesson1'">
                         <h3>${firstCourse.name}</h3>
-                        <p>${firstCourse.description}</p>
+                        <p>开始学习第一课</p>
                     </div>
                 `;
             } else {
                 // 显示正在学习的课程和它们的下一课
                 currentCourses.forEach(course => {
                     const courseInfo = courseConfig.courses[course.courseId];
-                    if (!courseInfo) return;  // 跳过无效的课程
+                    if (!courseInfo) return;
                     
+                    // 确保使用小写的 lesson ID
+                    const nextLesson = course.nextLesson.toLowerCase();
                     courseList.innerHTML += `
-                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson.toLowerCase()}'">
+                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${nextLesson}'">
                             <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
                             <h3>${courseInfo.name}</h3>
-                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课`}</p>
+                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(nextLesson.replace('lesson', ''))}课`}</p>
                         </div>
                     `;
                 });
