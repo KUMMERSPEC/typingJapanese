@@ -40,10 +40,14 @@ h1 {
     font-size: 20px;
     color: #333;
 }
+
+/* 修改书籍内容区域样式 */
 .book-content {
     padding: 20px;
     background: #f8f9fa;
-    min-height: 300px; /* 设置最小高度 */
+    min-height: 300px;
+    max-width: 900px; /* 限制最大宽度 */
+    margin: 0 auto; /* 居中显示 */
 }
 
 .book-header:hover {
@@ -53,11 +57,11 @@ h1 {
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 200px); /* 改为固定宽度 */
+    grid-template-columns: repeat(auto-fit, 200px);
     gap: 20px;
     padding: 10px;
     min-height: 200px;
-    justify-content: center; /* 添加居中对齐 */
+    justify-content: center;
 }
 
 .course-card {
