@@ -1,8 +1,18 @@
+import { courseConfig } from '../config/courseConfig.js';
+
 // 新建 courseDisplay.js 文件来处理课程显示逻辑
 export class CourseDisplay {
     constructor() {
         this.courseData = {};
         this.completedLessons = {};
+        this.courseOrder = courseConfig.courseOrder;
+        this.courseLessons = {};
+        
+        // 从配置文件初始化课程课时数
+        Object.entries(courseConfig.courses).forEach(([courseId, course]) => {
+            this.courseLessons[courseId] = course.lessonCount;
+        });
+        
         this.loadData();
     }
 
@@ -11,6 +21,15 @@ export class CourseDisplay {
         this.completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
         // 获取最近学习的课程
         this.lastStudied = JSON.parse(localStorage.getItem('lastStudied') || '{}');
+    }
+
+    // 获取下一个课程
+    getNextCourse(currentCourseId) {
+        const currentIndex = this.courseOrder.indexOf(currentCourseId);
+        if (currentIndex < this.courseOrder.length - 1) {
+            return this.courseOrder[currentIndex + 1];
+        }
+        return null;
     }
 
     // 获取当前正在学习的课程和下一课
@@ -23,11 +42,26 @@ export class CourseDisplay {
             const nextLessonNumber = parseInt(lastLesson.replace('lesson', '')) + 1;
             const nextLesson = `lesson${nextLessonNumber}`;
             
-            currentCourses.push({
-                courseId,
-                currentLesson: lastLesson,
-                nextLesson: nextLesson
-            });
+            // 检查是否超出当前课程的课时数
+            if (this.courseLessons[courseId] && nextLessonNumber > this.courseLessons[courseId]) {
+                // 获取下一个课程
+                const nextCourseId = this.getNextCourse(courseId);
+                if (nextCourseId) {
+                    currentCourses.push({
+                        courseId: nextCourseId,
+                        currentLesson: 'lesson0',
+                        nextLesson: 'lesson1',
+                        isNewCourse: true
+                    });
+                }
+            } else {
+                currentCourses.push({
+                    courseId,
+                    currentLesson: lastLesson,
+                    nextLesson: nextLesson,
+                    isNewCourse: false
+                });
+            }
         }
 
         return currentCourses;
@@ -51,23 +85,13 @@ export class CourseDisplay {
         } else {
             // 显示正在学习的课程和它们的下一课
             currentCourses.forEach(course => {
-                const courseNames = {
-                    'kimochi': '気持ち',
-                    'gimon': '疑問詞',
-                    'hitei': '否定',
-                    'katei': '假设',
-                    'kantan': '感叹',
-                    'ajiwai': '味道',
-                    'kanjou': '负面感情',
-                    'huku': '服装相关',
-                    'syoku': '饮食相关'
-                };
-
+                const courseInfo = courseConfig.courses[course.courseId] || {};
+                
                 courseList.innerHTML += `
                     <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
-                        <div class="course-status">继续学习</div>
-                        <h3>${courseNames[course.courseId] || course.courseId}</h3>
-                        <p>继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课</p>
+                        <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
+                        <h3>${courseInfo.name || course.courseId}</h3>
+                        <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课`}</p>
                     </div>
                 `;
             });

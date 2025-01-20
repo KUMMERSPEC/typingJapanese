@@ -147,11 +147,15 @@ header h1 {
 /* 课程列表样式 */
 .course-section {
     margin-top: 40px;
+    padding: 0 10px;
 }
 
 .course-section h2 {
     color: #333;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .course-list {
@@ -778,25 +782,40 @@ select option {
     }
 }
 
-/* 添加查看全部课程按钮样式 */
+/* 修改查看全部课程按钮的样式 */
 .view-all-courses {
-    text-align: center;
-    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;  /* 将按钮放在右侧 */
+    margin: 20px 10px;
 }
 
 .view-all-btn {
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #4a90e2;
-    color: white;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #4a90e2;
     text-decoration: none;
-    border-radius: 6px;
     font-weight: 500;
-    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    border: 1px solid #4a90e2;
+    border-radius: 20px;
+    background-color: transparent;
+    transition: all 0.2s ease;
 }
 
 .view-all-btn:hover {
-    background-color: #357abd;
-    transform: translateY(-2px);
+    background-color: #4a90e2;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.view-all-btn::after {
+    content: '→';
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+.view-all-btn:hover::after {
+    transform: translateX(3px);
 }
 
