@@ -60,7 +60,7 @@
       "character": "閉める",
       "hiragana": "しめる",
       "romaji": "shimeru",
-      "meaning": "关闭",
+      "meaning": "关闭（动作）",
       "type": "normal",
       "answers": "しめる:shimeru"
     },
@@ -68,7 +68,7 @@
       "character": "ドアを閉める",
       "hiragana": "ドア:を:しめる",
       "romaji": "doa:wo:shimeru",
-      "meaning": "关门（动作",
+      "meaning": "关门（动作）",
       "type": "split",
       "answers": "ドア:doa|を:wo|しめる:shimeru"
     },
@@ -132,7 +132,7 @@
       "character": "広い",
       "hiragana": "ひろい",
       "romaji": "hiroi",
-      "meaning": "宽的",
+      "meaning": "宽的，宽敞的",
       "type": "normal",
       "answers": "ひろい:hiroi"
     },
@@ -140,7 +140,7 @@
       "character": "部屋が広い",
       "hiragana": "へや:が:ひろい",
       "romaji": "heya:ga:hiroi",
-      "meaning": "宽敞的房间",
+      "meaning": "房间很宽敞",
       "type": "split",
       "answers": "へや:heya|が:ga|ひろい:hiroi"
     },
@@ -239,6 +239,14 @@
       "meaning": "爬楼梯",
       "type": "split",
       "answers": "かいだん:kaidan|を:wo|のぼる:noboru"
+    },
+    {
+      "character": "鍵",
+      "hiragana": "かぎ",
+      "romaji": "kagi",
+      "meaning": "锁",
+      "type": "normal",
+      "answers": "かぎ:kagi"
     },
     {
       "character": "鍵が開く",
