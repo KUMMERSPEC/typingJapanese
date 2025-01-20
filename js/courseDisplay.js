@@ -44,9 +44,13 @@ export class CourseDisplay {
     // 获取当前正在学习的课程和下一课
     getCurrentAndNextLessons() {
         const currentCourses = [];
+        const addedCourses = new Set(); // 用于跟踪已添加的课程
         
         // 遍历所有课程，找出正在学习的课程
         for (const [courseId, lessons] of Object.entries(this.completedLessons)) {
+            // 如果这个课程已经添加过，跳过
+            if (addedCourses.has(courseId)) continue;
+            
             const lastLesson = lessons[lessons.length - 1];
             const nextLessonNumber = parseInt(lastLesson.replace('lesson', '')) + 1;
             const nextLesson = `lesson${nextLessonNumber}`;
@@ -55,13 +59,14 @@ export class CourseDisplay {
             if (this.courseLessons[courseId] && nextLessonNumber > this.courseLessons[courseId]) {
                 // 获取下一个课程
                 const nextCourseId = this.getNextCourse(courseId);
-                if (nextCourseId) {
+                if (nextCourseId && !addedCourses.has(nextCourseId)) {
                     currentCourses.push({
                         courseId: nextCourseId,
                         currentLesson: 'lesson0',
                         nextLesson: 'lesson1',
                         isNewCourse: true
                     });
+                    addedCourses.add(nextCourseId);
                 }
             } else {
                 currentCourses.push({
@@ -70,6 +75,7 @@ export class CourseDisplay {
                     nextLesson: nextLesson,
                     isNewCourse: false
                 });
+                addedCourses.add(courseId);
             }
         }
 

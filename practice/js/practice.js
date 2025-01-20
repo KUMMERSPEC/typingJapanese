@@ -25,6 +25,9 @@ class PracticeManager {
         this.completedSentences = 0;
         
         this.init();
+        
+        // 绑定完成事件
+        this.bindCompletionEvents();
     }
 
     async init() {
@@ -1228,20 +1231,22 @@ class PracticeManager {
         historyContent.appendChild(historyItem);
     }
 
-    // 完成课程时调用
+    // 绑定完成事件
+    bindCompletionEvents() {
+        // 监听最后一个句子完成的事件
+        document.addEventListener('lastSentenceCompleted', async () => {
+            await this.completePractice();
+        });
+    }
+
     async completePractice() {
         try {
-            // 获取当前课程的所有句子
-            const currentSentences = this.sentences.map((sentence, index) => ({
-                id: `${this.courseId}_${this.lessonId}_${index + 1}`,
-                text: sentence.japanese,
-                translation: sentence.chinese,
-                course: this.courseId,
-                lesson: this.lessonId
-            }));
-
             // 更新统计数据
-            statsData.addLearningRecord(currentSentences);
+            statsData.addLearningRecord(this.sentences.map(sentence => ({
+                id: `${this.courseId}_${this.lessonId}_${sentence.index}`,
+                text: sentence.japanese,
+                translation: sentence.chinese
+            })));
             
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
@@ -1253,47 +1258,18 @@ class PracticeManager {
             }
             localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
 
-            // 更新已学习的句子总数
-            const learnedSentences = JSON.parse(localStorage.getItem('learnedSentences') || '[]');
-            currentSentences.forEach(sentence => {
-                if (!learnedSentences.some(s => s.id === sentence.id)) {
-                    learnedSentences.push(sentence);
-                }
+            // 添加调试日志
+            console.log('Practice completed:', {
+                courseId: this.courseId,
+                lessonId: this.lessonId,
+                sentencesCount: this.sentences.length
             });
-            localStorage.setItem('learnedSentences', JSON.stringify(learnedSentences));
 
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
-
-            console.log('Practice completed:', {
-                sentencesCount: currentSentences.length,
-                courseId: this.courseId,
-                lessonId: this.lessonId,
-                totalLearnedSentences: learnedSentences.length
-            });
         } catch (error) {
             console.error('Error completing practice:', error);
         }
-    }
-
-    async handlePracticeComplete() {
-        try {
-            // 确保在课程完成时调用 completePractice
-            await this.completePractice();
-            
-            // 显示完成界面
-            this.showCompletionScreen();
-            
-            // 添加调试日志
-            console.log('Practice completed and stats updated');
-        } catch (error) {
-            console.error('Error in handlePracticeComplete:', error);
-        }
-    }
-
-    // 确保这个方法在正确的时机被调用
-    showCompletionScreen() {
-        // ... 显示完成界面的代码 ...
     }
 }
 
