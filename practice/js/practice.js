@@ -1231,12 +1231,17 @@ class PracticeManager {
     // 完成课程时调用
     async completePractice() {
         try {
-            // 更新统计数据，传递完整的句子数组而不是仅传递长度
-            statsData.addLearningRecord(this.sentences.map(sentence => ({
-                id: sentence.id || `${this.courseId}_${this.lessonId}_${sentence.index}`,
+            // 获取当前课程的所有句子
+            const currentSentences = this.sentences.map((sentence, index) => ({
+                id: `${this.courseId}_${this.lessonId}_${index + 1}`,
                 text: sentence.japanese,
-                translation: sentence.chinese
-            })));
+                translation: sentence.chinese,
+                course: this.courseId,
+                lesson: this.lessonId
+            }));
+
+            // 更新统计数据
+            statsData.addLearningRecord(currentSentences);
             
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
@@ -1248,14 +1253,23 @@ class PracticeManager {
             }
             localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
 
+            // 更新已学习的句子总数
+            const learnedSentences = JSON.parse(localStorage.getItem('learnedSentences') || '[]');
+            currentSentences.forEach(sentence => {
+                if (!learnedSentences.some(s => s.id === sentence.id)) {
+                    learnedSentences.push(sentence);
+                }
+            });
+            localStorage.setItem('learnedSentences', JSON.stringify(learnedSentences));
+
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
 
-            // 添加调试日志
             console.log('Practice completed:', {
-                sentencesCount: this.sentences.length,
+                sentencesCount: currentSentences.length,
                 courseId: this.courseId,
-                lessonId: this.lessonId
+                lessonId: this.lessonId,
+                totalLearnedSentences: learnedSentences.length
             });
         } catch (error) {
             console.error('Error completing practice:', error);
