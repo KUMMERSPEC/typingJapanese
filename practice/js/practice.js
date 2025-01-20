@@ -1253,3 +1253,15 @@ function loadLesson(course, lesson) {
     const questions = lessonData.questions.map(q => generateQuestion(q));
     // ... 其他代码 ...
 }
+
+// 在完成练习时调用
+function completeLesson() {
+    // ... 现有的完成逻辑 ...
+
+    // 更新统计数据
+    const stats = new Statistics();
+    stats.addLearningRecord(sentencesLearned); // sentencesLearned 是这次学习的句子数
+
+    // 触发完成事件
+    window.dispatchEvent(new Event('lessonCompleted'));
+}

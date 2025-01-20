@@ -304,6 +304,54 @@ class Statistics {
     saveStatistics(stats) {
         localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
     }
+
+    // 添加学习记录
+    addLearningRecord(sentenceCount = 1) {
+        const stats = this.getStatistics();
+        const today = new Date().toLocaleDateString();
+
+        // 初始化今天的数据
+        if (!stats.dailyStats[today]) {
+            stats.dailyStats[today] = {
+                sentencesLearned: 0,
+                studyTime: 0
+            };
+        }
+
+        // 更新今天的学习数据
+        stats.dailyStats[today].sentencesLearned += sentenceCount;
+        stats.totalSentences += sentenceCount;
+
+        // 更新连续学习天数
+        if (stats.lastStudyDate !== today) {
+            stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? 
+                (stats.consecutiveDays || 0) + 1 : 1;
+            stats.lastStudyDate = today;
+        }
+
+        // 保存更新后的统计数据
+        this.saveStatistics(stats);
+
+        // 更新显示
+        this.updateDisplay();
+    }
+
+    // 更新显示
+    updateDisplay() {
+        const stats = this.getStatistics();
+        
+        // 更新学习天数显示
+        const learningDaysElement = document.querySelector('.learning-days');
+        if (learningDaysElement) {
+            learningDaysElement.textContent = stats.consecutiveDays || 0;
+        }
+
+        // 更新已学句子数显示
+        const learnedSentencesElement = document.querySelector('.learned-sentences');
+        if (learnedSentencesElement) {
+            learnedSentencesElement.textContent = stats.totalSentences || 0;
+        }
+    }
 }
 
 export default new Statistics();
