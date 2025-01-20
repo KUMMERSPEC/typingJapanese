@@ -78,12 +78,12 @@ export class CourseDisplay {
             const currentCourses = this.getCurrentAndNextLessons();
             
             if (currentCourses.length === 0) {
-                // 如果没有正在学习的课程，显示默认的第一课
-                const firstCourse = courseConfig.courses[courseConfig.courseOrder[0]];
+                // 修改为显示 huku 课程作为默认课程，因为它已经确认可以工作
+                const firstCourse = courseConfig.courses['huku'];
                 if (!firstCourse) throw new Error('No course config found');
                 
                 courseList.innerHTML = `
-                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=${courseConfig.courseOrder[0]}&lesson=lesson1'">
+                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=huku&lesson=lesson1'">
                         <h3>${firstCourse.name}</h3>
                         <p>${firstCourse.description}</p>
                     </div>
