@@ -306,4 +306,16 @@ class Statistics {
     }
 }
 
-export default new Statistics(); 
+export default new Statistics();
+
+// 更新学习天数的显示
+function updateLearningDays() {
+    const learningDaysElement = document.querySelector('.learning-days');
+    if (learningDaysElement) {
+        const learningDays = localStorage.getItem('learningDays') || '0';
+        learningDaysElement.textContent = learningDays;
+    }
+}
+
+// 在页面加载时更新显示
+document.addEventListener('DOMContentLoaded', updateLearningDays); 

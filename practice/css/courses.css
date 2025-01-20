@@ -19,14 +19,15 @@ h1 {
 
 /* 书籍容器样式 */
 .book-container {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .book-header {
-    padding: 20px;
+    background: #f8f9fa;
+    padding: 15px 20px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -36,10 +37,9 @@ h1 {
 
 .book-header h2 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 20px;
     color: #333;
 }
-
 .book-content {
     padding: 20px;
     background: #f8f9fa;
