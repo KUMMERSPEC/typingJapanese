@@ -1244,6 +1244,33 @@ class PracticeManager {
         // 添加到历史记录区域
         historyContent.appendChild(historyItem);
     }
+
+    // 只在 completePractice 函数中添加统计功能
+    async completePractice() {
+        try {
+            // 原有的代码保持不变
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+            
+            // 更新统计数据
+            statsData.addLearningRecord(this.questions.length);
+
+            // 更新课程完成状态（原有代码）
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            if (!completedLessons[this.course]) {
+                completedLessons[this.course] = [];
+            }
+            if (!completedLessons[this.course].includes(this.lesson)) {
+                completedLessons[this.course].push(this.lesson);
+            }
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+
+            // 原有的完成逻辑保持不变
+            alert('恭喜完成本课程！');
+            window.location.href = '../courses.html';
+        } catch (error) {
+            console.error('Error in completePractice:', error);
+        }
+    }
 }
 
  // 修改初始化方式
