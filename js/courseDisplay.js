@@ -79,9 +79,9 @@ export class CourseDisplay {
     // 渲染课程列表
     renderCourseList() {
         const courseList = document.querySelector('.course-list');
-        if (!courseList) return;  // 添加安全检查
+        if (!courseList) return;
         
-        courseList.innerHTML = ''; // 清空现有内容
+        courseList.innerHTML = '';
 
         try {
             const currentCourses = this.getCurrentAndNextLessons();
@@ -100,20 +100,23 @@ export class CourseDisplay {
                     const courseInfo = courseConfig.courses[course.courseId];
                     if (!courseInfo) return;
                     
-                    // 确保使用小写的 lesson ID
-                    const nextLesson = course.nextLesson.toLowerCase();
+                    // 检查下一课是否存在
+                    const nextLessonNumber = parseInt(course.nextLesson.replace('lesson', ''));
+                    if (nextLessonNumber > courseInfo.lessonCount) {
+                        return; // 如果下一课超出课程总课时，不显示
+                    }
+
                     courseList.innerHTML += `
-                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${nextLesson}'">
+                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
                             <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
                             <h3>${courseInfo.name}</h3>
-                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(nextLesson.replace('lesson', ''))}课`}</p>
+                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${nextLessonNumber}课`}</p>
                         </div>
                     `;
                 });
             }
         } catch (error) {
             console.error('Error rendering course list:', error);
-            // 显示错误提示
             courseList.innerHTML = `
                 <div class="error-message">
                     加载课程失败，请刷新页面重试

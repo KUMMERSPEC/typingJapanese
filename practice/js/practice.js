@@ -1275,6 +1275,26 @@ class PracticeManager {
             console.error('Error completing practice:', error);
         }
     }
+
+    async handlePracticeComplete() {
+        try {
+            // 确保在课程完成时调用 completePractice
+            await this.completePractice();
+            
+            // 显示完成界面
+            this.showCompletionScreen();
+            
+            // 添加调试日志
+            console.log('Practice completed and stats updated');
+        } catch (error) {
+            console.error('Error in handlePracticeComplete:', error);
+        }
+    }
+
+    // 确保这个方法在正确的时机被调用
+    showCompletionScreen() {
+        // ... 显示完成界面的代码 ...
+    }
 }
 
 // 修改初始化方式
