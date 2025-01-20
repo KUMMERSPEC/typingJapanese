@@ -52,27 +52,12 @@ h1 {
     transform: translateY(-50%);
 }
 
-/* 修改书籍内容区域样式 */
-.book-content {
-    padding: 20px;
-    background: #f8f9fa;
-    min-height: 300px;
-    max-width: 900px; /* 限制最大宽度 */
-    margin: 0 auto; /* 居中显示 */
-}
-
-.book-header:hover {
-    background: #f0f0f0;
-}
-
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    padding: 10px;
-    min-height: 200px;
-    justify-content: center;
+    padding: 20px;
 }
 
 .course-card {
@@ -100,6 +85,7 @@ h1 {
     color: #666;
     font-size: 16px;
 }
+
 
 /* 课时选择弹窗样式 */
 .lesson-modal {
