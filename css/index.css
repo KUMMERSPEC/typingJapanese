@@ -153,6 +153,7 @@ header h1 {
 .course-section h2 {
     color: #333;
     margin-bottom: 20px;
+    padding: 0 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -783,12 +784,6 @@ select option {
 }
 
 /* 修改查看全部课程按钮的样式 */
-.view-all-courses {
-    display: flex;
-    justify-content: flex-end;  /* 将按钮放在右侧 */
-    margin: 20px 10px;
-}
-
 .view-all-btn {
     display: inline-flex;
     align-items: center;
@@ -817,5 +812,10 @@ select option {
 
 .view-all-btn:hover::after {
     transform: translateX(3px);
+}
+
+/* 移除之前的 view-all-courses 容器样式 */
+.view-all-courses {
+    display: none;
 }
 

@@ -76,10 +76,11 @@ export class CourseDisplay {
         
         if (currentCourses.length === 0) {
             // 如果没有正在学习的课程，显示默认的第一课
+            const firstCourse = courseConfig.courses[courseConfig.courseOrder[0]];
             courseList.innerHTML = `
-                <div class="course-card" onclick="window.location.href='practice/practice.html?course=kimochi&lesson=lesson1'">
-                    <h3>気持ち</h3>
-                    <p>开始学习第一课</p>
+                <div class="course-card" onclick="window.location.href='practice/practice.html?course=${courseConfig.courseOrder[0]}&lesson=lesson1'">
+                    <h3>${firstCourse.name}</h3>
+                    <p>${firstCourse.description}</p>
                 </div>
             `;
         } else {
@@ -97,11 +98,13 @@ export class CourseDisplay {
             });
         }
 
-        // 添加"查看全部课程"按钮
-        courseList.insertAdjacentHTML('afterend', `
-            <div class="view-all-courses">
-                <a href="practice/courses.html" class="view-all-btn">查看全部课程 →</a>
-            </div>
-        `);
+        // 修改课程列表标题，添加"查看全部课程"按钮
+        const courseSection = document.querySelector('.course-section h2');
+        if (courseSection) {
+            courseSection.innerHTML = `
+                课程列表
+                <a href="practice/courses.html" class="view-all-btn">查看全部课程</a>
+            `;
+        }
     }
 } 
