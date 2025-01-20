@@ -1244,135 +1244,15 @@ class PracticeManager {
         // 添加到历史记录区域
         historyContent.appendChild(historyItem);
     }
-
-    // 绑定完成事件
-    bindCompletionEvents() {
-        // 监听最后一个句子完成事件
-        document.addEventListener('lastSentenceCompleted', async () => {
-            await this.completePractice();
-        });
-    }
-
-    async completePractice() {
-        try {
-            console.log('Starting completePractice with:', {
-                sentences: this.sentences,
-                courseId: this.courseId,
-                lessonId: this.lessonId
-            });
-
-            // 确保 sentences 数据正确
-            if (!this.sentences || !Array.isArray(this.sentences)) {
-                console.error('Invalid sentences data:', this.sentences);
-                return;
-            }
-
-            // 更新统计数据
-            const sentencesToRecord = this.sentences.map((sentence, index) => ({
-                id: `${this.courseId}_${this.lessonId}_${index + 1}`,
-                text: sentence.japanese,
-                translation: sentence.chinese
-            }));
-
-            // 记录学习数据
-            statsData.addLearningRecord(sentencesToRecord);
-
-            // 更新课程完成状态
-            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
-            if (!completedLessons[this.courseId]) {
-                completedLessons[this.courseId] = [];
-            }
-            if (!completedLessons[this.courseId].includes(this.lessonId)) {
-                completedLessons[this.courseId].push(this.lessonId);
-            }
-            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
-
-            // 显示完成界面
-            this.showCompletionScreen();
-
-            // 触发完成事件
-            window.dispatchEvent(new Event('lessonCompleted'));
-
-            console.log('Practice completed:', {
-                courseId: this.courseId,
-                lessonId: this.lessonId,
-                sentencesCount: this.sentences.length
-            });
-        } catch (error) {
-            console.error('Error completing practice:', error);
-        }
-    }
-
-    // 显示完成界面
-    showCompletionScreen() {
-        // ... 显示完成界面的代码 ...
-    }
-
-    async handleQuestionComplete() {
-        try {
-            this.completedSentences++;
-            
-            // 更新进度显示
-            const titleElement = document.querySelector('.lesson-info span');
-            if (titleElement) {
-                const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
-                titleElement.textContent = `第${lessonNumber}课 (${this.completedSentences + 1}/${this.questions.length})`;
-            }
-
-            // 如果所有题目都完成了
-            if (this.completedSentences === this.questions.length) {
-                await this.completePractice();
-            } else {
-                // 显示下一题
-                this.currentQuestionIndex++;
-                this.showQuestion();
-            }
-        } catch (error) {
-            console.error('Error in handleQuestionComplete:', error);
-        }
-    }
-
-    async completePractice() {
-        try {
-            // 更新统计数据
-            statsData.addLearningRecord({
-                courseId: this.course,
-                lessonId: this.lesson,
-                sentences: this.questions.map(q => ({
-                    id: `${this.course}_${this.lesson}_${q.character}`,
-                    text: q.japanese,
-                    translation: q.chinese
-                }))
-            });
-
-            // 更新课程完成状态
-            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
-            if (!completedLessons[this.course]) {
-                completedLessons[this.course] = [];
-            }
-            if (!completedLessons[this.course].includes(this.lesson)) {
-                completedLessons[this.course].push(this.lesson);
-            }
-            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
-
-            // 显示完成提示
-            alert('恭喜完成本课程！');
-            
-            // 返回课程列表
-            window.location.href = '../index.html';
-        } catch (error) {
-            console.error('Error in completePractice:', error);
-        }
-    }
 }
 
-// 修改初始化方式
-window.addEventListener('DOMContentLoaded', () => {
+ // 修改初始化方式
+    window.addEventListener('DOMContentLoaded', () => {
     window.practiceManager = new PracticeManager();
 });
 
-// 检查题目数据结构
-function generateQuestion(data, index, courseKey) {
+  // 检查题目数据结构
+     function generateQuestion(data, index, courseKey) {
     // 使用课程标识+序号作为ID
     const questionId = data.id || `${courseKey}_q${index + 1}`;
     return {
@@ -1383,16 +1263,10 @@ function generateQuestion(data, index, courseKey) {
         meaning: data.meaning,
         romaji: data.romaji
     };
-}
+   }
 
-// 在加载课程时使用
-function loadLesson(course, lesson) {
-    const questions = lessonData.questions.map(q => generateQuestion(q));
-    // ... 其他代码 ...
-}
-
-// 在完成练习时调用
-function completePractice() {
+  // 在完成练习时调用
+    function completePractice() {
     const stats = new Statistics();
     // sentences 是本次学习的句子数组，每个句子包含 id, text, translation
     stats.addLearningRecord(sentences);
