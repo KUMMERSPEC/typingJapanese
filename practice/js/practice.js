@@ -32,33 +32,79 @@ class PracticeManager {
 
     async init() {
         try {
-            // 获取URL参数
-            const urlParams = new URLSearchParams(window.location.search);
-            this.courseId = urlParams.get('course');
-            this.lessonId = urlParams.get('lesson');
+            console.log('Starting initialization...');
             
-            if (!this.courseId || !this.lessonId) {
-                throw new Error('Missing course or lesson ID');
+            // 从 URL 获取课程参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const course = urlParams.get('course');
+            const lesson = urlParams.get('lesson');
+
+            console.log('URL parameters:', { course, lesson });
+
+            if (!course || !lesson) {
+                throw new Error('Course or lesson parameter is missing');
             }
+
+            // 保存课程和课程名到实例中
+            this.course = course;
+            this.lesson = lesson;
 
             // 加载课程数据
-            const response = await fetch(`../practice/data/${this.courseId}/${this.lessonId}.json`);
-            if (!response.ok) {
-                throw new Error('Failed to load lesson data');
+            console.log('Loading course data...');
+            try {
+                const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
+                console.log('Loaded lesson data:', lessonData);
+                
+                // 确保题目数组正确加载
+                if (!lessonData || !lessonData.questions || !Array.isArray(lessonData.questions)) {
+                    throw new Error('Invalid lesson data structure');
+                }
+
+                // 获取已掌握的句子
+                const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+                
+                // 过滤掉已掌握的句子
+                this.questions = lessonData.questions.filter(question => {
+                    const questionKey = `${course}:${lesson}:${question.character}`;
+                    return !masteredSentences[questionKey];
+                });
+                
+                // 确保题目数组不为空
+                if (this.questions.length === 0) {
+                    // 如果所有题目都已掌握，显示提示并返回课程列表
+                    alert('恭喜！本课程的所有内容你都已掌握！');
+                    window.location.href = '../courses.html';
+                    return;
+                }
+
+                // 重置当前题目索引
+                this.currentQuestionIndex = 0;
+
+                // 更新页面标题和进度
+                const titleElement = document.querySelector('.lesson-info span');
+                if (titleElement) {
+                    const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
+                    titleElement.textContent = `第${lessonNumber}课 (1/${this.questions.length})`;
+                }
+                
+                // 显示第一个题目
+                this.showQuestion();
+
+                this.totalSentences = this.questions.length;
+                this.completedSentences = 0;
+
+                // 绑定事件监听器
+                this.bindEvents();
+
+            } catch (loadError) {
+                console.error('Error loading lesson data:', loadError);
+                throw new Error(`Failed to load lesson data: ${loadError.message}`);
             }
 
-            const data = await response.json();
-            this.sentences = data.questions;
-            this.currentSentenceIndex = 0;
-
-            // 初始化界面
-            this.initializeUI();
-            
-            // 显示第一个句子
-            this.showCurrentSentence();
         } catch (error) {
             console.error('Error in init:', error);
-            document.body.innerHTML = `<div class="error">加载课程失败，请返回重试</div>`;
+            alert('加载课程失败，请返回重试');
+            window.location.href = '../courses.html';
         }
     }
 
@@ -1260,6 +1306,63 @@ class PracticeManager {
     // 显示完成界面
     showCompletionScreen() {
         // ... 显示完成界面的代码 ...
+    }
+
+    async handleQuestionComplete() {
+        try {
+            this.completedSentences++;
+            
+            // 更新进度显示
+            const titleElement = document.querySelector('.lesson-info span');
+            if (titleElement) {
+                const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
+                titleElement.textContent = `第${lessonNumber}课 (${this.completedSentences + 1}/${this.questions.length})`;
+            }
+
+            // 如果所有题目都完成了
+            if (this.completedSentences === this.questions.length) {
+                await this.completePractice();
+            } else {
+                // 显示下一题
+                this.currentQuestionIndex++;
+                this.showQuestion();
+            }
+        } catch (error) {
+            console.error('Error in handleQuestionComplete:', error);
+        }
+    }
+
+    async completePractice() {
+        try {
+            // 更新统计数据
+            statsData.addLearningRecord({
+                courseId: this.course,
+                lessonId: this.lesson,
+                sentences: this.questions.map(q => ({
+                    id: `${this.course}_${this.lesson}_${q.character}`,
+                    text: q.japanese,
+                    translation: q.chinese
+                }))
+            });
+
+            // 更新课程完成状态
+            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            if (!completedLessons[this.course]) {
+                completedLessons[this.course] = [];
+            }
+            if (!completedLessons[this.course].includes(this.lesson)) {
+                completedLessons[this.course].push(this.lesson);
+            }
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+
+            // 显示完成提示
+            alert('恭喜完成本课程！');
+            
+            // 返回课程列表
+            window.location.href = '../index.html';
+        } catch (error) {
+            console.error('Error in completePractice:', error);
+        }
     }
 }
 
