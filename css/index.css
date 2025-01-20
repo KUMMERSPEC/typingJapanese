@@ -161,6 +161,7 @@ header h1 {
 }
 
 .course-card {
+    cursor: pointer;
     position: relative;
     padding: 20px;
     margin: 10px;
@@ -775,5 +776,27 @@ select option {
     select option {
         font-size: 1em;
     }
+}
+
+/* 添加查看全部课程按钮样式 */
+.view-all-courses {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.view-all-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #4a90e2;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.view-all-btn:hover {
+    background-color: #357abd;
+    transform: translateY(-2px);
 }
 

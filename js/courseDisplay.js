@@ -43,7 +43,7 @@ export class CourseDisplay {
         if (currentCourses.length === 0) {
             // 如果没有正在学习的课程，显示默认的第一课
             courseList.innerHTML = `
-                <div class="course-card" onclick="window.location.href='./practice/practice.html?course=kimochi&lesson=lesson1'">
+                <div class="course-card" onclick="window.location.href='practice/practice.html?course=kimochi&lesson=lesson1'">
                     <h3>気持ち</h3>
                     <p>开始学习第一课</p>
                 </div>
@@ -64,7 +64,7 @@ export class CourseDisplay {
                 };
 
                 courseList.innerHTML += `
-                    <div class="course-card current-course" onclick="window.location.href='./practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
+                    <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
                         <div class="course-status">继续学习</div>
                         <h3>${courseNames[course.courseId] || course.courseId}</h3>
                         <p>继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课</p>
@@ -72,5 +72,12 @@ export class CourseDisplay {
                 `;
             });
         }
+
+        // 添加"查看全部课程"按钮
+        courseList.insertAdjacentHTML('afterend', `
+            <div class="view-all-courses">
+                <a href="practice/courses.html" class="view-all-btn">查看全部课程 →</a>
+            </div>
+        `);
     }
 } 
