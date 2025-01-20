@@ -1268,11 +1268,14 @@ class PracticeManager {
             }
 
             // 更新统计数据
-            await statsData.addLearningRecord(this.sentences.map((sentence, index) => ({
+            const sentencesToRecord = this.sentences.map((sentence, index) => ({
                 id: `${this.courseId}_${this.lessonId}_${index + 1}`,
                 text: sentence.japanese,
                 translation: sentence.chinese
-            })));
+            }));
+
+            // 记录学习数据
+            statsData.addLearningRecord(sentencesToRecord);
 
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
@@ -1290,9 +1293,13 @@ class PracticeManager {
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
 
-            console.log('Practice completed successfully');
+            console.log('Practice completed:', {
+                courseId: this.courseId,
+                lessonId: this.lessonId,
+                sentencesCount: this.sentences.length
+            });
         } catch (error) {
-            console.error('Error in completePractice:', error);
+            console.error('Error completing practice:', error);
         }
     }
 
