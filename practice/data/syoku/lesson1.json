@@ -10,11 +10,11 @@
     },
     {
       "character": "薄い",
-      "hiragana": "nan",
+      "hiragana": "うすい",
       "romaji": "usui",
       "meaning": "淡的，浅的",
       "type": "normal",
-      "answers": "nan:usui"
+      "answers": "うすい:usui"
     },
     {
       "character": "お茶が薄い",
@@ -28,7 +28,7 @@
       "character": "濃い",
       "hiragana": "こい",
       "romaji": "koi",
-      "meaning": "黑暗的",
+      "meaning": "浓的，浓厚的",
       "type": "normal",
       "answers": "こい:koi"
     },
@@ -60,7 +60,7 @@
       "character": "味がある",
       "hiragana": "あじ:が:ある",
       "romaji": "aji:ga:aru",
-      "meaning": "有一种味道",
+      "meaning": "有味道",
       "type": "split",
       "answers": "あじ:aji|が:ga|ある:aru"
     },
@@ -84,7 +84,7 @@
       "character": "薄い",
       "hiragana": "うすい",
       "romaji": "usui",
-      "meaning": "薄的",
+      "meaning": "淡的，浅的",
       "type": "normal",
       "answers": "うすい:usui"
     },
@@ -92,7 +92,7 @@
       "character": "味が薄い",
       "hiragana": "あじ:が:うすい",
       "romaji": "aji:ga:usui",
-      "meaning": "无味的，味淡",
+      "meaning": "无味，味道淡",
       "type": "split",
       "answers": "あじ:aji|が:ga|うすい:usui"
     },
@@ -108,7 +108,7 @@
       "character": "味が濃い",
       "hiragana": "あじ:が:こい",
       "romaji": "aji:ga:koi",
-      "meaning": "味道浓烈",
+      "meaning": "味道浓",
       "type": "split",
       "answers": "あじ:aji|が:ga|こい:koi"
     },
@@ -116,7 +116,7 @@
       "character": "味がする",
       "hiragana": "あじ:が:する",
       "romaji": "aji:ga:suru",
-      "meaning": "嚐到……的味道",
+      "meaning": "尝到……的味道",
       "type": "split",
       "answers": "あじ:aji|が:ga|する:suru"
     },
@@ -265,7 +265,7 @@
       "answers": "におい:nioi|が:ga|わるい:warui"
     },
     {
-      "character": "かぐ",
+      "character": "嗅ぐ",
       "hiragana": "かぐ",
       "romaji": "kagu",
       "meaning": "闻，嗅",
@@ -273,7 +273,7 @@
       "answers": "かぐ:kagu"
     },
     {
-      "character": "においをかぐ",
+      "character": "においを嗅ぐ",
       "hiragana": "におい:を:かぐ",
       "romaji": "nioi:wo:kagu",
       "meaning": "闻气味",
@@ -300,7 +300,7 @@
       "character": "弱い",
       "hiragana": "よわい",
       "romaji": "yowai",
-      "meaning": "虚弱的",
+      "meaning": "弱的，不强的",
       "type": "normal",
       "answers": "よわい:yowai"
     },

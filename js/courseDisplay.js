@@ -95,7 +95,7 @@ export class CourseDisplay {
                     if (!courseInfo) return;  // 跳过无效的课程
                     
                     courseList.innerHTML += `
-                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
+                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson.toLowerCase()}'">
                             <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
                             <h3>${courseInfo.name}</h3>
                             <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课`}</p>

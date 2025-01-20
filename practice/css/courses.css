@@ -19,15 +19,14 @@ h1 {
 
 /* 书籍容器样式 */
 .book-container {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     background: white;
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .book-header {
-    background: #f8f9fa;
-    padding: 15px 20px;
+    padding: 20px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -37,12 +36,13 @@ h1 {
 
 .book-header h2 {
     margin: 0;
-    font-size: 20px;
+    font-size: 1.2rem;
     color: #333;
 }
 
 .book-content {
     padding: 20px;
+    background: #f8f9fa;
 }
 
 .book-header:hover {
@@ -52,35 +52,39 @@ h1 {
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .course-card {
     background: white;
-    border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.course-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    height: 100px; /* 固定高度 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .course-card h2 {
     margin: 0 0 10px 0;
+    font-size: 1.1rem;
     color: #333;
-    font-size: 24px;
 }
 
 .course-card p {
     margin: 0;
+    font-size: 0.9rem;
     color: #666;
-    font-size: 16px;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* 课时选择弹窗样式 */
@@ -238,22 +242,12 @@ h1 {
     }
 
     .course-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
-        padding: 10px;
     }
 
     .course-card {
-        padding: 15px;
-        border-radius: 8px;
-    }
-
-    .course-card h2 {
-        font-size: 20px;
-    }
-
-    .course-card p {
-        font-size: 14px;
+        height: 80px;
     }
 
     /* 课时选择弹窗移动端优化 */
