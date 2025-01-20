@@ -534,6 +534,20 @@ class PracticeManager {
                 }
             }
         });
+
+        // 监听最后一个句子完成事件
+        document.addEventListener('lastSentenceCompleted', () => {
+            this.completePractice();
+        });
+
+        // 监听每个句子完成事件
+        this.practiceArea.addEventListener('sentenceComplete', (event) => {
+            const currentIndex = this.currentSentenceIndex;
+            if (currentIndex === this.sentences.length - 1) {
+                // 触发最后一个句子完成事件
+                document.dispatchEvent(new Event('lastSentenceCompleted'));
+            }
+        });
     }
 
     checkAnswer(answer) {
@@ -1233,7 +1247,7 @@ class PracticeManager {
 
     // 绑定完成事件
     bindCompletionEvents() {
-        // 监听最后一个句子完成的事件
+        // 监听最后一个句子完成事件
         document.addEventListener('lastSentenceCompleted', async () => {
             await this.completePractice();
         });
@@ -1241,35 +1255,24 @@ class PracticeManager {
 
     async completePractice() {
         try {
-            // 添加更详细的调试日志
-            console.log('Before completePractice:', {
+            console.log('Starting completePractice with:', {
                 sentences: this.sentences,
                 courseId: this.courseId,
-                lessonId: this.lessonId,
-                currentStats: JSON.parse(localStorage.getItem('typing_statistics'))
+                lessonId: this.lessonId
             });
 
-            // 检查 sentences 是否正确
+            // 确保 sentences 数据正确
             if (!this.sentences || !Array.isArray(this.sentences)) {
-                console.error('Invalid sentences:', this.sentences);
+                console.error('Invalid sentences data:', this.sentences);
                 return;
             }
 
-            const formattedSentences = this.sentences.map((sentence, index) => ({
+            // 更新统计数据
+            await statsData.addLearningRecord(this.sentences.map((sentence, index) => ({
                 id: `${this.courseId}_${this.lessonId}_${index + 1}`,
                 text: sentence.japanese,
                 translation: sentence.chinese
-            }));
-
-            console.log('Formatted sentences:', formattedSentences);
-
-            // 更新统计数据
-            statsData.addLearningRecord(formattedSentences);
-
-            // 记录更新后的状态
-            console.log('After completePractice:', {
-                updatedStats: JSON.parse(localStorage.getItem('typing_statistics'))
-            });
+            })));
 
             // 更新课程完成状态
             const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
@@ -1281,18 +1284,21 @@ class PracticeManager {
             }
             localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
 
-            // 添加调试日志
-            console.log('Practice completed:', {
-                courseId: this.courseId,
-                lessonId: this.lessonId,
-                sentencesCount: this.sentences.length
-            });
+            // 显示完成界面
+            this.showCompletionScreen();
 
             // 触发完成事件
             window.dispatchEvent(new Event('lessonCompleted'));
+
+            console.log('Practice completed successfully');
         } catch (error) {
-            console.error('Error in completePractice:', error, error.stack);
+            console.error('Error in completePractice:', error);
         }
+    }
+
+    // 显示完成界面
+    showCompletionScreen() {
+        // ... 显示完成界面的代码 ...
     }
 }
 
