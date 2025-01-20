@@ -41,13 +41,8 @@ h1 {
     color: #333;
 }
 
-/* 修改书籍内容区域样式 */
 .book-content {
     padding: 20px;
-    background: #f8f9fa;
-    min-height: 300px;
-    max-width: 900px; /* 限制最大宽度 */
-    margin: 0 auto; /* 居中显示 */
 }
 
 .book-header:hover {
@@ -57,42 +52,35 @@ h1 {
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    padding: 10px;
-    min-height: 200px;
-    justify-content: center;
+    padding: 20px;
 }
 
 .course-card {
-    width: 200px; /* 添加固定宽度 */
     background: white;
+    border-radius: 10px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     cursor: pointer;
-    transition: all 0.3s ease;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .course-card h2 {
     margin: 0 0 10px 0;
-    font-size: 1.1rem;
     color: #333;
+    font-size: 24px;
 }
 
 .course-card p {
     margin: 0;
-    font-size: 0.9rem;
     color: #666;
-}
-
-.course-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
 }
 
 /* 课时选择弹窗样式 */
@@ -250,12 +238,22 @@ h1 {
     }
 
     .course-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: 1fr;
         gap: 15px;
+        padding: 10px;
     }
 
     .course-card {
-        height: 80px;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .course-card h2 {
+        font-size: 20px;
+    }
+
+    .course-card p {
+        font-size: 14px;
     }
 
     /* 课时选择弹窗移动端优化 */
