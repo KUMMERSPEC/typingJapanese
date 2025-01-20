@@ -50,16 +50,8 @@
             <div class="course-section">
                 <h2>课程列表</h2>
                 <div class="course-list">
-                    <div class="course-card" onclick="window.location.href='./practice/practice.html?course=kimochi&lesson=Lesson1'">
-                        <h3>気持ち</h3>
-                        <p>表达感受的词汇</p>
-                    </div>
-                    <div class="course-card" onclick="window.location.href='./practice/practice.html?course=gimon&lesson=Lesson1'">
-                        <h3>疑問詞</h3>
-                        <p>疑问词练习</p>
-                    </div>
+                    <!-- 课程列表将由 JavaScript 动态生成 -->
                 </div>
-                <a href="practice/courses.html" class="course-select-btn">查看全部课程 →</a>
             </div>
 
             <!-- 添加复习面板 -->
@@ -142,5 +134,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
     <script type="module" src="js/statsChart.js"></script>
     <script type="module" src="js/statistics.js"></script>
+    <script type="module">
+        import { CourseDisplay } from './js/courseDisplay.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const courseDisplay = new CourseDisplay();
+            courseDisplay.renderCourseList();
+        });
+    </script>
 </body>
 </html> 

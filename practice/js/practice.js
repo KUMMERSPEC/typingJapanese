@@ -108,7 +108,6 @@ class PracticeManager {
     // 初始化日语语音
     async initVoice() {
         try {
-            // 检测是否支持语音合成
             if (!('speechSynthesis' in window)) {
                 console.warn('浏览器不支持语音合成');
                 return;
@@ -116,52 +115,38 @@ class PracticeManager {
 
             this.speechSynthesis = window.speechSynthesis;
             
-            // 在移动端，确保语音合成处于活动状态
-            if (this.isMobile) {
-                this.speechSynthesis.resume();
-            }
-
             // 等待语音列表加载
             if (this.speechSynthesis.getVoices().length === 0) {
                 await new Promise(resolve => {
-                    this.speechSynthesis.onvoiceschanged = () => {
-                        resolve();
-                    };
+                    this.speechSynthesis.onvoiceschanged = () => resolve();
                     // 添加超时处理
                     setTimeout(resolve, 1000);
                 });
             }
 
-            // 获取日语语音
+            // 获取日语语音，优先选择 Google 日语语音
             const voices = this.speechSynthesis.getVoices();
             console.log('Available voices:', voices.map(v => ({name: v.name, lang: v.lang})));
             
+            // 优先选择 Google 日语语音
             this.japaneseVoice = voices.find(voice => 
-                voice.lang.includes('ja') || voice.lang.includes('JP')
+                voice.name.includes('Google') && voice.lang.includes('ja')
             );
 
+            // 如果没有 Google 日语语音，选择其他日语语音
+            if (!this.japaneseVoice) {
+                this.japaneseVoice = voices.find(voice => 
+                    voice.lang.includes('ja') || voice.lang.includes('JP')
+                );
+            }
+
+            // 如果还是没有找到，使用默认语音
             if (!this.japaneseVoice) {
                 console.warn('未找到日语语音，将使用默认语音');
                 this.japaneseVoice = voices[0];
             }
 
             console.log('Selected voice:', this.japaneseVoice);
-
-            // 在移动设备上预加载一个空的语音
-            if (this.isMobile) {
-                const silence = new SpeechSynthesisUtterance('');
-                silence.volume = 0;
-                this.speechSynthesis.speak(silence);
-            }
-
-            // 定期检查并恢复语音合成状态（针对移动端）
-            if (this.isMobile) {
-                setInterval(() => {
-                    if (this.speechSynthesis.paused) {
-                        this.speechSynthesis.resume();
-                    }
-                }, 1000);
-            }
 
         } catch (error) {
             console.error('初始化语音失败:', error);
@@ -184,13 +169,21 @@ class PracticeManager {
 
             console.log('Speaking text:', textToSpeak);
 
+            // 预加载下一个音频
+            this.preloadNextAudio();
+
             // 使用有道词典 API
             const audio = new Audio();
-            audio.src = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+            
+            // 设置音频预加载
+            audio.preload = 'auto';
             
             // 添加错误处理
             audio.onerror = (error) => {
                 console.error('Audio playback error:', error);
+                // 如果有道 API 失败，尝试使用 Web Speech API 作为备选
+                this.fallbackSpeak(textToSpeak);
             };
 
             // 播放音频
@@ -198,10 +191,36 @@ class PracticeManager {
                 await audio.play();
             } catch (error) {
                 console.error('Failed to play audio:', error);
+                this.fallbackSpeak(textToSpeak);
             }
 
         } catch (error) {
             console.error('播放语音失败:', error);
+            this.fallbackSpeak(text);
+        }
+    }
+
+    // 添加预加载下一个音频的方法
+    preloadNextAudio() {
+        try {
+            // 检查是否有下一题
+            if (this.currentQuestionIndex + 1 < this.questions.length) {
+                const nextQuestion = this.questions[this.currentQuestionIndex + 1];
+                if (nextQuestion) {
+                    // 获取下一题的文本
+                    let nextText = nextQuestion.hiragana || nextQuestion.character;
+                    if (nextQuestion.type === 'split') {
+                        nextText = nextText.replace(/:/g, '');
+                    }
+                    
+                    // 创建并预加载下一个音频
+                    const nextAudio = new Audio();
+                    nextAudio.preload = 'auto';
+                    nextAudio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(nextText)}&le=jap&type=3`;
+                }
+            }
+        } catch (error) {
+            console.error('预加载下一个音频失败:', error);
         }
     }
 

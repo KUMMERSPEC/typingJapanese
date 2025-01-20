@@ -69,10 +69,29 @@ class Statistics {
     // 获取学习天数
     getLearningDays() {
         const stats = this.getStatistics();
-        console.log('Getting learning days:', {
-            stats,
-            consecutiveDays: stats.consecutiveDays
-        });
+        if (!stats.dailyStats) return 0;
+
+        // 获取所有学习日期并排序
+        const learningDates = Object.keys(stats.dailyStats).sort();
+        if (learningDates.length === 0) return 0;
+
+        // 获取最近的学习记录
+        const today = new Date().toLocaleDateString();
+        const lastLearningDate = learningDates[learningDates.length - 1];
+
+        // 如果今天没有学习，返回之前的连续天数
+        if (!stats.dailyStats[today]) {
+            return stats.consecutiveDays || 0;
+        }
+
+        // 如果是新的一天学习，增加连续天数
+        if (stats.lastStudyDate !== today) {
+            stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? 
+                (stats.consecutiveDays || 0) + 1 : 1;
+            stats.lastStudyDate = today;
+            this.saveStatistics(stats);
+        }
+
         return stats.consecutiveDays || 0;
     }
 
@@ -117,87 +136,40 @@ class Statistics {
     }
 
     // 更新今日学习统计
-    updateDailyStats(lessonId, splitCount, questions) {
-        try {
-            console.log('Updating daily stats:', {
-                lessonId,
-                splitCount,
-                questions
-            });
-            
-            let stats = this.getStatistics();
-            const today = new Date().toLocaleDateString();
-            
-            // 初始化今日统计
-            if (!stats.dailyStats[today]) {
-                stats.dailyStats[today] = {
-                    sentencesLearned: 0,
-                    completedLessons: {},
-                    timestamp: new Date().toISOString()
-                };
-            }
+    updateDailyStats(lessonId, sentenceCount, sentences = []) {
+        const stats = this.getStatistics();
+        const today = new Date().toISOString().split('T')[0];
 
-            // 更新学习天数
-            if (stats.lastStudyDate !== today) {
-                stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? stats.consecutiveDays + 1 : 1;
-                stats.lastStudyDate = today;
-            }
-
-            // 检查课程是否已经计数过
-            if (!stats.dailyStats[today].completedLessons[lessonId]) {
-                // 只有在这个课程今天第一次完成时才增加计数
-                stats.dailyStats[today].sentencesLearned = (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
-                stats.totalSentences = (stats.totalSentences || 0) + splitCount;
-                
-                // 记录课程完成情况
-                stats.dailyStats[today].completedLessons[lessonId] = {
-                    timestamp: new Date().toISOString(),
-                    questionCount: splitCount
-                };
-            }
-
-            // 更新复习记录
-            if (questions && Array.isArray(questions)) {
-                if (!stats.reviewHistory) stats.reviewHistory = {};
-                
-                questions.forEach((question, index) => {
-                    // 使用句子内容作为唯一标识，而不是位置索引
-                    const questionId = `${question.character}:${question.hiragana}`;
-                    if (!stats.reviewHistory[questionId]) {
-                        const [courseId, lessonName] = lessonId.split(':');
-                        const courseNames = {
-                            'kimochi': '気持ち',
-                            'gimon': '疑問詞',
-                            'hitei': '否定',
-                            'katei': '假设',
-                            'kantan': '感叹',
-                            'ajiwai': '味道',
-                            'kanjou': '负面感情'
-                        };
-                        stats.reviewHistory[questionId] = {
-                            japanese: question.character,
-                            hiragana: question.hiragana,
-                            meaning: question.meaning,
-                            course: courseNames[courseId] || courseId,
-                            lesson: lessonName,
-                            lastReview: new Date().toISOString(),
-                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                            proficiency: question.proficiency || 'low',  // 使用问题自带的掌握度，如果没有则默认为'low'
-                            reviewCount: 0
-                        };
-                    }
-                });
-            }
-
-            // 保存更新后的统计数据
-            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            console.log('Updated stats:', stats);
-
-            return stats;
-        } catch (error) {
-            console.error('Error updating daily stats:', error);
-            return null;
+        // 初始化每日统计
+        if (!stats.dailyStats) {
+            stats.dailyStats = {};
         }
+
+        // 初始化今日数据
+        if (!stats.dailyStats[today]) {
+            stats.dailyStats[today] = {
+                totalSentences: 0,
+                lessons: {},
+                lastUpdate: new Date().toISOString()
+            };
+        }
+
+        // 更新今日数据
+        stats.dailyStats[today].totalSentences += sentenceCount;
+        if (!stats.dailyStats[today].lessons[lessonId]) {
+            stats.dailyStats[today].lessons[lessonId] = {
+                count: 0,
+                sentences: []
+            };
+        }
+        stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
+        stats.dailyStats[today].lessons[lessonId].sentences.push(...sentences);
+        stats.dailyStats[today].lastUpdate = new Date().toISOString();
+
+        // 保存更新后的统计数据
+        this.saveStatistics(stats);
+
+        return stats.dailyStats[today].totalSentences;
     }
 
     // 获取掌握情况统计
