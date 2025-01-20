@@ -819,3 +819,57 @@ select option {
     display: none;
 }
 
+/* 修改课程列表标题区域样式 */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: 1px solid #4a90e2;
+    border-radius: 20px;
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+    background-color: #4a90e2;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.view-all-btn::after {
+    content: '→';
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+.view-all-btn:hover::after {
+    transform: translateX(3px);
+}
+
+.error-message {
+    padding: 20px;
+    background-color: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    color: #d32f2f;
+    text-align: center;
+    margin: 10px;
+}
+

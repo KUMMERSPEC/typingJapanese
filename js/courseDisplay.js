@@ -70,40 +70,46 @@ export class CourseDisplay {
     // 渲染课程列表
     renderCourseList() {
         const courseList = document.querySelector('.course-list');
+        if (!courseList) return;  // 添加安全检查
+        
         courseList.innerHTML = ''; // 清空现有内容
 
-        const currentCourses = this.getCurrentAndNextLessons();
-        
-        if (currentCourses.length === 0) {
-            // 如果没有正在学习的课程，显示默认的第一课
-            const firstCourse = courseConfig.courses[courseConfig.courseOrder[0]];
-            courseList.innerHTML = `
-                <div class="course-card" onclick="window.location.href='practice/practice.html?course=${courseConfig.courseOrder[0]}&lesson=lesson1'">
-                    <h3>${firstCourse.name}</h3>
-                    <p>${firstCourse.description}</p>
-                </div>
-            `;
-        } else {
-            // 显示正在学习的课程和它们的下一课
-            currentCourses.forEach(course => {
-                const courseInfo = courseConfig.courses[course.courseId] || {};
+        try {
+            const currentCourses = this.getCurrentAndNextLessons();
+            
+            if (currentCourses.length === 0) {
+                // 如果没有正在学习的课程，显示默认的第一课
+                const firstCourse = courseConfig.courses[courseConfig.courseOrder[0]];
+                if (!firstCourse) throw new Error('No course config found');
                 
-                courseList.innerHTML += `
-                    <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
-                        <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
-                        <h3>${courseInfo.name || course.courseId}</h3>
-                        <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课`}</p>
+                courseList.innerHTML = `
+                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=${courseConfig.courseOrder[0]}&lesson=lesson1'">
+                        <h3>${firstCourse.name}</h3>
+                        <p>${firstCourse.description}</p>
                     </div>
                 `;
-            });
-        }
-
-        // 修改课程列表标题，添加"查看全部课程"按钮
-        const courseSection = document.querySelector('.course-section h2');
-        if (courseSection) {
-            courseSection.innerHTML = `
-                课程列表
-                <a href="practice/courses.html" class="view-all-btn">查看全部课程</a>
+            } else {
+                // 显示正在学习的课程和它们的下一课
+                currentCourses.forEach(course => {
+                    const courseInfo = courseConfig.courses[course.courseId];
+                    if (!courseInfo) return;  // 跳过无效的课程
+                    
+                    courseList.innerHTML += `
+                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
+                            <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
+                            <h3>${courseInfo.name}</h3>
+                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${parseInt(course.nextLesson.replace('lesson', ''))}课`}</p>
+                        </div>
+                    `;
+                });
+            }
+        } catch (error) {
+            console.error('Error rendering course list:', error);
+            // 显示错误提示
+            courseList.innerHTML = `
+                <div class="error-message">
+                    加载课程失败，请刷新页面重试
+                </div>
             `;
         }
     }
