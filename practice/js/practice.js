@@ -1,5 +1,6 @@
 import DataLoader from './dataLoader.js';
 import statsData from '../../js/common/statsData.js';
+import Statistics from '../js/common/statsData.js';
 
 class PracticeManager {
     constructor() {
@@ -1255,13 +1256,10 @@ function loadLesson(course, lesson) {
 }
 
 // 在完成练习时调用
-function completeLesson() {
-    // ... 现有的完成逻辑 ...
-
-    // 更新统计数据
+function completePractice() {
     const stats = new Statistics();
-    stats.addLearningRecord(sentencesLearned); // sentencesLearned 是这次学习的句子数
-
-    // 触发完成事件
-    window.dispatchEvent(new Event('lessonCompleted'));
+    // sentences 是本次学习的句子数组，每个句子包含 id, text, translation
+    stats.addLearningRecord(sentences);
+    
+    // 其他完成逻辑...
 }

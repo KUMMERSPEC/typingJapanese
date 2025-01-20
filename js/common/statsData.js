@@ -3,7 +3,7 @@
  */
 import { getProgress, getHistory } from './storage.js';
 
-const STATS_STORAGE_KEY = 'typing_statistics';
+const STATS_STORAGE_KEY = 'learningStats';
 
 // 间隔复习算法配置
 const REVIEW_INTERVALS = {
@@ -47,7 +47,7 @@ const INTERVAL_ADJUSTMENTS = {
 
 class Statistics {
     constructor() {
-        this.initializeStats();
+        this.STATS_STORAGE_KEY = 'learningStats';
     }
 
     initializeStats() {
@@ -207,15 +207,13 @@ class Statistics {
     // 获取统计数据
     getStatistics() {
         const stats = localStorage.getItem(STATS_STORAGE_KEY);
-        if (!stats) {
-            return this.initializeStats();
-        }
-        const parsedStats = JSON.parse(stats);
-        
-        // 更新掌握情况统计
-        parsedStats.masteryStats = this.getMasteryStats();
-        
-        return parsedStats;
+        return stats ? JSON.parse(stats) : {
+            dailyStats: {},
+            lastStudyDate: '',
+            consecutiveDays: 0,
+            totalSentences: 0,
+            reviewHistory: {} // 确保有复习历史字段
+        };
     }
 
     // 检查是否是连续天数
@@ -305,8 +303,8 @@ class Statistics {
         localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
     }
 
-    // 添加学习记录
-    addLearningRecord(sentenceCount = 1) {
+    // 修改添加学习记录方法
+    addLearningRecord(sentences) {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
@@ -319,8 +317,8 @@ class Statistics {
         }
 
         // 更新今天的学习数据
-        stats.dailyStats[today].sentencesLearned += sentenceCount;
-        stats.totalSentences += sentenceCount;
+        stats.dailyStats[today].sentencesLearned += sentences.length;
+        stats.totalSentences += sentences.length;
 
         // 更新连续学习天数
         if (stats.lastStudyDate !== today) {
@@ -329,14 +327,25 @@ class Statistics {
             stats.lastStudyDate = today;
         }
 
+        // 添加句子到复习历史
+        sentences.forEach(sentence => {
+            if (!stats.reviewHistory[sentence.id]) {
+                stats.reviewHistory[sentence.id] = {
+                    sentence: sentence.text,
+                    translation: sentence.translation,
+                    nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24小时后复习
+                    proficiency: 'low',
+                    reviewCount: 0
+                };
+            }
+        });
+
         // 保存更新后的统计数据
         this.saveStatistics(stats);
-
-        // 更新显示
         this.updateDisplay();
     }
 
-    // 更新显示
+    // 更新显示方法
     updateDisplay() {
         const stats = this.getStatistics();
         
@@ -351,19 +360,13 @@ class Statistics {
         if (learnedSentencesElement) {
             learnedSentencesElement.textContent = stats.totalSentences || 0;
         }
+
+        // 更新待复习数量显示
+        const reviewItemsElement = document.querySelector('.review-items');
+        if (reviewItemsElement) {
+            reviewItemsElement.textContent = this.getReviewCount();
+        }
     }
 }
 
-export default new Statistics();
-
-// 更新学习天数的显示
-function updateLearningDays() {
-    const learningDaysElement = document.querySelector('.learning-days');
-    if (learningDaysElement) {
-        const learningDays = localStorage.getItem('learningDays') || '0';
-        learningDaysElement.textContent = learningDays;
-    }
-}
-
-// 在页面加载时更新显示
-document.addEventListener('DOMContentLoaded', updateLearningDays); 
+export default new Statistics(); 
