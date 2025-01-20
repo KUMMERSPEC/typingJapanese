@@ -55,15 +55,16 @@ class Statistics {
         if (!stats) {
             const initialStats = {
                 firstUseDate: new Date().toISOString(),
-                lastStudyDate: new Date().toLocaleDateString(),
-                consecutiveDays: 1,
+                lastStudyDate: '',
+                consecutiveDays: 0,
                 dailyStats: {},
-                completedQuestions: {},
                 totalSentences: 0,
-                reviewHistory: {}
+                completedQuestions: []
             };
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(initialStats));
+            return initialStats;
         }
+        return JSON.parse(stats);
     }
 
     // 获取学习天数
@@ -305,12 +306,12 @@ class Statistics {
         localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
     }
 
-    // 修改添加学习记录方法，但保持与原有数据结构兼容
+    // 修改添加学习记录方法
     addLearningRecord(sentences) {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
-        // 初始化今天的数据
+        // 初始化或更新今天的数据
         if (!stats.dailyStats[today]) {
             stats.dailyStats[today] = {
                 sentencesLearned: 0,
@@ -321,34 +322,52 @@ class Statistics {
         // 更新今天的学习数据
         const sentenceCount = Array.isArray(sentences) ? sentences.length : sentences;
         stats.dailyStats[today].sentencesLearned += sentenceCount;
-        stats.totalSentences = (stats.totalSentences || 0) + sentenceCount;
 
-        // 更新连续学习天数
-        if (stats.lastStudyDate !== today) {
-            stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? 
-                (stats.consecutiveDays || 0) + 1 : 1;
-            stats.lastStudyDate = today;
+        // 更新总句子数
+        if (!stats.completedQuestions) {
+            stats.completedQuestions = [];
         }
 
-        // 如果传入的是句子数组，添加到复习历史
+        // 如果传入的是句子数组，添加新学习的句子
         if (Array.isArray(sentences)) {
-            if (!stats.reviewHistory) stats.reviewHistory = {};
             sentences.forEach(sentence => {
-                if (!stats.reviewHistory[sentence.id]) {
-                    stats.reviewHistory[sentence.id] = {
-                        sentence: sentence.text,
-                        translation: sentence.translation,
-                        nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                        proficiency: 'low',
-                        reviewCount: 0
-                    };
+                const sentenceId = sentence.id;
+                if (!stats.completedQuestions.includes(sentenceId)) {
+                    stats.completedQuestions.push(sentenceId);
                 }
             });
         }
 
+        // 更新总句子数
+        stats.totalSentences = stats.completedQuestions.length;
+
+        // 更新连续学习天数
+        if (stats.lastStudyDate !== today) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayString = yesterday.toLocaleDateString();
+            
+            if (stats.lastStudyDate === yesterdayString) {
+                stats.consecutiveDays = (stats.consecutiveDays || 0) + 1;
+            } else if (stats.lastStudyDate !== today) {
+                stats.consecutiveDays = 1;
+            }
+            stats.lastStudyDate = today;
+        }
+
         // 保存更新后的统计数据
         this.saveStatistics(stats);
+
+        // 更新显示
         this.updateDisplay();
+
+        // 添加调试日志
+        console.log('Statistics updated:', {
+            today,
+            totalSentences: stats.totalSentences,
+            consecutiveDays: stats.consecutiveDays,
+            dailyStats: stats.dailyStats[today]
+        });
     }
 
     // 更新显示方法

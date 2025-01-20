@@ -5,8 +5,8 @@
       "hiragana": "ひ",
       "romaji": "hi",
       "meaning": "火，火焰",
-      "type": "nan",
-      "answers": ""
+      "type": "normal",
+      "answers": "ひ:hi"
     },
     {
       "character": "消える",
@@ -25,10 +25,18 @@
       "answers": "ひ:hi|が:ga|きえる:kieru"
     },
     {
+      "character": "つく",
+      "hiragana": "つく",
+      "romaji": "tsuku",
+      "meaning": "点燃",
+      "type": "normal",
+      "answers": "つく:tsuku"
+    },
+    {
       "character": "火がつく",
       "hiragana": "ひ:が:つく",
       "romaji": "hi:ga:tsuku",
-      "meaning": "引起, 着火, 被点燃",
+      "meaning": "火被点燃",
       "type": "split",
       "answers": "ひ:hi|が:ga|つく:tsuku"
     },
@@ -140,7 +148,7 @@
       "character": "火を止める",
       "hiragana": "ひ:を:とめる",
       "romaji": "hi:wo:tomeru",
-      "meaning": "关过（停火）",
+      "meaning": "关火（停火）",
       "type": "split",
       "answers": "ひ:hi|を:wo|とめる:tomeru"
     },
@@ -188,7 +196,7 @@
       "character": "水を出す",
       "hiragana": "みず:を:だす",
       "romaji": "mizu:wo:dasu",
-      "meaning": "拿出水",
+      "meaning": "拿出水，放水",
       "type": "split",
       "answers": "みず:mizu|を:wo|だす:dasu"
     },
@@ -204,7 +212,7 @@
       "character": "水を止める",
       "hiragana": "みず:を:とめる",
       "romaji": "mizu:wo:tomeru",
-      "meaning": "停止水",
+      "meaning": "关水，把水关了",
       "type": "split",
       "answers": "みず:mizu|を:wo|とめる:tomeru"
     },
