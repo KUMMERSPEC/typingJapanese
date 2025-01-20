@@ -23,6 +23,7 @@ h1 {
     background: white;
     border-radius: 10px;
     overflow: hidden;
+    width: 100%; /* 确保宽度一致 */
 }
 
 .book-header {
@@ -33,12 +34,22 @@ h1 {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #eee;
+    position: relative;
 }
 
 .book-header h2 {
     margin: 0;
     font-size: 20px;
     color: #333;
+    padding-right: 40px;
+    padding-left: 0; /* 确保左对齐 */
+}
+
+.book-header span {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* 修改书籍内容区域样式 */
