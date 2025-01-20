@@ -41,8 +41,13 @@ h1 {
     color: #333;
 }
 
+/* 修改书籍内容区域样式 */
 .book-content {
     padding: 20px;
+    background: #f8f9fa;
+    min-height: 300px;
+    max-width: 900px; /* 限制最大宽度 */
+    margin: 0 auto; /* 居中显示 */
 }
 
 .book-header:hover {
@@ -52,9 +57,11 @@ h1 {
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, 200px);
     gap: 20px;
-    padding: 20px;
+    padding: 10px;
+    min-height: 200px;
+    justify-content: center;
 }
 
 .course-card {
