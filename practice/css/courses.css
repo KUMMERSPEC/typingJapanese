@@ -53,13 +53,15 @@ h1 {
 /* 课程网格样式 */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, 200px); /* 改为固定宽度 */
     gap: 20px;
     padding: 10px;
-    min-height: 200px; /* 确保最小高度一致 */
+    min-height: 200px;
+    justify-content: center; /* 添加居中对齐 */
 }
 
 .course-card {
+    width: 200px; /* 添加固定宽度 */
     background: white;
     padding: 20px;
     border-radius: 8px;
