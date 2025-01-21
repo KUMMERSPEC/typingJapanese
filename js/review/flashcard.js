@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 
 class FlashcardManager {
     constructor() {
+        console.log('初始化 FlashcardManager');
         this.currentIndex = 0;
         this.sentences = [];
         this.mode = null;
@@ -23,27 +24,31 @@ class FlashcardManager {
 
         this.isLoading = true;  // 添加加载状态标记
         this.init();
-        
-        // 直接在构造函数中添加事件监听
+        console.log('调用 initModeSelection');
         this.initModeSelection();
     }
 
     async init() {
+        console.log('开始初始化');
         try {
             this.showLoading();  // 显示加载状态
             
             // 从 sessionStorage 获取复习句子
             const savedSentences = sessionStorage.getItem('reviewSentences');
+            console.log('从 sessionStorage 获取的句子:', savedSentences);
+            
             if (!savedSentences) {
+                console.log('没有找到待复习句子');
                 this.hideLoading();
                 this.showEmptyState();
                 return;
             }
 
             this.sentences = JSON.parse(savedSentences);
-            console.log('Loaded review sentences:', this.sentences);
+            console.log('解析后的句子数组:', this.sentences);
             
             if (this.sentences.length === 0) {
+                console.log('句子数组为空');
                 this.hideLoading();
                 this.showEmptyState();
                 return;
@@ -55,7 +60,7 @@ class FlashcardManager {
             this.setupEventListeners();
             
         } catch (error) {
-            console.error('Error initializing flashcards:', error);
+            console.error('初始化错误:', error);
             this.showError('加载失败，请刷新重试');
         } finally {
             this.hideLoading();
@@ -115,31 +120,48 @@ class FlashcardManager {
 
     // 添加模式选择初始化
     initModeSelection() {
-        // 为模式选择按钮添加事件监听
-        document.querySelector('.mode-btn.mode-cn-jp')?.addEventListener('click', () => {
-            console.log('选择中文到日文模式');
-            this.startPractice('cn-jp');
+        // 检查按钮是否存在
+        const cnJpBtn = document.querySelector('.mode-btn.mode-cn-jp');
+        const jpCnBtn = document.querySelector('.mode-btn.mode-jp-cn');
+        
+        console.log('找到的按钮:', {
+            'cn-jp按钮': cnJpBtn,
+            'jp-cn按钮': jpCnBtn
         });
 
-        document.querySelector('.mode-btn.mode-jp-cn')?.addEventListener('click', () => {
-            console.log('选择日文到中文模式');
-            this.startPractice('jp-cn');
-        });
+        if (cnJpBtn) {
+            cnJpBtn.addEventListener('click', () => {
+                console.log('点击了中文到日文按钮');
+                this.startPractice('cn-jp');
+            });
+        }
+
+        if (jpCnBtn) {
+            jpCnBtn.addEventListener('click', () => {
+                console.log('点击了日文到中文按钮');
+                this.startPractice('jp-cn');
+            });
+        }
     }
 
     // 开始练习
     startPractice(mode) {
         console.log('开始练习，模式：', mode);
+        console.log('当前句子数组:', this.sentences);
+        
         this.mode = mode;
+        this.practiceStarted = true;
         
         // 隐藏模式选择界面
         const modeSelectScreen = document.querySelector('.mode-select-screen');
+        console.log('模式选择界面元素:', modeSelectScreen);
         if (modeSelectScreen) {
             modeSelectScreen.style.display = 'none';
         }
 
         // 显示练习界面
         const practiceContainer = document.querySelector('.practice-container');
+        console.log('练习容器元素:', practiceContainer);
         if (practiceContainer) {
             practiceContainer.style.display = 'block';
         }
@@ -455,6 +477,6 @@ class FlashcardManager {
 
 // 确保在 DOM 加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initializing FlashcardManager');
+    console.log('DOM 加载完成，开始初始化 FlashcardManager');
     new FlashcardManager();
 }); 
