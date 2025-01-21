@@ -48,6 +48,7 @@ const INTERVAL_ADJUSTMENTS = {
 class Statistics {
     constructor() {
         this._stats = null; // 添加缓存
+        this._isUpdating = false; // 添加标志位防止循环
     }
 
     initializeStats() {
@@ -164,19 +165,18 @@ class Statistics {
     getStatistics() {
         try {
             const statsStr = localStorage.getItem(STATS_STORAGE_KEY);
-            console.log('Raw stats from storage:', statsStr);
-            
             let stats = statsStr ? JSON.parse(statsStr) : {};
             
-            // 确保基本属性存在
+            // 初始化基本属性
             stats.totalSentences = stats.totalSentences || 0;
             stats.dailyStats = stats.dailyStats || {};
             stats.reviewHistory = stats.reviewHistory || {};
             
-            // 确保掌握情况统计存在
-            stats.masteryStats = this.getMasteryStats();
+            // 只在非更新状态时计算 masteryStats
+            if (!this._isUpdating) {
+                stats.masteryStats = this.calculateMasteryStats(stats);
+            }
             
-            console.log('Processed stats:', stats);
             return stats;
         } catch (error) {
             console.error('Error getting statistics:', error);
@@ -200,14 +200,21 @@ class Statistics {
 
     // 新增：计算掌握情况的方法
     calculateMasteryStats(stats) {
-        const masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
-        
+        const masteryStats = {
+            low: 0,
+            medium: 0,
+            high: 0,
+            master: 0
+        };
+
         if (stats.reviewHistory) {
             Object.values(stats.reviewHistory).forEach(item => {
-                masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
+                if (item && item.proficiency) {
+                    masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
+                }
             });
         }
-        
+
         return masteryStats;
     }
 
@@ -382,18 +389,14 @@ class Statistics {
 
     // 修改：处理练习完成时的数据更新
     updateDailyStats(lessonId, splitCount, questions) {
+        if (this._isUpdating) return null; // 防止重复调用
+        
         try {
-            console.log('Starting updateDailyStats:', {
-                lessonId,
-                splitCount,
-                currentStats: this.getStatistics()
-            });
-            
+            this._isUpdating = true;
             let stats = this.getStatistics();
             const today = new Date().toLocaleDateString();
 
             // 初始化数据结构
-            if (!stats.dailyStats) stats.dailyStats = {};
             if (!stats.dailyStats[today]) {
                 stats.dailyStats[today] = {
                     sentencesLearned: 0,
@@ -401,20 +404,13 @@ class Statistics {
                 };
             }
 
-            // 直接更新总句子数，不再依赖于 completedLessons 检查
+            // 更新句子数量
             stats.totalSentences = (stats.totalSentences || 0) + splitCount;
             stats.dailyStats[today].sentencesLearned = 
                 (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
 
-            console.log('After updating counts:', {
-                totalSentences: stats.totalSentences,
-                dailyLearned: stats.dailyStats[today].sentencesLearned
-            });
-
-            // 更新复习记录时同时更新掌握情况
+            // 更新复习记录
             if (questions && Array.isArray(questions)) {
-                if (!stats.reviewHistory) stats.reviewHistory = {};
-                
                 questions.forEach(question => {
                     if (!question) return;
                     const questionId = `${question.character}:${question.hiragana}`;
@@ -428,25 +424,24 @@ class Statistics {
                             lesson: lessonName,
                             lastReview: new Date().toISOString(),
                             nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                            proficiency: 'low'  // 新添加的句子默认为 low
+                            proficiency: 'low'
                         };
                     }
                 });
             }
 
-            // 重新计算掌握情况
-            stats.masteryStats = this.getMasteryStats();
-            
-            console.log('Updated stats with mastery:', stats);
+            // 计算掌握情况
+            stats.masteryStats = this.calculateMasteryStats(stats);
+
+            // 保存更新后的统计数据
             this.saveStatistics(stats);
-            
-            // 立即更新显示
-            this.updateDisplay();
             
             return stats;
         } catch (error) {
             console.error('Error in updateDailyStats:', error);
             return null;
+        } finally {
+            this._isUpdating = false; // 确保标志位被重置
         }
     }
 
