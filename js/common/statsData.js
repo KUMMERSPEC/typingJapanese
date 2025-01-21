@@ -375,21 +375,10 @@ class Statistics {
     // 修改：处理练习完成时的数据更新
     updateDailyStats(lessonId, splitCount, questions) {
         try {
-            console.log('Updating daily stats with:', {
-                lessonId,
-                splitCount,
-                questions
-            });
+            console.log('Updating stats with:', { lessonId, splitCount, questions });
             
             let stats = this.getStatistics();
             const today = new Date().toLocaleDateString();
-
-            // 调试日志：检查 dailyStats 结构
-            console.log('Current stats structure:', {
-                dailyStats: stats.dailyStats,
-                today,
-                currentDayStats: stats.dailyStats?.[today]
-            });
 
             // 初始化数据结构
             if (!stats.dailyStats) stats.dailyStats = {};
@@ -398,6 +387,16 @@ class Statistics {
                     sentencesLearned: 0,
                     completedLessons: {}
                 };
+            }
+
+            // 更新今日学习的句子数
+            if (!stats.dailyStats[today].completedLessons[lessonId]) {
+                stats.dailyStats[today].sentencesLearned += splitCount;
+                stats.dailyStats[today].completedLessons[lessonId] = true;
+                
+                // 更新总句子数
+                stats.totalSentences = (stats.totalSentences || 0) + splitCount;
+                console.log('Updated total sentences:', stats.totalSentences);
             }
 
             // 更新复习记录
@@ -551,7 +550,13 @@ class Statistics {
     // 修改现有的 updateDisplay 方法，添加图表更新
     updateDisplay() {
         const stats = this.getStatistics();
-        console.log('Updating display with stats:', stats); // 调试日志
+        console.log('Updating display with stats:', stats);
+
+        // 更新总句子数显示
+        const totalSentencesElement = document.getElementById('totalSentences');
+        if (totalSentencesElement) {
+            totalSentencesElement.textContent = stats.totalSentences || 0;
+        }
 
         // 更新学习天数
         const learningDaysElement = document.querySelector('.learning-days');
