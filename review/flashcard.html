@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>闪卡练习 - Typing Japanese</title>
     <link rel="stylesheet" href="../css/flashcard.css">
-    <link rel="stylesheet" href="../css/completion.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <!-- 模式选择界面 -->
     <div class="mode-select-screen">
         <div class="practice-header">
             <h2>选择练习模式</h2>
-            <a href="../" class="back-btn"><i class="fas fa-times"></i></a>
         </div>
-        <div class="mode-selection">
-            <div class="mode-button mode-cn-jp">
-                <span class="arrow">➜</span>
+        <div class="mode-buttons">
+            <button class="mode-btn mode-cn-jp">
+                <i class="fas fa-arrow-right"></i>
                 中文 → 日文
-            </div>
-            <div class="mode-button mode-jp-cn">
-                <span class="arrow">➜</span>
+            </button>
+            <button class="mode-btn mode-jp-cn">
+                <i class="fas fa-arrow-right"></i>
                 日文 → 中文
-            </div>
+            </button>
         </div>
     </div>
 
@@ -66,6 +63,7 @@
             </div>
         </div>
     </div>
+
+    <script src="../js/review/flashcard.js" type="module"></script>
 </body>
-<script type="module" src="../js/review/flashcard.js"></script>
 </html> 
