@@ -136,43 +136,6 @@ class Statistics {
         }
     }
 
-    // 更新今日学习统计
-    updateDailyStats(lessonId, sentenceCount, sentences = []) {
-        const stats = this.getStatistics();
-        const today = new Date().toISOString().split('T')[0];
-
-        // 初始化每日统计
-        if (!stats.dailyStats) {
-            stats.dailyStats = {};
-        }
-
-        // 初始化今日数据
-        if (!stats.dailyStats[today]) {
-            stats.dailyStats[today] = {
-                totalSentences: 0,
-                lessons: {},
-                lastUpdate: new Date().toISOString()
-            };
-        }
-
-        // 更新今日数据
-        stats.dailyStats[today].totalSentences += sentenceCount;
-        if (!stats.dailyStats[today].lessons[lessonId]) {
-            stats.dailyStats[today].lessons[lessonId] = {
-                count: 0,
-                sentences: []
-            };
-        }
-        stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
-        stats.dailyStats[today].lessons[lessonId].sentences.push(...sentences);
-        stats.dailyStats[today].lastUpdate = new Date().toISOString();
-
-        // 保存更新后的统计数据
-        this.saveStatistics(stats);
-
-        return stats.dailyStats[today].totalSentences;
-    }
-
     // 获取掌握情况统计
     getMasteryStats() {
         const stats = localStorage.getItem(STATS_STORAGE_KEY);
@@ -214,13 +177,24 @@ class Statistics {
             }
             const parsedStats = JSON.parse(stats);
             
-            // 确保返回所有必要的字段
+            // 计算实际的总句子数
+            let totalSentences = 0;
+            if (parsedStats.dailyStats) {
+                Object.values(parsedStats.dailyStats).forEach(day => {
+                    if (day.totalSentences) {
+                        totalSentences = Math.max(totalSentences, day.totalSentences);
+                    }
+                });
+            }
+
+            // 确保返回所有必要的字段，并同步总句子数
             return {
+                ...parsedStats,
                 firstUseDate: parsedStats.firstUseDate || new Date().toISOString(),
                 lastStudyDate: parsedStats.lastStudyDate || '',
                 consecutiveDays: parsedStats.consecutiveDays || 0,
                 dailyStats: parsedStats.dailyStats || {},
-                totalSentences: parsedStats.totalSentences || 0,
+                totalSentences: totalSentences, // 使用计算得到的总句子数
                 completedQuestions: parsedStats.completedQuestions || [],
                 masteryStats: this.getMasteryStats(),
                 reviewHistory: parsedStats.reviewHistory || {}
@@ -401,8 +375,10 @@ class Statistics {
 
     // 更新显示方法
     updateDisplay() {
+        // 获取最新统计数据
         const stats = this.getStatistics();
-        
+        console.log('Updating display with latest stats:', stats);
+
         // 更新学习天数显示
         const learningDaysElement = document.querySelector('.learning-days');
         if (learningDaysElement) {
@@ -420,6 +396,54 @@ class Statistics {
         if (reviewItemsElement) {
             reviewItemsElement.textContent = this.getReviewCount();
         }
+    }
+
+    updateDailyStats(lessonId, sentenceCount, sentences = []) {
+        console.log('Updating daily stats:', { lessonId, sentenceCount, sentences });
+        
+        const stats = this.getStatistics();
+        const today = new Date().toISOString().split('T')[0];
+
+        // 初始化每日统计
+        if (!stats.dailyStats) {
+            stats.dailyStats = {};
+        }
+
+        // 初始化今日数据
+        if (!stats.dailyStats[today]) {
+            stats.dailyStats[today] = {
+                totalSentences: 0,
+                lessons: {},
+                lastUpdate: new Date().toISOString()
+            };
+        }
+
+        // 更新今日数据
+        stats.dailyStats[today].totalSentences += sentenceCount;
+        if (!stats.dailyStats[today].lessons[lessonId]) {
+            stats.dailyStats[today].lessons[lessonId] = {
+                count: 0,
+                sentences: []
+            };
+        }
+        stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
+        stats.dailyStats[today].lessons[lessonId].sentences.push(...sentences);
+        stats.dailyStats[today].lastUpdate = new Date().toISOString();
+
+        // 更新总句子数
+        stats.totalSentences = Math.max(
+            stats.totalSentences || 0,
+            stats.dailyStats[today].totalSentences
+        );
+
+        // 保存更新后的统计数据
+        console.log('Saving updated stats:', stats);
+        this.saveStatistics(stats);
+
+        // 立即更新显示
+        this.updateDisplay();
+
+        return stats.dailyStats[today].totalSentences;
     }
 }
 
