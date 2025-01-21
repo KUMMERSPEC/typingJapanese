@@ -372,77 +372,14 @@ class Statistics {
         return finalStats;
     }
 
-    // 更新显示方法
-    updateDisplay() {
-        const stats = this.getStatistics();
-        console.log('Updating display with stats:', stats);
-
-        // 更新学习天数
-        const learningDaysElement = document.querySelector('.learning-days');
-        if (learningDaysElement) {
-            learningDaysElement.textContent = this.getLearningDays();
-        }
-
-        // 更新已学句子数
-        const learnedSentencesElement = document.querySelector('.learned-sentences');
-        if (learnedSentencesElement) {
-            learnedSentencesElement.textContent = stats.totalSentences || 0;
-        }
-
-        // 更新待复习数量
-        const reviewItems = this.getReviewItems();
-        const reviewItemsElement = document.querySelector('.review-items');
-        if (reviewItemsElement) {
-            reviewItemsElement.textContent = reviewItems.length;
-        }
-
-        // 更新待复习列表
-        this.updateReviewList(reviewItems);
-
-        // 更新统计面板
-        this.updateStatsPanel();
-    }
-
-    // 新增：更新待复习列表
-    updateReviewList(reviewItems) {
-        const reviewListElement = document.querySelector('.review-list');
-        if (reviewListElement) {
-            reviewListElement.innerHTML = reviewItems.map(item => `
-                <div class="review-item" data-id="${item.id}">
-                    <span class="sentence">${item.sentence}</span>
-                    <span class="proficiency ${item.proficiency}">${item.proficiency}</span>
-                </div>
-            `).join('');
-        }
-    }
-
-    // 新增：更新统计面板
-    updateStatsPanel() {
-        const masteryStats = this.getMasteryStats();
-        const elements = {
-            low: document.getElementById('masteryLow'),
-            medium: document.getElementById('masteryMedium'),
-            high: document.getElementById('masteryHigh'),
-            master: document.getElementById('masteryMaster')
-        };
-
-        Object.entries(elements).forEach(([level, element]) => {
-            if (element) {
-                element.textContent = masteryStats[level] || 0;
-            }
-        });
-    }
-
+    // 修改：处理练习完成时的数据更新
     updateDailyStats(lessonId, sentenceCount, sentences = []) {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
-        // 初始化每日统计
-        if (!stats.dailyStats) {
-            stats.dailyStats = {};
-        }
-
-        // 初始化今日数据
+        // 初始化数据结构
+        if (!stats.dailyStats) stats.dailyStats = {};
+        if (!stats.reviewHistory) stats.reviewHistory = {};
         if (!stats.dailyStats[today]) {
             stats.dailyStats[today] = {
                 totalSentences: 0,
@@ -450,7 +387,7 @@ class Statistics {
             };
         }
 
-        // 更新今日数据
+        // 更新课程数据
         if (!stats.dailyStats[today].lessons[lessonId]) {
             stats.dailyStats[today].lessons[lessonId] = {
                 count: 0,
@@ -458,10 +395,42 @@ class Statistics {
             };
         }
 
+        // 更新句子数据和复习项
         stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
-        stats.dailyStats[today].lessons[lessonId].sentences.push(...sentences);
+        if (Array.isArray(sentences)) {
+            sentences.forEach(sentence => {
+                // 添加到今日学习的句子
+                stats.dailyStats[today].lessons[lessonId].sentences.push(sentence);
+                
+                // 处理 split 类型的句子，添加到复习系统
+                if (sentence.type === 'split') {
+                    sentence.answers.forEach(answer => {
+                        const reviewId = `${sentence.character}_${answer}`;
+                        if (!stats.reviewHistory[reviewId]) {
+                            stats.reviewHistory[reviewId] = {
+                                sentence: answer,
+                                character: sentence.character,
+                                hiragana: sentence.hiragana,
+                                romaji: sentence.romaji,
+                                meaning: sentence.meaning,
+                                proficiency: 'low',
+                                lastReview: new Date().toISOString(),
+                                nextReviewDate: new Date().toISOString(), // 立即可复习
+                                reviewCount: 0
+                            };
+                        }
+                    });
+                }
+            });
+        }
+
+        // 更新总句子数
         stats.dailyStats[today].totalSentences = 
             (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
+        stats.totalSentences = Math.max(
+            stats.totalSentences || 0,
+            stats.dailyStats[today].totalSentences
+        );
 
         // 更新连续学习天数
         if (stats.lastStudyDate !== today) {
@@ -477,36 +446,77 @@ class Statistics {
             stats.lastStudyDate = today;
         }
 
-        // 清除缓存
+        // 清除缓存并保存
         this._stats = null;
-        // 保存更新后的统计数据
         this.saveStatistics(stats);
+        
+        // 立即更新显示
+        this.updateDisplay();
     }
 
-    // 修改添加复习项目的方法
-    addReviewItem(sentence) {
+    // 修改：获取待复习项目
+    getReviewItems() {
         const stats = this.getStatistics();
-        if (!stats.reviewHistory) {
-            stats.reviewHistory = {};
+        if (!stats.reviewHistory) return [];
+
+        const now = new Date();
+        const reviewItems = Object.entries(stats.reviewHistory)
+            .filter(([_, item]) => new Date(item.nextReviewDate) <= now)
+            .map(([id, item]) => ({
+                id,
+                ...item
+            }));
+
+        console.log('Review items:', reviewItems); // 调试日志
+        return reviewItems;
+    }
+
+    // 修改：更新显示方法
+    updateDisplay() {
+        const stats = this.getStatistics();
+        console.log('Updating display with stats:', stats); // 调试日志
+
+        // 更新学习天数
+        const learningDaysElement = document.querySelector('.learning-days');
+        if (learningDaysElement) {
+            learningDaysElement.textContent = stats.consecutiveDays || 0;
         }
 
-        // 为每个分割的句子添加复习记录
-        if (sentence.type === 'split') {
-            sentence.answers.forEach(answer => {
-                const reviewId = `${sentence.character}_${answer}`;
-                if (!stats.reviewHistory[reviewId]) {
-                    stats.reviewHistory[reviewId] = {
-                        sentence: answer,
-                        proficiency: 'low',
-                        lastReview: new Date().toISOString(),
-                        nextReviewDate: new Date().toISOString(), // 立即可复习
-                        reviewCount: 0
-                    };
-                }
-            });
+        // 更新已学句子数
+        const learnedSentencesElement = document.querySelector('.learned-sentences');
+        if (learnedSentencesElement) {
+            learnedSentencesElement.textContent = stats.totalSentences || 0;
         }
 
-        this.saveStatistics(stats);
+        // 更新待复习列表
+        const reviewItems = this.getReviewItems();
+        const reviewListElement = document.querySelector('.review-list');
+        if (reviewListElement) {
+            reviewListElement.innerHTML = reviewItems.map(item => `
+                <div class="review-item" data-id="${item.id}">
+                    <div class="sentence-content">
+                        <div class="japanese">${item.sentence}</div>
+                        <div class="meaning">${item.meaning}</div>
+                    </div>
+                    <div class="proficiency ${item.proficiency}">${item.proficiency}</div>
+                </div>
+            `).join('');
+        }
+
+        // 更新待复习数量
+        const reviewItemsElement = document.querySelector('.review-items');
+        if (reviewItemsElement) {
+            reviewItemsElement.textContent = reviewItems.length;
+        }
+
+        // 更新统计面板
+        const masteryStats = this.getMasteryStats();
+        ['low', 'medium', 'high', 'master'].forEach(level => {
+            const element = document.getElementById(`mastery${level.charAt(0).toUpperCase() + level.slice(1)}`);
+            if (element) {
+                element.textContent = masteryStats[level] || 0;
+            }
+        });
     }
 }
 
