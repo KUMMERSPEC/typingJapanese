@@ -134,16 +134,30 @@ class Statistics {
 
     // 获取掌握情况统计
     getMasteryStats() {
-        const stats = this.getStatistics();
-        const masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
+        try {
+            const stats = this.getStatistics();
+            const masteryStats = {
+                low: 0,
+                medium: 0,
+                high: 0,
+                master: 0
+            };
 
-        if (stats.reviewHistory) {
-            Object.values(stats.reviewHistory).forEach(item => {
-                masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
-            });
+            // 从复习历史中统计掌握情况
+            if (stats.reviewHistory) {
+                Object.values(stats.reviewHistory).forEach(item => {
+                    if (item && item.proficiency) {
+                        masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
+                    }
+                });
+            }
+
+            console.log('Calculated mastery stats:', masteryStats);
+            return masteryStats;
+        } catch (error) {
+            console.error('Error calculating mastery stats:', error);
+            return { low: 0, medium: 0, high: 0, master: 0 };
         }
-
-        return masteryStats;
     }
 
     // 获取统计数据
@@ -159,6 +173,9 @@ class Statistics {
             stats.dailyStats = stats.dailyStats || {};
             stats.reviewHistory = stats.reviewHistory || {};
             
+            // 确保掌握情况统计存在
+            stats.masteryStats = this.getMasteryStats();
+            
             console.log('Processed stats:', stats);
             return stats;
         } catch (error) {
@@ -166,7 +183,8 @@ class Statistics {
             return {
                 totalSentences: 0,
                 dailyStats: {},
-                reviewHistory: {}
+                reviewHistory: {},
+                masteryStats: { low: 0, medium: 0, high: 0, master: 0 }
             };
         }
     }
@@ -393,7 +411,7 @@ class Statistics {
                 dailyLearned: stats.dailyStats[today].sentencesLearned
             });
 
-            // 更新复习记录
+            // 更新复习记录时同时更新掌握情况
             if (questions && Array.isArray(questions)) {
                 if (!stats.reviewHistory) stats.reviewHistory = {};
                 
@@ -410,18 +428,16 @@ class Statistics {
                             lesson: lessonName,
                             lastReview: new Date().toISOString(),
                             nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                            proficiency: 'low'
+                            proficiency: 'low'  // 新添加的句子默认为 low
                         };
                     }
                 });
             }
 
-            // 保存前再次检查总数
-            console.log('Before saving stats:', {
-                totalSentences: stats.totalSentences,
-                stats: stats
-            });
-
+            // 重新计算掌握情况
+            stats.masteryStats = this.getMasteryStats();
+            
+            console.log('Updated stats with mastery:', stats);
             this.saveStatistics(stats);
             
             // 立即更新显示
