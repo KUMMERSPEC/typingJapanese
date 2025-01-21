@@ -460,15 +460,16 @@ class Statistics {
         if (!stats.reviewHistory) return [];
 
         const now = new Date();
-        const reviewItems = Object.entries(stats.reviewHistory)
+        return Object.entries(stats.reviewHistory)
             .filter(([_, item]) => new Date(item.nextReviewDate) <= now)
             .map(([id, item]) => ({
                 id,
-                ...item
+                sentence: item.sentence,
+                hiragana: item.hiragana,
+                romaji: item.romaji,
+                meaning: item.meaning,
+                proficiency: item.proficiency
             }));
-
-        console.log('Review items:', reviewItems); // 调试日志
-        return reviewItems;
     }
 
     // 获取学习趋势数据
@@ -498,46 +499,63 @@ class Statistics {
 
     // 更新学习趋势图表
     updateTrendChart() {
-        try {
-            const chartCanvas = document.getElementById('trendChart');
-            if (!chartCanvas) return;
+        const chartElement = document.getElementById('learningTrendChart');
+        if (!chartElement) return;
 
-            const trendData = this.getTrendData();
-            console.log('Trend data:', trendData); // 调试日志
+        const stats = this.getStatistics();
+        const dates = [];
+        const counts = [];
 
-            if (window.trendChart) {
-                window.trendChart.destroy();
-            }
+        // 获取最近7天的数据
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateStr = date.toLocaleDateString();
+            dates.push(dateStr);
 
-            window.trendChart = new Chart(chartCanvas, {
-                type: 'line',
-                data: {
-                    labels: trendData.labels,
-                    datasets: [{
-                        label: '每日学习句子数',
-                        data: trendData.data,
-                        borderColor: '#4CAF50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
+            // 获取当天的学习数据
+            const dailyData = stats.dailyStats?.[dateStr];
+            counts.push(dailyData ? dailyData.totalSentences || 0 : 0);
+        }
+
+        // 更新图表
+        if (window.learningTrendChart) {
+            window.learningTrendChart.destroy();
+        }
+
+        window.learningTrendChart = new Chart(chartElement, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: '每日学习句子数',
+                    data: counts,
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
                 }
-            });
-        } catch (error) {
-            console.error('Error updating trend chart:', error);
-        }
+            }
+        });
     }
 
     // 修改现有的 updateDisplay 方法，添加图表更新
@@ -565,6 +583,7 @@ class Statistics {
                 <div class="review-item" data-id="${item.id}">
                     <div class="sentence-content">
                         <div class="japanese">${item.sentence}</div>
+                        <div class="hiragana">${item.hiragana}</div>
                         <div class="meaning">${item.meaning}</div>
                     </div>
                     <div class="proficiency ${item.proficiency}">${item.proficiency}</div>
