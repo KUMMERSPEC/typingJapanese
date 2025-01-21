@@ -1,8 +1,7 @@
 console.log('flashcard.js loaded');  // 添加这行来测试文件是否被加载
 
-import statsData from '/typingJapanese/js/common/statsData.js';
-import { CompletionEffect } from '/typingJapanese/js/common/completion.js';
-import CryptoJS from 'crypto-js';
+import statsData from '../common/statsData.js';
+import { CompletionEffect } from '../common/completion.js';
 
 class FlashcardManager {
     constructor() {
@@ -12,13 +11,6 @@ class FlashcardManager {
         this.mode = null;
         this.practiceStarted = false;
         
-        // 有道API配置
-        this.youdaoAPI = {
-            baseUrl: 'https://openapi.youdao.com/ttsapi',
-            appKey: 'your_app_key',  // 需要替换为实际的有道API密钥
-            secretKey: 'your_secret_key'  // 需要替换为实际的有道密钥
-        };
-
         // 触摸相关变量
         this.touchStartX = 0;
         this.touchEndX = 0;
