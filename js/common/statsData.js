@@ -148,34 +148,26 @@ class Statistics {
 
     // 获取统计数据
     getStatistics() {
-        // 如果已经有缓存的统计数据，直接返回
-        if (this._stats) {
-            return this._stats;
-        }
-
         try {
-            const statsJson = localStorage.getItem(STATS_STORAGE_KEY);
-            if (!statsJson) {
-                return this.initializeStats();
-            }
-
-            const stats = JSON.parse(statsJson);
-            // 缓存统计数据
-            this._stats = {
-                firstUseDate: stats.firstUseDate || new Date().toISOString(),
-                lastStudyDate: stats.lastStudyDate || '',
-                consecutiveDays: stats.consecutiveDays || 0,
-                dailyStats: stats.dailyStats || {},
-                totalSentences: this.calculateTotalSentences(stats),
-                completedQuestions: stats.completedQuestions || [],
-                reviewHistory: stats.reviewHistory || {},
-                masteryStats: this.calculateMasteryStats(stats)
-            };
-
-            return this._stats;
+            const statsStr = localStorage.getItem(STATS_STORAGE_KEY);
+            console.log('Raw stats from storage:', statsStr);
+            
+            let stats = statsStr ? JSON.parse(statsStr) : {};
+            
+            // 确保基本属性存在
+            stats.totalSentences = stats.totalSentences || 0;
+            stats.dailyStats = stats.dailyStats || {};
+            stats.reviewHistory = stats.reviewHistory || {};
+            
+            console.log('Processed stats:', stats);
+            return stats;
         } catch (error) {
             console.error('Error getting statistics:', error);
-            return this.initializeStats();
+            return {
+                totalSentences: 0,
+                dailyStats: {},
+                reviewHistory: {}
+            };
         }
     }
 
@@ -286,11 +278,9 @@ class Statistics {
 
     saveStatistics(stats) {
         try {
-            // 更新缓存
-            this._stats = stats;
+            console.log('Saving stats with totalSentences:', stats.totalSentences);
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            // 触发显示更新
-            this.updateDisplay();
+            console.log('Stats saved successfully');
         } catch (error) {
             console.error('Error saving statistics:', error);
         }
@@ -375,7 +365,11 @@ class Statistics {
     // 修改：处理练习完成时的数据更新
     updateDailyStats(lessonId, splitCount, questions) {
         try {
-            console.log('Updating stats with:', { lessonId, splitCount, questions });
+            console.log('Starting updateDailyStats:', {
+                lessonId,
+                splitCount,
+                currentStats: this.getStatistics()
+            });
             
             let stats = this.getStatistics();
             const today = new Date().toLocaleDateString();
@@ -389,27 +383,23 @@ class Statistics {
                 };
             }
 
-            // 更新今日学习的句子数
-            if (!stats.dailyStats[today].completedLessons[lessonId]) {
-                stats.dailyStats[today].sentencesLearned += splitCount;
-                stats.dailyStats[today].completedLessons[lessonId] = true;
-                
-                // 更新总句子数
-                stats.totalSentences = (stats.totalSentences || 0) + splitCount;
-                console.log('Updated total sentences:', stats.totalSentences);
-            }
+            // 直接更新总句子数，不再依赖于 completedLessons 检查
+            stats.totalSentences = (stats.totalSentences || 0) + splitCount;
+            stats.dailyStats[today].sentencesLearned = 
+                (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
+
+            console.log('After updating counts:', {
+                totalSentences: stats.totalSentences,
+                dailyLearned: stats.dailyStats[today].sentencesLearned
+            });
 
             // 更新复习记录
             if (questions && Array.isArray(questions)) {
                 if (!stats.reviewHistory) stats.reviewHistory = {};
                 
                 questions.forEach(question => {
+                    if (!question) return;
                     const questionId = `${question.character}:${question.hiragana}`;
-                    console.log('Processing question:', {
-                        questionId,
-                        question
-                    });
-
                     if (!stats.reviewHistory[questionId]) {
                         const [courseId, lessonName] = lessonId.split(':');
                         stats.reviewHistory[questionId] = {
@@ -426,17 +416,17 @@ class Statistics {
                 });
             }
 
-            // 更新学习趋势数据
-            stats.dailyStats[today].sentencesLearned = 
-                (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
-
-            // 调试日志：检查更新后的数据
-            console.log('Updated stats:', {
-                dailyStats: stats.dailyStats[today],
-                reviewHistory: stats.reviewHistory
+            // 保存前再次检查总数
+            console.log('Before saving stats:', {
+                totalSentences: stats.totalSentences,
+                stats: stats
             });
 
             this.saveStatistics(stats);
+            
+            // 立即更新显示
+            this.updateDisplay();
+            
             return stats;
         } catch (error) {
             console.error('Error in updateDailyStats:', error);
@@ -549,63 +539,73 @@ class Statistics {
 
     // 修改现有的 updateDisplay 方法，添加图表更新
     updateDisplay() {
-        const stats = this.getStatistics();
-        console.log('Updating display with stats:', stats);
+        try {
+            const stats = this.getStatistics();
+            console.log('Updating display with stats:', {
+                totalSentences: stats.totalSentences,
+                stats: stats
+            });
 
-        // 更新总句子数显示
-        const totalSentencesElement = document.getElementById('totalSentences');
-        if (totalSentencesElement) {
-            totalSentencesElement.textContent = stats.totalSentences || 0;
-        }
-
-        // 更新学习天数
-        const learningDaysElement = document.querySelector('.learning-days');
-        if (learningDaysElement) {
-            learningDaysElement.textContent = stats.consecutiveDays || 0;
-        }
-
-        // 更新已学句子数
-        const learnedSentencesElement = document.querySelector('.learned-sentences');
-        if (learnedSentencesElement) {
-            learnedSentencesElement.textContent = stats.totalSentences || 0;
-        }
-
-        // 更新待复习列表
-        const reviewItems = this.getReviewItems();
-        const reviewListElement = document.querySelector('.review-list');
-        if (reviewListElement) {
-            reviewListElement.innerHTML = reviewItems.map(item => {
-                // 使用课程和句子的完整信息
-                const lessonPrefix = item.lessonId ? `[${item.lessonId}] ` : '';
-                return `
-                    <div class="review-item" data-id="${item.id}">
-                        <div class="sentence-content">
-                            <div class="japanese">${lessonPrefix}${item.sentence}</div>
-                            <div class="hiragana">${item.hiragana || ''}</div>
-                            <div class="meaning">${item.meaning || ''}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // 更新待复习数量
-        const reviewItemsElement = document.querySelector('.review-items');
-        if (reviewItemsElement) {
-            reviewItemsElement.textContent = reviewItems.length;
-        }
-
-        // 更新统计面板
-        const masteryStats = this.getMasteryStats();
-        ['low', 'medium', 'high', 'master'].forEach(level => {
-            const element = document.getElementById(`mastery${level.charAt(0).toUpperCase() + level.slice(1)}`);
-            if (element) {
-                element.textContent = masteryStats[level] || 0;
+            // 更新总句子数显示
+            const totalSentencesElement = document.getElementById('totalSentences');
+            if (totalSentencesElement) {
+                totalSentencesElement.textContent = stats.totalSentences || 0;
+                console.log('Updated totalSentences display to:', stats.totalSentences);
+            } else {
+                console.log('totalSentences element not found');
             }
-        });
 
-        // 更新学习趋势图表
-        this.updateTrendChart();
+            // 更新学习天数
+            const learningDaysElement = document.querySelector('.learning-days');
+            if (learningDaysElement) {
+                learningDaysElement.textContent = stats.consecutiveDays || 0;
+            }
+
+            // 更新已学句子数
+            const learnedSentencesElement = document.querySelector('.learned-sentences');
+            if (learnedSentencesElement) {
+                learnedSentencesElement.textContent = stats.totalSentences || 0;
+            }
+
+            // 更新待复习列表
+            const reviewItems = this.getReviewItems();
+            const reviewListElement = document.querySelector('.review-list');
+            if (reviewListElement) {
+                reviewListElement.innerHTML = reviewItems.map(item => {
+                    // 使用课程和句子的完整信息
+                    const lessonPrefix = item.lessonId ? `[${item.lessonId}] ` : '';
+                    return `
+                        <div class="review-item" data-id="${item.id}">
+                            <div class="sentence-content">
+                                <div class="japanese">${lessonPrefix}${item.sentence}</div>
+                                <div class="hiragana">${item.hiragana || ''}</div>
+                                <div class="meaning">${item.meaning || ''}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 更新待复习数量
+            const reviewItemsElement = document.querySelector('.review-items');
+            if (reviewItemsElement) {
+                reviewItemsElement.textContent = reviewItems.length;
+            }
+
+            // 更新统计面板
+            const masteryStats = this.getMasteryStats();
+            ['low', 'medium', 'high', 'master'].forEach(level => {
+                const element = document.getElementById(`mastery${level.charAt(0).toUpperCase() + level.slice(1)}`);
+                if (element) {
+                    element.textContent = masteryStats[level] || 0;
+                }
+            });
+
+            // 更新学习趋势图表
+            this.updateTrendChart();
+        } catch (error) {
+            console.error('Error in updateDisplay:', error);
+        }
     }
 }
 
