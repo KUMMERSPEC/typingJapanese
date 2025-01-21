@@ -373,15 +373,16 @@ class Statistics {
     }
 
     // 修改：处理练习完成时的数据更新
-    updateDailyStats(lessonId, sentenceCount, sentences = []) {
-        console.log('Updating daily stats with:', { lessonId, sentenceCount, sentences }); // 调试日志
-        
+    updateDailyStats(lessonId, sentenceCount, splitQuestions = []) {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
         // 初始化数据结构
         if (!stats.dailyStats) stats.dailyStats = {};
         if (!stats.reviewHistory) stats.reviewHistory = {};
+        if (!stats.masteryStats) stats.masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
+
+        // 更新每日统计
         if (!stats.dailyStats[today]) {
             stats.dailyStats[today] = {
                 totalSentences: 0,
@@ -397,41 +398,30 @@ class Statistics {
             };
         }
 
-        // 更新句子数据和复习项
         stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
+        stats.dailyStats[today].totalSentences = 
+            (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
 
-        // 确保 sentences 是数组
-        const sentencesArray = Array.isArray(sentences) ? sentences : [sentences];
-        
-        sentencesArray.forEach(sentence => {
-            try {
-                // 添加到今日学习的句子
-                stats.dailyStats[today].lessons[lessonId].sentences.push(sentence);
-                
-                // 处理 split 类型的句子
-                if (sentence && sentence.type === 'split' && Array.isArray(sentence.answers)) {
-                    // 为每个答案创建复习项
-                    sentence.answers.forEach(answer => {
-                        const reviewId = `${sentence.character}_${answer}`;
-                        if (!stats.reviewHistory[reviewId]) {
-                            stats.reviewHistory[reviewId] = {
-                                sentence: answer,
-                                character: sentence.character,
-                                hiragana: sentence.hiragana,
-                                romaji: sentence.romaji,
-                                meaning: sentence.meaning,
-                                proficiency: 'low',
-                                lastReview: new Date().toISOString(),
-                                nextReviewDate: new Date().toISOString(),
-                                reviewCount: 0
-                            };
-                        }
-                    });
-                } else {
-                    console.log('Invalid sentence format:', sentence); // 调试日志
+        // 处理 split 类型的句子，添加到复习系统
+        splitQuestions.forEach(question => {
+            if (question.type === 'split') {
+                // 为每个句子创建一个复习项
+                const reviewId = `${question.character}`;
+                if (!stats.reviewHistory[reviewId]) {
+                    stats.reviewHistory[reviewId] = {
+                        sentence: question.character,
+                        hiragana: question.hiragana,
+                        romaji: question.romaji,
+                        meaning: question.meaning,
+                        proficiency: 'low',
+                        lastReview: new Date().toISOString(),
+                        nextReviewDate: new Date().toISOString(),
+                        reviewCount: 0
+                    };
+                    
+                    // 更新掌握度统计
+                    stats.masteryStats.low = (stats.masteryStats.low || 0) + 1;
                 }
-            } catch (error) {
-                console.error('Error processing sentence:', error, sentence);
             }
         });
 
@@ -457,10 +447,10 @@ class Statistics {
             stats.lastStudyDate = today;
         }
 
-        // 保存并更新显示
+        // 保存更新后的统计数据
+        console.log('Saving stats with review items:', stats.reviewHistory);
         this.saveStatistics(stats);
-        this.updateDisplay();
-
+        
         return stats;
     }
 
