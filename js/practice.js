@@ -339,7 +339,11 @@ export function initializePractice(courseId, lessonId) {
         typingInput.style.display = 'none';
         hintButton.style.display = 'none';
         skipButton.style.display = 'none';
-        statsData.updateDailyStats(lessonId, currentState.correctCount, currentState.sentences);
+        statsData.updateDailyStats(
+            `${courseId}:${lessonId}`,
+            currentState.sentences.length,
+            currentState.sentences
+        );
     }
 
     // 事件监听
@@ -364,4 +368,19 @@ export function initializePractice(courseId, lessonId) {
 
     // 初始化
     loadCourseData();
+}
+
+// 在完成练习时调用
+function showComplete(course, lesson, stats) {
+    try {
+        const sentences = lesson.sentences || [];
+        statsData.updateDailyStats(
+            `${course.id}:${lesson.id}`,
+            sentences.length,
+            sentences
+        );
+        // ... 其他完成逻辑 ...
+    } catch (error) {
+        console.error('Error in showComplete:', error);
+    }
 } 
