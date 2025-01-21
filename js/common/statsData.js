@@ -471,7 +471,81 @@ class Statistics {
         return reviewItems;
     }
 
-    // 修改：更新显示方法
+    // 获取学习趋势数据
+    getLearningTrends() {
+        const stats = this.getStatistics();
+        const trends = {
+            dates: [],
+            counts: []
+        };
+
+        if (stats.dailyStats) {
+            // 获取最近7天的日期
+            const dates = [];
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                dates.push(date.toLocaleDateString());
+            }
+
+            // 收集每天的学习数据
+            dates.forEach(date => {
+                trends.dates.push(date);
+                const dailyData = stats.dailyStats[date];
+                trends.counts.push(dailyData ? dailyData.totalSentences || 0 : 0);
+            });
+        }
+
+        return trends;
+    }
+
+    // 更新学习趋势图表
+    updateTrendChart() {
+        const trends = this.getLearningTrends();
+        const chartCanvas = document.getElementById('statsChart');
+        
+        if (chartCanvas && window.Chart) {
+            // 销毁现有图表
+            if (this.trendChart) {
+                this.trendChart.destroy();
+            }
+
+            // 创建新图表
+            this.trendChart = new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels: trends.dates,
+                    datasets: [{
+                        label: '每日学习句子数',
+                        data: trends.counts,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 修改现有的 updateDisplay 方法，添加图表更新
     updateDisplay() {
         const stats = this.getStatistics();
         console.log('Updating display with stats:', stats); // 调试日志
@@ -517,6 +591,9 @@ class Statistics {
                 element.textContent = masteryStats[level] || 0;
             }
         });
+
+        // 更新学习趋势图表
+        this.updateTrendChart();
     }
 }
 
