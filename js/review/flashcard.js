@@ -182,12 +182,22 @@ class FlashcardManager {
 
     // 显示当前卡片
     showCurrentCard() {
-        if (!this.sentences.length) return;
+        console.log('显示当前卡片，当前句子：', this.sentences[this.currentIndex]);
         
+        if (!this.sentences || !this.sentences[this.currentIndex]) {
+            console.error('没有可显示的句子');
+            return;
+        }
+
         const currentSentence = this.sentences[this.currentIndex];
         const cardFront = document.querySelector('.card-front');
         const cardBack = document.querySelector('.card-back');
-        
+
+        if (!cardFront || !cardBack) {
+            console.error('找不到卡片元素');
+            return;
+        }
+
         if (this.mode === 'cn-jp') {
             cardFront.textContent = currentSentence.meaning;
             cardBack.textContent = currentSentence.japanese;
@@ -195,6 +205,10 @@ class FlashcardManager {
             cardFront.textContent = currentSentence.japanese;
             cardBack.textContent = currentSentence.meaning;
         }
+
+        // 更新进度和状态
+        this.updateProgress();
+        this.updateStatus(currentSentence);
     }
 
     // 播放日语语音
