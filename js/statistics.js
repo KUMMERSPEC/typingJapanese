@@ -2,8 +2,21 @@ import statsData from './common/statsData.js';
 
 class Statistics {
     constructor() {
+        // 确保在 DOMContentLoaded 后再初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.init());
+        } else {
+            this.init();
+        }
+    }
+
+    init() {
         this.bindEvents();
         this.updateDisplay();
+        
+        // 添加调试日志
+        console.log('Statistics initialized');
+        console.log('Current stats:', statsData.getStatistics());
     }
 
     bindEvents() {
@@ -11,6 +24,9 @@ class Statistics {
         const statsButton = document.querySelector('[data-action="stats"]');
         if (statsButton) {
             statsButton.addEventListener('click', () => this.openStatsPanel());
+            console.log('Stats button bound');
+        } else {
+            console.log('Stats button not found');
         }
 
         // 绑定关闭按钮事件
@@ -77,9 +93,28 @@ class Statistics {
 
     updateDisplay() {
         const stats = statsData.getStatistics();
-        const masteryStats = stats.masteryStats || { low: 0, medium: 0, high: 0 };
+        console.log('Updating display with stats:', stats);
 
-        // 更新掌握情况数据
+        // 更新学习天数
+        const learningDaysElement = document.querySelector('.learning-days');
+        if (learningDaysElement) {
+            learningDaysElement.textContent = stats.consecutiveDays || 0;
+        }
+
+        // 更新已学句子数
+        const learnedSentencesElement = document.querySelector('.learned-sentences');
+        if (learnedSentencesElement) {
+            learnedSentencesElement.textContent = stats.totalSentences || 0;
+        }
+
+        // 更新待复习数量
+        const reviewItemsElement = document.querySelector('.review-items');
+        if (reviewItemsElement) {
+            reviewItemsElement.textContent = statsData.getReviewCount();
+        }
+
+        // 更新掌握情况
+        const masteryStats = stats.masteryStats || { low: 0, medium: 0, high: 0 };
         const elements = {
             high: document.getElementById('masteryHigh'),
             medium: document.getElementById('masteryMedium'),
@@ -92,9 +127,13 @@ class Statistics {
     }
 }
 
-// 初始化统计功能
+// 确保只创建一个实例
+let statisticsInstance = null;
 document.addEventListener('DOMContentLoaded', () => {
-    window.statistics = new Statistics();
+    if (!statisticsInstance) {
+        statisticsInstance = new Statistics();
+        window.statistics = statisticsInstance;
+    }
 });
 
 export default Statistics; 
