@@ -207,16 +207,28 @@ class Statistics {
 
     // 获取统计数据
     getStatistics() {
-        const stats = localStorage.getItem(STATS_STORAGE_KEY);
-        if (!stats) {
+        try {
+            const stats = localStorage.getItem(STATS_STORAGE_KEY);
+            if (!stats) {
+                return this.initializeStats();
+            }
+            const parsedStats = JSON.parse(stats);
+            
+            // 确保返回所有必要的字段
+            return {
+                firstUseDate: parsedStats.firstUseDate || new Date().toISOString(),
+                lastStudyDate: parsedStats.lastStudyDate || '',
+                consecutiveDays: parsedStats.consecutiveDays || 0,
+                dailyStats: parsedStats.dailyStats || {},
+                totalSentences: parsedStats.totalSentences || 0,
+                completedQuestions: parsedStats.completedQuestions || [],
+                masteryStats: this.getMasteryStats(),
+                reviewHistory: parsedStats.reviewHistory || {}
+            };
+        } catch (error) {
+            console.error('Error getting statistics:', error);
             return this.initializeStats();
         }
-        const parsedStats = JSON.parse(stats);
-        
-        // 更新掌握情况统计
-        parsedStats.masteryStats = this.getMasteryStats();
-        
-        return parsedStats;
     }
 
     // 检查是否是连续天数
@@ -303,7 +315,12 @@ class Statistics {
     }
 
     saveStatistics(stats) {
-        localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+        try {
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            console.log('Statistics saved successfully:', stats);
+        } catch (error) {
+            console.error('Error saving statistics:', error);
+        }
     }
 
     // 修改添加学习记录方法
@@ -316,27 +333,31 @@ class Statistics {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
-        // 初始化或更新今天的数据
-        if (!stats.dailyStats[today]) {
-            stats.dailyStats[today] = {
-                sentencesLearned: 0,
-                studyTime: 0
-            };
+        // 确保基础数据结构存在
+        if (!stats.dailyStats) {
+            stats.dailyStats = {};
         }
-
-        // 更新今天的学习数据
-        const sentenceCount = Array.isArray(sentences) ? sentences.length : sentences;
-        stats.dailyStats[today].sentencesLearned += sentenceCount;
-
-        // 更新总句子数
         if (!stats.completedQuestions) {
             stats.completedQuestions = [];
         }
 
-        // 如果传入的是句子数组，添加新学习的句子
+        // 初始化或更新今天的数据
+        if (!stats.dailyStats[today]) {
+            stats.dailyStats[today] = {
+                sentencesLearned: 0,
+                studyTime: 0,
+                lessons: {}  // 添加 lessons 对象
+            };
+        }
+
+        // 更新句子数据
+        const sentenceCount = Array.isArray(sentences) ? sentences.length : sentences;
+        stats.dailyStats[today].sentencesLearned += sentenceCount;
+
+        // 如果传入的是句子数组，更新完成的题目
         if (Array.isArray(sentences)) {
             sentences.forEach(sentence => {
-                const sentenceId = sentence.id;
+                const sentenceId = typeof sentence === 'object' ? sentence.id : sentence;
                 if (!stats.completedQuestions.includes(sentenceId)) {
                     stats.completedQuestions.push(sentenceId);
                 }
@@ -354,26 +375,28 @@ class Statistics {
             
             if (stats.lastStudyDate === yesterdayString) {
                 stats.consecutiveDays = (stats.consecutiveDays || 0) + 1;
-            } else if (stats.lastStudyDate !== today) {
+            } else {
                 stats.consecutiveDays = 1;
             }
             stats.lastStudyDate = today;
         }
 
+        // 保存前确保所有必要的字段都存在
+        const finalStats = {
+            ...stats,
+            firstUseDate: stats.firstUseDate || new Date().toISOString(),
+            totalSentences: stats.totalSentences || 0,
+            consecutiveDays: stats.consecutiveDays || 0,
+            dailyStats: stats.dailyStats || {},
+            completedQuestions: stats.completedQuestions || [],
+            lastStudyDate: stats.lastStudyDate || ''
+        };
+
         // 保存更新后的统计数据
-        console.log('Saving updated stats:', stats);
-        this.saveStatistics(stats);
+        console.log('Saving final stats:', finalStats);
+        this.saveStatistics(finalStats);
 
-        // 更新显示
-        this.updateDisplay();
-
-        // 添加调试日志
-        console.log('Statistics updated:', {
-            today,
-            totalSentences: stats.totalSentences,
-            consecutiveDays: stats.consecutiveDays,
-            dailyStats: stats.dailyStats[today]
-        });
+        return finalStats;
     }
 
     // 更新显示方法
