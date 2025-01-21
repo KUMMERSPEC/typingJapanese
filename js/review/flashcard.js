@@ -23,6 +23,8 @@ class FlashcardManager {
 
         this.isLoading = true;  // 添加加载状态标记
         this.init();
+        
+        // 直接在构造函数中添加事件监听
         this.initModeSelection();
     }
 
@@ -113,34 +115,52 @@ class FlashcardManager {
 
     // 添加模式选择初始化
     initModeSelection() {
-        const cnToJp = document.querySelector('.mode-cn-jp');
-        const jpToCn = document.querySelector('.mode-jp-cn');
+        // 确保在模式选择页面
+        const modeSelection = document.querySelector('.mode-selection');
+        if (!modeSelection) return;
 
-        if (cnToJp) {
-            cnToJp.addEventListener('click', () => this.startPractice('cn-jp'));
-        }
-        if (jpToCn) {
-            jpToCn.addEventListener('click', () => this.startPractice('jp-cn'));
-        }
+        // 为两个模式按钮添加点击事件
+        const modes = {
+            'cn-jp': document.querySelector('.mode-cn-jp'),
+            'jp-cn': document.querySelector('.mode-jp-cn')
+        };
+
+        Object.entries(modes).forEach(([mode, element]) => {
+            if (element) {
+                console.log(`Adding click listener for ${mode} mode`);
+                element.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log(`${mode} mode selected`);
+                    this.startPractice(mode);
+                });
+            }
+        });
     }
 
     // 开始练习
     startPractice(mode) {
-        this.mode = mode;
-        this.practiceStarted = true;
-
+        console.log('Starting practice mode:', mode);
+        
         // 隐藏模式选择界面
         const modeSelection = document.querySelector('.mode-selection');
         if (modeSelection) {
             modeSelection.style.display = 'none';
         }
 
+        this.mode = mode;
+        this.practiceStarted = true;
+
         // 显示练习界面
         const practiceContainer = document.querySelector('.practice-container');
+        if (!practiceContainer) {
+            console.error('Practice container not found');
+            return;
+        }
+
         practiceContainer.style.display = 'block';
         practiceContainer.classList.add('practice-started');
 
-        // 保留原有的练习界面 HTML
+        // 保持原有的练习界面 HTML...
         practiceContainer.innerHTML = `
             <div class="practice-header">
                 <div class="progress">
@@ -468,5 +488,8 @@ class FlashcardManager {
     // ... 其他辅助方法 ...
 }
 
-// 初始化
-new FlashcardManager(); 
+// 确保在 DOM 加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initializing FlashcardManager');
+    new FlashcardManager();
+}); 
