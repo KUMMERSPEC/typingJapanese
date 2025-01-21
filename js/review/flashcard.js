@@ -217,8 +217,8 @@ class FlashcardManager {
 
     // 显示当前卡片
     showCurrentCard() {
-        console.log('显示当前卡片，当前句子：', this.sentences[this.currentIndex]);
-        console.log('当前模式：', this.mode);  // 添加日志查看模式
+        console.log('显示当前卡片，模式:', this.mode);
+        console.log('当前句子:', this.sentences[this.currentIndex]);
         
         if (!this.sentences || !this.sentences[this.currentIndex]) {
             console.error('没有可显示的句子');
@@ -234,19 +234,21 @@ class FlashcardManager {
             return;
         }
 
-        // 修改模式判断
-        if (this.mode === 'cn-jp') {  // 中文 -> 日文模式
-            cardFront.textContent = currentSentence.meaning;  // 正面显示中文
-            cardBack.textContent = currentSentence.japanese;  // 背面显示日文
-        } else if (this.mode === 'jp-cn') {  // 日文 -> 中文模式
-            cardFront.textContent = currentSentence.japanese; // 正面显示日文
-            cardBack.textContent = currentSentence.meaning;   // 背面显示中文
-        }
-
-        // 重置卡片状态，确保新卡片显示正面
+        // 确保卡片回到正面状态
         const flashcard = document.querySelector('.flashcard');
         if (flashcard) {
             flashcard.classList.remove('flipped');
+        }
+
+        // 根据模式设置内容
+        if (this.mode === 'cn-jp') {
+            console.log('中文->日文模式，正面显示中文');
+            cardFront.textContent = currentSentence.meaning;    // 中文
+            cardBack.textContent = currentSentence.japanese;   // 日文
+        } else {
+            console.log('日文->中文模式，正面显示日文');
+            cardFront.textContent = currentSentence.japanese;  // 日文
+            cardBack.textContent = currentSentence.meaning;    // 中文
         }
 
         // 更新进度和状态
@@ -390,17 +392,21 @@ class FlashcardManager {
     }
 
     flipCard() {
+        console.log('翻转卡片');
         const card = document.querySelector('.flashcard');
+        if (!card) return;
+        
         card.classList.toggle('flipped');
 
-        // 在翻转时，如果是从中文翻转到日语，则朗读
-        if (this.mode === 'meaning' && card.classList.contains('flipped')) {
+        // 如果是中文->日文模式，且翻到背面，播放日语
+        if (this.mode === 'cn-jp' && card.classList.contains('flipped')) {
             const current = this.sentences[this.currentIndex];
             this.speakJapanese(current.japanese);
         }
     }
 
     handleReview(isCorrect) {
+        console.log('处理复习结果，正确:', isCorrect);
         const current = this.sentences[this.currentIndex];
         
         // 更新复习记录
@@ -409,7 +415,13 @@ class FlashcardManager {
         // 移动到下一个句子
         if (this.currentIndex < this.sentences.length - 1) {
             this.currentIndex++;
-            this.showCard();
+            // 重置卡片状态
+            const flashcard = document.querySelector('.flashcard');
+            if (flashcard) {
+                flashcard.classList.remove('flipped');
+            }
+            // 显示新卡片
+            this.showCurrentCard();
         } else {
             this.showComplete();
         }
