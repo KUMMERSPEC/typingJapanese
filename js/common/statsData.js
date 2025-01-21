@@ -472,60 +472,59 @@ class Statistics {
     }
 
     // 获取学习趋势数据
-    getLearningTrends() {
+    getTrendData() {
         const stats = this.getStatistics();
-        const trends = {
-            dates: [],
-            counts: []
+        const trendData = {
+            labels: [],
+            data: []
         };
 
         if (stats.dailyStats) {
-            // 获取最近7天的日期
-            const dates = [];
+            // 获取最近7天的数据
             const today = new Date();
             for (let i = 6; i >= 0; i--) {
-                const date = new Date();
+                const date = new Date(today);
                 date.setDate(today.getDate() - i);
-                dates.push(date.toLocaleDateString());
+                const dateStr = date.toLocaleDateString();
+                
+                trendData.labels.push(dateStr);
+                const dailyStats = stats.dailyStats[dateStr];
+                trendData.data.push(dailyStats ? dailyStats.totalSentences || 0 : 0);
             }
-
-            // 收集每天的学习数据
-            dates.forEach(date => {
-                trends.dates.push(date);
-                const dailyData = stats.dailyStats[date];
-                trends.counts.push(dailyData ? dailyData.totalSentences || 0 : 0);
-            });
         }
 
-        return trends;
+        return trendData;
     }
 
     // 更新学习趋势图表
     updateTrendChart() {
-        const trends = this.getLearningTrends();
-        const chartCanvas = document.getElementById('statsChart');
-        
-        if (chartCanvas && window.Chart) {
-            // 销毁现有图表
-            if (this.trendChart) {
-                this.trendChart.destroy();
+        try {
+            const chartCanvas = document.getElementById('trendChart');
+            if (!chartCanvas) return;
+
+            const trendData = this.getTrendData();
+            console.log('Trend data:', trendData); // 调试日志
+
+            if (window.trendChart) {
+                window.trendChart.destroy();
             }
 
-            // 创建新图表
-            this.trendChart = new Chart(chartCanvas, {
+            window.trendChart = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
-                    labels: trends.dates,
+                    labels: trendData.labels,
                     datasets: [{
                         label: '每日学习句子数',
-                        data: trends.counts,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1,
-                        fill: false
+                        data: trendData.data,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -533,15 +532,11 @@ class Statistics {
                                 stepSize: 1
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
                     }
                 }
             });
+        } catch (error) {
+            console.error('Error updating trend chart:', error);
         }
     }
 
