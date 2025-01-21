@@ -339,6 +339,7 @@ export function initializePractice(courseId, lessonId) {
         typingInput.style.display = 'none';
         hintButton.style.display = 'none';
         skipButton.style.display = 'none';
+        statsData.updateDailyStats(lessonId, currentState.correctCount, currentState.sentences);
     }
 
     // 事件监听
