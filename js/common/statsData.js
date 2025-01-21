@@ -373,86 +373,76 @@ class Statistics {
     }
 
     // 修改：处理练习完成时的数据更新
-    updateDailyStats(lessonId, sentenceCount, splitQuestions = []) {
-        const stats = this.getStatistics();
-        const today = new Date().toLocaleDateString();
+    updateDailyStats(lessonId, splitCount, questions) {
+        try {
+            console.log('Updating daily stats with:', {
+                lessonId,
+                splitCount,
+                questions
+            });
+            
+            let stats = this.getStatistics();
+            const today = new Date().toLocaleDateString();
 
-        // 确保数据结构存在
-        if (!stats.dailyStats) stats.dailyStats = {};
-        if (!stats.reviewHistory) stats.reviewHistory = {};
-        if (!stats.masteryStats) stats.masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
+            // 调试日志：检查 dailyStats 结构
+            console.log('Current stats structure:', {
+                dailyStats: stats.dailyStats,
+                today,
+                currentDayStats: stats.dailyStats?.[today]
+            });
 
-        // 更新每日统计
-        if (!stats.dailyStats[today]) {
-            stats.dailyStats[today] = {
-                totalSentences: 0,
-                lessons: {}
-            };
-        }
-
-        // 更新当日统计
-        if (!stats.dailyStats[today].lessons[lessonId]) {
-            stats.dailyStats[today].lessons[lessonId] = {
-                count: 0,
-                sentences: []
-            };
-        }
-
-        stats.dailyStats[today].lessons[lessonId].count += sentenceCount;
-        stats.dailyStats[today].totalSentences = 
-            (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
-
-        // 保存完整的句子信息，包含课程ID
-        splitQuestions.forEach(question => {
-            if (question.type === 'split') {
-                if (!stats.reviewHistory) stats.reviewHistory = {};
-                const reviewId = `${lessonId}_${question.character}`;
-                
-                stats.reviewHistory[reviewId] = {
-                    id: reviewId,
-                    lessonId: lessonId,
-                    sentence: question.character,
-                    hiragana: question.hiragana,
-                    romaji: question.romaji,
-                    meaning: question.meaning,
-                    proficiency: 'low',
-                    lastReview: new Date().toISOString(),
-                    nextReviewDate: new Date().toISOString()
+            // 初始化数据结构
+            if (!stats.dailyStats) stats.dailyStats = {};
+            if (!stats.dailyStats[today]) {
+                stats.dailyStats[today] = {
+                    sentencesLearned: 0,
+                    completedLessons: {}
                 };
             }
-        });
 
-        // 更新总句子数
-        stats.dailyStats[today].totalSentences = 
-            (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
-        stats.totalSentences = Math.max(
-            stats.totalSentences || 0,
-            stats.dailyStats[today].totalSentences
-        );
+            // 更新复习记录
+            if (questions && Array.isArray(questions)) {
+                if (!stats.reviewHistory) stats.reviewHistory = {};
+                
+                questions.forEach(question => {
+                    const questionId = `${question.character}:${question.hiragana}`;
+                    console.log('Processing question:', {
+                        questionId,
+                        question
+                    });
 
-        // 更新连续学习天数
-        if (stats.lastStudyDate !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayString = yesterday.toLocaleDateString();
-            
-            if (stats.lastStudyDate === yesterdayString) {
-                stats.consecutiveDays = (stats.consecutiveDays || 0) + 1;
-            } else {
-                stats.consecutiveDays = 1;
+                    if (!stats.reviewHistory[questionId]) {
+                        const [courseId, lessonName] = lessonId.split(':');
+                        stats.reviewHistory[questionId] = {
+                            japanese: question.character,
+                            hiragana: question.hiragana,
+                            meaning: question.meaning,
+                            course: courseId,
+                            lesson: lessonName,
+                            lastReview: new Date().toISOString(),
+                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                            proficiency: 'low'
+                        };
+                    }
+                });
             }
-            stats.lastStudyDate = today;
-        }
 
-        // 保存更新后的统计数据
-        console.log('Saving stats with review items:', stats.reviewHistory);
-        this.saveStatistics(stats);
-        this.updateDisplay();
-        
-        // 确保图表更新
-        this.updateTrendChart();
-        
-        return stats;
+            // 更新学习趋势数据
+            stats.dailyStats[today].sentencesLearned = 
+                (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
+
+            // 调试日志：检查更新后的数据
+            console.log('Updated stats:', {
+                dailyStats: stats.dailyStats[today],
+                reviewHistory: stats.reviewHistory
+            });
+
+            this.saveStatistics(stats);
+            return stats;
+        } catch (error) {
+            console.error('Error in updateDailyStats:', error);
+            return null;
+        }
     }
 
     // 修改：获取待复习项目
