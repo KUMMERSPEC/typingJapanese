@@ -319,6 +319,8 @@ export function initializePractice(courseId, lessonId) {
             typingInput.classList.add('correct');
             nextButton.style.display = 'block';
             updateProgress();
+            statsData.addReviewItem(currentSentence);
+            statsData.updateDisplay();
         }
     }
 
