@@ -141,42 +141,77 @@ class FlashcardManager {
     // 开始练习
     startPractice(mode) {
         console.log('开始练习，模式：', mode);
-        console.log('当前句子数组:', this.sentences);
-        
         this.mode = mode;
         this.practiceStarted = true;
-        
+
         // 隐藏模式选择界面
         const modeSelectScreen = document.querySelector('.mode-select-screen');
-        console.log('模式选择界面元素:', modeSelectScreen);
         if (modeSelectScreen) {
             modeSelectScreen.style.display = 'none';
         }
 
-        // 显示练习界面
+        // 显示练习界面并初始化 HTML 结构
         const practiceContainer = document.querySelector('.practice-container');
-        console.log('练习容器元素:', practiceContainer);
         if (practiceContainer) {
             practiceContainer.style.display = 'block';
+            // 先创建必要的 DOM 结构
+            practiceContainer.innerHTML = `
+                <div class="practice-header">
+                    <div class="progress">
+                        <span class="current">1</span>/<span class="total">${this.sentences.length}</span>
+                    </div>
+                    <div class="status-info">
+                        <div class="proficiency low">生疏</div>
+                        <div class="last-review">上次：今天</div>
+                    </div>
+                    <a href="../" class="back-btn"><i class="fas fa-times"></i></a>
+                </div>
+
+                <div class="flashcard-area">
+                    <div class="flashcard">
+                        <div class="card-inner">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
+                    </div>
+                    <div class="card-controls">
+                        <button class="flip-btn"><i class="fas fa-sync-alt"></i> 翻转</button>
+                        <button class="speak-btn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="review-buttons">
+                        <button class="review-btn wrong">
+                            <i class="fas fa-times"></i>
+                            不认识
+                        </button>
+                        <button class="review-btn correct">
+                            <i class="fas fa-check"></i>
+                            认识
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
-        // 初始化练习数据
+        // 初始化练习
         this.initializePractice();
     }
 
-    // 初始化练习数据
     async initializePractice() {
         try {
-            // 这里添加获取练习数据的逻辑
-            // ... 其他初始化代码 ...
-            
-            this.isLoading = false;
-            this.practiceStarted = true;
+            console.log('初始化练习数据');
+            // 确保 DOM 元素已经创建
+            await new Promise(resolve => setTimeout(resolve, 0));
             
             // 显示第一个卡片
             this.showCurrentCard();
+            // 绑定事件
+            this.bindEvents();
+            
         } catch (error) {
             console.error('初始化练习失败:', error);
+            this.showError('初始化失败，请刷新重试');
         }
     }
 
