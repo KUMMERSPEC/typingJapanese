@@ -1,5 +1,7 @@
-import statsData from '../common/statsData.js';
-import { CompletionEffect } from '../common/completion.js';
+console.log('flashcard.js loaded');  // 添加这行来测试文件是否被加载
+
+import statsData from '/typingJapanese/js/common/statsData.js';
+import { CompletionEffect } from '/typingJapanese/js/common/completion.js';
 import CryptoJS from 'crypto-js';
 
 class FlashcardManager {
