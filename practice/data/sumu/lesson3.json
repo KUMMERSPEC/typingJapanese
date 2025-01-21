@@ -81,14 +81,6 @@
       "answers": "すいどう:suidou|が:ga|とまる:tomaru"
     },
     {
-      "character": "水道",
-      "hiragana": "すいどう",
-      "romaji": "suidou",
-      "meaning": "供水",
-      "type": "normal",
-      "answers": "すいどう:suidou"
-    },
-    {
       "character": "止める",
       "hiragana": "とめる",
       "romaji": "tomeru",
