@@ -218,7 +218,6 @@ class FlashcardManager {
     // 显示当前卡片
     showCurrentCard() {
         console.log('显示当前卡片，模式:', this.mode);
-        console.log('当前句子:', this.sentences[this.currentIndex]);
         
         if (!this.sentences || !this.sentences[this.currentIndex]) {
             console.error('没有可显示的句子');
@@ -228,32 +227,37 @@ class FlashcardManager {
         const currentSentence = this.sentences[this.currentIndex];
         const cardFront = document.querySelector('.card-front');
         const cardBack = document.querySelector('.card-back');
+        const flashcard = document.querySelector('.flashcard');
 
-        if (!cardFront || !cardBack) {
+        if (!cardFront || !cardBack || !flashcard) {
             console.error('找不到卡片元素');
             return;
         }
 
-        // 确保卡片回到正面状态
-        const flashcard = document.querySelector('.flashcard');
-        if (flashcard) {
+        // 1. 先添加过渡类，使卡片暂时不可见
+        flashcard.classList.add('transitioning');
+        
+        // 2. 等待短暂延迟后更新内容并显示
+        setTimeout(() => {
+            // 确保卡片回到正面状态
             flashcard.classList.remove('flipped');
-        }
+            
+            // 根据模式设置内容
+            if (this.mode === 'cn-jp') {
+                cardFront.textContent = currentSentence.meaning;    // 中文
+                cardBack.textContent = currentSentence.japanese;   // 日文
+            } else {
+                cardFront.textContent = currentSentence.japanese;  // 日文
+                cardBack.textContent = currentSentence.meaning;    // 中文
+            }
 
-        // 根据模式设置内容
-        if (this.mode === 'cn-jp') {
-            console.log('中文->日文模式，正面显示中文');
-            cardFront.textContent = currentSentence.meaning;    // 中文
-            cardBack.textContent = currentSentence.japanese;   // 日文
-        } else {
-            console.log('日文->中文模式，正面显示日文');
-            cardFront.textContent = currentSentence.japanese;  // 日文
-            cardBack.textContent = currentSentence.meaning;    // 中文
-        }
-
-        // 更新进度和状态
-        this.updateProgress();
-        this.updateStatus(currentSentence);
+            // 3. 移除过渡类，使卡片可见
+            flashcard.classList.remove('transitioning');
+            
+            // 更新进度和状态
+            this.updateProgress();
+            this.updateStatus(currentSentence);
+        }, 150); // 150ms 的延迟，可以根据需要调整
     }
 
     // 播放日语语音
