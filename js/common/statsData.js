@@ -402,13 +402,15 @@ class Statistics {
         stats.dailyStats[today].totalSentences = 
             (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
 
-        // 保存完整的句子信息
+        // 保存完整的句子信息，包含课程ID
         splitQuestions.forEach(question => {
             if (question.type === 'split') {
-                const reviewId = `${question.character}`;
                 if (!stats.reviewHistory) stats.reviewHistory = {};
+                const reviewId = `${lessonId}_${question.character}`;
                 
                 stats.reviewHistory[reviewId] = {
+                    id: reviewId,
+                    lessonId: lessonId,
                     sentence: question.character,
                     hiragana: question.hiragana,
                     romaji: question.romaji,
@@ -446,6 +448,11 @@ class Statistics {
         console.log('Saving stats with review items:', stats.reviewHistory);
         this.saveStatistics(stats);
         this.updateDisplay();
+        
+        // 确保图表更新
+        this.updateTrendChart();
+        
+        return stats;
     }
 
     // 修改：获取待复习项目
@@ -493,15 +500,13 @@ class Statistics {
 
     // 更新学习趋势图表
     updateTrendChart() {
-        const stats = this.getStatistics();
         const chartElement = document.getElementById('learningTrendChart');
-        
-        if (!chartElement || !stats.dailyStats) return;
+        if (!chartElement) return;
 
-        // 收集每日数据
+        const stats = this.getStatistics();
         const dailyData = {
-            dates: [],
-            counts: []
+            labels: [],
+            data: []
         };
 
         // 获取最近7天的数据
@@ -511,20 +516,21 @@ class Statistics {
             date.setDate(today.getDate() - i);
             const dateStr = date.toLocaleDateString();
             
-            dailyData.dates.push(dateStr);
-            const dayStats = stats.dailyStats[dateStr];
-            dailyData.counts.push(dayStats ? dayStats.totalSentences || 0 : 0);
+            dailyData.labels.push(dateStr);
+            const dayStats = stats.dailyStats?.[dateStr];
+            const count = dayStats ? (dayStats.totalSentences || 0) : 0;
+            dailyData.data.push(count);
         }
 
-        // 创建或更新图表
+        // 确保图表实例存在
         if (!window.learningTrendChart) {
             window.learningTrendChart = new Chart(chartElement, {
                 type: 'line',
                 data: {
-                    labels: dailyData.dates,
+                    labels: dailyData.labels,
                     datasets: [{
                         label: '每日学习句子数',
-                        data: dailyData.counts,
+                        data: dailyData.data,
                         borderColor: '#4CAF50',
                         backgroundColor: 'rgba(76, 175, 80, 0.1)',
                         tension: 0.4,
@@ -545,9 +551,9 @@ class Statistics {
                 }
             });
         } else {
-            // 更新现有图表数据
-            window.learningTrendChart.data.labels = dailyData.dates;
-            window.learningTrendChart.data.datasets[0].data = dailyData.counts;
+            // 更新现有图表
+            window.learningTrendChart.data.labels = dailyData.labels;
+            window.learningTrendChart.data.datasets[0].data = dailyData.data;
             window.learningTrendChart.update();
         }
     }
@@ -574,16 +580,15 @@ class Statistics {
         const reviewListElement = document.querySelector('.review-list');
         if (reviewListElement) {
             reviewListElement.innerHTML = reviewItems.map(item => {
-                // 确保所有必要的字段都有值
-                const sentence = item.sentence || '未知';
-                const hiragana = item.hiragana || '';
-                const meaning = item.meaning || '';
-                
+                // 使用课程和句子的完整信息
+                const lessonPrefix = item.lessonId ? `[${item.lessonId}] ` : '';
                 return `
-                    <div class="review-item">
-                        <div class="sentence-japanese">${sentence}</div>
-                        <div class="sentence-hiragana">${hiragana}</div>
-                        <div class="sentence-meaning">${meaning}</div>
+                    <div class="review-item" data-id="${item.id}">
+                        <div class="sentence-content">
+                            <div class="japanese">${lessonPrefix}${item.sentence}</div>
+                            <div class="hiragana">${item.hiragana || ''}</div>
+                            <div class="meaning">${item.meaning || ''}</div>
+                        </div>
                     </div>
                 `;
             }).join('');
