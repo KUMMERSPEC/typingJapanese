@@ -1,5 +1,6 @@
 import statsData from '../common/statsData.js';
 import { CompletionEffect } from '../common/completion.js';
+import CryptoJS from 'crypto-js';
 
 class FlashcardManager {
     constructor() {
@@ -8,10 +9,12 @@ class FlashcardManager {
         this.mode = null;
         this.practiceStarted = false;
         
-        // 初始化语音合成
-        this.speechSynthesis = window.speechSynthesis;
-        this.japaneseVoice = null;
-        this.initVoice();
+        // 有道API配置
+        this.youdaoAPI = {
+            baseUrl: 'https://openapi.youdao.com/ttsapi',
+            appKey: 'your_app_key',  // 需要替换为实际的有道API密钥
+            secretKey: 'your_secret_key'  // 需要替换为实际的有道密钥
+        };
 
         // 触摸相关变量
         this.touchStartX = 0;
@@ -175,32 +178,22 @@ class FlashcardManager {
         this.bindEvents();
     }
 
-    // 初始化语音
-    async initVoice() {
-        // 等待语音列表加载
-        if (this.speechSynthesis.getVoices().length === 0) {
-            await new Promise(resolve => {
-                this.speechSynthesis.addEventListener('voiceschanged', resolve, { once: true });
+    // 播放日语语音
+    playJapanese(text) {
+        try {
+            const audio = new Audio();
+            audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(text)}`;
+            audio.play().catch(error => {
+                console.error('Error playing audio:', error);
             });
+        } catch (error) {
+            console.error('Error creating audio:', error);
         }
-
-        // 获取日语语音
-        const voices = this.speechSynthesis.getVoices();
-        this.japaneseVoice = voices.find(voice => voice.lang === 'ja-JP');
     }
 
-    // 朗读文本
-    speak(text) {
-        if (!this.japaneseVoice) return;
-
-        // 停止当前朗读
-        this.speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = this.japaneseVoice;
-        utterance.rate = 1; // 语速正常
-        utterance.pitch = 1;
-        this.speechSynthesis.speak(utterance);
+    // 修改原有的语音播放方法
+    speakJapanese(text) {
+        this.playJapanese(text);
     }
 
     bindEvents() {
@@ -252,7 +245,7 @@ class FlashcardManager {
             speakBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const current = this.sentences[this.currentIndex];
-                this.speak(current.japanese);
+                this.speakJapanese(current.japanese);
             });
         }
 
@@ -309,7 +302,7 @@ class FlashcardManager {
             front.textContent = current.japanese;
             back.textContent = current.meaning;
             // 如果正面是日语，立即朗读
-            this.speak(current.japanese);
+            this.speakJapanese(current.japanese);
         }
 
         // 重置卡片状态
@@ -327,7 +320,7 @@ class FlashcardManager {
         // 在翻转时，如果是从中文翻转到日语，则朗读
         if (this.mode === 'meaning' && card.classList.contains('flipped')) {
             const current = this.sentences[this.currentIndex];
-            this.speak(current.japanese);
+            this.speakJapanese(current.japanese);
         }
     }
 
