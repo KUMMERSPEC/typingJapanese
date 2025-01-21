@@ -377,7 +377,7 @@ class Statistics {
         const stats = this.getStatistics();
         const today = new Date().toLocaleDateString();
 
-        // 初始化数据结构
+        // 确保数据结构存在
         if (!stats.dailyStats) stats.dailyStats = {};
         if (!stats.reviewHistory) stats.reviewHistory = {};
         if (!stats.masteryStats) stats.masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
@@ -390,7 +390,7 @@ class Statistics {
             };
         }
 
-        // 更新课程数据
+        // 更新当日统计
         if (!stats.dailyStats[today].lessons[lessonId]) {
             stats.dailyStats[today].lessons[lessonId] = {
                 count: 0,
@@ -402,26 +402,21 @@ class Statistics {
         stats.dailyStats[today].totalSentences = 
             (stats.dailyStats[today].totalSentences || 0) + sentenceCount;
 
-        // 处理 split 类型的句子，添加到复习系统
+        // 保存完整的句子信息
         splitQuestions.forEach(question => {
             if (question.type === 'split') {
-                // 为每个句子创建一个复习项
                 const reviewId = `${question.character}`;
-                if (!stats.reviewHistory[reviewId]) {
-                    stats.reviewHistory[reviewId] = {
-                        sentence: question.character,
-                        hiragana: question.hiragana,
-                        romaji: question.romaji,
-                        meaning: question.meaning,
-                        proficiency: 'low',
-                        lastReview: new Date().toISOString(),
-                        nextReviewDate: new Date().toISOString(),
-                        reviewCount: 0
-                    };
-                    
-                    // 更新掌握度统计
-                    stats.masteryStats.low = (stats.masteryStats.low || 0) + 1;
-                }
+                if (!stats.reviewHistory) stats.reviewHistory = {};
+                
+                stats.reviewHistory[reviewId] = {
+                    sentence: question.character,
+                    hiragana: question.hiragana,
+                    romaji: question.romaji,
+                    meaning: question.meaning,
+                    proficiency: 'low',
+                    lastReview: new Date().toISOString(),
+                    nextReviewDate: new Date().toISOString()
+                };
             }
         });
 
@@ -450,8 +445,7 @@ class Statistics {
         // 保存更新后的统计数据
         console.log('Saving stats with review items:', stats.reviewHistory);
         this.saveStatistics(stats);
-        
-        return stats;
+        this.updateDisplay();
     }
 
     // 修改：获取待复习项目
@@ -499,12 +493,16 @@ class Statistics {
 
     // 更新学习趋势图表
     updateTrendChart() {
-        const chartElement = document.getElementById('learningTrendChart');
-        if (!chartElement) return;
-
         const stats = this.getStatistics();
-        const dates = [];
-        const counts = [];
+        const chartElement = document.getElementById('learningTrendChart');
+        
+        if (!chartElement || !stats.dailyStats) return;
+
+        // 收集每日数据
+        const dailyData = {
+            dates: [],
+            counts: []
+        };
 
         // 获取最近7天的数据
         const today = new Date();
@@ -512,50 +510,46 @@ class Statistics {
             const date = new Date(today);
             date.setDate(today.getDate() - i);
             const dateStr = date.toLocaleDateString();
-            dates.push(dateStr);
-
-            // 获取当天的学习数据
-            const dailyData = stats.dailyStats?.[dateStr];
-            counts.push(dailyData ? dailyData.totalSentences || 0 : 0);
+            
+            dailyData.dates.push(dateStr);
+            const dayStats = stats.dailyStats[dateStr];
+            dailyData.counts.push(dayStats ? dayStats.totalSentences || 0 : 0);
         }
 
-        // 更新图表
-        if (window.learningTrendChart) {
-            window.learningTrendChart.destroy();
-        }
-
-        window.learningTrendChart = new Chart(chartElement, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: '每日学习句子数',
-                    data: counts,
-                    borderColor: '#4CAF50',
-                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
+        // 创建或更新图表
+        if (!window.learningTrendChart) {
+            window.learningTrendChart = new Chart(chartElement, {
+                type: 'line',
+                data: {
+                    labels: dailyData.dates,
+                    datasets: [{
+                        label: '每日学习句子数',
+                        data: dailyData.counts,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
                 }
-            }
-        });
+            });
+        } else {
+            // 更新现有图表数据
+            window.learningTrendChart.data.labels = dailyData.dates;
+            window.learningTrendChart.data.datasets[0].data = dailyData.counts;
+            window.learningTrendChart.update();
+        }
     }
 
     // 修改现有的 updateDisplay 方法，添加图表更新
@@ -579,16 +573,20 @@ class Statistics {
         const reviewItems = this.getReviewItems();
         const reviewListElement = document.querySelector('.review-list');
         if (reviewListElement) {
-            reviewListElement.innerHTML = reviewItems.map(item => `
-                <div class="review-item" data-id="${item.id}">
-                    <div class="sentence-content">
-                        <div class="japanese">${item.sentence}</div>
-                        <div class="hiragana">${item.hiragana}</div>
-                        <div class="meaning">${item.meaning}</div>
+            reviewListElement.innerHTML = reviewItems.map(item => {
+                // 确保所有必要的字段都有值
+                const sentence = item.sentence || '未知';
+                const hiragana = item.hiragana || '';
+                const meaning = item.meaning || '';
+                
+                return `
+                    <div class="review-item">
+                        <div class="sentence-japanese">${sentence}</div>
+                        <div class="sentence-hiragana">${hiragana}</div>
+                        <div class="sentence-meaning">${meaning}</div>
                     </div>
-                    <div class="proficiency ${item.proficiency}">${item.proficiency}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // 更新待复习数量
