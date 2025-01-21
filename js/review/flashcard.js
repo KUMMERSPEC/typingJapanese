@@ -23,6 +23,7 @@ class FlashcardManager {
 
         this.isLoading = true;  // 添加加载状态标记
         this.init();
+        this.initModeSelection();
     }
 
     async init() {
@@ -110,30 +111,36 @@ class FlashcardManager {
         `;
     }
 
-    // 添加模式选择绑定
-    bindModeSelection() {
-        const modeButtons = document.querySelectorAll('.mode-btn');
-        modeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.startPractice(btn.dataset.mode);
-            });
-        });
+    // 添加模式选择初始化
+    initModeSelection() {
+        const cnToJp = document.querySelector('.mode-cn-jp');
+        const jpToCn = document.querySelector('.mode-jp-cn');
+
+        if (cnToJp) {
+            cnToJp.addEventListener('click', () => this.startPractice('cn-jp'));
+        }
+        if (jpToCn) {
+            jpToCn.addEventListener('click', () => this.startPractice('jp-cn'));
+        }
     }
 
     // 开始练习
-    startPractice(selectedMode) {
-        this.mode = selectedMode;
+    startPractice(mode) {
+        this.mode = mode;
         this.practiceStarted = true;
 
         // 隐藏模式选择界面
-        document.querySelector('.mode-select-screen').style.display = 'none';
-        
+        const modeSelection = document.querySelector('.mode-selection');
+        if (modeSelection) {
+            modeSelection.style.display = 'none';
+        }
+
         // 显示练习界面
         const practiceContainer = document.querySelector('.practice-container');
         practiceContainer.style.display = 'block';
         practiceContainer.classList.add('practice-started');
 
-        // 初始化练习界面 HTML
+        // 保留原有的练习界面 HTML
         practiceContainer.innerHTML = `
             <div class="practice-header">
                 <div class="progress">
@@ -172,10 +179,21 @@ class FlashcardManager {
             </div>
         `;
 
-        // 初始化练习
-        this.updateProgress();
-        this.showCard();
-        this.bindEvents();
+        // 播放日语语音的方法
+        this.playJapanese = (text) => {
+            try {
+                const audio = new Audio();
+                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(text)}`;
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            } catch (error) {
+                console.error('Error creating audio:', error);
+            }
+        };
+
+        // 其他初始化...
+        this.initializeCards();
     }
 
     // 播放日语语音
