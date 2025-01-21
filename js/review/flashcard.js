@@ -218,6 +218,7 @@ class FlashcardManager {
     // 显示当前卡片
     showCurrentCard() {
         console.log('显示当前卡片，当前句子：', this.sentences[this.currentIndex]);
+        console.log('当前模式：', this.mode);  // 添加日志查看模式
         
         if (!this.sentences || !this.sentences[this.currentIndex]) {
             console.error('没有可显示的句子');
@@ -233,12 +234,19 @@ class FlashcardManager {
             return;
         }
 
-        if (this.mode === 'cn-jp') {
-            cardFront.textContent = currentSentence.meaning;
-            cardBack.textContent = currentSentence.japanese;
-        } else {
-            cardFront.textContent = currentSentence.japanese;
-            cardBack.textContent = currentSentence.meaning;
+        // 修改模式判断
+        if (this.mode === 'cn-jp') {  // 中文 -> 日文模式
+            cardFront.textContent = currentSentence.meaning;  // 正面显示中文
+            cardBack.textContent = currentSentence.japanese;  // 背面显示日文
+        } else if (this.mode === 'jp-cn') {  // 日文 -> 中文模式
+            cardFront.textContent = currentSentence.japanese; // 正面显示日文
+            cardBack.textContent = currentSentence.meaning;   // 背面显示中文
+        }
+
+        // 重置卡片状态，确保新卡片显示正面
+        const flashcard = document.querySelector('.flashcard');
+        if (flashcard) {
+            flashcard.classList.remove('flipped');
         }
 
         // 更新进度和状态
