@@ -115,105 +115,70 @@ class FlashcardManager {
 
     // 添加模式选择初始化
     initModeSelection() {
-        // 确保在模式选择页面
-        const modeSelection = document.querySelector('.mode-selection');
-        if (!modeSelection) return;
+        // 为模式选择按钮添加事件监听
+        document.querySelector('.mode-btn.mode-cn-jp')?.addEventListener('click', () => {
+            console.log('选择中文到日文模式');
+            this.startPractice('cn-jp');
+        });
 
-        // 为两个模式按钮添加点击事件
-        const modes = {
-            'cn-jp': document.querySelector('.mode-cn-jp'),
-            'jp-cn': document.querySelector('.mode-jp-cn')
-        };
-
-        Object.entries(modes).forEach(([mode, element]) => {
-            if (element) {
-                console.log(`Adding click listener for ${mode} mode`);
-                element.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    console.log(`${mode} mode selected`);
-                    this.startPractice(mode);
-                });
-            }
+        document.querySelector('.mode-btn.mode-jp-cn')?.addEventListener('click', () => {
+            console.log('选择日文到中文模式');
+            this.startPractice('jp-cn');
         });
     }
 
     // 开始练习
     startPractice(mode) {
-        console.log('Starting practice mode:', mode);
+        console.log('开始练习，模式：', mode);
+        this.mode = mode;
         
         // 隐藏模式选择界面
-        const modeSelection = document.querySelector('.mode-selection');
-        if (modeSelection) {
-            modeSelection.style.display = 'none';
+        const modeSelectScreen = document.querySelector('.mode-select-screen');
+        if (modeSelectScreen) {
+            modeSelectScreen.style.display = 'none';
         }
-
-        this.mode = mode;
-        this.practiceStarted = true;
 
         // 显示练习界面
         const practiceContainer = document.querySelector('.practice-container');
-        if (!practiceContainer) {
-            console.error('Practice container not found');
-            return;
+        if (practiceContainer) {
+            practiceContainer.style.display = 'block';
         }
 
-        practiceContainer.style.display = 'block';
-        practiceContainer.classList.add('practice-started');
+        // 初始化练习数据
+        this.initializePractice();
+    }
 
-        // 保持原有的练习界面 HTML...
-        practiceContainer.innerHTML = `
-            <div class="practice-header">
-                <div class="progress">
-                    <span class="current">1</span>/<span class="total">${this.sentences.length}</span>
-                </div>
-                <div class="status-info">
-                    <div class="proficiency low">生疏</div>
-                    <div class="last-review">上次：今天</div>
-                </div>
-                <a href="../" class="back-btn"><i class="fas fa-times"></i></a>
-            </div>
+    // 初始化练习数据
+    async initializePractice() {
+        try {
+            // 这里添加获取练习数据的逻辑
+            // ... 其他初始化代码 ...
+            
+            this.isLoading = false;
+            this.practiceStarted = true;
+            
+            // 显示第一个卡片
+            this.showCurrentCard();
+        } catch (error) {
+            console.error('初始化练习失败:', error);
+        }
+    }
 
-            <div class="flashcard-area">
-                <div class="flashcard">
-                    <div class="card-inner">
-                        <div class="card-front"></div>
-                        <div class="card-back"></div>
-                    </div>
-                </div>
-                <div class="card-controls">
-                    <button class="flip-btn"><i class="fas fa-sync-alt"></i> 翻转</button>
-                    <button class="speak-btn">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                </div>
-                <div class="review-buttons">
-                    <button class="review-btn wrong">
-                        <i class="fas fa-times"></i>
-                        不认识
-                    </button>
-                    <button class="review-btn correct">
-                        <i class="fas fa-check"></i>
-                        认识
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // 播放日语语音的方法
-        this.playJapanese = (text) => {
-            try {
-                const audio = new Audio();
-                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(text)}`;
-                audio.play().catch(error => {
-                    console.error('Error playing audio:', error);
-                });
-            } catch (error) {
-                console.error('Error creating audio:', error);
-            }
-        };
-
-        // 其他初始化...
-        this.initializeCards();
+    // 显示当前卡片
+    showCurrentCard() {
+        if (!this.sentences.length) return;
+        
+        const currentSentence = this.sentences[this.currentIndex];
+        const cardFront = document.querySelector('.card-front');
+        const cardBack = document.querySelector('.card-back');
+        
+        if (this.mode === 'cn-jp') {
+            cardFront.textContent = currentSentence.meaning;
+            cardBack.textContent = currentSentence.japanese;
+        } else {
+            cardFront.textContent = currentSentence.japanese;
+            cardBack.textContent = currentSentence.meaning;
+        }
     }
 
     // 播放日语语音
@@ -222,10 +187,10 @@ class FlashcardManager {
             const audio = new Audio();
             audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(text)}`;
             audio.play().catch(error => {
-                console.error('Error playing audio:', error);
+                console.error('播放语音失败:', error);
             });
         } catch (error) {
-            console.error('Error creating audio:', error);
+            console.error('创建语音失败:', error);
         }
     }
 
