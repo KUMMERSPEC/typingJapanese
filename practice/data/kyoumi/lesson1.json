@@ -106,11 +106,11 @@
     },
     {
       "character": "強い興味",
-      "hiragana": "つよいきょうみ",
-      "romaji": "tsuyoikyoumi",
+      "hiragana": "つよい:きょうみ",
+      "romaji": "tsuyoi:kyoumi",
       "meaning": "浓厚的兴趣",
       "type": "split",
-      "answers": "つよいきょうみ:tsuyoikyoumi"
+      "answers": "つよい:tsuyoi|きょうみ:kyoumi"
     },
     {
       "character": "音楽",
@@ -121,10 +121,18 @@
       "answers": "おんがく:ongaku"
     },
     {
+      "character": "かかる",
+      "hiragana": "かかる",
+      "romaji": "kakaru",
+      "meaning": "打开，挂上（状态）",
+      "type": "normal",
+      "answers": "かかる:kakaru"
+    },
+    {
       "character": "音楽がかかる",
       "hiragana": "おんがく:が:かかる",
       "romaji": "ongaku:ga:kakaru",
-      "meaning": "音乐播放（状态）",
+      "meaning": "音乐打开（状态）",
       "type": "split",
       "answers": "おんがく:ongaku|が:ga|かかる:kakaru"
     },
@@ -148,7 +156,7 @@
       "character": "かける",
       "hiragana": "かける",
       "romaji": "kakeru",
-      "meaning": "打开，挂上",
+      "meaning": "打开，挂上（动作）",
       "type": "normal",
       "answers": "かける:kakeru"
     },
@@ -188,7 +196,7 @@
       "character": "できる",
       "hiragana": "できる",
       "romaji": "dekiru",
-      "meaning": "能",
+      "meaning": "能，会（某项技能）",
       "type": "normal",
       "answers": "できる:dekiru"
     },
@@ -212,7 +220,7 @@
       "character": "ギターができる",
       "hiragana": "ギター:が:できる",
       "romaji": "gitaa:ga:dekiru",
-      "meaning": "会弹吉他",
+      "meaning": "会吉他",
       "type": "split",
       "answers": "ギター:gitaa|が:ga|できる:dekiru"
     },
@@ -244,7 +252,7 @@
       "character": "たいこができる",
       "hiragana": "たいこ:が:できる",
       "romaji": "taiko:ga:dekiru",
-      "meaning": "我可以打太鼓",
+      "meaning": "会打太鼓",
       "type": "split",
       "answers": "たいこ:taiko|が:ga|できる:dekiru"
     },
@@ -305,14 +313,6 @@
       "answers": "バイオリン:baiorin|が:ga|できる:dekiru"
     },
     {
-      "character": "バイオリンを演奏する",
-      "hiragana": "バイオリン:を:えんそうする",
-      "romaji": "baiorin:wo:ensousuru",
-      "meaning": "拉小提琴",
-      "type": "split",
-      "answers": "バイオリン:baiorin|を:wo|えんそうする:ensousuru"
-    },
-    {
       "character": "バイオリンを弾く",
       "hiragana": "バイオリン:を:ひく",
       "romaji": "baiorin:wo:hiku",
@@ -345,20 +345,28 @@
       "answers": "ピアノ:piano|を:wo|ひく:hiku"
     },
     {
-      "character": "ピアノを演奏する",
-      "hiragana": "ピアノ:を:えんそうする",
-      "romaji": "piano:wo:ensousuru",
-      "meaning": "弹钢琴",
-      "type": "split",
-      "answers": "ピアノ:piano|を:wo|えんそうする:ensousuru"
+      "character": "笛",
+      "hiragana": "ふえ",
+      "romaji": "fue",
+      "meaning": "笛子",
+      "type": "normal",
+      "answers": "ふえ:fue"
     },
     {
       "character": "笛ができる",
       "hiragana": "ふえ:が:できる",
       "romaji": "fue:ga:dekiru",
-      "meaning": "我会吹底子",
+      "meaning": "我会吹笛子",
       "type": "split",
       "answers": "ふえ:fue|が:ga|できる:dekiru"
+    },
+    {
+      "character": "吹く",
+      "hiragana": "ふく",
+      "romaji": "fuku",
+      "meaning": "吹、吹奏",
+      "type": "normal",
+      "answers": "ふく:fuku"
     },
     {
       "character": "笛を吹く",
@@ -420,7 +428,7 @@
       "character": "たいこを演奏する",
       "hiragana": "たいこ:を:えんそうする",
       "romaji": "taiko:wo:ensousuru",
-      "meaning": "玩太鼓",
+      "meaning": "演奏太鼓",
       "type": "split",
       "answers": "たいこ:taiko|を:wo|えんそうする:ensousuru"
     },
@@ -428,15 +436,31 @@
       "character": "ドラムを演奏する",
       "hiragana": "ドラム:を:えんそうする",
       "romaji": "doramu:wo:ensousuru",
-      "meaning": "打鼓",
+      "meaning": "演奏架子鼓",
       "type": "split",
       "answers": "ドラム:doramu|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "バイオリンを演奏する",
+      "hiragana": "バイオリン:を:えんそうする",
+      "romaji": "baiorin:wo:ensousuru",
+      "meaning": "演奏小提琴",
+      "type": "split",
+      "answers": "バイオリン:baiorin|を:wo|えんそうする:ensousuru"
+    },
+    {
+      "character": "ピアノを演奏する",
+      "hiragana": "ピアノ:を:えんそうする",
+      "romaji": "piano:wo:ensousuru",
+      "meaning": "演奏钢琴",
+      "type": "split",
+      "answers": "ピアノ:piano|を:wo|えんそうする:ensousuru"
     },
     {
       "character": "笛を演奏する",
       "hiragana": "ふえ:を:えんそうする",
       "romaji": "fue:wo:ensousuru",
-      "meaning": "吹长笛",
+      "meaning": "吹奏笛子",
       "type": "split",
       "answers": "ふえ:fue|を:wo|えんそうする:ensousuru"
     },
@@ -444,7 +468,7 @@
       "character": "フルートを演奏する",
       "hiragana": "フルート:を:えんそうする",
       "romaji": "furuuto:wo:ensousuru",
-      "meaning": "吹长笛",
+      "meaning": "演奏长笛",
       "type": "split",
       "answers": "フルート:furuuto|を:wo|えんそうする:ensousuru"
     }
