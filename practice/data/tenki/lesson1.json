@@ -36,7 +36,7 @@
       "character": "雨が多い",
       "hiragana": "あめ:が:おおい",
       "romaji": "ame:ga:ooi",
-      "meaning": "雨很大",
+      "meaning": "多雨，下雨（的时候）多",
       "type": "split",
       "answers": "あめ:ame|が:ga|おおい:ooi"
     },
@@ -52,7 +52,7 @@
       "character": "雨が少ない",
       "hiragana": "あめ:が:すくない",
       "romaji": "ame:ga:sukunai",
-      "meaning": "小雨",
+      "meaning": "少雨，下雨（的时候）少",
       "type": "split",
       "answers": "あめ:ame|が:ga|すくない:sukunai"
     },
