@@ -169,6 +169,14 @@
       "answers": "シャツ:shatsu|を:wo|きる:kiru"
     },
     {
+      "character": "服",
+      "hiragana": "ふく",
+      "romaji": "fuku",
+      "meaning": "衣服",
+      "type": "normal",
+      "answers": "ふく:fuku"
+    },
+    {
       "character": "服が大きい",
       "hiragana": "ふく:が:おおきい",
       "romaji": "fuku:ga:ookii",
@@ -196,7 +204,7 @@
       "character": "服が似合う",
       "hiragana": "ふく:が:にあう",
       "romaji": "fuku:ga:niau",
-      "meaning": "衣服适合我",
+      "meaning": "衣服很合适",
       "type": "split",
       "answers": "ふく:fuku|が:ga|にあう:niau"
     },
