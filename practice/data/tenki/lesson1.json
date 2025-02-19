@@ -3,10 +3,10 @@
     {
       "character": "雨",
       "hiragana": "あめ",
-      "romaji": "ame ",
+      "romaji": "ame",
       "meaning": "雨，下雨",
-      "type": "nan",
-      "answers": ""
+      "type": "normal",
+      "answers": "あめ:ame"
     },
     {
       "character": "上がる",
