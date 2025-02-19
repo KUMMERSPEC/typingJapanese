@@ -20,7 +20,7 @@
       "character": "上陸する",
       "hiragana": "じょうりくする",
       "romaji": "jourikusuru",
-      "meaning": "上岸",
+      "meaning": "上岸，登陆",
       "type": "normal",
       "answers": "じょうりくする:jourikusuru"
     },
@@ -36,7 +36,7 @@
       "character": "近づく",
       "hiragana": "ちかづく",
       "romaji": "chikazuku",
-      "meaning": "靠近一点",
+      "meaning": "靠近，接近",
       "type": "normal",
       "answers": "ちかづく:chikazuku"
     },
@@ -316,7 +316,7 @@
       "character": "高い",
       "hiragana": "たかい",
       "romaji": "takai",
-      "meaning": "昂贵的",
+      "meaning": "高的，贵的",
       "type": "normal",
       "answers": "たかい:takai"
     },
@@ -345,22 +345,6 @@
       "answers": "つなみ:tsunami|が:ga|ちいさい:chiisai"
     },
     {
-      "character": "引く",
-      "hiragana": "ひく",
-      "romaji": "hiku",
-      "meaning": "拉",
-      "type": "normal",
-      "answers": "ひく:hiku"
-    },
-    {
-      "character": "津波が引く",
-      "hiragana": "つなみ:が:ひく",
-      "romaji": "tsunami:ga:hiku",
-      "meaning": "海啸退去",
-      "type": "split",
-      "answers": "つなみ:tsunami|が:ga|ひく:hiku"
-    },
-    {
       "character": "低い",
       "hiragana": "ひくい",
       "romaji": "hikui",
@@ -375,6 +359,22 @@
       "meaning": "海啸强度较低",
       "type": "split",
       "answers": "つなみ:tsunami|が:ga|ひくい:hikui"
+    },
+    {
+      "character": "引く",
+      "hiragana": "ひく",
+      "romaji": "hiku",
+      "meaning": "拉，牵引",
+      "type": "normal",
+      "answers": "ひく:hiku"
+    },
+    {
+      "character": "津波が引く",
+      "hiragana": "つなみ:が:ひく",
+      "romaji": "tsunami:ga:hiku",
+      "meaning": "海啸退去",
+      "type": "split",
+      "answers": "つなみ:tsunami|が:ga|ひく:hiku"
     }
   ]
 }
