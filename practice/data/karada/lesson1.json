@@ -5,8 +5,8 @@
       "hiragana": "あたま",
       "romaji": "atama",
       "meaning": "头，脑袋",
-      "type": "nan",
-      "answers": ""
+      "type": "normal",
+      "answers": "あたま:atama"
     },
     {
       "character": "ふる",
@@ -132,7 +132,7 @@
       "character": "伸びる",
       "hiragana": "のびる",
       "romaji": "nobiru",
-      "meaning": "延长",
+      "meaning": "伸长，长长",
       "type": "normal",
       "answers": "のびる:nobiru"
     },
@@ -228,7 +228,7 @@
       "character": "伸ばす",
       "hiragana": "のばす",
       "romaji": "nobasu",
-      "meaning": "延长。拉伸，",
+      "meaning": "拉伸，使延长。",
       "type": "normal",
       "answers": "のばす:nobasu"
     },
@@ -684,7 +684,7 @@
       "character": "指す",
       "hiragana": "さす",
       "romaji": "sasu",
-      "meaning": "向，朝向。",
+      "meaning": "指着，指向",
       "type": "normal",
       "answers": "さす:sasu"
     },
@@ -708,7 +708,7 @@
       "character": "指を伸ばす",
       "hiragana": "ゆび:を:のばす",
       "romaji": "yubi:wo:nobasu",
-      "meaning": "伸展你的手指",
+      "meaning": "伸展手指",
       "type": "split",
       "answers": "ゆび:yubi|を:wo|のばす:nobasu"
     },
@@ -724,15 +724,15 @@
       "character": "指を曲げる",
       "hiragana": "ゆび:を:まげる",
       "romaji": "yubi:wo:mageru",
-      "meaning": "弯曲你的手指",
+      "meaning": "弯曲手指",
       "type": "split",
       "answers": "ゆび:yubi|を:wo|まげる:mageru"
     },
     {
-      "character": "足が遅い",
+      "character": "足",
       "hiragana": "あし",
       "romaji": "ashi",
-      "meaning": "腿脚",
+      "meaning": "脚，足",
       "type": "normal",
       "answers": "あし:ashi"
     },
@@ -788,7 +788,7 @@
       "character": "脚",
       "hiragana": "あし",
       "romaji": "kumu",
-      "meaning": "脚",
+      "meaning": "脚（腿部+脚）",
       "type": "normal",
       "answers": "あし:ashi"
     },
@@ -804,7 +804,7 @@
       "character": "脚を伸ばす",
       "hiragana": "あし:を:のばす",
       "romaji": "ashi:wo:nobasu",
-      "meaning": "伸展你的腿",
+      "meaning": "伸展双腿",
       "type": "split",
       "answers": "あし:ashi|を:wo|のばす:nobasu"
     },
@@ -812,7 +812,7 @@
       "character": "脚を曲げる",
       "hiragana": "あし:を:まげる",
       "romaji": "ashi:wo:mageru",
-      "meaning": "弯曲你的腿",
+      "meaning": "弯曲腿",
       "type": "split",
       "answers": "あし:ashi|を:wo|まげる:mageru"
     },
