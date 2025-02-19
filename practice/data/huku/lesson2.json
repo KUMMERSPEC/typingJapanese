@@ -33,7 +33,7 @@
       "answers": "スカート:sukaーto|を:wo|ぬぐ:nugu"
     },
     {
-      "character": "はき替える",
+      "character": "履き替える",
       "hiragana": "はきかえる",
       "romaji": "hakikaeru",
       "meaning": "换衣服（下装）",
@@ -41,7 +41,7 @@
       "answers": "はきかえる:hakikaeru"
     },
     {
-      "character": "スカートをは着替える",
+      "character": "スカートを履き替える",
       "hiragana": "スカート:を:はきかえる",
       "romaji": "sukaーto:wo:hakikaeru",
       "meaning": "换裙子",
@@ -76,7 +76,7 @@
       "character": "ズボンがぶかぶかだ",
       "hiragana": "ズボン:が:ぶかぶかだ",
       "romaji": "zubon:ga:bukabukada",
-      "meaning": "我的裤子很宽松",
+      "meaning": "裤子很宽松",
       "type": "split",
       "answers": "ズボン:zubon|が:ga|ぶかぶかだ:bukabukada"
     },
@@ -84,7 +84,7 @@
       "character": "ズボンを脱ぐ",
       "hiragana": "ズボン:を:ぬぐ",
       "romaji": "zubon:wo:nugu",
-      "meaning": "脱掉你的裤子",
+      "meaning": "脱掉裤子",
       "type": "split",
       "answers": "ズボン:zubon|を:wo|ぬぐ:nugu"
     },
