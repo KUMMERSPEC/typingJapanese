@@ -145,6 +145,14 @@
       "answers": "きゅうなあめ:kyuunaame"
     },
     {
+      "character": "雪",
+      "hiragana": "ゆき",
+      "romaji": "yuki",
+      "meaning": "雪",
+      "type": "normal",
+      "answers": "ゆき:yuki"
+    },
+    {
       "character": "雪が多い",
       "hiragana": "ゆき:が:おおい",
       "romaji": "yuki:ga:ooi",
@@ -159,14 +167,6 @@
       "meaning": "小雪",
       "type": "split",
       "answers": "ゆき:yuki|が:ga|すくない:sukunai"
-    },
-    {
-      "character": "風が強い",
-      "hiragana": "かぜ:が:つよい",
-      "romaji": "kaze:ga:tsuyoi",
-      "meaning": "大风",
-      "type": "split",
-      "answers": "かぜ:kaze|が:ga|つよい:tsuyoi"
     },
     {
       "character": "積もる",
@@ -185,15 +185,15 @@
       "answers": "ゆき:yuki|が:ga|つもる:tsumoru"
     },
     {
-      "character": "解ける",
+      "character": "溶ける",
       "hiragana": "とける",
       "romaji": "tokeru",
-      "meaning": "可以解决",
+      "meaning": "融化",
       "type": "normal",
       "answers": "とける:tokeru"
     },
     {
-      "character": "雪が解ける",
+      "character": "雪が溶ける",
       "hiragana": "ゆき:が:とける",
       "romaji": "yuki:ga:tokeru",
       "meaning": "雪融化了",
@@ -204,7 +204,7 @@
       "character": "残る",
       "hiragana": "のこる",
       "romaji": "nokoru",
-      "meaning": "保持",
+      "meaning": "剩余，残留",
       "type": "normal",
       "answers": "のこる:nokoru"
     },
@@ -249,12 +249,36 @@
       "answers": "ゆき:yuki|が:ga|やむ:yamu"
     },
     {
+      "character": "かく",
+      "hiragana": "かく",
+      "romaji": "kaku",
+      "meaning": "铲，划桨",
+      "type": "normal",
+      "answers": "かく:kaku"
+    },
+    {
       "character": "雪をかく",
       "hiragana": "ゆき:を:かく",
       "romaji": "yuki:wo:kaku",
       "meaning": "铲雪",
       "type": "split",
       "answers": "ゆき:yuki|を:wo|かく:kaku"
+    },
+    {
+      "character": "風",
+      "hiragana": "かぜ",
+      "romaji": "kaze",
+      "meaning": "风",
+      "type": "normal",
+      "answers": "かぜ:kaze"
+    },
+    {
+      "character": "風が強い",
+      "hiragana": "かぜ:が:つよい",
+      "romaji": "kaze:ga:tsuyoi",
+      "meaning": "大风，风很强",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|つよい:tsuyoi"
     },
     {
       "character": "吹く",
@@ -316,7 +340,7 @@
       "character": "変わる",
       "hiragana": "かわる",
       "romaji": "kawaru",
-      "meaning": "改变",
+      "meaning": "变化，变换",
       "type": "normal",
       "answers": "かわる:kawaru"
     },
@@ -340,9 +364,17 @@
       "character": "天気が悪い",
       "hiragana": "てんき:が:わるい",
       "romaji": "tenki:ga:warui",
-      "meaning": "恶劣天气",
+      "meaning": "天气不好，天气恶劣",
       "type": "split",
       "answers": "てんき:tenki|が:ga|わるい:warui"
+    },
+    {
+      "character": "空",
+      "hiragana": "そら",
+      "romaji": "sora",
+      "meaning": "天空",
+      "type": "normal",
+      "answers": "そら:sora"
     },
     {
       "character": "明るい",
@@ -396,7 +428,7 @@
       "character": "晴れる",
       "hiragana": "はれる",
       "romaji": "hareru",
-      "meaning": "今天是晴天",
+      "meaning": "放晴，晴天",
       "type": "normal",
       "answers": "はれる:hareru"
     },
@@ -409,10 +441,18 @@
       "answers": "そら:sora|が:ga|はれる:hareru"
     },
     {
+      "character": "雷",
+      "hiragana": "かみなり",
+      "romaji": "kaminari",
+      "meaning": "雷电",
+      "type": "split",
+      "answers": "かみなり:kaminari"
+    },
+    {
       "character": "落ちる",
       "hiragana": "おちる",
       "romaji": "ochiru",
-      "meaning": "下拉",
+      "meaning": "坠落，落下",
       "type": "normal",
       "answers": "おちる:ochiru"
     },
@@ -420,7 +460,7 @@
       "character": "雷が落ちる",
       "hiragana": "かみなり:が:おちる",
       "romaji": "kaminari:ga:ochiru",
-      "meaning": "雷击",
+      "meaning": "雷击，打雷",
       "type": "split",
       "answers": "かみなり:kaminari|が:ga|おちる:ochiru"
     },
@@ -428,7 +468,7 @@
       "character": "近い",
       "hiragana": "ちかい",
       "romaji": "chikai",
-      "meaning": "关闭",
+      "meaning": "很近，近处的",
       "type": "normal",
       "answers": "ちかい:chikai"
     },
@@ -460,7 +500,7 @@
       "character": "鳴る",
       "hiragana": "なる",
       "romaji": "naru",
-      "meaning": "戒指",
+      "meaning": "响起（声音）",
       "type": "normal",
       "answers": "なる:naru"
     },
@@ -468,7 +508,7 @@
       "character": "雷が鳴る",
       "hiragana": "かみなり:が:なる",
       "romaji": "kaminari:ga:naru",
-      "meaning": "雷",
+      "meaning": "雷声响起，打雷",
       "type": "split",
       "answers": "かみなり:kaminari|が:ga|なる:naru"
     },
@@ -476,7 +516,7 @@
       "character": "光る",
       "hiragana": "ひかる",
       "romaji": "hikaru",
-      "meaning": "闪耀",
+      "meaning": "发光，闪耀",
       "type": "normal",
       "answers": "ひかる:hikaru"
     },
@@ -484,7 +524,7 @@
       "character": "雷が光る",
       "hiragana": "かみなり:が:ひかる",
       "romaji": "kaminari:ga:hikaru",
-      "meaning": "闪电闪耀",
+      "meaning": "打雷闪电（雷放光）",
       "type": "split",
       "answers": "かみなり:kaminari|が:ga|ひかる:hikaru"
     },
@@ -495,6 +535,14 @@
       "meaning": "雷声停止了",
       "type": "split",
       "answers": "かみなり:kaminari|が:ga|やむ:yamu"
+    },
+    {
+      "character": "自然",
+      "hiragana": "しぜん",
+      "romaji": "shizen",
+      "meaning": "大自然",
+      "type": "normal",
+      "answers": "しぜん:shizen"
     },
     {
       "character": "豊か",
@@ -516,7 +564,7 @@
       "character": "壊す",
       "hiragana": "こわす",
       "romaji": "kowasu",
-      "meaning": "休息",
+      "meaning": "破坏，摧毁",
       "type": "normal",
       "answers": "こわす:kowasu"
     },
