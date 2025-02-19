@@ -68,7 +68,7 @@
       "character": "通り過ぎる",
       "hiragana": "とおりすぎる",
       "romaji": "toorisugiru",
-      "meaning": "路过",
+      "meaning": "路过，通过",
       "type": "normal",
       "answers": "とおりすぎる:toorisugiru"
     },
@@ -156,7 +156,7 @@
       "character": "おさまる",
       "hiragana": "おさまる",
       "romaji": "osamaru",
-      "meaning": "消退",
+      "meaning": "消退，止住",
       "type": "normal",
       "answers": "おさまる:osamaru"
     },
@@ -164,7 +164,7 @@
       "character": "地震がおさまる",
       "hiragana": "じしん:が:おさまる",
       "romaji": "jishin:ga:osamaru",
-      "meaning": "地震消退",
+      "meaning": "地震停止",
       "type": "split",
       "answers": "じしん:jishin|が:ga|おさまる:osamaru"
     },
@@ -172,7 +172,7 @@
       "character": "地震が来る",
       "hiragana": "じしん:が:くる",
       "romaji": "jishin:ga:kuru",
-      "meaning": "地震即将来临",
+      "meaning": "地震来临",
       "type": "split",
       "answers": "じしん:jishin|が:ga|くる:kuru"
     },
@@ -220,7 +220,7 @@
       "character": "起きる",
       "hiragana": "おきる",
       "romaji": "okiru",
-      "meaning": "起床",
+      "meaning": "起来，发生",
       "type": "normal",
       "answers": "おきる:okiru"
     },
@@ -236,7 +236,7 @@
       "character": "引く",
       "hiragana": "ひく",
       "romaji": "hiku",
-      "meaning": "拉，拉",
+      "meaning": "拉，牵引",
       "type": "normal",
       "answers": "ひく:hiku"
     },
@@ -276,7 +276,7 @@
       "character": "起きる",
       "hiragana": "おきる",
       "romaji": "okiru",
-      "meaning": "起床",
+      "meaning": "发生，起来",
       "type": "normal",
       "answers": "おきる:okiru"
     },
@@ -292,7 +292,7 @@
       "character": "おさまる",
       "hiragana": "おさまる",
       "romaji": "osamaru",
-      "meaning": "消退",
+      "meaning": "消退，止住",
       "type": "normal",
       "answers": "おさまる:osamaru"
     },
@@ -308,7 +308,7 @@
       "character": "津波が来る",
       "hiragana": "つなみ:が:くる",
       "romaji": "tsunami:ga:kuru",
-      "meaning": "海啸即将来临",
+      "meaning": "海啸来临",
       "type": "split",
       "answers": "つなみ:tsunami|が:ga|くる:kuru"
     },

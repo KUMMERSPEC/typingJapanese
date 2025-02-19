@@ -44,7 +44,7 @@
       "character": "早い",
       "hiragana": "はやい",
       "romaji": "hayai",
-      "meaning": "早期的",
+      "meaning": "早的，快的",
       "type": "normal",
       "answers": "はやい:hayai"
     },
@@ -92,7 +92,7 @@
       "character": "遅らせる",
       "hiragana": "おくらせる",
       "romaji": "okuraseru",
-      "meaning": "延迟",
+      "meaning": "延迟，推迟",
       "type": "normal",
       "answers": "おくらせる:okuraseru"
     },
@@ -108,7 +108,7 @@
       "character": "早める",
       "hiragana": "はやめる",
       "romaji": "hayameru",
-      "meaning": "提早",
+      "meaning": "提早，提前",
       "type": "normal",
       "answers": "はやめる:hayameru"
     },
@@ -116,7 +116,7 @@
       "character": "時間を早める",
       "hiragana": "じかん:を:はやめる",
       "romaji": "jikan:wo:hayameru",
-      "meaning": "加快时间",
+      "meaning": "加快时间，把时间提前",
       "type": "split",
       "answers": "じかん:jikan|を:wo|はやめる:hayameru"
     },
@@ -143,6 +143,14 @@
       "meaning": "最后期限",
       "type": "normal",
       "answers": "しめきり:shimekiri"
+    },
+    {
+      "character": "過ぎる",
+      "hiragana": "すぎる",
+      "romaji": "sugiru",
+      "meaning": "(时间)过去，经过。",
+      "type": "normal",
+      "answers": "すぎる:sugiru"
     },
     {
       "character": "締め切りが過ぎる",
@@ -172,7 +180,7 @@
       "character": "遅れる",
       "hiragana": "おくれる",
       "romaji": "okureru",
-      "meaning": "迟到",
+      "meaning": "迟到，晚点",
       "type": "normal",
       "answers": "おくれる:okureru"
     },
@@ -233,10 +241,18 @@
       "answers": "あまる:amaru"
     },
     {
+      "character": "時間が余る",
+      "hiragana": "じかん:が:あまる",
+      "romaji": "jikan:ga:amaru",
+      "meaning": "时间有剩余，还有时间",
+      "type": "split",
+      "answers": "じかん:jikan|が:ga|あまる:amaru"
+    },
+    {
       "character": "経つ",
       "hiragana": "たつ",
       "romaji": "tatsu",
-      "meaning": "通过，失效",
+      "meaning": "通过，流逝",
       "type": "normal",
       "answers": "たつ:tatsu"
     },
@@ -260,7 +276,7 @@
       "character": "時間が足りる",
       "hiragana": "じかん:が:たりる",
       "romaji": "jikan:ga:tariru",
-      "meaning": "我有足够的时间",
+      "meaning": "有足够的时间",
       "type": "split",
       "answers": "じかん:jikan|が:ga|たりる:tariru"
     },
@@ -268,7 +284,7 @@
       "character": "時間がない",
       "hiragana": "じかん:が:ない",
       "romaji": "jikan:ga:nai",
-      "meaning": "我没有时间",
+      "meaning": "没有时间",
       "type": "split",
       "answers": "じかん:jikan|が:ga|ない:nai"
     },
@@ -300,7 +316,7 @@
       "character": "時間がかかる",
       "hiragana": "じかん:が:かかる",
       "romaji": "jikan:ga:kakaru",
-      "meaning": "花点时间（状态结果）",
+      "meaning": "时间花费了（状态结果）",
       "type": "split",
       "answers": "じかん:jikan|が:ga|かかる:kakaru"
     }

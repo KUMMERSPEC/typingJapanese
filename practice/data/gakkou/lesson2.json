@@ -60,7 +60,7 @@
       "character": "やる",
       "hiragana": "やる",
       "romaji": "yaru",
-      "meaning": "做",
+      "meaning": "做（更随意的表达）",
       "type": "normal",
       "answers": "やる:yaru"
     },
@@ -68,7 +68,7 @@
       "character": "宿題をやる",
       "hiragana": "しゅくだい:を:やる",
       "romaji": "shukudai:wo:yaru",
-      "meaning": "做作业",
+      "meaning": "做作业（更随意的表达）",
       "type": "split",
       "answers": "しゅくだい:shukudai|を:wo|やる:yaru"
     },
@@ -100,7 +100,7 @@
       "character": "閉じる",
       "hiragana": "とじる",
       "romaji": "tojiru",
-      "meaning": "关闭",
+      "meaning": "关闭，合上",
       "type": "normal",
       "answers": "とじる:tojiru"
     },
@@ -124,7 +124,7 @@
       "character": "ノートを取る",
       "hiragana": "ノート:を:とる",
       "romaji": "nooto:wo:toru",
-      "meaning": "做笔记",
+      "meaning": "做笔记（取得记录）",
       "type": "split",
       "answers": "ノート:nooto|を:wo|とる:toru"
     },
@@ -161,12 +161,28 @@
       "answers": "ノート:nooto|を:wo|めくる:mekuru"
     },
     {
+      "character": "開く",
+      "hiragana": "ひらく",
+      "romaji": "hiraku",
+      "meaning": "打开",
+      "type": "normal",
+      "answers": "ひらく:hiraku"
+    },
+    {
       "character": "本を開く",
       "hiragana": "ほん:を:ひらく",
       "romaji": "hon:wo:hiraku",
       "meaning": "打开书本",
       "type": "split",
       "answers": "ほん:hon|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "めくる",
+      "hiragana": "めくる",
+      "romaji": "mekuru",
+      "meaning": "翻开，翻动",
+      "type": "normal",
+      "answers": "めくる:mekuru"
     },
     {
       "character": "本をめくる",

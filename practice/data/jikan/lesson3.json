@@ -20,7 +20,7 @@
       "character": "用事がある",
       "hiragana": "ようじ:が:ある",
       "romaji": "youji:ga:aru",
-      "meaning": "有有事情（拒绝邀约，有事）",
+      "meaning": "有事情（拒绝邀约，有事）",
       "type": "split",
       "answers": "ようじ:youji|が:ga|ある:aru"
     },
@@ -81,10 +81,18 @@
       "answers": "つごう:tsugou|が:ga|いい:ii"
     },
     {
+      "character": "つく",
+      "hiragana": "つく",
+      "romaji": "tsuku",
+      "meaning": "调整时间，金钱等，使某事成立 ",
+      "type": "split",
+      "answers": "つく:tsuku"
+    },
+    {
       "character": "都合がつく",
       "hiragana": "つごう:が:つく",
       "romaji": "tsugou:ga:tsuku",
-      "meaning": "(在时间、金钱等方面)方便 つく",
+      "meaning": "(在时间、金钱等方面)方便",
       "type": "split",
       "answers": "つごう:tsugou|が:ga|つく:tsuku"
     },
@@ -204,7 +212,7 @@
       "character": "休みになる",
       "hiragana": "やすみ:に:なる",
       "romaji": "yasumi:ni:naru",
-      "meaning": "我要休息一天",
+      "meaning": "要休息（变成假期）",
       "type": "split",
       "answers": "やすみ:yasumi|に:ni|なる:naru"
     },
@@ -212,7 +220,7 @@
       "character": "過ごす",
       "hiragana": "すごす",
       "romaji": "sugosu",
-      "meaning": "花费",
+      "meaning": "度过，生活",
       "type": "normal",
       "answers": "すごす:sugosu"
     },
@@ -236,15 +244,23 @@
       "character": "休みを取る",
       "hiragana": "やすみ:を:とる",
       "romaji": "yasumi:wo:toru",
-      "meaning": "请一天假",
+      "meaning": "请假",
       "type": "split",
       "answers": "やすみ:yasumi|を:wo|とる:toru"
+    },
+    {
+      "character": "もらう",
+      "hiragana": "もらう",
+      "romaji": "morau",
+      "meaning": "得到，获得",
+      "type": "normal",
+      "answers": "もらう:morau"
     },
     {
       "character": "休みをもらう",
       "hiragana": "やすみ:を:もらう",
       "romaji": "yasumi:wo:morau",
-      "meaning": "请一天假",
+      "meaning": "请假，获得假期",
       "type": "split",
       "answers": "やすみ:yasumi|を:wo|もらう:morau"
     }

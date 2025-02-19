@@ -116,7 +116,7 @@
       "character": "シャツをかける",
       "hiragana": "シャツ:を:かける",
       "romaji": "shatsu:wo:kakeru",
-      "meaning": "挂一件衬衫",
+      "meaning": "挂衬衫",
       "type": "split",
       "answers": "シャツ:shatsu|を:wo|かける:kakeru"
     },
@@ -164,7 +164,7 @@
       "character": "シャツを着る",
       "hiragana": "シャツ:を:きる",
       "romaji": "shatsu:wo:kiru",
-      "meaning": "穿一件衬衫",
+      "meaning": "穿衬衫",
       "type": "split",
       "answers": "シャツ:shatsu|を:wo|きる:kiru"
     },

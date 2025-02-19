@@ -4,7 +4,7 @@
       "character": "試合",
       "hiragana": "しあい",
       "romaji": "shiai",
-      "meaning": "游戏",
+      "meaning": "比赛",
       "type": "normal",
       "answers": "しあい:shiai"
     },
@@ -36,7 +36,7 @@
       "character": "試合に出る",
       "hiragana": "しあい:に:でる",
       "romaji": "shiai:ni:deru",
-      "meaning": "参加比赛",
+      "meaning": "参加比赛（在比赛里出场）",
       "type": "split",
       "answers": "しあい:shiai|に:ni|でる:deru"
     },
@@ -44,7 +44,7 @@
       "character": "負ける",
       "hiragana": "まける",
       "romaji": "makeru",
-      "meaning": "失去",
+      "meaning": "失去，输掉",
       "type": "normal",
       "answers": "まける:makeru"
     },
@@ -60,7 +60,7 @@
       "character": "出す",
       "hiragana": "だす",
       "romaji": "dasu",
-      "meaning": "拿出来",
+      "meaning": "拿出来，使~出来",
       "type": "normal",
       "answers": "だす:dasu"
     },

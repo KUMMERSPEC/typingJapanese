@@ -4,7 +4,7 @@
       "character": "日にち",
       "hiragana": "ひにち",
       "romaji": "hinichi",
-      "meaning": "日期",
+      "meaning": "日期，日程",
       "type": "normal",
       "answers": "ひにち:hinichi"
     },
@@ -68,7 +68,7 @@
       "character": "日にちを決める",
       "hiragana": "ひにち:を:きめる",
       "romaji": "hinichi:wo:kimeru",
-      "meaning": "决定日期",
+      "meaning": "决定日期（动作行为）",
       "type": "split",
       "answers": "ひにち:hinichi|を:wo|きめる:kimeru"
     },
@@ -84,7 +84,7 @@
       "character": "遅れる",
       "hiragana": "おくれる",
       "romaji": "okureru",
-      "meaning": "迟到，晚点",
+      "meaning": "迟到，晚点（状态结果）",
       "type": "normal",
       "answers": "おくれる:okureru"
     },
@@ -108,7 +108,7 @@
       "character": "予定がある",
       "hiragana": "よてい:が:ある",
       "romaji": "yotei:ga:aru",
-      "meaning": "我有计划",
+      "meaning": "有计划",
       "type": "split",
       "answers": "よてい:yotei|が:ga|ある:aru"
     },
@@ -116,7 +116,7 @@
       "character": "予定がない",
       "hiragana": "よてい:が:ない",
       "romaji": "yotei:ga:nai",
-      "meaning": "我没有任何计划",
+      "meaning": "没有计划",
       "type": "split",
       "answers": "よてい:yotei|が:ga|ない:nai"
     },
@@ -202,43 +202,35 @@
     },
     {
       "character": "キャンセルする",
-      "hiragana": "キャンセル",
+      "hiragana": "キャンセルする",
       "romaji": "kyanserusuru",
       "meaning": "取消",
       "type": "normal",
-      "answers": "キャンセル:kyanserusuru"
+      "answers": "キャンセルする:kyanserusuru"
     },
     {
       "character": "予定をキャンセルする",
       "hiragana": "よてい:を:キャンセルする",
       "romaji": "yotei:wo:kyanserusuru",
-      "meaning": "取消预约",
+      "meaning": "取消计划",
       "type": "split",
       "answers": "よてい:yotei|を:wo|キャンセルする:kyanserusuru"
-    },
-    {
-      "character": "キャンセル",
-      "hiragana": "キャンセル",
-      "romaji": "kyanseru",
-      "meaning": "取消",
-      "type": "normal",
-      "answers": "キャンセル:kyanseru"
     },
     {
       "character": "予約",
       "hiragana": "よやく",
       "romaji": "yoyaku",
-      "meaning": "预订",
+      "meaning": "预订，预约",
       "type": "normal",
       "answers": "よやく:yoyaku"
     },
     {
       "character": "キャンセルする",
-      "hiragana": "キャンセル",
-      "romaji": "kyanseru",
+      "hiragana": "キャンセルする",
+      "romaji": "kyanserusuru",
       "meaning": "取消",
       "type": "normal",
-      "answers": "キャンセル:kyanseru"
+      "answers": "キャンセルする:kyanserusuru"
     },
     {
       "character": "予約をキャンセルする",

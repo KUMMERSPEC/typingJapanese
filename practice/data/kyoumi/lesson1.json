@@ -92,7 +92,7 @@
       "character": "趣味を持つ",
       "hiragana": "しゅみ:を:もつ",
       "romaji": "shumi:wo:motsu",
-      "meaning": "有爱好",
+      "meaning": "有爱好（持有拥有爱好）",
       "type": "split",
       "answers": "しゅみ:shumi|を:wo|もつ:motsu"
     },
@@ -156,7 +156,7 @@
       "character": "音楽をかける",
       "hiragana": "おんがく:を:かける",
       "romaji": "ongaku:wo:kakeru",
-      "meaning": "打开播放音乐（动作）",
+      "meaning": "打开，播放音乐（动作）",
       "type": "split",
       "answers": "おんがく:ongaku|を:wo|かける:kakeru"
     },

@@ -4,9 +4,57 @@
       "character": "風邪",
       "hiragana": "かぜ",
       "romaji": "kaze",
-      "meaning": "感冒",
+      "meaning": "感冒，伤风",
       "type": "normal",
       "answers": "かぜ:kaze"
+    },
+    {
+      "character": "ひく",
+      "hiragana": "ひく",
+      "romaji": "hiku",
+      "meaning": "染上，患上（感冒）",
+      "type": "normal",
+      "answers": "ひく:hiku"
+    },
+    {
+      "character": "風邪をひく",
+      "hiragana": "かぜ:を:ひく",
+      "romaji": "kaze:wo:hiku",
+      "meaning": "感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|を:wo|ひく:hiku"
+    },
+    {
+      "character": "重い",
+      "hiragana": "おもい",
+      "romaji": "omoi",
+      "meaning": "重的",
+      "type": "normal",
+      "answers": "おもい:omoi"
+    },
+    {
+      "character": "風邪が重い",
+      "hiragana": "かぜ:が:おもい",
+      "romaji": "kaze:ga:omoi",
+      "meaning": "重感冒，感冒严重（相对客观，侧重症状和染病时间）",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|おもい:omoi"
+    },
+    {
+      "character": "軽い",
+      "hiragana": "かるい",
+      "romaji": "karui",
+      "meaning": "轻的，重量小的",
+      "type": "normal",
+      "answers": "かるい:karui"
+    },
+    {
+      "character": "風邪が軽い",
+      "hiragana": "かぜ:が:かるい",
+      "romaji": "kaze:ga:karui",
+      "meaning": "小感冒，有点感冒",
+      "type": "split",
+      "answers": "かぜ:kaze|が:ga|かるい:karui"
     },
     {
       "character": "うつる",
@@ -23,38 +71,6 @@
       "meaning": "感冒传染",
       "type": "split",
       "answers": "かぜ:kaze|が:ga|うつる:utsuru"
-    },
-    {
-      "character": "重い",
-      "hiragana": "おもい",
-      "romaji": "omoi",
-      "meaning": "重的",
-      "type": "normal",
-      "answers": "おもい:omoi"
-    },
-    {
-      "character": "風邪が重い",
-      "hiragana": "かぜ:が:おもい",
-      "romaji": "kaze:ga:omoi",
-      "meaning": "重感冒",
-      "type": "split",
-      "answers": "かぜ:kaze|が:ga|おもい:omoi"
-    },
-    {
-      "character": "軽い",
-      "hiragana": "かるい",
-      "romaji": "karui",
-      "meaning": "轻的，重量小的",
-      "type": "normal",
-      "answers": "かるい:karui"
-    },
-    {
-      "character": "風邪が軽い",
-      "hiragana": "かぜ:が:かるい",
-      "romaji": "kaze:ga:karui",
-      "meaning": "有点感冒",
-      "type": "split",
-      "answers": "かぜ:kaze|が:ga|かるい:karui"
     },
     {
       "character": "治る",
@@ -100,7 +116,7 @@
       "character": "風邪がひどい",
       "hiragana": "かぜ:が:ひどい",
       "romaji": "kaze:ga:hidoi",
-      "meaning": "重感冒",
+      "meaning": "重感冒，感冒很严重（相对主观，个人认为生病的痛苦）",
       "type": "split",
       "answers": "かぜ:kaze|が:ga|ひどい:hidoi"
     },
@@ -119,14 +135,6 @@
       "meaning": "治感冒",
       "type": "split",
       "answers": "かぜ:kaze|を:wo|なおす:naosu"
-    },
-    {
-      "character": "風邪をひく",
-      "hiragana": "かぜ:を:ひく",
-      "romaji": "kaze:wo:hiku",
-      "meaning": "感冒",
-      "type": "split",
-      "answers": "かぜ:kaze|を:wo|ひく:hiku"
     },
     {
       "character": "せき",
@@ -212,7 +220,7 @@
       "character": "熱が下がる",
       "hiragana": "ねつ:が:さがる",
       "romaji": "netsu:ga:sagaru",
-      "meaning": "发烧退下来",
+      "meaning": "发烧退下来，退烧",
       "type": "split",
       "answers": "ねつ:netsu|が:ga|さがる:sagaru"
     },
@@ -228,7 +236,7 @@
       "character": "熱を下げる",
       "hiragana": "ねつ:を:さげる",
       "romaji": "netsu:wo:sageru",
-      "meaning": "退烧",
+      "meaning": "退烧（使发热温度降低）",
       "type": "split",
       "answers": "ねつ:netsu|を:wo|さげる:sageru"
     },
@@ -260,7 +268,7 @@
       "character": "治る",
       "hiragana": "なおる",
       "romaji": "naoru",
-      "meaning": "治愈",
+      "meaning": "治愈（结果状态）",
       "type": "normal",
       "answers": "なおる:naoru"
     },
@@ -292,7 +300,7 @@
       "character": "治す",
       "hiragana": "なおす",
       "romaji": "naosu",
-      "meaning": "治愈",
+      "meaning": "治愈（动作）",
       "type": "normal",
       "answers": "なおす:naosu"
     },
@@ -303,6 +311,14 @@
       "meaning": "治疗伤口",
       "type": "split",
       "answers": "けが:kega|を:wo|なおす:naosu"
+    },
+    {
+      "character": "血",
+      "hiragana": "ち",
+      "romaji": "chi",
+      "meaning": "血出来了",
+      "type": "normal",
+      "answers": "ち:chi"
     },
     {
       "character": "出る",
@@ -356,7 +372,7 @@
       "character": "止める",
       "hiragana": "とめる",
       "romaji": "tomeru",
-      "meaning": "停止",
+      "meaning": "让~停止",
       "type": "normal",
       "answers": "とめる:tomeru"
     },
@@ -367,6 +383,14 @@
       "meaning": "止血",
       "type": "split",
       "answers": "ち:chi|を:wo|とめる:tomeru"
+    },
+    {
+      "character": "傷",
+      "hiragana": "きず",
+      "romaji": "kizu",
+      "meaning": "伤口",
+      "type": "normal",
+      "answers": "きず:kizu"
     },
     {
       "character": "浅い",
@@ -388,7 +412,7 @@
       "character": "傷がある",
       "hiragana": "きず:が:ある",
       "romaji": "kizu:ga:aru",
-      "meaning": "有疤痕",
+      "meaning": "有疤痕，有伤口",
       "type": "split",
       "answers": "きず:kizu|が:ga|ある:aru"
     },
@@ -468,7 +492,7 @@
       "character": "軽い",
       "hiragana": "かるい",
       "romaji": "karui",
-      "meaning": "光",
+      "meaning": "轻的，重量小的",
       "type": "normal",
       "answers": "かるい:karui"
     },
@@ -537,12 +561,20 @@
       "answers": "いしゃ:isha|に:ni|みせる:miseru"
     },
     {
+      "character": "見てもらう",
+      "hiragana": "みて:もらう",
+      "romaji": "isha:ni:mite:morau",
+      "meaning": "请~看",
+      "type": "split",
+      "answers": "みて:mite|もらう:morau"
+    },
+    {
       "character": "医者に見てもらう",
-      "hiragana": "いしゃ:に:み:て:もらう",
-      "romaji": "isha:ni:mi:te:morau",
+      "hiragana": "いしゃ:に:みて:もらう",
+      "romaji": "isha:ni:mite:morau",
       "meaning": "请医生看病",
       "type": "split",
-      "answers": "いしゃ:isha|に:ni|み:mi|て:te|もらう:morau"
+      "answers": "いしゃ:isha|に:ni|みて:mite|もらう:morau"
     },
     {
       "character": "注射",
@@ -556,7 +588,7 @@
       "character": "打つ",
       "hiragana": "うつ",
       "romaji": "utsu",
-      "meaning": "罢工",
+      "meaning": "打，扎入",
       "type": "normal",
       "answers": "うつ:utsu"
     },

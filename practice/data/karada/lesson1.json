@@ -25,6 +25,14 @@
       "answers": "あたま:atama|を:wo|ふる:furu"
     },
     {
+      "character": "肩",
+      "hiragana": "かた",
+      "romaji": "kata",
+      "meaning": "肩膀",
+      "type": "normal",
+      "answers": "かた:kata"
+    },
+    {
       "character": "こる",
       "hiragana": "こる",
       "romaji": "koru",
@@ -97,6 +105,14 @@
       "answers": "のど:nodo|が:ga|かわく:kawaku"
     },
     {
+      "character": "髪",
+      "hiragana": "かみ",
+      "romaji": "kami",
+      "meaning": "头发",
+      "type": "normal",
+      "answers": "かみ:kami"
+    },
+    {
       "character": "抜ける",
       "hiragana": "ぬける",
       "romaji": "nukeru",
@@ -124,7 +140,7 @@
       "character": "髪が伸びる",
       "hiragana": "かみ:が:のびる",
       "romaji": "kami:ga:nobiru",
-      "meaning": "头发生长",
+      "meaning": "头发长长了",
       "type": "split",
       "answers": "かみ:kami|が:ga|のびる:nobiru"
     },
@@ -140,7 +156,7 @@
       "character": "髪が生える",
       "hiragana": "かみ:が:はえる",
       "romaji": "kami:ga:haeru",
-      "meaning": "头发生长",
+      "meaning": "生发，头发生长",
       "type": "split",
       "answers": "かみ:kami|が:ga|はえる:haeru"
     },
@@ -225,6 +241,14 @@
       "answers": "かみ:kami|を:wo|のばす:nobasu"
     },
     {
+      "character": "鼻",
+      "hiragana": "はな",
+      "romaji": "hanau",
+      "meaning": "鼻子",
+      "type": "normal",
+      "answers": "はな:hana"
+    },
+    {
       "character": "つまる",
       "hiragana": "つまる",
       "romaji": "tsumaru",
@@ -257,6 +281,14 @@
       "answers": "はな:hana|を:wo|かむ:kamu"
     },
     {
+      "character": "耳",
+      "hiragana": "みみ",
+      "romaji": "mimi",
+      "meaning": "耳朵",
+      "type": "normal",
+      "answers": "みみ:mimi"
+    },
+    {
       "character": "耳がいい",
       "hiragana": "みみ:が:いい",
       "romaji": "mimi:ga:ii",
@@ -276,7 +308,7 @@
       "character": "耳が聞こえる",
       "hiragana": "みみ:が:きこえる",
       "romaji": "mimi:ga:kikoeru",
-      "meaning": "能听到",
+      "meaning": "耳朵能听到",
       "type": "split",
       "answers": "みみ:mimi|が:ga|きこえる:kikoeru"
     },
@@ -313,12 +345,28 @@
       "answers": "みみ:mimi|が:ga|わるい:warui"
     },
     {
+      "character": "目",
+      "hiragana": "め",
+      "romaji": "me",
+      "meaning": "眼睛",
+      "type": "normal",
+      "answers": "め:me"
+    },
+    {
       "character": "目がいい",
       "hiragana": "め:が:いい",
       "romaji": "me:ga:ii",
       "meaning": "视力好",
       "type": "split",
       "answers": "め:me|が:ga|いい:ii"
+    },
+    {
+      "character": "目が悪い",
+      "hiragana": "め:が:わるい",
+      "romaji": "me:ga:warui",
+      "meaning": "视力不好",
+      "type": "split",
+      "answers": "め:me|が:ga|わるい:warui"
     },
     {
       "character": "覚める",
@@ -332,23 +380,15 @@
       "character": "目が覚める",
       "hiragana": "め:が:さめる",
       "romaji": "me:ga:sameru",
-      "meaning": "睁开眼睛",
+      "meaning": "睁开眼睛（眼睛唤醒）",
       "type": "split",
       "answers": "め:me|が:ga|さめる:sameru"
     },
     {
-      "character": "目が悪い",
-      "hiragana": "め:が:わるい",
-      "romaji": "me:ga:warui",
-      "meaning": "视力不好",
-      "type": "split",
-      "answers": "め:me|が:ga|わるい:warui"
-    },
-    {
       "character": "開ける",
       "hiragana": "あける",
-      "romaji": "akeru",
-      "meaning": "打开",
+      "romaji": "me:wo:akeru",
+      "meaning": "打开，张开（物理动作行为）",
       "type": "normal",
       "answers": "あける:akeru"
     },
@@ -356,7 +396,7 @@
       "character": "目を開ける",
       "hiragana": "め:を:あける",
       "romaji": "me:wo:akeru",
-      "meaning": "睁开你的眼睛",
+      "meaning": "睁开眼睛（物理动作行为）",
       "type": "split",
       "answers": "め:me|を:wo|あける:akeru"
     },
@@ -372,7 +412,7 @@
       "character": "目を閉じる",
       "hiragana": "め:を:とじる",
       "romaji": "me:wo:tojiru",
-      "meaning": "闭上你的眼睛",
+      "meaning": "闭上眼睛",
       "type": "split",
       "answers": "め:me|を:wo|とじる:tojiru"
     },
@@ -388,9 +428,17 @@
       "character": "目を開く",
       "hiragana": "め:を:ひらく",
       "romaji": "me:wo:hiraku",
-      "meaning": "睁开你的眼睛",
+      "meaning": "睁开眼睛（抽象意义，睁眼看世界，打开视野）",
       "type": "split",
       "answers": "め:me|を:wo|ひらく:hiraku"
+    },
+    {
+      "character": "歯",
+      "hiragana": "は",
+      "romaji": "ha",
+      "meaning": "牙齿",
+      "type": "normal",
+      "answers": "は:ha"
     },
     {
       "character": "抜ける",
@@ -444,7 +492,7 @@
       "character": "抜く",
       "hiragana": "ぬく",
       "romaji": "nuku",
-      "meaning": "拔出",
+      "meaning": "拔出，拔掉",
       "type": "normal",
       "answers": "ぬく:nuku"
     },
@@ -471,6 +519,14 @@
       "meaning": "刷牙",
       "type": "split",
       "answers": "は:ha|を:wo|みがく:migaku"
+    },
+    {
+      "character": "腕",
+      "hiragana": "うで",
+      "romaji": "ude",
+      "meaning": "手腕",
+      "type": "normal",
+      "answers": "うで:ude"
     },
     {
       "character": "組む",
@@ -617,6 +673,14 @@
       "answers": "て:te|を:wo|ふる:furu"
     },
     {
+      "character": "指",
+      "hiragana": "ゆび",
+      "romaji": "yubi",
+      "meaning": "手指",
+      "type": "normal",
+      "answers": "ゆび:yubi"
+    },
+    {
       "character": "指す",
       "hiragana": "さす",
       "romaji": "sasu",
@@ -665,6 +729,14 @@
       "answers": "ゆび:yubi|を:wo|まげる:mageru"
     },
     {
+      "character": "足が遅い",
+      "hiragana": "あし",
+      "romaji": "ashi",
+      "meaning": "腿脚",
+      "type": "normal",
+      "answers": "あし:ashi"
+    },
+    {
       "character": "遅い",
       "hiragana": "おそい",
       "romaji": "osoi",
@@ -711,6 +783,14 @@
       "meaning": "跑得快",
       "type": "split",
       "answers": "あし:ashi|が:ga|はやい:hayai"
+    },
+    {
+      "character": "脚",
+      "hiragana": "あし",
+      "romaji": "kumu",
+      "meaning": "脚",
+      "type": "normal",
+      "answers": "あし:ashi"
     },
     {
       "character": "脚を組む",

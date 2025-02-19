@@ -148,7 +148,7 @@
       "character": "おつりがある",
       "hiragana": "おつり:が:ある",
       "romaji": "otsuri:ga:aru",
-      "meaning": "我有零钱",
+      "meaning": "有零钱",
       "type": "split",
       "answers": "おつり:otsuri|が:ga|ある:aru"
     },
@@ -156,7 +156,7 @@
       "character": "おつりがない",
       "hiragana": "おつり:が:ない",
       "romaji": "otsuri:ga:nai",
-      "meaning": "我没有零钱",
+      "meaning": "没有零钱",
       "type": "split",
       "answers": "おつり:otsuri|が:ga|ない:nai"
     },
@@ -308,7 +308,7 @@
       "character": "お金がたまる",
       "hiragana": "おかね:が:たまる",
       "romaji": "okane:ga:tamaru",
-      "meaning": "省钱",
+      "meaning": "钱存着，钱储蓄着",
       "type": "split",
       "answers": "おかね:okane|が:ga|たまる:tamaru"
     },
@@ -380,7 +380,7 @@
       "character": "貯金",
       "hiragana": "ちょきん",
       "romaji": "chokin",
-      "meaning": "保存",
+      "meaning": "积蓄，存款",
       "type": "normal",
       "answers": "ちょきん:chokin"
     },
@@ -420,7 +420,7 @@
       "character": "貯金が少ない",
       "hiragana": "ちょきん:が:すくない",
       "romaji": "chokin:ga:sukunai",
-      "meaning": "我没有太多积蓄",
+      "meaning": "没有太多积蓄",
       "type": "split",
       "answers": "ちょきん:chokin|が:ga|すくない:sukunai"
     },
@@ -428,7 +428,7 @@
       "character": "貯金がない",
       "hiragana": "ちょきん:が:ない",
       "romaji": "chokin:ga:nai",
-      "meaning": "我没有任何积蓄",
+      "meaning": "没有积蓄",
       "type": "split",
       "answers": "ちょきん:chokin|が:ga|ない:nai"
     },
@@ -436,7 +436,7 @@
       "character": "なくなる",
       "hiragana": "なくなる",
       "romaji": "nakunaru",
-      "meaning": "消失",
+      "meaning": "消失，没有了",
       "type": "normal",
       "answers": "なくなる:nakunaru"
     },
@@ -444,7 +444,7 @@
       "character": "貯金がなくなる",
       "hiragana": "ちょきん:が:なくなる",
       "romaji": "chokin:ga:nakunaru",
-      "meaning": "我的积蓄用完了",
+      "meaning": "存款用完了",
       "type": "split",
       "answers": "ちょきん:chokin|が:ga|なくなる:nakunaru"
     },
