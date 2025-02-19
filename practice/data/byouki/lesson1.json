@@ -193,6 +193,14 @@
       "answers": "せき:seki|を:wo|とめる:tomeru"
     },
     {
+      "character": "熱",
+      "hiragana": "ねつ",
+      "romaji": "netsu",
+      "meaning": "热度，热量",
+      "type": "normal",
+      "answers": "ねつ:netsu"
+    },
+    {
       "character": "上がる",
       "hiragana": "あがる",
       "romaji": "agaru",
@@ -260,7 +268,7 @@
       "character": "けが",
       "hiragana": "けが",
       "romaji": "kega",
-      "meaning": "伤口，商砼",
+      "meaning": "伤口，受伤",
       "type": "normal",
       "answers": "けが:kega"
     },
@@ -316,7 +324,7 @@
       "character": "血",
       "hiragana": "ち",
       "romaji": "chi",
-      "meaning": "血出来了",
+      "meaning": "血",
       "type": "normal",
       "answers": "ち:chi"
     },
@@ -340,7 +348,7 @@
       "character": "止まる",
       "hiragana": "とまる",
       "romaji": "tomaru",
-      "meaning": "停止",
+      "meaning": "停止（状态结果）",
       "type": "normal",
       "answers": "とまる:tomaru"
     },
@@ -452,7 +460,7 @@
       "character": "傷が深い",
       "hiragana": "きず:が:ふかい",
       "romaji": "kizu:ga:fukai",
-      "meaning": "深深的疤痕",
+      "meaning": "伤疤很深",
       "type": "split",
       "answers": "きず:kizu|が:ga|ふかい:fukai"
     },
