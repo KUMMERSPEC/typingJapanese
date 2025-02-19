@@ -1,5 +1,7 @@
 # Typing Japanese - 日语打字练习系统
 
+练习页面布局设计和逻辑是沿用https://lingua-split.vercel.app/selectCourse的设计
+
 一个基于 Web 的日语打字练习系统，帮助用户学习和练习日语输入。
 用ai捏出来的，ai指令比较难，所以要解决一个问题可能得走很多弯路，还会影响之前已经实现的代码。
 ## 项目目标
