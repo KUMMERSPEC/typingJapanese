@@ -28,7 +28,7 @@
       "character": "できる",
       "hiragana": "できる",
       "romaji": "dekiru",
-      "meaning": "人与人直接结成朋友，伴侣关系。",
+      "meaning": "人与人结成朋友，伴侣关系。",
       "type": "normal",
       "answers": "できる:dekiru"
     },
@@ -76,7 +76,7 @@
       "character": "作る",
       "hiragana": "つくる",
       "romaji": "tsukuru",
-      "meaning": "制作，人與人之間的關係產生的親密的變",
+      "meaning": "制作，人和人产生结成亲密关系",
       "type": "normal",
       "answers": "つくる:tsukuru"
     },
@@ -103,6 +103,14 @@
       "meaning": "甩掉女朋友",
       "type": "split",
       "answers": "かのじょ:kanojo|を:wo|ふる:furu"
+    },
+    {
+      "character": "彼氏",
+      "hiragana": "かれし",
+      "romaji": "kareshi",
+      "meaning": "normal",
+      "type": "split",
+      "answers": "かれし:kareshi"
     },
     {
       "character": "彼氏がいる",

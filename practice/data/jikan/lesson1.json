@@ -52,7 +52,7 @@
       "character": "時間が早い",
       "hiragana": "じかん:が:はやい",
       "romaji": "jikan:ga:hayai",
-      "meaning": "时间还早",
+      "meaning": "时间很快",
       "type": "split",
       "answers": "じかん:jikan|が:ga|はやい:hayai"
     },
@@ -124,7 +124,7 @@
       "character": "間違える",
       "hiragana": "まちがえる",
       "romaji": "machigaeru",
-      "meaning": "错误",
+      "meaning": "弄错，搞错",
       "type": "normal",
       "answers": "まちがえる:machigaeru"
     },

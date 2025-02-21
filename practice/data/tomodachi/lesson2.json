@@ -68,7 +68,7 @@
       "character": "パーティーに出席する",
       "hiragana": "パーティー:に:しゅっせきする",
       "romaji": "paathii:ni:shussekisuru",
-      "meaning": "参加聚会",
+      "meaning": "参加聚会，出席聚会",
       "type": "split",
       "answers": "パーティー:paathii|に:ni|しゅっせきする:shussekisuru"
     },
@@ -76,7 +76,7 @@
       "character": "招待する",
       "hiragana": "しょうたいする",
       "romaji": "shoutaisuru",
-      "meaning": "邀请",
+      "meaning": "招待，邀请",
       "type": "normal",
       "answers": "しょうたいする:shoutaisuru"
     },
@@ -84,7 +84,7 @@
       "character": "パーティーに招待する",
       "hiragana": "パーティー:に:しょうたいする",
       "romaji": "paathii:ni:shoutaisuru",
-      "meaning": "邀请参加聚会",
+      "meaning": "邀请来聚会招待",
       "type": "split",
       "answers": "パーティー:paathii|に:ni|しょうたいする:shoutaisuru"
     },
@@ -116,7 +116,7 @@
       "character": "開く",
       "hiragana": "ひらく",
       "romaji": "hiraku",
-      "meaning": "打开",
+      "meaning": "开办，开展",
       "type": "normal",
       "answers": "ひらく:hiraku"
     },
@@ -135,22 +135,6 @@
       "meaning": "祝福",
       "type": "normal",
       "answers": "おいわい:oiwai"
-    },
-    {
-      "character": "言葉",
-      "hiragana": "ことば",
-      "romaji": "kotoba",
-      "meaning": "话语",
-      "type": "normal",
-      "answers": "ことば:kotoba"
-    },
-    {
-      "character": "お祝いの言葉",
-      "hiragana": "おいわい:の:ことば",
-      "romaji": "oiwai:no:kotoba",
-      "meaning": "祝贺的话",
-      "type": "split",
-      "answers": "おいわい:oiwai|の:no|ことば:kotoba"
     },
     {
       "character": "あげる",
@@ -188,7 +172,7 @@
       "character": "贈る",
       "hiragana": "おくる",
       "romaji": "okuru",
-      "meaning": "给",
+      "meaning": "赠与，发送",
       "type": "normal",
       "answers": "おくる:okuru"
     },
@@ -217,12 +201,12 @@
       "answers": "おいわい:oiwai|を:wo|もらう:morau"
     },
     {
-      "character": "見舞い",
-      "hiragana": "みまい",
+      "character": "お見舞い",
+      "hiragana": "おみまい",
       "romaji": "mimai",
-      "meaning": "探访",
+      "meaning": "探访、拜访生病的人",
       "type": "normal",
-      "answers": "みまい:mimai"
+      "answers": "おみまい:omimai"
     },
     {
       "character": "行く",
@@ -236,17 +220,9 @@
       "character": "お見舞いに行く",
       "hiragana": "おみまい:に:いく",
       "romaji": "omimai:ni:iku",
-      "meaning": "去拜访",
+      "meaning": "去拜访，去探望",
       "type": "split",
       "answers": "おみまい:omimai|に:ni|いく:iku"
-    },
-    {
-      "character": "見舞い",
-      "hiragana": "みまい",
-      "romaji": "mimai",
-      "meaning": "探访",
-      "type": "normal",
-      "answers": "みまい:mimai"
     },
     {
       "character": "来る",
@@ -268,7 +244,7 @@
       "character": "お礼",
       "hiragana": "おれい",
       "romaji": "orei",
-      "meaning": "谢意，礼物，谢礼",
+      "meaning": "谢意，礼物，谢礼（名）",
       "type": "normal",
       "answers": "おれい:orei"
     },
@@ -276,7 +252,7 @@
       "character": "お礼をする",
       "hiragana": "おれい:を:する",
       "romaji": "orei:wo:suru",
-      "meaning": "感谢，致谢",
+      "meaning": "感谢，致谢（动作）",
       "type": "split",
       "answers": "おれい:orei|を:wo|する:suru"
     },
@@ -284,7 +260,7 @@
       "character": "おわび",
       "hiragana": "おわび",
       "romaji": "owabi",
-      "meaning": "道歉",
+      "meaning": "道歉（名词）",
       "type": "normal",
       "answers": "おわび:owabi"
     },
@@ -297,20 +273,20 @@
       "answers": "おわび:owabi|に:ni|いく:iku"
     },
     {
-      "character": "おわび",
-      "hiragana": "おわび",
-      "romaji": "owabi",
-      "meaning": "道歉（名词）",
-      "type": "normal",
-      "answers": "おわび:owabi"
-    },
-    {
       "character": "おわびをする",
       "hiragana": "おわび:を:する",
       "romaji": "owabi:wo:suru",
       "meaning": "道歉（动作）",
       "type": "split",
       "answers": "おわび:owabi|を:wo|する:suru"
+    },
+    {
+      "character": "嘘",
+      "hiragana": "うそ",
+      "romaji": "uso",
+      "meaning": "谎言",
+      "type": "normal",
+      "answers": "うそ:uso"
     },
     {
       "character": "ばれる",
@@ -329,6 +305,14 @@
       "answers": "うそ:uso|が:ga|ばれる:bareru"
     },
     {
+      "character": "つく",
+      "hiragana": "つく",
+      "romaji": "tsuku",
+      "meaning": "吐出，说出",
+      "type": "normal",
+      "answers": "つく:tsuku"
+    },
+    {
       "character": "嘘をつく",
       "hiragana": "うそ:を:つく",
       "romaji": "uso:wo:tsuku",
@@ -340,17 +324,9 @@
       "character": "世話",
       "hiragana": "せわ",
       "romaji": "sewa",
-      "meaning": "关心",
+      "meaning": "关心，照顾",
       "type": "normal",
       "answers": "せわ:sewa"
-    },
-    {
-      "character": "世話がかかる",
-      "hiragana": "せわ:が:かかる",
-      "romaji": "sewa:ga:kakaru",
-      "meaning": "它需要照顾",
-      "type": "split",
-      "answers": "せわ:sewa|が:ga|かかる:kakaru"
     },
     {
       "character": "世話になる",
@@ -365,14 +341,14 @@
       "hiragana": "せわ:が:やける",
       "romaji": "sewa:wo:yakeru",
       "meaning": "給他人添麻煩",
-      "type": "nan",
-      "answers": ""
+      "type": "split",
+      "answers": "せわ:sewa|を:wo|やける:yakeru"
     },
     {
       "character": "世話をする",
       "hiragana": "せわ:を:する",
       "romaji": "sewa:wo:suru",
-      "meaning": "照料、照顾",
+      "meaning": "照料、照顾（别人）",
       "type": "split",
       "answers": "せわ:sewa|を:wo|する:suru"
     },
@@ -383,6 +359,14 @@
       "meaning": "帶給人麻煩、令人困扰",
       "type": "normal",
       "answers": "めいわく:meiwaku"
+    },
+    {
+      "character": "かける",
+      "hiragana": "かける",
+      "romaji": "kakeru",
+      "meaning": "挂上，添上",
+      "type": "split",
+      "answers": "かける:kakeru"
     },
     {
       "character": "迷惑をかける",
