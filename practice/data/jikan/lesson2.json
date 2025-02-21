@@ -97,6 +97,14 @@
       "answers": "よてい:yotei|が:ga|おくれる:okureru"
     },
     {
+      "character": "変わる",
+      "hiragana": "かわる",
+      "romaji": "kawaru",
+      "meaning": "改变（状态结果）",
+      "type": "normal",
+      "answers": "かわる:kawaru"
+    },
+    {
       "character": "予定が変わる",
       "hiragana": "よてい:が:かわる",
       "romaji": "yotei:ga:kawaru",

@@ -25,22 +25,6 @@
       "answers": "ネット:netto|が:ga|おそい:osoi"
     },
     {
-      "character": "つながる",
-      "hiragana": "つながる",
-      "romaji": "tsunagaru",
-      "meaning": "连接",
-      "type": "normal",
-      "answers": "つながる:tsunagaru"
-    },
-    {
-      "character": "ネットがつながる",
-      "hiragana": "ネット:が:つながる",
-      "romaji": "netto:ga:tsunagaru",
-      "meaning": "连接到互联网",
-      "type": "split",
-      "answers": "ネット:netto|が:ga|つながる:tsunagaru"
-    },
-    {
       "character": "速い",
       "hiragana": "はやい",
       "romaji": "hayai",
@@ -66,11 +50,11 @@
     },
     {
       "character": "アクセスする",
-      "hiragana": "アクセス",
-      "romaji": "akusesu",
+      "hiragana": "アクセスする",
+      "romaji": "akusesusuru",
       "meaning": "访问，使用",
       "type": "normal",
-      "answers": "アクセス:akusesu"
+      "answers": "アクセスする:akusesusuru"
     },
     {
       "character": "ネットにアクセスする",
@@ -108,7 +92,7 @@
       "character": "届く",
       "hiragana": "とどく",
       "romaji": "todoku",
-      "meaning": "抵达",
+      "meaning": "抵达，到达",
       "type": "normal",
       "answers": "とどく:todoku"
     },
@@ -116,25 +100,9 @@
       "character": "メールが届く",
       "hiragana": "メール:が:とどく",
       "romaji": "meeru:ga:todoku",
-      "meaning": "收到一封电子邮件（邮件抵达）",
+      "meaning": "收到电子邮件（邮件抵达）",
       "type": "split",
       "answers": "メール:meeru|が:ga|とどく:todoku"
-    },
-    {
-      "character": "開く",
-      "hiragana": "ひらく",
-      "romaji": "hiraku",
-      "meaning": "打开",
-      "type": "normal",
-      "answers": "ひらく:hiraku"
-    },
-    {
-      "character": "メールが開く",
-      "hiragana": "メール:が:ひらく",
-      "romaji": "meeru:ga:hiraku",
-      "meaning": "电子邮件打开",
-      "type": "split",
-      "answers": "メール:meeru|が:ga|ひらく:hiraku"
     },
     {
       "character": "打つ",
@@ -186,11 +154,11 @@
     },
     {
       "character": "チェックする",
-      "hiragana": "チェック",
+      "hiragana": "チェックする",
       "romaji": "chekkusuru",
       "meaning": "查看",
       "type": "normal",
-      "answers": "チェック:chekkusuru"
+      "answers": "チェックする:chekkusuru"
     },
     {
       "character": "メールをチェックする",

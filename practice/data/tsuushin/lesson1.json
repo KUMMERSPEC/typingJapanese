@@ -58,11 +58,11 @@
     },
     {
       "character": "フリーズする",
-      "hiragana": "フリーズ",
-      "romaji": "furiizu",
+      "hiragana": "フリーズする",
+      "romaji": "furiizusuru",
       "meaning": "冻结，死机",
       "type": "normal",
-      "answers": "フリーズ:furiizu"
+      "answers": "フリーズする:furiizusuru"
     },
     {
       "character": "パソコンがフリーズする",
@@ -74,11 +74,11 @@
     },
     {
       "character": "ログインする",
-      "hiragana": "ログイン",
-      "romaji": "roguin",
+      "hiragana": "ログインする",
+      "romaji": "roguinsuru",
       "meaning": "登录",
       "type": "normal",
-      "answers": "ログイン:roguin"
+      "answers": "ログインする:roguinsuru"
     },
     {
       "character": "パソコンにログインする",
@@ -100,7 +100,7 @@
       "character": "パソコンを開ける",
       "hiragana": "パソコン:を:あける",
       "romaji": "pasokon:wo:akeru",
-      "meaning": "打开电脑",
+      "meaning": "打开电脑（笔记本）",
       "type": "split",
       "answers": "パソコン:pasokon|を:wo|あける:akeru"
     },
@@ -132,23 +132,23 @@
       "character": "パソコンを切る",
       "hiragana": "パソコン:を:きる",
       "romaji": "pasokon:wo:kiru",
-      "meaning": "关掉电脑",
+      "meaning": "关掉电脑(关机）",
       "type": "split",
       "answers": "パソコン:pasokon|を:wo|きる:kiru"
     },
     {
       "character": "シャットダウンする",
-      "hiragana": "シャット",
+      "hiragana": "シャットダウンする",
       "romaji": "shattodaunsuru",
       "meaning": "关闭，熄火，停车",
       "type": "normal",
-      "answers": "シャット:shattodaunsuru"
+      "answers": "シャットダウンする:shattodaunsuru"
     },
     {
       "character": "パソコンをシャットダウンする",
       "hiragana": "パソコン:を:シャットダウンする",
       "romaji": "pasokon:wo:shattodaunsuru",
-      "meaning": "关闭你的电脑",
+      "meaning": "关闭电脑，关机",
       "type": "split",
       "answers": "パソコン:pasokon|を:wo|シャットダウンする:shattodaunsuru"
     },
@@ -156,7 +156,7 @@
       "character": "立ち上げる",
       "hiragana": "たちあげる",
       "romaji": "tachiageru",
-      "meaning": "启动（某事），启动，启动（计算机）",
+      "meaning": "启动，启动（计算机）",
       "type": "normal",
       "answers": "たちあげる:tachiageru"
     },
@@ -212,7 +212,7 @@
       "character": "パソコンを開く",
       "hiragana": "パソコン:を:ひらく",
       "romaji": "pasokon:wo:hiraku",
-      "meaning": "打开电脑",
+      "meaning": "打开电脑（台式机，笔记本）",
       "type": "split",
       "answers": "パソコン:pasokon|を:wo|ひらく:hiraku"
     },

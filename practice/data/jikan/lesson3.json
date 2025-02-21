@@ -10,11 +10,11 @@
     },
     {
       "character": "急な用事",
-      "hiragana": "きゅうなようじ",
-      "romaji": "kyuunayouji",
+      "hiragana": "きゅう:な:ようじ",
+      "romaji": "kyuu:na:youji",
       "meaning": "很突然的事情",
       "type": "split",
-      "answers": "きゅうなようじ:kyuunayouji"
+      "answers": "きゅう:kyuuna|な:naようじ|ようじ:youji"
     },
     {
       "character": "用事がある",
@@ -23,6 +23,14 @@
       "meaning": "有事情（拒绝邀约，有事）",
       "type": "split",
       "answers": "ようじ:youji|が:ga|ある:aru"
+    },
+    {
+      "character": "できる",
+      "hiragana": "できる",
+      "romaji": "dekiru",
+      "meaning": "出现，发生",
+      "type": "normal",
+      "answers": "できる:dekiru"
     },
     {
       "character": "用事ができる",
@@ -116,7 +124,7 @@
       "character": "約束",
       "hiragana": "やくそく",
       "romaji": "yakusoku",
-      "meaning": "承诺",
+      "meaning": "约定，承诺",
       "type": "normal",
       "answers": "やくそく:yakusoku"
     },
@@ -244,7 +252,7 @@
       "character": "休みを取る",
       "hiragana": "やすみ:を:とる",
       "romaji": "yasumi:wo:toru",
-      "meaning": "请假",
+      "meaning": "请假（拿到假期）",
       "type": "split",
       "answers": "やすみ:yasumi|を:wo|とる:toru"
     },

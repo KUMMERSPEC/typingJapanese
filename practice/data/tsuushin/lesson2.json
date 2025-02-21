@@ -25,6 +25,30 @@
       "answers": "データ:deeta|が:ga|おおきい:ookii"
     },
     {
+      "character": "小さい",
+      "hiragana": "ちいさい",
+      "romaji": "chiisai",
+      "meaning": "小的",
+      "type": "normal",
+      "answers": "ちいさい:chiisai"
+    },
+    {
+      "character": "データが小さい",
+      "hiragana": "データ:が:ちいさい",
+      "romaji": "deeta:ga:chiisai",
+      "meaning": "数据量小",
+      "type": "split",
+      "answers": "データ:deeta|が:ga|ちいさい:chiisai"
+    },
+    {
+      "character": "重い",
+      "hiragana": "おもい",
+      "romaji": "omoi",
+      "meaning": "很重",
+      "type": "normal",
+      "answers": "おもい:omoi"
+    },
+    {
       "character": "データが重い",
       "hiragana": "データ:が:おもい",
       "romaji": "deeta:ga:omoi",
@@ -33,10 +57,18 @@
       "answers": "データ:deeta|が:ga|おもい:omoi"
     },
     {
+      "character": "軽い",
+      "hiragana": "かるい",
+      "romaji": "karui",
+      "meaning": "很轻",
+      "type": "normal",
+      "answers": "かるい:karui"
+    },
+    {
       "character": "データが軽い",
       "hiragana": "データ:が:かるい",
       "romaji": "deeta:ga:karui",
-      "meaning": "数据很轻",
+      "meaning": "数据很少（很轻）",
       "type": "split",
       "answers": "データ:deeta|が:ga|かるい:karui"
     },
@@ -73,22 +105,6 @@
       "answers": "データ:deeta|が:ga|こわれる:kowareru"
     },
     {
-      "character": "小さい",
-      "hiragana": "ちいさい",
-      "romaji": "chiisai",
-      "meaning": "小的",
-      "type": "normal",
-      "answers": "ちいさい:chiisai"
-    },
-    {
-      "character": "データが小さい",
-      "hiragana": "データ:が:ちいさい",
-      "romaji": "deeta:ga:chiisai",
-      "meaning": "数据量小",
-      "type": "split",
-      "answers": "データ:deeta|が:ga|ちいさい:chiisai"
-    },
-    {
       "character": "送る",
       "hiragana": "おくる",
       "romaji": "okuru",
@@ -122,11 +138,11 @@
     },
     {
       "character": "ダウンロードする",
-      "hiragana": "ダウンロード",
+      "hiragana": "ダウンロードする",
       "romaji": "daunroodosuru",
       "meaning": "下载",
       "type": "normal",
-      "answers": "ダウンロード:daunroodosuru"
+      "answers": "ダウンロードする:daunroodosuru"
     },
     {
       "character": "データをダウンロードする",
@@ -138,17 +154,17 @@
     },
     {
       "character": "バックアップする",
-      "hiragana": "バックアップ",
+      "hiragana": "バックアップする",
       "romaji": "bakkuappusuru",
       "meaning": "备份",
       "type": "normal",
-      "answers": "バックアップ:bakkuappusuru"
+      "answers": "バックアップする:bakkuappusuru"
     },
     {
       "character": "データをバックアップする",
       "hiragana": "データ:を:バックアップする",
       "romaji": "deeta:wo:bakkuappusuru",
-      "meaning": "备份您的数据",
+      "meaning": "备份数据",
       "type": "split",
       "answers": "データ:deeta|を:wo|バックアップする:bakkuappusuru"
     },
@@ -332,7 +348,7 @@
       "character": "保存する",
       "hiragana": "ほぞんする",
       "romaji": "hozonsuru",
-      "meaning": "节省",
+      "meaning": "保存",
       "type": "normal",
       "answers": "ほぞんする:hozonsuru"
     },
