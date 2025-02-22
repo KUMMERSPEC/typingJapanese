@@ -340,7 +340,7 @@
       "character": "お金を出す",
       "hiragana": "おかね:を:だす",
       "romaji": "okane:wo:dasu",
-      "meaning": "给钱",
+      "meaning": "给钱、拿出钱",
       "type": "split",
       "answers": "おかね:okane|を:wo|だす:dasu"
     },
@@ -356,7 +356,7 @@
       "character": "お金をためる",
       "hiragana": "おかね:を:ためる",
       "romaji": "okane:wo:tameru",
-      "meaning": "省钱",
+      "meaning": "存钱",
       "type": "split",
       "answers": "おかね:okane|を:wo|ためる:tameru"
     },
@@ -484,7 +484,7 @@
       "character": "貯金を下ろす",
       "hiragana": "ちょきん:を:おろす",
       "romaji": "chokin:wo:orosu",
-      "meaning": "提取储蓄",
+      "meaning": "提取存款，取钱",
       "type": "split",
       "answers": "ちょきん:chokin|を:wo|おろす:orosu"
     },
@@ -500,7 +500,7 @@
       "character": "貯金をする",
       "hiragana": "ちょきん:を:する",
       "romaji": "chokin:wo:suru",
-      "meaning": "省钱",
+      "meaning": "存钱，攒钱",
       "type": "split",
       "answers": "ちょきん:chokin|を:wo|する:suru"
     },
@@ -508,7 +508,7 @@
       "character": "貯金を使う",
       "hiragana": "ちょきん:を:つかう",
       "romaji": "chokin:wo:tsukau",
-      "meaning": "使用储蓄",
+      "meaning": "使用存款",
       "type": "split",
       "answers": "ちょきん:chokin|を:wo|つかう:tsukau"
     }

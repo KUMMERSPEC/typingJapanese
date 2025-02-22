@@ -140,7 +140,7 @@
       "character": "退学する",
       "hiragana": "たいがくする",
       "romaji": "taigakusuru",
-      "meaning": "辍学",
+      "meaning": "辍学，退学",
       "type": "normal",
       "answers": "たいがくする:taigakusuru"
     },
@@ -308,7 +308,7 @@
       "character": "授業を取る",
       "hiragana": "じゅぎょう:を:とる",
       "romaji": "jugyou:wo:toru",
-      "meaning": "选课（登记了很多选修课的感觉）",
+      "meaning": "选课（登记选修课）",
       "type": "split",
       "answers": "じゅぎょう:jugyou|を:wo|とる:toru"
     },

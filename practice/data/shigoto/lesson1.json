@@ -36,7 +36,7 @@
       "character": "仕事がない",
       "hiragana": "しごと:が:ない",
       "romaji": "shigoto:ga:nai",
-      "meaning": "我没有工作",
+      "meaning": "没有工作",
       "type": "split",
       "answers": "しごと:shigoto|が:ga|ない:nai"
     },
@@ -148,7 +148,7 @@
       "character": "やめる",
       "hiragana": "やめる",
       "romaji": "yameru",
-      "meaning": "停止",
+      "meaning": "停止，作罢",
       "type": "normal",
       "answers": "やめる:yameru"
     },
@@ -244,7 +244,7 @@
       "character": "リストラされる",
       "hiragana": "リストラされる",
       "romaji": "risutorasareru",
-      "meaning": "企业）重组、裁员",
+      "meaning": "（企业）重组、裁员",
       "type": "normal",
       "answers": "リストラされる:risutorasareru"
     },

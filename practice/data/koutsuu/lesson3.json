@@ -34,19 +34,19 @@
     },
     {
       "character": "曲がっている",
-      "hiragana": "まがっている",
-      "romaji": "michi:ga:magatte:iru",
+      "hiragana": "まがって:いる",
+      "romaji": "magatte:iru",
       "meaning": "弯曲, 扭曲",
       "type": "normal",
-      "answers": "まがっている:michi:ga:magatte:iru"
+      "answers": "まがって:magatte|いる:iru"
     },
     {
       "character": "道が曲がっている",
-      "hiragana": "みち:が:まがっ:て:いる",
+      "hiragana": "みち:が:まがって:いる",
       "romaji": "michi:ga:magatte:iru",
-      "meaning": "路是弯道",
+      "meaning": "道路弯曲",
       "type": "split",
-      "answers": "みち:michi|が:ga|まがっ:magatte|て:iru"
+      "answers": "みち:michi|が:ga|まがって:magatte|いる:iru"
     },
     {
       "character": "まっすぐ",
@@ -140,7 +140,7 @@
       "character": "道を通る",
       "hiragana": "みち:を:とおる",
       "romaji": "michi:wo:tooru",
-      "meaning": "在路上经过",
+      "meaning": "在道路上通行",
       "type": "split",
       "answers": "みち:michi|を:wo|とおる:tooru"
     },
