@@ -631,11 +631,6 @@ class PracticeManager {
                 const firstInput = inputArea.querySelector('input');
                 if (firstInput) firstInput.focus();
             }, 2000);
-        } else {
-            // 答对后显示答案：2秒后进入下一题
-            this.nextQuestionTimer = setTimeout(() => {
-                this.nextQuestion();
-            }, 2000);
         }
     }
 
