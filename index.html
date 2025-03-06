@@ -150,6 +150,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 const courseDisplay = new CourseDisplay();
+                courseDisplay.loadCoursesFromHTML();
                 courseDisplay.renderCourseList();
             } catch (error) {
                 console.error('Error initializing CourseDisplay:', error);
