@@ -151,6 +151,9 @@ export class CourseDisplay {
             const courseNameElement = card.querySelector('h2');
             const courseDescriptionElement = card.querySelector('p');
 
+            // 添加调试信息以确认元素是否存在
+            console.log(`Course card: ${courseId}, Name Element: ${courseNameElement}, Description Element: ${courseDescriptionElement}`);
+
             const courseName = courseNameElement ? courseNameElement.textContent : '未知课程';
             const courseDescription = courseDescriptionElement ? courseDescriptionElement.textContent : '无描述';
 
