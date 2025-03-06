@@ -365,7 +365,7 @@ class PracticeManager {
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Tab') {
                         e.preventDefault();
-                        this.showCorrectAnswer(question);
+                        this.showCorrectAnswer(question, true);
                     } else if (!isMobile && e.code === 'Space') {
                         // 检查是否正在使用输入法
                         if (isComposing) {
@@ -425,7 +425,7 @@ class PracticeManager {
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Tab') {
                     e.preventDefault();
-                    this.showCorrectAnswer(question);
+                    this.showCorrectAnswer(question, true);
                 } else if (e.key === 'Enter') {
                     e.preventDefault();
                     const answer = input.value.trim();
@@ -613,7 +613,9 @@ class PracticeManager {
         answerDisplay.appendChild(answerContent);
         
         // 播放声音
-        this.speak(question.character);
+        if (!isTabPress) {
+            this.speak(question.character);
+        }
         
         if (isTabPress) {
             // Tab键显示答案：2秒后返回原题
