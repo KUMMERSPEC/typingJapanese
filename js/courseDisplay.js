@@ -143,12 +143,13 @@ export class CourseDisplay {
 
     loadCoursesFromHTML() {
         const courseCards = document.querySelectorAll('.course-card');
+        console.log('Course cards found:', courseCards.length); // 添加调试信息
         this.courses = {};
 
         courseCards.forEach(card => {
             const courseId = card.getAttribute('data-course');
-            const courseName = card.querySelector('h2').textContent;
-            const courseDescription = card.querySelector('p').textContent;
+            const courseName = card.querySelector('h2') ? card.querySelector('h2').textContent : '未知课程';
+            const courseDescription = card.querySelector('p') ? card.querySelector('p').textContent : '无描述';
 
             this.courses[courseId] = {
                 name: courseName,
