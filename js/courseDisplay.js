@@ -88,10 +88,11 @@ export class CourseDisplay {
         const courseListContainer = document.querySelector('.course-list');
         courseListContainer.innerHTML = '';
 
-        this.courses.forEach(course => {
+        // 使用 Object.entries 遍历对象
+        Object.entries(this.courses).forEach(([courseId, course]) => {
             const courseElement = document.createElement('div');
             courseElement.className = 'course-card';
-            courseElement.innerHTML = `<h3>${course.title}</h3>`;
+            courseElement.innerHTML = `<h3>${course.name}</h3>`; // 使用 course.name
 
             const lessons = course.lessons;
             let ongoingLesson = null;
