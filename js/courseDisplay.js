@@ -8,13 +8,14 @@ export class CourseDisplay {
                 throw new Error('Course config not found');
             }
             
-            this.courseData = {};
+            this.courses = courseConfig.courses; // 确保 this.courses 被正确赋值
+            console.log('Courses:', this.courses); // 添加调试信息
             this.completedLessons = {};
             this.courseOrder = courseConfig.courseOrder;
             this.courseLessons = {};
             
             // 从配置文件初始化课程课时数
-            Object.entries(courseConfig.courses).forEach(([courseId, course]) => {
+            Object.entries(this.courses).forEach(([courseId, course]) => {
                 this.courseLessons[courseId] = course.lessonCount;
             });
             
