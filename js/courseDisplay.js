@@ -5,18 +5,14 @@ export class CourseDisplay {
     constructor() {
         try {
             this.loadCoursesFromHTML(); // 从 HTML 加载课程信息
-            if (!courseConfig || !courseConfig.courses) {
-                throw new Error('Course config not found');
-            }
-            
             console.log('Courses:', this.courses); // 添加调试信息
             this.completedLessons = {};
-            this.courseOrder = courseConfig.courseOrder;
+            this.courseOrder = []; // 这里可以根据需要初始化课程顺序
             this.courseLessons = {};
             
-            // 从配置文件初始化课程课时数
+            // 从加载的课程信息初始化课程课时数
             Object.entries(this.courses).forEach(([courseId, course]) => {
-                this.courseLessons[courseId] = course.lessonCount;
+                this.courseLessons[courseId] = course.lessonCount || 0; // 确保有课时数
             });
             
             this.loadData();
