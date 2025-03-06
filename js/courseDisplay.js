@@ -57,23 +57,20 @@ export class CourseDisplay {
             
             // 检查是否超出当前课程的课时数
             if (this.courseLessons[courseId] && nextLessonNumber > this.courseLessons[courseId]) {
-                // 获取下一个课程
-                const nextCourseId = this.getNextCourse(courseId);
-                if (nextCourseId && !addedCourses.has(nextCourseId)) {
-                    currentCourses.push({
-                        courseId: nextCourseId,
-                        currentLesson: 'lesson0',
-                        nextLesson: 'lesson1',
-                        isNewCourse: true
-                    });
-                    addedCourses.add(nextCourseId);
-                }
+                // 课程已完成，添加已完成状态
+                currentCourses.push({
+                    courseId,
+                    currentLesson: lastLesson,
+                    nextLesson: null,
+                    isCompleted: true // 标记为已完成
+                });
             } else {
                 currentCourses.push({
                     courseId,
                     currentLesson: lastLesson,
                     nextLesson: nextLesson,
-                    isNewCourse: false
+                    isNewCourse: false,
+                    isCompleted: false // 标记为未完成
                 });
                 addedCourses.add(courseId);
             }
@@ -105,20 +102,30 @@ export class CourseDisplay {
                 currentCourses.forEach(course => {
                     const courseInfo = courseConfig.courses[course.courseId];
                     if (!courseInfo) return;
-                    
-                    // 检查下一课是否存在
-                    const nextLessonNumber = parseInt(course.nextLesson.replace('lesson', ''));
-                    if (nextLessonNumber > courseInfo.lessonCount) {
-                        return; // 如果下一课超出课程总课时，不显示
-                    }
 
-                    courseList.innerHTML += `
-                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
-                            <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
-                            <h3>${courseInfo.name}</h3>
-                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${nextLessonNumber}课`}</p>
-                        </div>
-                    `;
+                    if (course.isCompleted) {
+                        // 如果课程已完成，显示已完成状态
+                        courseList.innerHTML += `
+                            <div class="course-card completed">
+                                <div class="course-status">已完成</div>
+                                <h3>${courseInfo.name}</h3>
+                            </div>
+                        `;
+                    } else {
+                        // 检查下一课是否存在
+                        const nextLessonNumber = parseInt(course.nextLesson.replace('lesson', ''));
+                        if (nextLessonNumber > courseInfo.lessonCount) {
+                            return; // 如果下一课超出课程总课时，不显示
+                        }
+
+                        courseList.innerHTML += `
+                            <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
+                                <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
+                                <h3>${courseInfo.name}</h3>
+                                <p>${course.isNewCourse ? '开始第1课' : `继续学习第${nextLessonNumber}课`}</p>
+                            </div>
+                        `;
+                    }
                 });
             }
         } catch (error) {
