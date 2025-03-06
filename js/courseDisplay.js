@@ -1,4 +1,4 @@
-import { courseConfig } from './config/courseConfig.js';
+import { courseData } from './courseData.js';
 
 // 新建 courseDisplay.js 文件来处理课程显示逻辑
 export class CourseDisplay {
@@ -100,12 +100,30 @@ export class CourseDisplay {
         });
     }
 
-    loadCourses() {
-        // 这里是加载课程的逻辑
-        return [
-            { id: 'huku', title: 'Huku课程', lessons: [{ id: 'lesson1', title: 'Lesson 1' }, { id: 'lesson2', title: 'Lesson 2' }] },
-            // 其他课程...
-        ];
+    async loadCourses() {
+        try {
+            // 从 courseData 中加载课程列表
+            const courseList = Object.entries(courseData['standard-basic-1'].courses).map(([id, course]) => ({
+                id,
+                title: course.name,
+                description: course.description,
+                lessons: course.lessons
+            }));
+
+            this.courses = {};
+            courseList.forEach(course => {
+                this.courses[course.id] = {
+                    name: course.title,
+                    description: course.description,
+                    lessons: course.lessons
+                };
+            });
+
+            this.renderCourseList(); // 渲染课程列表
+        } catch (error) {
+            console.error('Error loading courses:', error);
+            this.showError('加载课程失败，请刷新重试');
+        }
     }
 
     loadCoursesFromHTML() {
