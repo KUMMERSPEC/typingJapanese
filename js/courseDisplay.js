@@ -148,8 +148,13 @@ export class CourseDisplay {
 
         courseCards.forEach(card => {
             const courseId = card.getAttribute('data-course');
-            const courseName = card.querySelector('h2') ? card.querySelector('h2').textContent : '未知课程';
-            const courseDescription = card.querySelector('p') ? card.querySelector('p').textContent : '无描述';
+            const courseNameElement = card.querySelector('h2');
+            const courseDescriptionElement = card.querySelector('p');
+
+            const courseName = courseNameElement ? courseNameElement.textContent : '未知课程';
+            const courseDescription = courseDescriptionElement ? courseDescriptionElement.textContent : '无描述';
+
+            console.log(`Course ID: ${courseId}, Name: ${courseName}, Description: ${courseDescription}`); // 添加调试信息
 
             this.courses[courseId] = {
                 name: courseName,
