@@ -94,6 +94,7 @@ export class CourseDisplay {
             courseElement.addEventListener('click', () => {
                 console.log(`Clicked on course: ${courseId}`); // 调试信息
                 // 在这里添加点击后的逻辑，例如跳转到课程详情页面
+                window.location.href = `practice/practice.html?course=${courseId}`; // 示例链接
             });
 
             courseListContainer.appendChild(courseElement);
