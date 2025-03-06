@@ -143,7 +143,12 @@ export class CourseDisplay {
         this.courses = {};
 
         courseCards.forEach(card => {
-            const courseId = card.getAttribute('data-course');
+            const courseId = card.getAttribute('data-course'); // 确保读取 data-course 属性
+            if (!courseId) {
+                console.error('Course ID is null or undefined for card:', card);
+                return; // 如果 courseId 为 null，跳过该卡片
+            }
+
             const courseNameElement = card.querySelector('h2');
             const courseDescriptionElement = card.querySelector('p');
 
