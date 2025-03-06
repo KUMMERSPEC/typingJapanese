@@ -4,11 +4,11 @@ import { courseConfig } from './config/courseConfig.js';
 export class CourseDisplay {
     constructor() {
         try {
+            this.loadCoursesFromHTML(); // 从 HTML 加载课程信息
             if (!courseConfig || !courseConfig.courses) {
                 throw new Error('Course config not found');
             }
             
-            this.courses = courseConfig.courses; // 确保 this.courses 被正确赋值
             console.log('Courses:', this.courses); // 添加调试信息
             this.completedLessons = {};
             this.courseOrder = courseConfig.courseOrder;
@@ -139,5 +139,22 @@ export class CourseDisplay {
             { id: 'huku', title: 'Huku课程', lessons: [{ id: 'lesson1', title: 'Lesson 1' }, { id: 'lesson2', title: 'Lesson 2' }] },
             // 其他课程...
         ];
+    }
+
+    loadCoursesFromHTML() {
+        const courseCards = document.querySelectorAll('.course-card');
+        this.courses = {};
+
+        courseCards.forEach(card => {
+            const courseId = card.getAttribute('data-course');
+            const courseName = card.querySelector('h2').textContent;
+            const courseDescription = card.querySelector('p').textContent;
+
+            this.courses[courseId] = {
+                name: courseName,
+                description: courseDescription,
+                lessons: [] // 这里可以添加具体的课时信息
+            };
+        });
     }
 } 
