@@ -94,7 +94,7 @@ export class CourseDisplay {
             courseElement.className = 'course-card';
             courseElement.innerHTML = `<h3>${course.name}</h3>`; // 使用 course.name
 
-            const lessons = course.lessons;
+            const lessons = course.lessons || []; // 确保 lessons 是一个数组
             let ongoingLesson = null;
             let allLessonsCompleted = true;
 
