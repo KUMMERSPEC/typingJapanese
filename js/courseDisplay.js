@@ -84,50 +84,50 @@ export class CourseDisplay {
 
     // 渲染课程列表
     renderCourseList() {
-        const courseList = document.querySelector('.course-list');
-        if (!courseList) return;
-        
-        courseList.innerHTML = '';
+        const courseListContainer = document.querySelector('.course-list');
+        courseListContainer.innerHTML = '';
 
-        try {
-            const currentCourses = this.getCurrentAndNextLessons();
-            
-            if (currentCourses.length === 0) {
-                const firstCourse = courseConfig.courses['huku'];
-                courseList.innerHTML = `
-                    <div class="course-card" onclick="window.location.href='practice/practice.html?course=huku&lesson=lesson1'">
-                        <h3>${firstCourse.name}</h3>
-                        <p>开始学习第一课</p>
-                    </div>
-                `;
-            } else {
-                // 显示正在学习的课程和它们的下一课
-                currentCourses.forEach(course => {
-                    const courseInfo = courseConfig.courses[course.courseId];
-                    if (!courseInfo) return;
-                    
-                    // 检查下一课是否存在
-                    const nextLessonNumber = parseInt(course.nextLesson.replace('lesson', ''));
-                    if (nextLessonNumber > courseInfo.lessonCount) {
-                        return; // 如果下一课超出课程总课时，不显示
+        this.courses.forEach(course => {
+            const courseElement = document.createElement('div');
+            courseElement.className = 'course-card';
+            courseElement.innerHTML = `<h3>${course.title}</h3>`;
+
+            const lessons = course.lessons;
+            let ongoingLesson = null;
+            let allLessonsCompleted = true;
+
+            lessons.forEach((lesson, index) => {
+                const lessonKey = `${course.id}:${lesson.id}`;
+                const isCompleted = this.completedLessons[course.id] && this.completedLessons[course.id].includes(lesson.id);
+
+                if (isCompleted) {
+                    // 如果课程的所有课时都已完成
+                    if (index === lessons.length - 1) {
+                        courseElement.innerHTML += '<p>已学完</p>';
                     }
+                } else {
+                    allLessonsCompleted = false;
+                    if (!ongoingLesson) {
+                        ongoingLesson = lesson;
+                    }
+                }
+            });
 
-                    courseList.innerHTML += `
-                        <div class="course-card current-course" onclick="window.location.href='practice/practice.html?course=${course.courseId}&lesson=${course.nextLesson}'">
-                            <div class="course-status">${course.isNewCourse ? '开始新课程' : '继续学习'}</div>
-                            <h3>${courseInfo.name}</h3>
-                            <p>${course.isNewCourse ? '开始第1课' : `继续学习第${nextLessonNumber}课`}</p>
-                        </div>
-                    `;
-                });
+            if (ongoingLesson) {
+                courseElement.innerHTML += `<p>正在学习 ${ongoingLesson.title}</p>`;
+            } else if (!allLessonsCompleted) {
+                courseElement.innerHTML += `<p>继续学习 ${lessons[0].title}</p>`;
             }
-        } catch (error) {
-            console.error('Error rendering course list:', error);
-            courseList.innerHTML = `
-                <div class="error-message">
-                    加载课程失败，请刷新页面重试
-                </div>
-            `;
-        }
+
+            courseListContainer.appendChild(courseElement);
+        });
+    }
+
+    loadCourses() {
+        // 这里是加载课程的逻辑
+        return [
+            { id: 'huku', title: 'Huku课程', lessons: [{ id: 'lesson1', title: 'Lesson 1' }, { id: 'lesson2', title: 'Lesson 2' }] },
+            // 其他课程...
+        ];
     }
 } 
