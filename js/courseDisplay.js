@@ -119,7 +119,15 @@ export class CourseDisplay {
                 courseElement.innerHTML += `<p>正在学习 ${ongoingLesson.title}</p>`;
             } else if (!allLessonsCompleted) {
                 courseElement.innerHTML += `<p>继续学习 ${lessons[0].title}</p>`;
+            } else {
+                courseElement.innerHTML += '<p>所有课时已完成</p>';
             }
+
+            // 添加点击事件监听器
+            courseElement.addEventListener('click', () => {
+                console.log(`Clicked on course: ${courseId}`); // 调试信息
+                // 在这里添加点击后的逻辑，例如跳转到课程详情页面
+            });
 
             courseListContainer.appendChild(courseElement);
         });
