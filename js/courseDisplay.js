@@ -84,40 +84,11 @@ export class CourseDisplay {
         const courseListContainer = document.querySelector('.course-list');
         courseListContainer.innerHTML = '';
 
-        // 使用 Object.entries 遍历对象
         Object.entries(this.courses).forEach(([courseId, course]) => {
             const courseElement = document.createElement('div');
             courseElement.className = 'course-card';
-            courseElement.innerHTML = `<h3>${course.name}</h3>`; // 使用 course.name
-
-            const lessons = course.lessons || []; // 确保 lessons 是一个数组
-            let ongoingLesson = null;
-            let allLessonsCompleted = true;
-
-            lessons.forEach((lesson, index) => {
-                const lessonKey = `${course.id}:${lesson.id}`;
-                const isCompleted = this.completedLessons[course.id] && this.completedLessons[course.id].includes(lesson.id);
-
-                if (isCompleted) {
-                    // 如果课程的所有课时都已完成
-                    if (index === lessons.length - 1) {
-                        courseElement.innerHTML += '<p>已学完</p>';
-                    }
-                } else {
-                    allLessonsCompleted = false;
-                    if (!ongoingLesson) {
-                        ongoingLesson = lesson;
-                    }
-                }
-            });
-
-            if (ongoingLesson) {
-                courseElement.innerHTML += `<p>正在学习 ${ongoingLesson.title}</p>`;
-            } else if (!allLessonsCompleted) {
-                courseElement.innerHTML += `<p>继续学习 ${lessons[0].title}</p>`;
-            } else {
-                courseElement.innerHTML += '<p>所有课时已完成</p>';
-            }
+            courseElement.setAttribute('data-course', courseId); // 设置 data-course 属性
+            courseElement.innerHTML = `<h3>${course.name}</h3><p>${course.description}</p>`; // 使用课程名称和描述
 
             // 添加点击事件监听器
             courseElement.addEventListener('click', () => {
