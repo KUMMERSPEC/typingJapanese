@@ -139,7 +139,7 @@ export class CourseDisplay {
 
     loadCoursesFromHTML() {
         const courseCards = document.querySelectorAll('.course-card');
-        console.log('Course cards found:', courseCards.length); // 添加调试信息
+        console.log('Found course cards:', courseCards); // 确认找到的课程卡片
         this.courses = {};
 
         courseCards.forEach(card => {
@@ -147,14 +147,8 @@ export class CourseDisplay {
             const courseNameElement = card.querySelector('h2');
             const courseDescriptionElement = card.querySelector('p');
 
-            // 添加调试信息以确认元素是否存在
-            console.log(`Course card: ${courseId}, Name Element: ${courseNameElement}, Description Element: ${courseDescriptionElement}`);
-
-            // 确认元素的文本内容
             const courseName = courseNameElement ? courseNameElement.textContent : '未知课程';
             const courseDescription = courseDescriptionElement ? courseDescriptionElement.textContent : '无描述';
-
-            console.log(`Course ID: ${courseId}, Name: ${courseName}, Description: ${courseDescription}`); // 添加调试信息
 
             this.courses[courseId] = {
                 name: courseName,
@@ -162,5 +156,7 @@ export class CourseDisplay {
                 lessons: [] // 这里可以添加具体的课时信息
             };
         });
+
+        console.log('Loaded courses:', this.courses); // 确认加载的课程
     }
 } 
