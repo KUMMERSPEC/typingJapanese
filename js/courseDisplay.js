@@ -154,6 +154,10 @@ export class CourseDisplay {
             // 添加调试信息以确认元素是否存在
             console.log(`Course card: ${courseId}, Name Element: ${courseNameElement}, Description Element: ${courseDescriptionElement}`);
 
+            // 确认元素的文本内容
+            console.log(`Course Name Text: ${courseNameElement ? courseNameElement.textContent : '无'}`);
+            console.log(`Course Description Text: ${courseDescriptionElement ? courseDescriptionElement.textContent : '无'}`);
+
             const courseName = courseNameElement ? courseNameElement.textContent : '未知课程';
             const courseDescription = courseDescriptionElement ? courseDescriptionElement.textContent : '无描述';
 
