@@ -497,6 +497,13 @@ class PracticeManager {
             newAudioButton.addEventListener('click', playAudio);
         }
 
+        // 绑定全局 Tab 键事件，只用于播放语音
+        const handleKeydown = (event) => {
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                playAudio();
+            }
+        };
 
         // 移除旧的事件监听器并添加新的
         document.removeEventListener('keydown', this.currentKeydownHandler);
