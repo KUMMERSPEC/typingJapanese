@@ -613,25 +613,21 @@ class PracticeManager {
         answerDisplay.appendChild(answerContent);
         
         // 播放声音
-        if (!isTabPress) {
-            this.speak(question.character);
-        }
+        this.speak(question.character);
         
-        if (isTabPress) {
-            // Tab键显示答案：2秒后返回原题
-            this.nextQuestionTimer = setTimeout(() => {
-                // 隐藏答案显示
-                answerDisplay.classList.remove('show');
-                answerDisplay.style.display = 'none';
-                // 显示输入区域和功能按钮
-                inputArea.style.display = 'flex';
-                character.style.display = 'block';
-                functionButtons.style.display = 'flex'; // 恢复显示功能按钮组
-                // 聚焦到第一个输入框
-                const firstInput = inputArea.querySelector('input');
-                if (firstInput) firstInput.focus();
-            }, 2000);
-        }
+        // 设置定时器，2秒后返回原题
+        this.nextQuestionTimer = setTimeout(() => {
+            // 隐藏答案显示
+            answerDisplay.classList.remove('show');
+            answerDisplay.style.display = 'none';
+            // 显示输入区域和功能按钮
+            inputArea.style.display = 'flex';
+            character.style.display = 'block';
+            functionButtons.style.display = 'flex'; // 恢复显示功能按钮组
+            // 聚焦到第一个输入框
+            const firstInput = inputArea.querySelector('input');
+            if (firstInput) firstInput.focus();
+        }, 2000);
     }
 
     // 添加标记为已掌握的方法
