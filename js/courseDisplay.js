@@ -195,6 +195,9 @@ export class CourseDisplay {
                 };
             }
 
+            // 检查推荐课程是否已经开始学习
+            const recommendationProgress = this.getCourseProgress(recommendation.id, recommendedCourse, this.completedLessons);
+            
             // 添加推荐课程（如果与正在学习的课程不同）
             if (!continueLearningCourse || continueLearningCourse.id !== recommendation.id) {
                 this.courses[recommendation.id] = {
@@ -202,7 +205,10 @@ export class CourseDisplay {
                     description: recommendedCourse.description,
                     lessons: recommendedCourse.lessons,
                     recommended: true,
-                    nextLesson: recommendation.lessonId
+                    nextLesson: recommendationProgress ? recommendationProgress.nextLesson : recommendation.lessonId,
+                    // 如果推荐课程已经开始学习，也显示进度
+                    progress: recommendationProgress ? recommendationProgress.progress : null,
+                    continueLearning: recommendationProgress !== null
                 };
             }
 
