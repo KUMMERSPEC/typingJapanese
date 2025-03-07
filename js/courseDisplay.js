@@ -90,11 +90,23 @@ export class CourseDisplay {
             courseElement.setAttribute('data-course', courseId); // 设置 data-course 属性
             courseElement.innerHTML = `<h3>${course.name}</h3><p>${course.description}</p>`; // 使用课程名称和描述
 
+            // 显示课时信息
+            if (course.lessons && Object.keys(course.lessons).length > 0) {
+                const lessonList = document.createElement('ul');
+                Object.entries(course.lessons).forEach(([lessonId, lesson]) => {
+                    const lessonItem = document.createElement('li');
+                    lessonItem.textContent = lesson.title; // 显示课时标题
+                    lessonList.appendChild(lessonItem);
+                });
+                courseElement.appendChild(lessonList);
+            } else {
+                courseElement.innerHTML += '<p>没有可用的课时</p>';
+            }
+
             // 添加点击事件监听器
             courseElement.addEventListener('click', () => {
                 console.log(`Clicked on course: ${courseId}`); // 调试信息
-                // 在这里添加点击后的逻辑，例如跳转到课程详情页面
-                window.location.href = `practice/practice.html?course=${courseId}`; // 示例链接
+                window.location.href = `practice/practice.html?course=${courseId}`; // 跳转到课程详情页面
             });
 
             courseListContainer.appendChild(courseElement);
