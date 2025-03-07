@@ -1,4 +1,5 @@
 import statsData from './common/statsData.js';
+import courseData from './common/courseData.js';
 
 class CourseManager {
     constructor() {
@@ -8,22 +9,15 @@ class CourseManager {
 
     async loadCourses() {
         try {
-            // 直接加载课程列表
-            const courseList = [
-                {
-                    id: 'kimochi',
-                    title: '気持ち',
-                    description: '表达感受的词汇'
-                },
-                {
-                    id: 'gimon',
-                    title: '疑問詞',
-                    description: '疑问词练习'
-                }
-            ];
+            // 从 courseData 中加载课程列表
+            const courseList = Object.entries(courseData['word-group'].courses).map(([id, course]) => ({
+                id,
+                title: course.name,
+                description: course.description
+            }));
 
-            this.courses = courseList;
-            this.renderCourses();
+            this.courses = courseList; // 更新课程列表
+            this.renderCourses(); // 渲染课程列表
         } catch (error) {
             console.error('Error loading courses:', error);
             this.showError('加载课程失败，请刷新重试');
