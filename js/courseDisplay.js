@@ -40,13 +40,25 @@ export class CourseDisplay {
 
     // 获取课程进度信息的核心方法
     getCourseProgress(courseId, course, completedLessons) {
+        console.log(`Checking progress for course ${courseId}:`, {
+            course,
+            completedLessons: completedLessons[courseId]
+        });
+        
         const totalLessons = Object.keys(course.lessons).length;
         const completedCourseLessons = completedLessons[courseId] || [];
         const completed = completedCourseLessons.length;
 
-        if (completed > 0 && completed < totalLessons) {
+        console.log(`Course ${courseId} progress:`, {
+            totalLessons,
+            completed,
+            hasProgress: completed > 0 && completed < totalLessons
+        });
+
+        // 只要有完成的课时，就返回进度信息
+        if (completed > 0) {
             const nextLessonNumber = completed + 1;
-            return {
+            const progress = {
                 id: courseId,
                 name: course.name,
                 description: course.description,
@@ -59,6 +71,8 @@ export class CourseDisplay {
                 },
                 isNewCourse: false
             };
+            console.log(`Returning progress for ${courseId}:`, progress);
+            return progress;
         }
         return null;
     }
@@ -174,8 +188,8 @@ export class CourseDisplay {
             const recommendation = this.getRecommendedCourse();
             console.log('Today\'s recommendation:', recommendation);
 
-            // 从 courseData 中加载推荐的课程
-            const recommendedCourse = courseData['word-group'].courses[recommendation.id];
+            // 从 courseData 中加载所有课程
+            const allCourses = courseData['word-group'].courses;
             
             // 获取正在学习的课程
             const continueLearningCourse = this.getContinueLearningCourse();
@@ -183,35 +197,36 @@ export class CourseDisplay {
 
             this.courses = {};
             
-            // 如果有正在学习的课程，添加到列表中
-            if (continueLearningCourse) {
-                this.courses[continueLearningCourse.id] = {
-                    name: continueLearningCourse.name,
-                    description: continueLearningCourse.description,
-                    lessons: continueLearningCourse.lessons,
-                    nextLesson: continueLearningCourse.nextLesson,
-                    progress: continueLearningCourse.progress,
-                    continueLearning: true
-                };
-            }
+            // 遍历所有课程，检查是否有进度
+            Object.entries(allCourses).forEach(([courseId, course]) => {
+                const progress = this.getCourseProgress(courseId, course, this.completedLessons);
+                
+                if (progress) {
+                    // 如果课程有进度，添加为继续学习
+                    this.courses[courseId] = {
+                        name: course.name,
+                        description: course.description,
+                        lessons: course.lessons,
+                        nextLesson: progress.nextLesson,
+                        progress: progress.progress,
+                        continueLearning: true
+                    };
+                }
+            });
 
-            // 检查推荐课程是否已经开始学习
-            const recommendationProgress = this.getCourseProgress(recommendation.id, recommendedCourse, this.completedLessons);
-            
-            // 添加推荐课程（如果与正在学习的课程不同）
-            if (!continueLearningCourse || continueLearningCourse.id !== recommendation.id) {
+            // 如果推荐课程不在继续学习列表中，添加为推荐
+            if (!this.courses[recommendation.id]) {
+                const recommendedCourse = allCourses[recommendation.id];
                 this.courses[recommendation.id] = {
                     name: recommendedCourse.name,
                     description: recommendedCourse.description,
                     lessons: recommendedCourse.lessons,
                     recommended: true,
-                    nextLesson: recommendationProgress ? recommendationProgress.nextLesson : recommendation.lessonId,
-                    // 如果推荐课程已经开始学习，也显示进度
-                    progress: recommendationProgress ? recommendationProgress.progress : null,
-                    continueLearning: recommendationProgress !== null
+                    nextLesson: recommendation.lessonId
                 };
             }
 
+            console.log('Final courses to display:', this.courses);
             this.renderCourseList(); // 渲染课程列表
         } catch (error) {
             console.error('Error loading courses:', error);
