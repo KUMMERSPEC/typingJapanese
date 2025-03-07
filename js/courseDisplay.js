@@ -79,58 +79,79 @@ export class CourseDisplay {
         return currentCourses;
     }
 
-    // 渲染课程列表
-    renderCourseList() {
-        const courseListContainer = document.querySelector('.course-list');
-        courseListContainer.innerHTML = '';
+    // 获取今天的推荐课程
+    getRecommendedCourse() {
+        const today = new Date().toISOString().split('T')[0];
+        const lastRecommendation = JSON.parse(localStorage.getItem('lastRecommendation') || '{}');
+        
+        // 如果今天已经推荐过课程，返回同样的推荐
+        if (lastRecommendation.date === today) {
+            return lastRecommendation.course;
+        }
 
-        Object.entries(this.courses).forEach(([courseId, course]) => {
-            const courseElement = document.createElement('div');
-            courseElement.className = 'course-card';
-            courseElement.setAttribute('data-course', courseId); // 设置 data-course 属性
-            courseElement.innerHTML = `<h3>${course.name}</h3><p>${course.description}</p>`; // 使用课程名称和描述
-
-            // 显示课时信息
-            if (course.lessons && Object.keys(course.lessons).length > 0) {
-                const lessonList = document.createElement('ul');
-                Object.entries(course.lessons).forEach(([lessonId, lesson]) => {
-                    const lessonItem = document.createElement('li');
-                    lessonItem.textContent = lesson.title; // 显示课时标题
-                    lessonList.appendChild(lessonItem);
-                });
-                courseElement.appendChild(lessonList);
-            } else {
-                courseElement.innerHTML += '<p>没有可用的课时</p>';
-            }
-
-            // 添加点击事件监听器
-            courseElement.addEventListener('click', () => {
-                console.log(`Clicked on course: ${courseId}`); // 调试信息
-                window.location.href = `practice/practice.html?course=${courseId}`; // 跳转到课程详情页面
-            });
-
-            courseListContainer.appendChild(courseElement);
+        // 获取所有可用课程
+        const allCourses = courseData['word-group'].courses;
+        const courseIds = Object.keys(allCourses);
+        
+        // 获取已完成的课程
+        const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+        
+        // 过滤出未完成的课程
+        const availableCourses = courseIds.filter(courseId => {
+            const course = allCourses[courseId];
+            const lessonCount = Object.keys(course.lessons).length;
+            const completed = completedLessons[courseId]?.length || 0;
+            return completed < lessonCount;
         });
+
+        // 如果没有可用课程，返回第一个课程
+        if (availableCourses.length === 0) {
+            return {
+                id: courseIds[0],
+                lessonId: 'lesson1'
+            };
+        }
+
+        // 随机选择一个课程
+        const randomIndex = Math.floor(Math.random() * availableCourses.length);
+        const selectedCourseId = availableCourses[randomIndex];
+        const selectedCourse = allCourses[selectedCourseId];
+
+        // 找到该课程的下一个未完成课时
+        const completedCourseLessons = completedLessons[selectedCourseId] || [];
+        let nextLessonNumber = completedCourseLessons.length + 1;
+        const recommendation = {
+            id: selectedCourseId,
+            lessonId: `lesson${nextLessonNumber}`
+        };
+
+        // 保存今天的推荐
+        localStorage.setItem('lastRecommendation', JSON.stringify({
+            date: today,
+            course: recommendation
+        }));
+
+        return recommendation;
     }
 
     async loadCourses() {
         try {
-            // 从 courseData 中加载课程列表
-            const courseList = Object.entries(courseData['word-group'].courses).map(([id, course]) => ({
-                id,
-                title: course.name,
-                description: course.description,
-                lessons: course.lessons
-            }));
+            // 获取今天的推荐课程
+            const recommendation = this.getRecommendedCourse();
+            console.log('Today\'s recommendation:', recommendation);
 
-            this.courses = {};
-            courseList.forEach(course => {
-                this.courses[course.id] = {
-                    name: course.title,
-                    description: course.description,
-                    lessons: course.lessons
-                };
-            });
+            // 从 courseData 中加载推荐的课程
+            const recommendedCourse = courseData['word-group'].courses[recommendation.id];
+            
+            this.courses = {
+                [recommendation.id]: {
+                    name: recommendedCourse.name,
+                    description: recommendedCourse.description,
+                    lessons: recommendedCourse.lessons,
+                    recommended: true,
+                    nextLesson: recommendation.lessonId
+                }
+            };
 
             this.renderCourseList(); // 渲染课程列表
         } catch (error) {
@@ -165,5 +186,39 @@ export class CourseDisplay {
         });
 
         console.log('Loaded courses:', this.courses); // 确认加载的课程
+    }
+
+    // 修改渲染方法以显示推荐信息
+    renderCourseList() {
+        const courseListContainer = document.querySelector('.course-list');
+        courseListContainer.innerHTML = '';
+
+        Object.entries(this.courses).forEach(([courseId, course]) => {
+            const courseElement = document.createElement('div');
+            courseElement.className = 'course-card';
+            if (course.recommended) {
+                courseElement.classList.add('recommended');
+            }
+            courseElement.setAttribute('data-course', courseId);
+
+            // 添加推荐标签
+            const recommendedHtml = course.recommended ? '<div class="recommended-badge">今日推荐</div>' : '';
+            
+            // 显示课程信息和下一课时
+            courseElement.innerHTML = `
+                ${recommendedHtml}
+                <h3>${course.name}</h3>
+                <p>${course.description}</p>
+                <div class="next-lesson">下一课时：${course.lessons[course.nextLesson].title}</div>
+            `;
+
+            // 添加点击事件监听器
+            courseElement.addEventListener('click', () => {
+                console.log(`Clicked on course: ${courseId}`);
+                window.location.href = `practice/practice.html?course=${courseId}&lesson=${course.nextLesson}`;
+            });
+
+            courseListContainer.appendChild(courseElement);
+        });
     }
 } 
