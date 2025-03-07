@@ -251,8 +251,8 @@
       "hiragana": "ボタン:を:かける",
       "romaji": "botan:wo:kakeru",
       "meaning": "扣上纽扣",
-      "type": "normal",
-      "answers": "かける:kakeru"
+      "type": "split",
+      "answers": "ボタン:botan|を:wo|かける:kakeru"
     },
     {
       "character": "はずす",
