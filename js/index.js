@@ -1,51 +1,5 @@
 import statsData from './common/statsData.js';
-
-class CourseManager {
-    constructor() {
-        this.courses = [];
-        this.loadCourses();
-    }
-
-    async loadCourses() {
-        try {
-            // 直接加载课程列表
-            const courseList = [
-                {
-                    id: 'kimochi',
-                    title: '気持ち',
-                    description: '表达感受的词汇'
-                },
-                {
-                    id: 'gimon',
-                    title: '疑問詞',
-                    description: '疑问词练习'
-                }
-            ];
-
-            this.courses = courseList;
-            this.renderCourses();
-        } catch (error) {
-            console.error('Error loading courses:', error);
-            this.showError('加载课程失败，请刷新重试');
-        }
-    }
-
-    renderCourses() {
-        const courseList = document.querySelector('.course-list');
-        if (!courseList) return;
-
-        courseList.innerHTML = this.courses.map(course => `
-            <div class="course-card" onclick="window.location.href='practice/practice.html?course=${course.id}&lesson=Lesson1'">
-                <h3>${course.title}</h3>
-                <p>${course.description}</p>
-            </div>
-        `).join('');
-    }
-
-    showError(message) {
-        alert(message);
-    }
-}
+import { CourseDisplay } from './courseDisplay.js'; // 导入 CourseDisplay 类
 
 // 初始化复习面板
 function initReviewPanel() {
@@ -118,8 +72,9 @@ function initReviewPanel() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, initializing...');
     
-    // 初始化课程管理器
-    const courseManager = new CourseManager();
+    // 初始化课程显示
+    const courseDisplay = new CourseDisplay();
+    courseDisplay.loadCourses(); // 使用 CourseDisplay 加载课程
     
     // 更新今日日期
     updateDate();

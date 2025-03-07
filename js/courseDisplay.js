@@ -116,7 +116,7 @@ export class CourseDisplay {
     async loadCourses() {
         try {
             // 从 courseData 中加载课程列表
-            const courseList = Object.entries(courseData['standard-basic-1'].courses).map(([id, course]) => ({
+            const courseList = Object.entries(courseData['word-group'].courses).map(([id, course]) => ({
                 id,
                 title: course.name,
                 description: course.description,
