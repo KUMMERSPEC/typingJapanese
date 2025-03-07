@@ -232,6 +232,46 @@ header h1 {
     color: #666;
 }
 
+.course-card.continue-learning {
+    border: 2px solid #2196F3;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+    position: relative;
+}
+
+.continue-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #2196F3;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.progress-bar {
+    margin-top: 15px;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar .progress {
+    height: 100%;
+    background-color: #2196F3;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #666;
+    text-align: right;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .container {

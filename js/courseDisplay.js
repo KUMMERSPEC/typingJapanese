@@ -38,45 +38,79 @@ export class CourseDisplay {
         return null;
     }
 
-    // 获取当前正在学习的课程和下一课
+    // 获取课程进度信息的核心方法
+    getCourseProgress(courseId, course, completedLessons) {
+        const totalLessons = Object.keys(course.lessons).length;
+        const completedCourseLessons = completedLessons[courseId] || [];
+        const completed = completedCourseLessons.length;
+
+        if (completed > 0 && completed < totalLessons) {
+            const nextLessonNumber = completed + 1;
+            return {
+                id: courseId,
+                name: course.name,
+                description: course.description,
+                lessons: course.lessons,
+                nextLesson: `lesson${nextLessonNumber}`,
+                currentLesson: `lesson${completed}`,
+                progress: {
+                    completed: completed,
+                    total: totalLessons
+                },
+                isNewCourse: false
+            };
+        }
+        return null;
+    }
+
+    // 获取所有正在学习的课程
     getCurrentAndNextLessons() {
+        const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
         const currentCourses = [];
-        const addedCourses = new Set(); // 用于跟踪已添加的课程
+        const addedCourses = new Set();
         
-        // 遍历所有课程，找出正在学习的课程
-        for (const [courseId, lessons] of Object.entries(this.completedLessons)) {
-            // 如果这个课程已经添加过，跳过
-            if (addedCourses.has(courseId)) continue;
-            
-            const lastLesson = lessons[lessons.length - 1];
-            const nextLessonNumber = parseInt(lastLesson.replace('lesson', '')) + 1;
-            const nextLesson = `lesson${nextLessonNumber}`;
-            
-            // 检查是否超出当前课程的课时数
-            if (this.courseLessons[courseId] && nextLessonNumber > this.courseLessons[courseId]) {
-                // 获取下一个课程
+        // 遍历所有课程
+        Object.entries(courseData['word-group'].courses).forEach(([courseId, course]) => {
+            if (addedCourses.has(courseId)) return;
+
+            const progress = this.getCourseProgress(courseId, course, completedLessons);
+            if (progress) {
+                currentCourses.push(progress);
+                addedCourses.add(courseId);
+            } else if (completedLessons[courseId]?.length === Object.keys(course.lessons).length) {
+                // 如果当前课程已完成，尝试获取下一个课程
                 const nextCourseId = this.getNextCourse(courseId);
                 if (nextCourseId && !addedCourses.has(nextCourseId)) {
+                    const nextCourse = courseData['word-group'].courses[nextCourseId];
                     currentCourses.push({
-                        courseId: nextCourseId,
+                        id: nextCourseId,
+                        name: nextCourse.name,
+                        description: nextCourse.description,
+                        lessons: nextCourse.lessons,
                         currentLesson: 'lesson0',
                         nextLesson: 'lesson1',
                         isNewCourse: true
                     });
                     addedCourses.add(nextCourseId);
                 }
-            } else {
-                currentCourses.push({
-                    courseId,
-                    currentLesson: lastLesson,
-                    nextLesson: nextLesson,
-                    isNewCourse: false
-                });
-                addedCourses.add(courseId);
             }
-        }
+        });
 
         return currentCourses;
+    }
+
+    // 获取单个正在学习的课程
+    getContinueLearningCourse() {
+        const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+        
+        // 遍历所有课程，找出第一个正在学习但未完成的课程
+        for (const [courseId, course] of Object.entries(courseData['word-group'].courses)) {
+            const progress = this.getCourseProgress(courseId, course, completedLessons);
+            if (progress) {
+                return progress;
+            }
+        }
+        return null;
     }
 
     // 获取今天的推荐课程
@@ -143,15 +177,34 @@ export class CourseDisplay {
             // 从 courseData 中加载推荐的课程
             const recommendedCourse = courseData['word-group'].courses[recommendation.id];
             
-            this.courses = {
-                [recommendation.id]: {
+            // 获取正在学习的课程
+            const continueLearningCourse = this.getContinueLearningCourse();
+            console.log('Continue learning course:', continueLearningCourse);
+
+            this.courses = {};
+            
+            // 如果有正在学习的课程，添加到列表中
+            if (continueLearningCourse) {
+                this.courses[continueLearningCourse.id] = {
+                    name: continueLearningCourse.name,
+                    description: continueLearningCourse.description,
+                    lessons: continueLearningCourse.lessons,
+                    nextLesson: continueLearningCourse.nextLesson,
+                    progress: continueLearningCourse.progress,
+                    continueLearning: true
+                };
+            }
+
+            // 添加推荐课程（如果与正在学习的课程不同）
+            if (!continueLearningCourse || continueLearningCourse.id !== recommendation.id) {
+                this.courses[recommendation.id] = {
                     name: recommendedCourse.name,
                     description: recommendedCourse.description,
                     lessons: recommendedCourse.lessons,
                     recommended: true,
                     nextLesson: recommendation.lessonId
-                }
-            };
+                };
+            }
 
             this.renderCourseList(); // 渲染课程列表
         } catch (error) {
@@ -188,7 +241,7 @@ export class CourseDisplay {
         console.log('Loaded courses:', this.courses); // 确认加载的课程
     }
 
-    // 修改渲染方法以显示推荐信息
+    // 修改渲染方法以显示继续学习信息
     renderCourseList() {
         const courseListContainer = document.querySelector('.course-list');
         courseListContainer.innerHTML = '';
@@ -199,16 +252,38 @@ export class CourseDisplay {
             if (course.recommended) {
                 courseElement.classList.add('recommended');
             }
+            if (course.continueLearning) {
+                courseElement.classList.add('continue-learning');
+            }
             courseElement.setAttribute('data-course', courseId);
 
-            // 添加推荐标签
-            const recommendedHtml = course.recommended ? '<div class="recommended-badge">今日推荐</div>' : '';
+            // 添加标签
+            let badgeHtml = '';
+            if (course.recommended) {
+                badgeHtml = '<div class="recommended-badge">今日推荐</div>';
+            } else if (course.continueLearning) {
+                badgeHtml = '<div class="continue-badge">继续学习</div>';
+            }
             
-            // 显示课程信息和下一课时
+            // 显示课程信息和进度
+            let progressHtml = '';
+            if (course.continueLearning && course.progress) {
+                const percent = (course.progress.completed / course.progress.total) * 100;
+                progressHtml = `
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        已完成 ${course.progress.completed}/${course.progress.total} 课时
+                    </div>
+                `;
+            }
+
             courseElement.innerHTML = `
-                ${recommendedHtml}
+                ${badgeHtml}
                 <h3>${course.name}</h3>
                 <p>${course.description}</p>
+                ${progressHtml}
                 <div class="next-lesson">下一课时：${course.lessons[course.nextLesson].title}</div>
             `;
 
