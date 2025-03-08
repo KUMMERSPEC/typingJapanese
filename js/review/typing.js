@@ -129,25 +129,34 @@ class ReviewManager {
 
             // 添加键盘事件监听
             input.addEventListener('keydown', (e) => {
-                // 如果正在使用输入法，不处理空格键
+                // 如果正在使用输入法，不处理任何特殊键
                 if (isComposing) {
                     return;
                 }
 
-                if (e.key === ' ' || e.code === 'Space') {
-                    e.preventDefault();  // 阻止空格键的默认行为
-                    // 直接跳转到下一个输入框
+                // 处理空格键和回车键
+                if ((e.key === ' ' || e.code === 'Space' || e.key === 'Enter') && !e.isComposing) {
+                    e.preventDefault();  // 阻止默认行为
+                    
+                    // 如果是最后一个输入框且按下回车键，提交答案
+                    if (e.key === 'Enter' && unitIndex === units.length - 1) {
+                        const answer = Array.from(document.querySelectorAll('.split-input'))
+                            .map(input => input.value).join(':');
+                        this.checkAnswer(answer);
+                        return;
+                    }
+                    
+                    // 否则跳转到下一个输入框
                     if (unitIndex < units.length - 1) {
                         const nextInput = inputArea.querySelector(`[data-index="${unitIndex + 1}"]`);
                         if (nextInput) {
                             nextInput.focus();
+                            // 确保下一个输入框不会输入空格
+                            setTimeout(() => {
+                                nextInput.value = nextInput.value.replace(/\s/g, '');
+                            }, 0);
                         }
                     }
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const answer = Array.from(document.querySelectorAll('.split-input'))
-                        .map(input => input.value).join(':');
-                    this.checkAnswer(answer);
                 }
             });
 
@@ -158,10 +167,18 @@ class ReviewManager {
                 }
             });
 
-            // 清除可能输入的空格
+            // 处理输入变化，清除不需要的空格
             input.addEventListener('input', (e) => {
+                // 在输入法组合期间不清除空格
                 if (!isComposing) {
+                    const cursorPosition = input.selectionStart;
+                    const originalLength = input.value.length;
                     input.value = input.value.replace(/\s/g, '');
+                    
+                    // 如果删除了空格，调整光标位置
+                    if (input.value.length !== originalLength) {
+                        input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+                    }
                 }
             });
 
