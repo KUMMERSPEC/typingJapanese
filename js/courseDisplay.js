@@ -132,11 +132,6 @@ export class CourseDisplay {
         const today = new Date().toISOString().split('T')[0];
         const lastRecommendation = JSON.parse(localStorage.getItem('lastRecommendation') || '{}');
         
-        // 如果今天已经推荐过课程，返回同样的推荐
-        if (lastRecommendation.date === today) {
-            return lastRecommendation.course;
-        }
-
         // 获取所有可用课程
         const allCourses = courseData['word-group'].courses;
         const courseIds = Object.keys(allCourses);
@@ -154,17 +149,41 @@ export class CourseDisplay {
 
         // 如果没有可用课程，返回第一个课程
         if (availableCourses.length === 0) {
-            return {
+            const defaultRecommendation = {
                 id: courseIds[0],
                 lessonId: 'lesson1'
             };
+            
+            // 保存今天的推荐
+            localStorage.setItem('lastRecommendation', JSON.stringify({
+                date: today,
+                course: defaultRecommendation
+            }));
+            
+            return defaultRecommendation;
         }
 
-        // 随机选择一个课程
-        const randomIndex = Math.floor(Math.random() * availableCourses.length);
-        const selectedCourseId = availableCourses[randomIndex];
-        const selectedCourse = allCourses[selectedCourseId];
+        let selectedCourseId;
+        
+        // 如果是同一天且上次推荐的课程仍然可用，继续使用相同推荐
+        if (lastRecommendation.date === today && 
+            availableCourses.includes(lastRecommendation.course.id)) {
+            selectedCourseId = lastRecommendation.course.id;
+        } else {
+            // 否则随机选择一个新课程
+            // 如果上次推荐的课程仍在可用列表中，避免重复推荐
+            const filteredCourses = lastRecommendation.course ? 
+                availableCourses.filter(id => id !== lastRecommendation.course.id) : 
+                availableCourses;
+            
+            // 如果还有其他可选课程，从中随机选择；否则从所有可用课程中选择
+            const coursesToChooseFrom = filteredCourses.length > 0 ? filteredCourses : availableCourses;
+            const randomIndex = Math.floor(Math.random() * coursesToChooseFrom.length);
+            selectedCourseId = coursesToChooseFrom[randomIndex];
+        }
 
+        const selectedCourse = allCourses[selectedCourseId];
+        
         // 找到该课程的下一个未完成课时
         const completedCourseLessons = completedLessons[selectedCourseId] || [];
         let nextLessonNumber = completedCourseLessons.length + 1;
