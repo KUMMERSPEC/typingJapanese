@@ -114,8 +114,26 @@ class ReviewManager {
             input.dataset.index = unitIndex;
             input.style.width = `${Math.max(unit.length * 20 + 40, 80)}px`;
 
+            // 添加输入法组合事件标志
+            let isComposing = false;
+
+            // 监听输入法组合开始
+            input.addEventListener('compositionstart', () => {
+                isComposing = true;
+            });
+
+            // 监听输入法组合结束
+            input.addEventListener('compositionend', () => {
+                isComposing = false;
+            });
+
             // 添加键盘事件监听
             input.addEventListener('keydown', (e) => {
+                // 如果正在使用输入法，不处理空格键
+                if (isComposing) {
+                    return;
+                }
+
                 if (e.key === ' ' || e.code === 'Space') {
                     e.preventDefault();  // 阻止空格键的默认行为
                     // 直接跳转到下一个输入框
@@ -133,16 +151,18 @@ class ReviewManager {
                 }
             });
 
-            // 阻止空格键的输入
+            // 阻止空格键的输入（仅在非输入法状态下）
             input.addEventListener('keypress', (e) => {
-                if (e.key === ' ' || e.code === 'Space') {
+                if (!isComposing && (e.key === ' ' || e.code === 'Space')) {
                     e.preventDefault();
                 }
             });
 
             // 清除可能输入的空格
             input.addEventListener('input', (e) => {
-                input.value = input.value.replace(/\s/g, '');
+                if (!isComposing) {
+                    input.value = input.value.replace(/\s/g, '');
+                }
             });
 
             unitContainer.appendChild(input);
