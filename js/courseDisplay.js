@@ -16,10 +16,18 @@ export class CourseDisplay {
             });
             
             this.loadData();
+            this.initializeEventListeners();
         } catch (error) {
             console.error('Error in CourseDisplay constructor:', error);
             throw error;
         }
+    }
+
+    initializeEventListeners() {
+        // 监听自定义收藏夹更新事件
+        window.addEventListener('collectionsUpdated', () => {
+            this.loadCourses();
+        });
     }
 
     loadData() {
@@ -245,8 +253,96 @@ export class CourseDisplay {
                 };
             }
 
+            const courseListElement = document.getElementById('course-list');
+            if (!courseListElement) return;
+
+            courseListElement.innerHTML = '';
+
+            // 添加继续学习的课程
+            Object.entries(this.courses).forEach(([courseId, course]) => {
+                if (course.continueLearning) {
+                    const courseElement = document.createElement('div');
+                    courseElement.className = 'course-item continue-learning';
+                    
+                    const percent = (course.progress.completed / course.progress.total) * 100;
+                    courseElement.innerHTML = `
+                        <div class="continue-badge">继续学习</div>
+                        <h3>${course.name}</h3>
+                        <p>${course.description || '暂无描述'}</p>
+                        <div class="course-stats">
+                            <span><i class="fas fa-book"></i> ${course.progress.total} 个课时</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${percent}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            已完成 ${course.progress.completed}/${course.progress.total} 课时
+                        </div>
+                        <div class="course-actions">
+                            <a href="practice/practice.html?course=${courseId}&lesson=${course.nextLesson}" class="start-button">
+                                继续学习
+                            </a>
+                        </div>
+                    `;
+                    courseListElement.appendChild(courseElement);
+                }
+            });
+
+            // 添加推荐课程
+            Object.entries(this.courses).forEach(([courseId, course]) => {
+                if (course.recommended) {
+                    const courseElement = document.createElement('div');
+                    courseElement.className = 'course-item recommended';
+                    
+                    courseElement.innerHTML = `
+                        <div class="recommended-badge">今日推荐</div>
+                        <h3>${course.name}</h3>
+                        <p>${course.description || '暂无描述'}</p>
+                        <div class="course-stats">
+                            <span><i class="fas fa-book"></i> ${Object.keys(course.lessons).length} 个课时</span>
+                        </div>
+                        <div class="course-actions">
+                            <a href="practice/practice.html?course=${courseId}&lesson=${course.nextLesson}" class="start-button">
+                                开始学习
+                            </a>
+                        </div>
+                    `;
+                    courseListElement.appendChild(courseElement);
+                }
+            });
+
+            // 添加自定义收藏夹
+            if (window.customCollections) {
+                Object.entries(window.customCollections.collections).forEach(([id, collection]) => {
+                    const sentenceCount = Object.keys(collection.sentences).length;
+                    if (sentenceCount > 0) {
+                        const courseElement = document.createElement('div');
+                        courseElement.className = 'course-item custom-collection';
+                        
+                        courseElement.innerHTML = `
+                            <h3>${collection.name}</h3>
+                            <p>${collection.description || '暂无描述'}</p>
+                            <div class="course-stats">
+                                <span>
+                                    <i class="fas fa-book"></i>
+                                    ${sentenceCount} 个句子
+                                </span>
+                                <span class="custom-badge">
+                                    <i class="fas fa-star"></i> 自定义收藏
+                                </span>
+                            </div>
+                            <div class="course-actions">
+                                <a href="practice/practice.html?course=${id}&type=custom" class="start-button">
+                                    开始练习
+                                </a>
+                            </div>
+                        `;
+                        courseListElement.appendChild(courseElement);
+                    }
+                });
+            }
+
             console.log('Final courses to display:', this.courses);
-            this.renderCourseList(); // 渲染课程列表
         } catch (error) {
             console.error('Error loading courses:', error);
             this.showError('加载课程失败，请刷新重试');

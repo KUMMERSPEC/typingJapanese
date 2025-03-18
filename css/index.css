@@ -1078,49 +1078,140 @@ select option {
 
 .collections-list {
     display: grid;
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
 .collection-item {
-    border: 1px solid #ddd;
+    background: #fff;
     border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 15px;
-    position: relative;
-    background: white;
-    transition: all 0.3s ease;
+    transition: transform 0.2s;
 }
 
 .collection-item:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.collection-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.collection-description {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.collection-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.collection-stats i {
+    margin-right: 5px;
 }
 
 .collection-actions {
-    position: absolute;
-    right: 10px;
-    top: 10px;
     display: flex;
     gap: 8px;
 }
 
 .action-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
+    background: none;
     border: none;
-    border-radius: 4px;
-    background: #f0f0f0;
-    color: #333;
+    padding: 5px;
     cursor: pointer;
-    font-size: 14px;
+    color: #666;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
 .action-button:hover {
-    background: #e0e0e0;
+    background: #f0f0f0;
+    color: #333;
 }
 
-.custom-collection {
-    border-left: 4px solid #4CAF50;
+/* 句子预览样式 */
+.sentences-list {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.sentence-preview {
+    padding: 8px;
+    border-radius: 4px;
+    background: #f8f8f8;
+    margin-bottom: 8px;
+}
+
+.sentence-preview .japanese {
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.sentence-preview .meaning {
+    font-size: 13px;
+    color: #666;
+}
+
+.more-sentences {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    padding: 5px;
+}
+
+/* 空状态样式 */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.empty-state i {
+    display: block;
+    margin-bottom: 15px;
+}
+
+/* 表单样式优化 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
 }
 
 /* 添加动画效果 */
@@ -1137,5 +1228,57 @@ select option {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.course-item.custom-collection {
+    border-left: 4px solid #4CAF50;
+}
+
+.custom-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: #e8f5e9;
+    color: #4CAF50;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.custom-badge i {
+    font-size: 10px;
+}
+
+.course-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.course-stats i {
+    margin-right: 4px;
+    color: #888;
+}
+
+.course-actions {
+    margin-top: 15px;
+}
+
+.start-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #1976D2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.start-button:hover {
+    background: #1565C0;
 }
 

@@ -141,6 +141,32 @@ export class CustomCollectionsManager {
                 }
             });
         });
+
+        // 添加句子表单提交
+        document.getElementById('addSentenceForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const collectionId = e.target.dataset.collectionId;
+            const sentenceData = {
+                japanese: document.getElementById('japanese').value,
+                hiragana: document.getElementById('hiragana').value,
+                romaji: document.getElementById('romaji').value,
+                meaning: document.getElementById('meaning').value
+            };
+            
+            try {
+                this.addSentence(collectionId, sentenceData);
+                const modal = document.getElementById('addSentenceModal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
+                this.refreshCollectionsList();
+                // 触发自定义事件通知 CourseDisplay 更新
+                window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+            } catch (error) {
+                console.error('Error adding sentence:', error);
+                alert('添加句子失败，请重试');
+            }
+        });
     }
 
     // 显示收藏夹列表模态框
@@ -176,25 +202,61 @@ export class CustomCollectionsManager {
 
         listContainer.innerHTML = '';
         
+        if (Object.keys(this.collections).length === 0) {
+            listContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-folder-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                    <p>还没有创建任何收藏夹</p>
+                    <p style="font-size: 14px; color: #666;">点击上方的"新建收藏夹"按钮开始创建</p>
+                </div>
+            `;
+            return;
+        }
+        
         Object.entries(this.collections).forEach(([id, collection]) => {
             const sentenceCount = Object.keys(collection.sentences).length;
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
+            
+            // 创建句子列表HTML
+            let sentencesHtml = '';
+            if (sentenceCount > 0) {
+                sentencesHtml = '<div class="sentences-list">';
+                Object.values(collection.sentences).slice(0, 3).forEach(sentence => {
+                    sentencesHtml += `
+                        <div class="sentence-preview">
+                            <div class="japanese">${sentence.japanese}</div>
+                            <div class="meaning">${sentence.meaning}</div>
+                        </div>
+                    `;
+                });
+                if (sentenceCount > 3) {
+                    sentencesHtml += `<div class="more-sentences">还有 ${sentenceCount - 3} 个句子...</div>`;
+                }
+                sentencesHtml += '</div>';
+            }
+
             collectionElement.innerHTML = `
-                <h3>${collection.name}</h3>
-                <p>${collection.description || '暂无描述'}</p>
-                <p>包含 ${sentenceCount} 个句子</p>
-                <div class="collection-actions">
-                    <button onclick="window.customCollections.showAddSentenceModal('${id}')" class="action-button">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button onclick="window.customCollections.showEditCollectionModal('${id}')" class="action-button">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="window.customCollections.deleteCollectionWithConfirm('${id}')" class="action-button">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <div class="collection-header">
+                    <h3>${collection.name}</h3>
+                    <div class="collection-actions">
+                        <button onclick="window.customCollections.showAddSentenceModal('${id}')" class="action-button" title="添加句子">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button onclick="window.customCollections.showEditCollectionModal('${id}')" class="action-button" title="编辑收藏夹">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="window.customCollections.deleteCollectionWithConfirm('${id}')" class="action-button" title="删除收藏夹">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
+                <p class="collection-description">${collection.description || '暂无描述'}</p>
+                <div class="collection-stats">
+                    <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
+                    <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
+                </div>
+                ${sentencesHtml}
             `;
             listContainer.appendChild(collectionElement);
         });
