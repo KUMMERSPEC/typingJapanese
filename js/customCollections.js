@@ -45,6 +45,7 @@ export class CustomCollectionsManager {
         const id = `sentence_${Date.now()}`;
         this.collections[collectionId].sentences[id] = {
             ...sentenceData,
+            type: 'split',
             created_at: new Date().toISOString()
         };
         this.saveCollections();
@@ -231,6 +232,9 @@ export class CustomCollectionsManager {
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
                     <div class="collection-actions">
+                        <button class="add-sentence-btn" title="添加句子">
+                            <i class="fas fa-plus"></i>
+                        </button>
                         <button class="delete-btn" title="删除收藏夹">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -241,6 +245,14 @@ export class CustomCollectionsManager {
                     <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
                 </div>
             `;
+
+            // 添加句子按钮事件
+            const addSentenceBtn = collectionElement.querySelector('.add-sentence-btn');
+            addSentenceBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showAddSentenceModal(id);
+            });
 
             // 添加删除功能
             const deleteBtn = collectionElement.querySelector('.delete-btn');

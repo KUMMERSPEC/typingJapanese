@@ -55,12 +55,12 @@ export class PracticeManager {
 
                 // 将收藏夹的句子转换为练习题目格式
                 this.questions = Object.values(collection.sentences).map(sentence => ({
-                    type: 'split',
+                    type: 'split',  // 确保类型为 split
                     character: sentence.japanese,
                     hiragana: sentence.hiragana,
                     meaning: sentence.meaning,
                     romaji: sentence.romaji,
-                    answers: [sentence.hiragana]
+                    answers: [sentence.japanese, sentence.hiragana]  // 允许日语和平假名两种答案
                 }));
 
                 // 保存课程信息

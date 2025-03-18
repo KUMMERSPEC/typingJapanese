@@ -1454,6 +1454,24 @@ select option {
     color: #333;
 }
 
+.collection-actions .add-sentence-btn {
+    color: #4CAF50;
+}
+
+.collection-actions .add-sentence-btn:hover {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.collection-actions .delete-btn {
+    color: #f44336;
+}
+
+.collection-actions .delete-btn:hover {
+    background: #ffebee;
+    color: #c62828;
+}
+
 /* 添加动画效果 */
 .modal-content {
     animation: slideIn 0.3s ease-out;
