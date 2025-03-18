@@ -4,6 +4,15 @@ export class CustomCollectionsManager {
         this.initializeEventListeners();
     }
 
+    // 获取所有收藏夹
+    getCollections() {
+        return Object.entries(this.collections).map(([id, collection]) => ({
+            id,
+            ...collection,
+            sentences: Object.values(collection.sentences || {})
+        }));
+    }
+
     // 加载所有收藏夹
     loadCollections() {
         return JSON.parse(localStorage.getItem('custom_collections') || '{}');

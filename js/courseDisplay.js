@@ -321,7 +321,7 @@ export class CourseDisplay {
                         ${collection.sentences?.length ? `
                             <button class="toggle-sentences" type="button">
                                 <i class="fas fa-chevron-down"></i>
-                                查看句子
+                                查看句子 (${collection.sentences.length})
                             </button>
                             <div class="sentences-list">
                                 ${collection.sentences.map(sentence => `
@@ -370,7 +370,7 @@ export class CourseDisplay {
                     // 添加点击事件处理
                     collectionCard.addEventListener('click', (e) => {
                         // 如果点击的是按钮，不处理
-                        if (e.target.closest('.collection-actions')) {
+                        if (e.target.closest('.collection-actions') || e.target.closest('.toggle-sentences')) {
                             return;
                         }
                         // 否则展开/折叠句子列表

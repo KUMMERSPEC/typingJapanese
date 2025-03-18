@@ -1357,10 +1357,14 @@ select option {
     padding-top: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
+    max-height: 0;
+    opacity: 0;
 }
 
 .sentences-list.show {
     display: block;
+    max-height: 500px;
+    opacity: 1;
 }
 
 .sentence-item {
@@ -1417,6 +1421,13 @@ select option {
 
 .toggle-sentences.expanded i {
     transform: rotate(180deg);
+}
+
+.no-sentences {
+    color: #999;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
 }
 
 /* 收藏夹操作按钮 */
