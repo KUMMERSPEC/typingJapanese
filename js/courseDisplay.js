@@ -299,24 +299,72 @@ export class CourseDisplay {
                 const collections = customCollectionsManager.getCollections();
                 collections.forEach(collection => {
                     const collectionCard = document.createElement('div');
-                    collectionCard.className = 'course-card custom-collection';
-                    collectionCard.innerHTML = `
-                        <div class="custom-badge">
-                            <i class="fas fa-folder"></i>
-                            自定义收藏
+                    collectionCard.className = 'collection-item';
+                    
+                    // 构建句子列表 HTML
+                    const sentencesHtml = collection.sentences ? collection.sentences.map(sentence => `
+                        <div class="sentence-item">
+                            <div class="sentence-japanese">${sentence.japanese}</div>
+                            <div class="sentence-chinese">${sentence.meaning}</div>
                         </div>
-                        <h3>${collection.name}</h3>
-                        <p>${collection.description || '暂无描述'}</p>
-                        <div class="course-stats">
+                    `).join('') : '';
+                    
+                    collectionCard.innerHTML = `
+                        <div class="collection-header">
+                            <h3>${collection.name}</h3>
+                            <div class="collection-actions">
+                                <button class="edit-btn" title="编辑收藏夹">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="delete-btn" title="删除收藏夹">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="collection-description">${collection.description || '暂无描述'}</p>
+                        <div class="collection-stats">
                             <span><i class="fas fa-book"></i>${collection.sentences ? collection.sentences.length : 0} 个句子</span>
                             <span><i class="fas fa-calendar"></i>${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <div class="course-actions">
-                            <a href="/typingJapanese/practice/collection-practice.html?collection=${collection.id}" class="start-button">
-                                <i class="fas fa-play"></i> 开始练习
-                            </a>
+                        <button class="toggle-sentences">
+                            <i class="fas fa-chevron-down"></i>
+                            ${collection.sentences?.length ? '查看句子' : '暂无句子'}
+                        </button>
+                        <div class="sentences-list">
+                            ${sentencesHtml}
                         </div>
                     `;
+
+                    // 添加展开/折叠功能
+                    const toggleBtn = collectionCard.querySelector('.toggle-sentences');
+                    const sentencesList = collectionCard.querySelector('.sentences-list');
+                    
+                    if (collection.sentences?.length) {
+                        toggleBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // 防止事件冒泡
+                            toggleBtn.classList.toggle('expanded');
+                            sentencesList.classList.toggle('show');
+                        });
+                    } else {
+                        toggleBtn.style.color = '#999';
+                        toggleBtn.style.cursor = 'default';
+                    }
+
+                    // 添加编辑和删除功能
+                    const editBtn = collectionCard.querySelector('.edit-btn');
+                    const deleteBtn = collectionCard.querySelector('.delete-btn');
+                    
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // 实现编辑功能
+                        console.log('Edit collection:', collection.id);
+                    });
+                    
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // 实现删除功能
+                        console.log('Delete collection:', collection.id);
+                    });
 
                     courseListContainer.appendChild(collectionCard);
                 });
