@@ -168,121 +168,152 @@ header h1 {
     padding: 0;
 }
 
+/* 课程卡片基础样式 */
 .course-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    margin: 10px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: #fff;
     border-radius: 12px;
-    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .course-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.course-card h3 {
+/* 卡片头部样式 */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+.card-header h2 {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4a90e2;
+    color: white;
+    border-radius: 50%;
+    font-size: 24px;
+    margin: 0;
+}
+
+/* 继续学习卡片特殊样式 */
+.continue-learning .card-header h2 {
+    background: #4CAF50;
+}
+
+/* 今日推荐卡片特殊样式 */
+.recommended .card-header h2 {
+    background: #2196F3;
+}
+
+/* 卡片内容区域样式 */
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
     margin: 0 0 10px 0;
+    font-size: 18px;
     color: #333;
-    font-size: 1.2rem;
-    font-weight: 500;
-    text-align: center;
 }
 
-.course-card p {
+.card-content p {
+    color: #666;
     margin: 0 0 15px 0;
-    color: #666;
-    font-size: 1rem;
-    line-height: 1.5;
-    text-align: center;
+    font-size: 14px;
 }
 
-/* 继续学习卡片样式 */
-.course-card.continue-learning {
-    border: none;
-    border-radius: 12px;
-    position: relative;
-}
-
-.continue-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #2196F3;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
-}
-
-/* 今日推荐卡片样式 */
-.course-card.recommended {
-    border: none;
-    border-radius: 12px;
-    position: relative;
-}
-
-.recommended-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.next-lesson {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    font-size: 0.9em;
-    color: #666;
-}
-
-/* 进度条样式 */
+/* 进度条样式优化 */
 .progress-bar {
-    margin: 12px 0;
     height: 6px;
-    background-color: #f0f0f0;
+    background: #f0f0f0;
     border-radius: 3px;
+    margin: 15px 0 5px 0;
     overflow: hidden;
 }
 
-.progress-bar .progress {
+.progress {
     height: 100%;
-    background-color: #2196F3;
+    background: #4CAF50;
     border-radius: 3px;
     transition: width 0.3s ease;
 }
 
 .progress-text {
-    margin-top: 8px;
-    font-size: 0.9em;
     color: #666;
+    font-size: 14px;
     text-align: right;
+    margin-bottom: 15px;
 }
 
-/* 课程统计信息样式 */
+/* 徽章样式优化 */
+.continue-badge,
+.recommended-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.continue-badge {
+    background: #e8f5e9;
+    color: #4CAF50;
+}
+
+.recommended-badge {
+    background: #e3f2fd;
+    color: #2196F3;
+}
+
+/* 按钮样式优化 */
+.start-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 20px;
+    background: #4a90e2;
+    color: white;
+    border-radius: 6px;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.start-button:hover {
+    background: #357abd;
+    transform: translateY(-1px);
+}
+
+.start-button i {
+    margin-right: 8px;
+}
+
+/* 统计信息样式优化 */
 .course-stats {
     display: flex;
-    align-items: center;
     gap: 15px;
-    margin: 15px 0;
     color: #666;
-    font-size: 0.9em;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.course-stats span {
+    display: flex;
+    align-items: center;
 }
 
 .course-stats i {
-    margin-right: 4px;
+    margin-right: 6px;
     color: #888;
 }
 
@@ -314,27 +345,6 @@ header h1 {
 }
 
 .edit-collection i {
-    margin-right: 6px;
-}
-
-.start-button, .continue-button {
-    display: inline-block;
-    width: 80%;
-    padding: 10px 0;
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    border-radius: 6px;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-
-.start-button:hover, .continue-button:hover {
-    background-color: #45A049;
-}
-
-.start-button i {
     margin-right: 6px;
 }
 
