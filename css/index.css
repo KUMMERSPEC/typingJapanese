@@ -274,12 +274,18 @@ header h1 {
     color: #2196F3;
 }
 
-/* 按钮样式优化 */
+/* 按钮样式 */
+.course-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
 .start-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     padding: 12px 20px;
     background: #4a90e2;
     color: white;
@@ -287,6 +293,7 @@ header h1 {
     font-size: 15px;
     text-decoration: none;
     transition: all 0.2s ease;
+    min-width: 120px;
 }
 
 .start-button:hover {
@@ -318,13 +325,6 @@ header h1 {
 }
 
 /* 按钮样式 */
-.course-actions {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
 .edit-collection {
     display: inline-flex;
     align-items: center;
@@ -1274,9 +1274,9 @@ select option {
 
 .collections-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 10px;
 }
 
 .collection-item {
@@ -1284,7 +1284,9 @@ select option {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 15px;
-    transition: transform 0.2s;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
 }
 
 .collection-item:hover {
@@ -1295,104 +1297,93 @@ select option {
 .collection-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 10px;
 }
 
 .collection-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
+    font-weight: 500;
 }
 
 .collection-description {
     color: #666;
     font-size: 14px;
-    margin: 10px 0;
+    margin: 8px 0;
+    line-height: 1.4;
 }
 
 .collection-stats {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     font-size: 13px;
     color: #888;
-    margin-bottom: 15px;
+    margin-top: 12px;
+}
+
+.collection-stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .collection-stats i {
-    margin-right: 5px;
+    font-size: 14px;
+    color: #999;
 }
 
 .collection-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
     display: flex;
     gap: 8px;
 }
 
-/* 句子预览样式 */
-.sentences-list {
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
-
-.sentence-preview {
-    padding: 8px;
+.collection-actions button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
     border-radius: 4px;
-    background: #f8f8f8;
-    margin-bottom: 8px;
+    transition: all 0.2s ease;
 }
 
-.sentence-preview .japanese {
-    font-size: 15px;
-    margin-bottom: 4px;
-}
-
-.sentence-preview .meaning {
-    font-size: 13px;
-    color: #666;
-}
-
-.more-sentences {
-    text-align: center;
-    font-size: 13px;
-    color: #888;
-    padding: 5px;
-}
-
-/* 空状态样式 */
-.empty-state {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-}
-
-.empty-state i {
-    display: block;
-    margin-bottom: 15px;
-}
-
-/* 表单样式优化 */
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
+.collection-actions button:hover {
+    background: #f5f5f5;
     color: #333;
 }
 
-.form-group input,
-.form-group textarea {
+.add-collection-btn {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    background: none;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
 }
 
-.form-group textarea {
-    min-height: 80px;
-    resize: vertical;
+.add-collection-btn:hover {
+    border-color: #4CAF50;
+    color: #4CAF50;
+    background: #f9f9f9;
+}
+
+/* 移除句子列表相关样式 */
+.sentences-list,
+.sentence-preview,
+.more-sentences {
+    display: none;
 }
 
 /* 添加动画效果 */
@@ -1449,17 +1440,25 @@ select option {
 }
 
 .start-button {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #1976D2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: #4a90e2;
     color: white;
+    border-radius: 6px;
+    font-size: 15px;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    min-width: 120px;
 }
 
 .start-button:hover {
-    background: #1565C0;
+    background: #357abd;
+    transform: translateY(-1px);
+}
+
+.start-button i {
+    margin-right: 8px;
 }
 
