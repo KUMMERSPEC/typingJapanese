@@ -320,7 +320,12 @@ export class CourseDisplay {
                         courseElement.className = 'course-item custom-collection';
                         
                         courseElement.innerHTML = `
-                            <h3>${collection.name}</h3>
+                            <div class="collection-header">
+                                <h3>${collection.name}</h3>
+                                <button class="toggle-sentences" data-collection-id="${id}">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </div>
                             <p>${collection.description || '暂无描述'}</p>
                             <div class="course-stats">
                                 <span>
@@ -331,12 +336,68 @@ export class CourseDisplay {
                                     <i class="fas fa-star"></i> 自定义收藏
                                 </span>
                             </div>
+                            <div class="sentence-list" style="display: none;" data-collection-id="${id}">
+                                ${Object.entries(collection.sentences).map(([sentenceId, sentence]) => `
+                                    <div class="sentence-item">
+                                        <div class="sentence-content">
+                                            <div class="japanese">${sentence.japanese}</div>
+                                            <div class="chinese">${sentence.chinese}</div>
+                                        </div>
+                                        <div class="sentence-actions">
+                                            <button class="edit-sentence" data-collection-id="${id}" data-sentence-id="${sentenceId}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="delete-sentence" data-collection-id="${id}" data-sentence-id="${sentenceId}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
                             <div class="course-actions">
                                 <a href="practice/practice.html?course=${id}&type=custom" class="start-button">
                                     开始练习
                                 </a>
                             </div>
                         `;
+
+                        // 添加展开/折叠功能
+                        const toggleButton = courseElement.querySelector('.toggle-sentences');
+                        const sentenceList = courseElement.querySelector('.sentence-list');
+                        toggleButton.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const icon = toggleButton.querySelector('i');
+                            if (sentenceList.style.display === 'none') {
+                                sentenceList.style.display = 'block';
+                                icon.className = 'fas fa-chevron-up';
+                            } else {
+                                sentenceList.style.display = 'none';
+                                icon.className = 'fas fa-chevron-down';
+                            }
+                        });
+
+                        // 添加编辑和删除功能
+                        courseElement.querySelectorAll('.edit-sentence').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const sentenceId = button.dataset.sentenceId;
+                                const collectionId = button.dataset.collectionId;
+                                window.customCollections.editSentence(collectionId, sentenceId);
+                            });
+                        });
+
+                        courseElement.querySelectorAll('.delete-sentence').forEach(button => {
+                            button.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const sentenceId = button.dataset.sentenceId;
+                                const collectionId = button.dataset.collectionId;
+                                if (confirm('确定要删除这个句子吗？')) {
+                                    window.customCollections.deleteSentence(collectionId, sentenceId);
+                                    this.loadCourses();
+                                }
+                            });
+                        });
+
                         courseListElement.appendChild(courseElement);
                     }
                 });
