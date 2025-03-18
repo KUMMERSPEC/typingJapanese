@@ -301,12 +301,12 @@ export class CourseDisplay {
                             <span><i class="fas fa-book"></i>${collection.sentences ? collection.sentences.length : 0} 个句子</span>
                             <span><i class="fas fa-calendar"></i>${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
+                        <div class="course-actions">
+                            <a href="/typingJapanese/practice/collection-practice.html?collection=${collection.id}" class="start-button">
+                                <i class="fas fa-play"></i> 开始练习
+                            </a>
+                        </div>
                     `;
-
-                    // 修改收藏夹卡片的点击事件
-                    collectionCard.addEventListener('click', () => {
-                        window.location.href = `/typingJapanese/practice/collection-practice.html?collection=${collection.id}`;
-                    });
 
                     courseListContainer.appendChild(collectionCard);
                 });
