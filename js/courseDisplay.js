@@ -301,26 +301,10 @@ export class CourseDisplay {
                             <span><i class="fas fa-book"></i>${collection.sentences ? collection.sentences.length : 0} 个句子</span>
                             <span><i class="fas fa-calendar"></i>${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <div class="course-actions">
-                            <button class="edit-collection" onclick="window.customCollections.editCollection('${collection.id}')">
-                                <i class="fas fa-edit"></i>
-                                编辑
-                            </button>
-                            <a href="/practice.html?collection=${collection.id}" class="start-button">
-                                <i class="fas fa-play"></i>
-                                开始练习
-                            </a>
-                        </div>
                     `;
 
                     // 添加点击事件，进入句子库
-                    collectionCard.addEventListener('click', (e) => {
-                        // 如果点击的是按钮，不触发跳转
-                        if (e.target.closest('.course-actions')) {
-                            e.stopPropagation();
-                            return;
-                        }
-                        // 跳转到句子库页面
+                    collectionCard.addEventListener('click', () => {
                         window.location.href = `/collection.html?id=${collection.id}`;
                     });
 
