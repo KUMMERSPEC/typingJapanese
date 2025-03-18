@@ -303,9 +303,9 @@ export class CourseDisplay {
                         </div>
                     `;
 
-                    // 添加点击事件，进入句子库
+                    // 修改收藏夹卡片的点击事件
                     collectionCard.addEventListener('click', () => {
-                        window.location.href = `/collection.html?id=${collection.id}`;
+                        window.location.href = `/typingJapanese/practice/collection-practice.html?collection=${collection.id}`;
                     });
 
                     courseListContainer.appendChild(collectionCard);

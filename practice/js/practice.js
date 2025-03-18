@@ -1,7 +1,8 @@
 import DataLoader from './dataLoader.js';
 import statsData from '../../js/common/statsData.js';
 
-class PracticeManager {
+// 修改初始化方式
+export class PracticeManager {
     constructor() {
         this.currentQuestionIndex = 0;
         this.questions = [];
@@ -1261,9 +1262,11 @@ class PracticeManager {
 }
 
 // 修改初始化方式
-window.addEventListener('DOMContentLoaded', () => {
-    window.practiceManager = new PracticeManager();
-});
+if (window.location.pathname.includes('practice.html')) {
+    window.addEventListener('DOMContentLoaded', () => {
+        window.practiceManager = new PracticeManager();
+    });
+}
 
 // 检查题目数据结构
 function generateQuestion(data, index, courseKey) {

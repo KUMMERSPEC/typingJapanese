@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏夹练习 - Typing-Japanese</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>收藏夹练习</h1>
+            <div class="lesson-info">
+                <span>第1课 (1/0)</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="practice-container">
+                <div class="character"></div>
+                <div class="input-area"></div>
+                <div class="answer-display"></div>
+                <div class="function-buttons">
+                    <button class="play-audio">
+                        <i class="fas fa-volume-up"></i>
+                        <span>播放</span>
+                        <span class="shortcut">Ctrl</span>
+                    </button>
+                    <button class="mark-mastered-btn">
+                        <span class="btn-icon">✓</span>
+                        <span class="btn-text">标记掌握</span>
+                        <span class="btn-shortcut">Alt+M</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 核心模块 -->
+    <script type="module" src="../js/common/statsData.js"></script>
+    <script type="module" src="js/practice.js"></script>
+    <script type="module" src="js/collection-practice.js"></script>
+</body>
+</html> 

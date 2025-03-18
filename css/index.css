@@ -4,6 +4,8 @@ body {
     padding: 0;
     font-family: 'Noto Sans JP', sans-serif;
     background-color: #f5f5f5;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 .container {
@@ -172,6 +174,7 @@ header h1 {
     align-items: center;
     justify-content: space-between;
     padding: 20px;
+    margin: 10px 0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-radius: 12px;
     background-color: #fff;
@@ -187,6 +190,7 @@ header h1 {
     color: #333;
     font-size: 1.2rem;
     font-weight: 500;
+    text-align: center;
 }
 
 .course-card p {
@@ -194,6 +198,7 @@ header h1 {
     color: #666;
     font-size: 1rem;
     line-height: 1.5;
+    text-align: center;
 }
 
 /* 继续学习卡片样式 */
