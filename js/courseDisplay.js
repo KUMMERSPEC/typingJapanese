@@ -301,22 +301,14 @@ export class CourseDisplay {
                     const collectionCard = document.createElement('div');
                     collectionCard.className = 'collection-item';
                     
-                    // 构建句子列表 HTML
-                    const sentencesHtml = collection.sentences ? collection.sentences.map(sentence => `
-                        <div class="sentence-item">
-                            <div class="sentence-japanese">${sentence.japanese}</div>
-                            <div class="sentence-chinese">${sentence.meaning}</div>
-                        </div>
-                    `).join('') : '';
-                    
                     collectionCard.innerHTML = `
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
                             <div class="collection-actions">
-                                <button class="edit-btn" title="编辑收藏夹">
+                                <button class="edit-btn" type="button" title="编辑收藏夹">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="delete-btn" title="删除收藏夹">
+                                <button class="delete-btn" type="button" title="删除收藏夹">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -326,20 +318,27 @@ export class CourseDisplay {
                             <span><i class="fas fa-book"></i> ${collection.sentences ? collection.sentences.length : 0} 个句子</span>
                             <span><i class="fas fa-calendar"></i> ${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <button class="toggle-sentences" type="button">
-                            <i class="fas fa-chevron-down"></i>
-                            ${collection.sentences?.length ? '查看句子' : '暂无句子'}
-                        </button>
-                        <div class="sentences-list">
-                            ${sentencesHtml}
-                        </div>
+                        ${collection.sentences?.length ? `
+                            <button class="toggle-sentences" type="button">
+                                <i class="fas fa-chevron-down"></i>
+                                查看句子
+                            </button>
+                            <div class="sentences-list">
+                                ${collection.sentences.map(sentence => `
+                                    <div class="sentence-item">
+                                        <div class="sentence-japanese">${sentence.japanese}</div>
+                                        <div class="sentence-chinese">${sentence.meaning}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<div class="no-sentences">暂无句子</div>'}
                     `;
 
                     // 添加展开/折叠功能
                     const toggleBtn = collectionCard.querySelector('.toggle-sentences');
                     const sentencesList = collectionCard.querySelector('.sentences-list');
                     
-                    if (collection.sentences?.length) {
+                    if (toggleBtn && sentencesList) {
                         toggleBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -350,9 +349,6 @@ export class CourseDisplay {
                             }
                             sentencesList.classList.toggle('show');
                         });
-                    } else {
-                        toggleBtn.style.color = '#999';
-                        toggleBtn.style.cursor = 'default';
                     }
 
                     // 添加编辑和删除功能
@@ -362,17 +358,13 @@ export class CourseDisplay {
                     editBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (customCollectionsManager) {
-                            customCollectionsManager.editCollection(collection.id);
-                        }
+                        window.customCollectionsManager.showEditCollectionModal(collection.id);
                     });
                     
                     deleteBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (customCollectionsManager) {
-                            customCollectionsManager.deleteCollection(collection.id);
-                        }
+                        window.customCollectionsManager.deleteCollection(collection.id);
                     });
 
                     courseListContainer.appendChild(collectionCard);
