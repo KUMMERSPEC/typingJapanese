@@ -161,32 +161,19 @@ header h1 {
 
 .course-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
+    padding: 10px;
 }
 
 .course-card {
-    cursor: pointer;
-    position: relative;
+    background: white;
+    border-radius: 12px;
     padding: 20px;
-    margin: 10px;
-    border-radius: 8px;
-    background: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-}
-
-.course-card.current-course {
-    border-left: 4px solid #4CAF50;
-}
-
-.course-status {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: #4CAF50;
-    font-weight: bold;
+    position: relative;
+    overflow: hidden;
 }
 
 .course-card:hover {
@@ -197,57 +184,42 @@ header h1 {
 .course-card h3 {
     margin: 0 0 10px 0;
     color: #333;
+    font-size: 1.2rem;
 }
 
 .course-card p {
     margin: 0;
     color: #666;
     font-size: 0.9rem;
-}
-
-.course-card.recommended {
-    border: 2px solid #4CAF50;
-    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
-    position: relative;
-}
-
-.recommended-badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.next-lesson {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    font-size: 0.9em;
-    color: #666;
+    line-height: 1.4;
 }
 
 .course-card.continue-learning {
     border: 2px solid #2196F3;
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
-    position: relative;
 }
 
-.continue-badge {
+.course-card.recommended {
+    border: 2px solid #4CAF50;
+}
+
+.continue-badge,
+.recommended-badge {
     position: absolute;
     top: -10px;
     right: -10px;
-    background-color: #2196F3;
-    color: white;
     padding: 5px 10px;
     border-radius: 15px;
     font-size: 0.9em;
+    color: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.continue-badge {
+    background-color: #2196F3;
+}
+
+.recommended-badge {
+    background-color: #4CAF50;
 }
 
 .progress-bar {
@@ -270,6 +242,129 @@ header h1 {
     font-size: 0.8em;
     color: #666;
     text-align: right;
+}
+
+.course-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.course-stats i {
+    margin-right: 4px;
+    color: #888;
+}
+
+.course-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.start-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #1976D2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.start-button:hover {
+    background: #1565C0;
+    transform: translateY(-1px);
+}
+
+/* 自定义收藏样式 */
+.course-card.custom-collection {
+    border: 2px solid #9C27B0;
+}
+
+.custom-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: #f3e5f5;
+    color: #9C27B0;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.custom-badge i {
+    font-size: 10px;
+}
+
+.sentence-list {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.sentence-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    background: #f8f8f8;
+    margin-bottom: 8px;
+}
+
+.sentence-content {
+    flex: 1;
+}
+
+.sentence-content .japanese {
+    font-size: 0.95em;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.sentence-content .chinese {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.sentence-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.sentence-actions button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.sentence-actions button:hover {
+    background: #eee;
+    color: #333;
+}
+
+.toggle-sentences {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.toggle-sentences:hover {
+    background: #f0f0f0;
+    color: #333;
 }
 
 /* 响应式设计 */

@@ -211,6 +211,15 @@ export class CourseDisplay {
 
     async loadCourses() {
         try {
+            const courseListContainer = document.querySelector('.course-list');
+            if (!courseListContainer) {
+                console.error('Course list container not found');
+                return;
+            }
+
+            // Clear existing content
+            courseListContainer.innerHTML = '';
+
             // 获取今天的推荐课程
             const recommendation = this.getRecommendedCourse();
             console.log('Today\'s recommendation:', recommendation);
@@ -222,191 +231,134 @@ export class CourseDisplay {
             const continueLearningCourse = this.getContinueLearningCourse();
             console.log('Continue learning course:', continueLearningCourse);
 
-            this.courses = {};
-            
-            // 遍历所有课程，检查是否有进度
-            Object.entries(allCourses).forEach(([courseId, course]) => {
-                const progress = this.getCourseProgress(courseId, course, this.completedLessons);
+            // 创建继续学习的课程卡片
+            if (continueLearningCourse) {
+                const course = allCourses[continueLearningCourse.id];
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card continue-learning';
                 
-                if (progress) {
-                    // 如果课程有进度，添加为继续学习
-                    this.courses[courseId] = {
-                        name: course.name,
-                        description: course.description,
-                        lessons: course.lessons,
-                        nextLesson: progress.nextLesson,
-                        progress: progress.progress,
-                        continueLearning: true
-                    };
-                }
-            });
-
-            // 如果推荐课程不在继续学习列表中，添加为推荐
-            if (!this.courses[recommendation.id]) {
-                const recommendedCourse = allCourses[recommendation.id];
-                this.courses[recommendation.id] = {
-                    name: recommendedCourse.name,
-                    description: recommendedCourse.description,
-                    lessons: recommendedCourse.lessons,
-                    recommended: true,
-                    nextLesson: recommendation.lessonId
-                };
+                const progress = continueLearningCourse.progress;
+                const progressPercentage = (progress.completed / progress.total) * 100;
+                
+                courseCard.innerHTML = `
+                    <span class="continue-badge">继续学习</span>
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-book"></i> ${progress.total} 课时</span>
+                        <span><i class="fas fa-check"></i> ${progress.completed} 已完成</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
+                    <div class="course-actions">
+                        <a href="#" class="start-button" data-course="${continueLearningCourse.id}" data-lesson="${continueLearningCourse.nextLesson}">
+                            <i class="fas fa-play"></i> 继续学习
+                        </a>
+                    </div>
+                `;
+                courseListContainer.appendChild(courseCard);
             }
 
-            const courseListElement = document.getElementById('course-list');
-            if (!courseListElement) return;
+            // 创建推荐课程卡片
+            if (recommendation && (!continueLearningCourse || recommendation.id !== continueLearningCourse.id)) {
+                const recommendedCourse = allCourses[recommendation.id];
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card recommended';
+                
+                courseCard.innerHTML = `
+                    <span class="recommended-badge">今日推荐</span>
+                    <h3>${recommendedCourse.name}</h3>
+                    <p>${recommendedCourse.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-book"></i> ${Object.keys(recommendedCourse.lessons).length} 课时</span>
+                    </div>
+                    <div class="course-actions">
+                        <a href="#" class="start-button" data-course="${recommendation.id}" data-lesson="${recommendation.lessonId}">
+                            <i class="fas fa-play"></i> 开始学习
+                        </a>
+                    </div>
+                `;
+                courseListContainer.appendChild(courseCard);
+            }
 
-            courseListElement.innerHTML = '';
-
-            // 添加继续学习的课程
-            Object.entries(this.courses).forEach(([courseId, course]) => {
-                if (course.continueLearning) {
-                    const courseElement = document.createElement('div');
-                    courseElement.className = 'course-item continue-learning';
+            // 获取自定义收藏夹
+            const customCollectionsManager = window.customCollectionsManager;
+            if (customCollectionsManager) {
+                const collections = customCollectionsManager.getCollections();
+                collections.forEach(collection => {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card custom-collection';
                     
-                    const percent = (course.progress.completed / course.progress.total) * 100;
-                    courseElement.innerHTML = `
-                        <div class="continue-badge">继续学习</div>
-                        <h3>${course.name}</h3>
-                        <p>${course.description || '暂无描述'}</p>
-                        <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${course.progress.total} 个课时</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: ${percent}%"></div>
-                        </div>
-                        <div class="progress-text">
-                            已完成 ${course.progress.completed}/${course.progress.total} 课时
-                        </div>
-                        <div class="course-actions">
-                            <a href="practice/practice.html?course=${courseId}&lesson=${course.nextLesson}" class="start-button">
-                                继续学习
-                            </a>
-                        </div>
-                    `;
-                    courseListElement.appendChild(courseElement);
-                }
-            });
-
-            // 添加推荐课程
-            Object.entries(this.courses).forEach(([courseId, course]) => {
-                if (course.recommended) {
-                    const courseElement = document.createElement('div');
-                    courseElement.className = 'course-item recommended';
+                    const sentenceCount = collection.sentences ? collection.sentences.length : 0;
                     
-                    courseElement.innerHTML = `
-                        <div class="recommended-badge">今日推荐</div>
-                        <h3>${course.name}</h3>
-                        <p>${course.description || '暂无描述'}</p>
+                    courseCard.innerHTML = `
+                        <div class="custom-badge">
+                            <i class="fas fa-folder"></i>
+                            自定义收藏
+                        </div>
+                        <h3>${collection.name}</h3>
                         <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${Object.keys(course.lessons).length} 个课时</span>
+                            <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
                         </div>
-                        <div class="course-actions">
-                            <a href="practice/practice.html?course=${courseId}&lesson=${course.nextLesson}" class="start-button">
-                                开始学习
-                            </a>
-                        </div>
-                    `;
-                    courseListElement.appendChild(courseElement);
-                }
-            });
-
-            // 添加自定义收藏夹
-            if (window.customCollections) {
-                Object.entries(window.customCollections.collections).forEach(([id, collection]) => {
-                    const sentenceCount = Object.keys(collection.sentences).length;
-                    if (sentenceCount > 0) {
-                        const courseElement = document.createElement('div');
-                        courseElement.className = 'course-item custom-collection';
-                        
-                        courseElement.innerHTML = `
-                            <div class="collection-header">
-                                <h3>${collection.name}</h3>
-                                <button class="toggle-sentences" data-collection-id="${id}">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                            </div>
-                            <p>${collection.description || '暂无描述'}</p>
-                            <div class="course-stats">
-                                <span>
-                                    <i class="fas fa-book"></i>
-                                    ${sentenceCount} 个句子
-                                </span>
-                                <span class="custom-badge">
-                                    <i class="fas fa-star"></i> 自定义收藏
-                                </span>
-                            </div>
-                            <div class="sentence-list" style="display: none;" data-collection-id="${id}">
-                                ${Object.entries(collection.sentences).map(([sentenceId, sentence]) => `
-                                    <div class="sentence-item">
-                                        <div class="sentence-content">
-                                            <div class="japanese">${sentence.japanese}</div>
-                                            <div class="chinese">${sentence.chinese}</div>
-                                        </div>
-                                        <div class="sentence-actions">
-                                            <button class="edit-sentence" data-collection-id="${id}" data-sentence-id="${sentenceId}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="delete-sentence" data-collection-id="${id}" data-sentence-id="${sentenceId}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
+                        <button class="toggle-sentences" data-collection-id="${collection.id}">
+                            <i class="fas fa-chevron-down"></i> 查看句子
+                        </button>
+                        <div class="sentence-list" style="display: none;">
+                            ${collection.sentences ? collection.sentences.map(sentence => `
+                                <div class="sentence-item">
+                                    <div class="sentence-content">
+                                        <div class="japanese">${sentence.japanese}</div>
+                                        <div class="chinese">${sentence.chinese}</div>
                                     </div>
-                                `).join('')}
-                            </div>
-                            <div class="course-actions">
-                                <a href="practice/practice.html?course=${id}&type=custom" class="start-button">
-                                    开始练习
-                                </a>
-                            </div>
-                        `;
+                                    <div class="sentence-actions">
+                                        <button class="edit-sentence" data-collection-id="${collection.id}" data-sentence-id="${sentence.id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="delete-sentence" data-collection-id="${collection.id}" data-sentence-id="${sentence.id}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                    `;
+                    courseListContainer.appendChild(courseCard);
 
-                        // 添加展开/折叠功能
-                        const toggleButton = courseElement.querySelector('.toggle-sentences');
-                        const sentenceList = courseElement.querySelector('.sentence-list');
-                        toggleButton.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const icon = toggleButton.querySelector('i');
-                            if (sentenceList.style.display === 'none') {
-                                sentenceList.style.display = 'block';
-                                icon.className = 'fas fa-chevron-up';
-                            } else {
-                                sentenceList.style.display = 'none';
-                                icon.className = 'fas fa-chevron-down';
-                            }
+                    // 添加切换句子列表显示的事件监听器
+                    const toggleButton = courseCard.querySelector('.toggle-sentences');
+                    const sentenceList = courseCard.querySelector('.sentence-list');
+                    if (toggleButton && sentenceList) {
+                        toggleButton.addEventListener('click', () => {
+                            const isHidden = sentenceList.style.display === 'none';
+                            sentenceList.style.display = isHidden ? 'block' : 'none';
+                            toggleButton.querySelector('i').className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
                         });
-
-                        // 添加编辑和删除功能
-                        courseElement.querySelectorAll('.edit-sentence').forEach(button => {
-                            button.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                const sentenceId = button.dataset.sentenceId;
-                                const collectionId = button.dataset.collectionId;
-                                window.customCollections.editSentence(collectionId, sentenceId);
-                            });
-                        });
-
-                        courseElement.querySelectorAll('.delete-sentence').forEach(button => {
-                            button.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                const sentenceId = button.dataset.sentenceId;
-                                const collectionId = button.dataset.collectionId;
-                                if (confirm('确定要删除这个句子吗？')) {
-                                    window.customCollections.deleteSentence(collectionId, sentenceId);
-                                    this.loadCourses();
-                                }
-                            });
-                        });
-
-                        courseListElement.appendChild(courseElement);
                     }
+
+                    // 添加编辑和删除句子的事件监听器
+                    courseCard.querySelectorAll('.edit-sentence').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const collectionId = e.target.closest('button').dataset.collectionId;
+                            const sentenceId = e.target.closest('button').dataset.sentenceId;
+                            customCollectionsManager.editSentence(collectionId, sentenceId);
+                        });
+                    });
+
+                    courseCard.querySelectorAll('.delete-sentence').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const collectionId = e.target.closest('button').dataset.collectionId;
+                            const sentenceId = e.target.closest('button').dataset.sentenceId;
+                            customCollectionsManager.deleteSentence(collectionId, sentenceId);
+                        });
+                    });
                 });
             }
 
-            console.log('Final courses to display:', this.courses);
+            console.log('Courses loaded:', this.courses);
         } catch (error) {
-            console.error('Error loading courses:', error);
-            this.showError('加载课程失败，请刷新重试');
+            console.error('Error in loadCourses:', error);
         }
     }
 
