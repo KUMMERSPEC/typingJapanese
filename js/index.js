@@ -1,5 +1,6 @@
 import statsData from './common/statsData.js';
 import { CourseDisplay } from './courseDisplay.js'; // 导入 CourseDisplay 类
+import { CustomCollectionsManager } from './customCollections.js';
 
 // 初始化复习面板
 function initReviewPanel() {
@@ -75,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化课程显示
     const courseDisplay = new CourseDisplay();
     courseDisplay.loadCourses(); // 使用 CourseDisplay 加载课程
+    
+    // 初始化自定义收藏功能
+    window.customCollections = new CustomCollectionsManager();
     
     // 更新今日日期
     updateDate();
