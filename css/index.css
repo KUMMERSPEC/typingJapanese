@@ -161,35 +161,34 @@ header h1 {
 
 .course-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
     padding: 0;
 }
 
 .course-card {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    cursor: pointer;
     position: relative;
-    overflow: hidden;
-    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
 .course-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .course-card h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     color: #333;
     font-size: 1.1rem;
 }
 
 .course-card p {
-    margin: 0 0 10px 0;
+    margin: 0 0 15px 0;
     color: #666;
     font-size: 0.9rem;
     line-height: 1.4;
@@ -247,19 +246,19 @@ header h1 {
 .course-stats {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 8px 0;
+    gap: 15px;
+    margin: 10px 0;
     color: #666;
-    font-size: 13px;
+    font-size: 0.9em;
 }
 
 .course-stats i {
-    margin-right: 3px;
+    margin-right: 4px;
     color: #888;
 }
 
 .course-actions {
-    margin-top: 12px;
+    margin-top: 15px;
     display: flex;
     justify-content: flex-end;
 }
@@ -267,12 +266,12 @@ header h1 {
 .start-button {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 8px 16px;
     background: #1976D2;
     color: white;
     text-decoration: none;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 0.9em;
     transition: all 0.2s ease;
 }
 
@@ -282,8 +281,7 @@ header h1 {
 }
 
 .start-button i {
-    margin-right: 4px;
-    font-size: 12px;
+    margin-right: 6px;
 }
 
 /* 自定义收藏样式 */
@@ -292,37 +290,37 @@ header h1 {
 }
 
 .custom-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 3px 6px;
-    background: #f3e5f5;
-    color: #9C27B0;
-    border-radius: 8px;
-    font-size: 11px;
     position: absolute;
     top: 10px;
     right: 10px;
+    padding: 4px 8px;
+    background: #f3e5f5;
+    color: #9C27B0;
+    border-radius: 12px;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .custom-badge i {
-    font-size: 9px;
+    font-size: 0.9em;
 }
 
 .sentence-list {
-    margin-top: 12px;
+    margin-top: 15px;
     border-top: 1px solid #eee;
-    padding-top: 12px;
+    padding-top: 15px;
 }
 
 .sentence-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px;
+    padding: 8px;
     border-radius: 4px;
     background: #f8f8f8;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .sentence-content {
@@ -331,16 +329,16 @@ header h1 {
 }
 
 .sentence-content .japanese {
-    font-size: 0.9em;
+    font-size: 0.95em;
     color: #333;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .sentence-content .chinese {
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #666;
     white-space: nowrap;
     overflow: hidden;
@@ -349,8 +347,8 @@ header h1 {
 
 .sentence-actions {
     display: flex;
-    gap: 6px;
-    margin-left: 8px;
+    gap: 8px;
+    margin-left: 12px;
 }
 
 .sentence-actions button {
@@ -358,10 +356,9 @@ header h1 {
     border: none;
     color: #666;
     cursor: pointer;
-    padding: 3px;
-    border-radius: 3px;
+    padding: 4px;
+    border-radius: 4px;
     transition: all 0.2s ease;
-    font-size: 12px;
 }
 
 .sentence-actions button:hover {
@@ -374,15 +371,15 @@ header h1 {
     border: none;
     color: #666;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 8px;
     border-radius: 4px;
     transition: all 0.2s ease;
-    font-size: 13px;
     width: 100%;
     text-align: left;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    font-size: 0.9em;
 }
 
 .toggle-sentences:hover {
@@ -391,7 +388,7 @@ header h1 {
 }
 
 .toggle-sentences i {
-    font-size: 11px;
+    font-size: 0.9em;
 }
 
 /* 响应式设计 */
