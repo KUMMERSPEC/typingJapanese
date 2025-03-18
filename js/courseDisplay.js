@@ -177,7 +177,7 @@ export class CourseDisplay {
         if (lastRecommendation.date === today && 
             availableCourses.includes(lastRecommendation.course.id)) {
             selectedCourseId = lastRecommendation.course.id;
-        } else {
+                } else {
             // 否则随机选择一个新课程
             // 如果上次推荐的课程仍在可用列表中，避免重复推荐
             const filteredCourses = lastRecommendation.course ? 
