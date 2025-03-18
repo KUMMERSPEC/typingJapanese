@@ -279,4 +279,52 @@ export class CustomCollectionsManager {
             this.refreshCollectionsList();
         }
     }
+
+    showEditCollectionModal(collectionId) {
+        const collection = this.collections[collectionId];
+        if (!collection) return;
+
+        const modal = document.getElementById('addCollectionModal');
+        if (!modal) return;
+
+        // 更新模态框标题
+        modal.querySelector('.modal-header h2').textContent = '编辑收藏夹';
+        
+        // 填充表单
+        const form = document.getElementById('addCollectionForm');
+        form.dataset.editId = collectionId;
+        document.getElementById('collectionName').value = collection.name;
+        document.getElementById('collectionDescription').value = collection.description || '';
+
+        // 更新提交按钮文本
+        const submitBtn = form.querySelector('.primary-btn');
+        submitBtn.textContent = '保存修改';
+
+        // 显示模态框
+        modal.classList.add('show');
+
+        // 修改表单提交处理
+        const submitHandler = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('collectionName').value;
+            const description = document.getElementById('collectionDescription').value;
+            
+            this.editCollection(collectionId, name, description);
+            modal.classList.remove('show');
+            form.reset();
+            delete form.dataset.editId;
+            submitBtn.textContent = '创建';
+            
+            // 刷新列表
+            this.refreshCollectionsList();
+            // 触发更新事件
+            window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+            
+            // 移除这个特殊的提交处理函数
+            form.removeEventListener('submit', submitHandler);
+        };
+
+        // 添加一次性提交处理函数
+        form.addEventListener('submit', submitHandler, { once: true });
+    }
 } 

@@ -364,7 +364,20 @@ export class CourseDisplay {
                     deleteBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        window.customCollectionsManager.deleteCollection(collection.id);
+                        window.customCollectionsManager.deleteCollectionWithConfirm(collection.id);
+                    });
+
+                    // 添加点击事件处理
+                    collectionCard.addEventListener('click', (e) => {
+                        // 如果点击的是按钮，不处理
+                        if (e.target.closest('.collection-actions')) {
+                            return;
+                        }
+                        // 否则展开/折叠句子列表
+                        const toggleBtn = collectionCard.querySelector('.toggle-sentences');
+                        if (toggleBtn) {
+                            toggleBtn.click();
+                        }
                     });
 
                     courseListContainer.appendChild(collectionCard);

@@ -154,18 +154,65 @@
     <!-- 课程显示模块 -->
     <script type="module">
         import { CourseDisplay } from './js/courseDisplay.js';
+        import { CustomCollectionsManager } from './js/customCollections.js';
         
         document.addEventListener('DOMContentLoaded', () => {
             try {
+                // 初始化自定义收藏管理器
+                window.customCollectionsManager = new CustomCollectionsManager();
+                
+                // 初始化课程显示
                 const courseDisplay = new CourseDisplay();
                 courseDisplay.loadCourses();
+
+                // 添加收藏夹相关事件监听
+                const collectionsModal = document.getElementById('collectionsModal');
+                const addCollectionModal = document.getElementById('addCollectionModal');
+                
+                // 打开收藏夹列表
+                document.querySelector('[data-action="custom-collection"]').addEventListener('click', () => {
+                    collectionsModal.classList.add('show');
+                });
+
+                // 关闭按钮事件
+                document.querySelectorAll('.close-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        collectionsModal.classList.remove('show');
+                        addCollectionModal.classList.remove('show');
+                    });
+                });
+
+                // 新建收藏夹按钮
+                document.querySelector('.add-collection-btn').addEventListener('click', () => {
+                    collectionsModal.classList.remove('show');
+                    addCollectionModal.classList.add('show');
+                });
+
+                // 处理新建收藏夹表单提交
+                document.getElementById('addCollectionForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('collectionName').value;
+                    const description = document.getElementById('collectionDescription').value;
+                    window.customCollectionsManager.createCollection(name, description);
+                    addCollectionModal.classList.remove('show');
+                    document.getElementById('addCollectionForm').reset();
+                });
+
+                // 取消按钮事件
+                document.querySelectorAll('.cancel-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        addCollectionModal.classList.remove('show');
+                        document.getElementById('addCollectionForm').reset();
+                    });
+                });
+
             } catch (error) {
-                console.error('Error initializing CourseDisplay:', error);
+                console.error('Error initializing:', error);
                 const courseList = document.querySelector('.course-list');
                 if (courseList) {
                     courseList.innerHTML = `
                         <div class="error-message">
-                            加载课程失败，请刷新页面重试
+                            加载失败，请刷新页面重试
                         </div>
                     `;
                 }
