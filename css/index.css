@@ -224,6 +224,8 @@ header h1 {
     display: flex;
     flex-direction: column;
     flex: 1;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .card-content h3 {
@@ -285,7 +287,8 @@ header h1 {
 .course-actions {
     margin-top: auto;
     padding-top: 15px;
-    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .start-button {
@@ -302,6 +305,7 @@ header h1 {
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .start-button:hover {
@@ -1351,6 +1355,8 @@ select option {
     margin-top: 15px;
     border-top: 1px solid #eee;
     padding-top: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .sentences-list.show {
@@ -1362,6 +1368,11 @@ select option {
     border-radius: 6px;
     background: #f8f9fa;
     margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+.sentence-item:hover {
+    background: #f0f0f0;
 }
 
 .sentence-item:last-child {
@@ -1386,12 +1397,18 @@ select option {
     gap: 5px;
     color: #4a90e2;
     font-size: 13px;
-    padding: 5px 0;
+    padding: 8px;
     cursor: pointer;
     border: none;
     background: none;
     width: 100%;
     text-align: left;
+    transition: all 0.2s ease;
+}
+
+.toggle-sentences:hover {
+    background: #f5f5f5;
+    color: #357abd;
 }
 
 .toggle-sentences i {
@@ -1416,7 +1433,7 @@ select option {
     border: none;
     color: #666;
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 8px;
     border-radius: 4px;
     transition: all 0.2s ease;
 }

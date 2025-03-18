@@ -323,10 +323,10 @@ export class CourseDisplay {
                         </div>
                         <p class="collection-description">${collection.description || '暂无描述'}</p>
                         <div class="collection-stats">
-                            <span><i class="fas fa-book"></i>${collection.sentences ? collection.sentences.length : 0} 个句子</span>
-                            <span><i class="fas fa-calendar"></i>${new Date(collection.createdAt).toLocaleDateString()}</span>
+                            <span><i class="fas fa-book"></i> ${collection.sentences ? collection.sentences.length : 0} 个句子</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
-                        <button class="toggle-sentences">
+                        <button class="toggle-sentences" type="button">
                             <i class="fas fa-chevron-down"></i>
                             ${collection.sentences?.length ? '查看句子' : '暂无句子'}
                         </button>
@@ -341,8 +341,13 @@ export class CourseDisplay {
                     
                     if (collection.sentences?.length) {
                         toggleBtn.addEventListener('click', (e) => {
-                            e.stopPropagation(); // 防止事件冒泡
+                            e.preventDefault();
+                            e.stopPropagation();
                             toggleBtn.classList.toggle('expanded');
+                            const icon = toggleBtn.querySelector('i');
+                            if (icon) {
+                                icon.style.transform = toggleBtn.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0)';
+                            }
                             sentencesList.classList.toggle('show');
                         });
                     } else {
@@ -355,15 +360,19 @@ export class CourseDisplay {
                     const deleteBtn = collectionCard.querySelector('.delete-btn');
                     
                     editBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
                         e.stopPropagation();
-                        // 实现编辑功能
-                        console.log('Edit collection:', collection.id);
+                        if (customCollectionsManager) {
+                            customCollectionsManager.editCollection(collection.id);
+                        }
                     });
                     
                     deleteBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
                         e.stopPropagation();
-                        // 实现删除功能
-                        console.log('Delete collection:', collection.id);
+                        if (customCollectionsManager) {
+                            customCollectionsManager.deleteCollection(collection.id);
+                        }
                     });
 
                     courseListContainer.appendChild(collectionCard);
