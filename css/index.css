@@ -173,73 +173,78 @@ header h1 {
     margin: 0;
     border-radius: 8px;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-    border: 1px solid #eee;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
 }
 
 .course-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .course-card h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     color: #333;
     font-size: 1.1rem;
     font-weight: 500;
-    line-height: 1.4;
 }
 
 .course-card p {
-    margin: 0 0 12px 0;
+    margin: 0 0 15px 0;
     color: #666;
     font-size: 0.9rem;
     line-height: 1.5;
-    flex-grow: 1;
 }
 
 /* 继续学习卡片样式 */
 .course-card.continue-learning {
-    border-left: 3px solid #4a90e2;
+    border-left: 4px solid #2196F3;
+    position: relative;
 }
 
 .continue-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85em;
-    color: #4a90e2;
-    background: #f0f7ff;
-    font-weight: normal;
+    top: -10px;
+    right: -10px;
+    background-color: #2196F3;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
 }
 
 /* 今日推荐卡片样式 */
 .course-card.recommended {
-    border-left: 3px solid #66bb6a;
+    border-left: 4px solid #4CAF50;
+    position: relative;
 }
 
 .recommended-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.85em;
-    color: #66bb6a;
-    background: #f1f9f1;
-    font-weight: normal;
+    top: -10px;
+    right: -10px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.next-lesson {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #666;
 }
 
 /* 进度条样式 */
 .progress-bar {
-    margin: 10px 0;
+    margin: 12px 0;
     height: 4px;
     background-color: #f0f0f0;
     border-radius: 2px;
@@ -248,15 +253,15 @@ header h1 {
 
 .progress-bar .progress {
     height: 100%;
-    background-color: #4a90e2;
+    background-color: #2196F3;
     border-radius: 2px;
     transition: width 0.3s ease;
 }
 
 .progress-text {
-    margin-top: 4px;
+    margin-top: 6px;
     font-size: 0.85em;
-    color: #888;
+    color: #666;
     text-align: right;
 }
 
@@ -264,48 +269,67 @@ header h1 {
 .course-stats {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 8px 0;
-    color: #888;
+    gap: 15px;
+    margin: 10px 0;
+    color: #666;
     font-size: 0.9em;
 }
 
 .course-stats i {
     margin-right: 4px;
-    color: #999;
+    color: #888;
 }
 
 /* 按钮样式 */
 .course-actions {
-    margin-top: auto;
-    padding-top: 12px;
+    margin-top: 15px;
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
 }
 
 .start-button {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 6px 16px;
-    background: #fff;
-    color: #4a90e2;
+    padding: 8px 16px;
+    background: #1976D2;
+    color: white;
     text-decoration: none;
     border-radius: 4px;
     font-size: 0.9em;
-    font-weight: normal;
     transition: all 0.2s ease;
-    border: 1px solid #4a90e2;
 }
 
 .start-button:hover {
-    background: #4a90e2;
-    color: #fff;
+    background: #1565C0;
+    transform: translateY(-1px);
 }
 
 .start-button i {
     margin-right: 6px;
+}
+
+.edit-collection {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #f5f5f5;
+    color: #666;
+    border: none;
+    border-radius: 4px;
     font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-collection:hover {
+    background: #e0e0e0;
+    color: #333;
+    transform: translateY(-1px);
+}
+
+.edit-collection i {
+    margin-right: 6px;
 }
 
 /* 自定义收藏卡片样式 */

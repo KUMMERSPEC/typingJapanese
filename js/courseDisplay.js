@@ -304,10 +304,10 @@ export class CourseDisplay {
                         </div>
                         <div class="course-actions">
                             <a href="practice/practice.html?collection=${collection.id}" class="start-button">
-                                <i class="fas fa-chevron-right"></i> 查看详情
+                                <i class="fas fa-play"></i> 开始练习
                             </a>
                             <button class="edit-collection" data-collection-id="${collection.id}">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-edit"></i> 编辑
                             </button>
                         </div>
                     `;
@@ -319,16 +319,9 @@ export class CourseDisplay {
                         editButton.addEventListener('click', (e) => {
                             e.stopPropagation(); // 阻止事件冒泡
                             const collectionId = e.currentTarget.dataset.collectionId;
-                            if (customCollectionsManager.showEditCollectionModal) {
-                                customCollectionsManager.showEditCollectionModal(collectionId);
-                            }
+                            customCollectionsManager.editCollection(collectionId);
                         });
                     }
-
-                    // 添加卡片点击事件
-                    courseCard.addEventListener('click', () => {
-                        window.location.href = `practice/practice.html?collection=${collection.id}`;
-                    });
                 });
             }
 
