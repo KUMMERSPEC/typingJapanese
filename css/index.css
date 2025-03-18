@@ -171,90 +171,92 @@ header h1 {
     position: relative;
     padding: 20px;
     margin: 0;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     transition: all 0.3s ease;
     border: 1px solid #eee;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .course-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .course-card h3 {
     margin: 0 0 8px 0;
-    color: #2c3e50;
-    font-size: 1.2rem;
-    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 500;
     line-height: 1.4;
 }
 
 .course-card p {
-    margin: 0 0 16px 0;
-    color: #64748b;
-    font-size: 0.95rem;
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 0.9rem;
     line-height: 1.5;
+    flex-grow: 1;
 }
 
 /* 继续学习卡片样式 */
 .course-card.continue-learning {
-    background: linear-gradient(to right, #2196F3 0%, #2196F3 4px, #fff 4px, #fff 100%);
+    border-left: 3px solid #4a90e2;
 }
 
 .continue-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 4px 10px;
+    border-radius: 12px;
     font-size: 0.85em;
-    color: white;
-    background: #2196F3;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+    color: #4a90e2;
+    background: #f0f7ff;
+    font-weight: normal;
 }
 
 /* 今日推荐卡片样式 */
 .course-card.recommended {
-    background: linear-gradient(to right, #4CAF50 0%, #4CAF50 4px, #fff 4px, #fff 100%);
+    border-left: 3px solid #66bb6a;
 }
 
 .recommended-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 4px 10px;
+    border-radius: 12px;
     font-size: 0.85em;
-    color: white;
-    background: #4CAF50;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+    color: #66bb6a;
+    background: #f1f9f1;
+    font-weight: normal;
 }
 
 /* 进度条样式 */
 .progress-bar {
-    margin: 12px 0;
-    height: 6px;
-    background-color: #e9ecef;
-    border-radius: 3px;
+    margin: 10px 0;
+    height: 4px;
+    background-color: #f0f0f0;
+    border-radius: 2px;
     overflow: hidden;
 }
 
 .progress-bar .progress {
     height: 100%;
-    background: linear-gradient(to right, #2196F3, #64B5F6);
-    border-radius: 3px;
+    background-color: #4a90e2;
+    border-radius: 2px;
     transition: width 0.3s ease;
 }
 
 .progress-text {
-    margin-top: 6px;
+    margin-top: 4px;
     font-size: 0.85em;
-    color: #64748b;
+    color: #888;
     text-align: right;
 }
 
@@ -262,20 +264,21 @@ header h1 {
 .course-stats {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin: 12px 0;
-    color: #64748b;
+    gap: 12px;
+    margin: 8px 0;
+    color: #888;
     font-size: 0.9em;
 }
 
 .course-stats i {
-    margin-right: 6px;
-    color: #94a3b8;
+    margin-right: 4px;
+    color: #999;
 }
 
 /* 按钮样式 */
 .course-actions {
-    margin-top: 16px;
+    margin-top: auto;
+    padding-top: 12px;
     display: flex;
     justify-content: flex-end;
 }
@@ -283,48 +286,46 @@ header h1 {
 .start-button {
     display: inline-flex;
     align-items: center;
-    padding: 8px 16px;
-    background: linear-gradient(to right, #1976D2, #2196F3);
-    color: white;
+    justify-content: center;
+    padding: 6px 16px;
+    background: #fff;
+    color: #4a90e2;
     text-decoration: none;
-    border-radius: 8px;
-    font-size: 0.95em;
-    font-weight: 500;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: normal;
     transition: all 0.2s ease;
-    border: none;
-    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+    border: 1px solid #4a90e2;
 }
 
 .start-button:hover {
-    background: linear-gradient(to right, #1565C0, #1976D2);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+    background: #4a90e2;
+    color: #fff;
 }
 
 .start-button i {
-    margin-right: 8px;
+    margin-right: 6px;
     font-size: 0.9em;
 }
 
 /* 自定义收藏卡片样式 */
 .course-card.custom-collection {
-    background: linear-gradient(to right, #9C27B0 0%, #9C27B0 4px, #fff 4px, #fff 100%);
+    border-left: 3px solid #9C27B0;
 }
 
 .custom-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 6px 12px;
-    background: #f3e5f5;
+    padding: 4px 10px;
+    background: #fdf4ff;
     color: #9C27B0;
-    border-radius: 20px;
+    border-radius: 12px;
     font-size: 0.85em;
-    font-weight: 500;
+    font-weight: normal;
     display: flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.1);
+    gap: 4px;
 }
 
 .custom-badge i {
