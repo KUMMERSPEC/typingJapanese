@@ -290,28 +290,6 @@ header h1 {
     justify-content: flex-end;
 }
 
-.start-button {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 20px;
-    background: #2196F3;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 1em;
-    transition: all 0.2s ease;
-    border: none;
-}
-
-.start-button:hover {
-    background: #1976D2;
-    transform: translateY(-1px);
-}
-
-.start-button i {
-    margin-right: 6px;
-}
-
 .edit-collection {
     display: inline-flex;
     align-items: center;
@@ -319,7 +297,7 @@ header h1 {
     background: #f5f5f5;
     color: #666;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.9em;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -335,21 +313,50 @@ header h1 {
     margin-right: 6px;
 }
 
-/* 自定义收藏卡片样式 */
+.start-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 20px;
+    background: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.start-button:hover {
+    background: #1976D2;
+    transform: translateY(-1px);
+}
+
+.start-button i {
+    margin-right: 6px;
+}
+
 .course-card.custom-collection {
-    border-left: 3px solid #9C27B0;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.course-card.custom-collection:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .custom-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 4px 10px;
-    background: #fdf4ff;
-    color: #9C27B0;
-    border-radius: 12px;
-    font-size: 0.85em;
-    font-weight: normal;
+    top: 15px;
+    right: 15px;
+    background-color: #9C27B0;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.2);
     display: flex;
     align-items: center;
     gap: 4px;

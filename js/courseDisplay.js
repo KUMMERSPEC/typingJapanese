@@ -288,40 +288,43 @@ export class CourseDisplay {
             if (customCollectionsManager) {
                 const collections = customCollectionsManager.getCollections();
                 collections.forEach(collection => {
-                    const courseCard = document.createElement('div');
-                    courseCard.className = 'course-card custom-collection';
-                    
-                    const sentenceCount = collection.sentences ? collection.sentences.length : 0;
-                    
-                    courseCard.innerHTML = `
+                    const collectionCard = document.createElement('div');
+                    collectionCard.className = 'course-card custom-collection';
+                    collectionCard.innerHTML = `
                         <div class="custom-badge">
                             <i class="fas fa-folder"></i>
                             自定义收藏
                         </div>
                         <h3>${collection.name}</h3>
+                        <p>${collection.description || '暂无描述'}</p>
                         <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
+                            <span><i class="fas fa-book"></i>${collection.sentences ? collection.sentences.length : 0} 个句子</span>
+                            <span><i class="fas fa-calendar"></i>${new Date(collection.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div class="course-actions">
-                            <a href="practice/practice.html?collection=${collection.id}" class="start-button">
-                                <i class="fas fa-play"></i> 开始练习
-                            </a>
-                            <button class="edit-collection" data-collection-id="${collection.id}">
-                                <i class="fas fa-edit"></i> 编辑
+                            <button class="edit-collection" onclick="window.customCollections.editCollection('${collection.id}')">
+                                <i class="fas fa-edit"></i>
+                                编辑
                             </button>
+                            <a href="/practice.html?collection=${collection.id}" class="start-button">
+                                <i class="fas fa-play"></i>
+                                开始练习
+                            </a>
                         </div>
                     `;
-                    courseListContainer.appendChild(courseCard);
 
-                    // 添加编辑收藏夹的事件监听器
-                    const editButton = courseCard.querySelector('.edit-collection');
-                    if (editButton) {
-                        editButton.addEventListener('click', (e) => {
-                            e.stopPropagation(); // 阻止事件冒泡
-                            const collectionId = e.currentTarget.dataset.collectionId;
-                            customCollectionsManager.editCollection(collectionId);
-                        });
-                    }
+                    // 添加点击事件，进入句子库
+                    collectionCard.addEventListener('click', (e) => {
+                        // 如果点击的是按钮，不触发跳转
+                        if (e.target.closest('.course-actions')) {
+                            e.stopPropagation();
+                            return;
+                        }
+                        // 跳转到句子库页面
+                        window.location.href = `/collection.html?id=${collection.id}`;
+                    });
+
+                    courseListContainer.appendChild(collectionCard);
                 });
             }
 
