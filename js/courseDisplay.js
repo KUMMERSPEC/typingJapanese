@@ -302,56 +302,32 @@ export class CourseDisplay {
                         <div class="course-stats">
                             <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
                         </div>
-                        <button class="toggle-sentences" data-collection-id="${collection.id}">
-                            <i class="fas fa-chevron-down"></i> 查看句子
-                        </button>
-                        <div class="sentence-list" style="display: none;">
-                            ${collection.sentences ? collection.sentences.map(sentence => `
-                                <div class="sentence-item">
-                                    <div class="sentence-content">
-                                        <div class="japanese">${sentence.japanese}</div>
-                                        <div class="chinese">${sentence.chinese}</div>
-                                    </div>
-                                    <div class="sentence-actions">
-                                        <button class="edit-sentence" data-collection-id="${collection.id}" data-sentence-id="${sentence.id}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="delete-sentence" data-collection-id="${collection.id}" data-sentence-id="${sentence.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('') : ''}
+                        <div class="course-actions">
+                            <a href="practice/practice.html?collection=${collection.id}" class="start-button">
+                                <i class="fas fa-chevron-right"></i> 查看详情
+                            </a>
+                            <button class="edit-collection" data-collection-id="${collection.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
                         </div>
                     `;
                     courseListContainer.appendChild(courseCard);
 
-                    // 添加切换句子列表显示的事件监听器
-                    const toggleButton = courseCard.querySelector('.toggle-sentences');
-                    const sentenceList = courseCard.querySelector('.sentence-list');
-                    if (toggleButton && sentenceList) {
-                        toggleButton.addEventListener('click', () => {
-                            const isHidden = sentenceList.style.display === 'none';
-                            sentenceList.style.display = isHidden ? 'block' : 'none';
-                            toggleButton.querySelector('i').className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                    // 添加编辑收藏夹的事件监听器
+                    const editButton = courseCard.querySelector('.edit-collection');
+                    if (editButton) {
+                        editButton.addEventListener('click', (e) => {
+                            e.stopPropagation(); // 阻止事件冒泡
+                            const collectionId = e.currentTarget.dataset.collectionId;
+                            if (customCollectionsManager.showEditCollectionModal) {
+                                customCollectionsManager.showEditCollectionModal(collectionId);
+                            }
                         });
                     }
 
-                    // 添加编辑和删除句子的事件监听器
-                    courseCard.querySelectorAll('.edit-sentence').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const collectionId = e.target.closest('button').dataset.collectionId;
-                            const sentenceId = e.target.closest('button').dataset.sentenceId;
-                            customCollectionsManager.editSentence(collectionId, sentenceId);
-                        });
-                    });
-
-                    courseCard.querySelectorAll('.delete-sentence').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const collectionId = e.target.closest('button').dataset.collectionId;
-                            const sentenceId = e.target.closest('button').dataset.sentenceId;
-                            customCollectionsManager.deleteSentence(collectionId, sentenceId);
-                        });
+                    // 添加卡片点击事件
+                    courseCard.addEventListener('click', () => {
+                        window.location.href = `practice/practice.html?collection=${collection.id}`;
                     });
                 });
             }

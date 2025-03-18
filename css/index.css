@@ -170,95 +170,112 @@ header h1 {
     cursor: pointer;
     position: relative;
     padding: 20px;
-    border-radius: 8px;
+    margin: 0;
+    border-radius: 12px;
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     transition: all 0.3s ease;
+    border: 1px solid #eee;
+    overflow: hidden;
 }
 
 .course-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 .course-card h3 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 1.1rem;
-}
-
-.course-card p {
-    margin: 0 0 15px 0;
-    color: #666;
-    font-size: 0.9rem;
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
     line-height: 1.4;
 }
 
+.course-card p {
+    margin: 0 0 16px 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* 继续学习卡片样式 */
 .course-card.continue-learning {
-    border-left: 4px solid #2196F3;
-}
-
-.course-card.recommended {
-    border-left: 4px solid #4CAF50;
-}
-
-.continue-badge,
-.recommended-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    color: white;
+    background: linear-gradient(to right, #2196F3 0%, #2196F3 4px, #fff 4px, #fff 100%);
 }
 
 .continue-badge {
-    background-color: #2196F3;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    color: white;
+    background: #2196F3;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+}
+
+/* 今日推荐卡片样式 */
+.course-card.recommended {
+    background: linear-gradient(to right, #4CAF50 0%, #4CAF50 4px, #fff 4px, #fff 100%);
 }
 
 .recommended-badge {
-    background-color: #4CAF50;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    color: white;
+    background: #4CAF50;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
 }
 
+/* 进度条样式 */
 .progress-bar {
-    margin: 10px 0;
-    height: 4px;
-    background-color: #e0e0e0;
-    border-radius: 2px;
+    margin: 12px 0;
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .progress-bar .progress {
     height: 100%;
-    background-color: #2196F3;
-    border-radius: 2px;
+    background: linear-gradient(to right, #2196F3, #64B5F6);
+    border-radius: 3px;
     transition: width 0.3s ease;
 }
 
 .progress-text {
-    margin-top: 4px;
-    font-size: 0.8em;
-    color: #666;
+    margin-top: 6px;
+    font-size: 0.85em;
+    color: #64748b;
     text-align: right;
 }
 
+/* 课程统计信息样式 */
 .course-stats {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin: 10px 0;
-    color: #666;
+    gap: 16px;
+    margin: 12px 0;
+    color: #64748b;
     font-size: 0.9em;
 }
 
 .course-stats i {
-    margin-right: 4px;
-    color: #888;
+    margin-right: 6px;
+    color: #94a3b8;
 }
 
+/* 按钮样式 */
 .course-actions {
-    margin-top: 15px;
+    margin-top: 16px;
     display: flex;
     justify-content: flex-end;
 }
@@ -267,40 +284,47 @@ header h1 {
     display: inline-flex;
     align-items: center;
     padding: 8px 16px;
-    background: #1976D2;
+    background: linear-gradient(to right, #1976D2, #2196F3);
     color: white;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.9em;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 500;
     transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
 }
 
 .start-button:hover {
-    background: #1565C0;
+    background: linear-gradient(to right, #1565C0, #1976D2);
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
 }
 
 .start-button i {
-    margin-right: 6px;
+    margin-right: 8px;
+    font-size: 0.9em;
 }
 
-/* 自定义收藏样式 */
+/* 自定义收藏卡片样式 */
 .course-card.custom-collection {
-    border-left: 4px solid #9C27B0;
+    background: linear-gradient(to right, #9C27B0 0%, #9C27B0 4px, #fff 4px, #fff 100%);
 }
 
 .custom-badge {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 4px 8px;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
     background: #f3e5f5;
     color: #9C27B0;
-    border-radius: 12px;
-    font-size: 0.8em;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.1);
 }
 
 .custom-badge i {
