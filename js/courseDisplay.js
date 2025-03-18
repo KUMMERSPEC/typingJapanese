@@ -253,7 +253,7 @@ export class CourseDisplay {
                     </div>
                     <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
                     <div class="course-actions">
-                        <a href="#" class="start-button" data-course="${continueLearningCourse.id}" data-lesson="${continueLearningCourse.nextLesson}">
+                        <a href="practice/practice.html?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
                             <i class="fas fa-play"></i> 继续学习
                         </a>
                     </div>
@@ -275,7 +275,7 @@ export class CourseDisplay {
                         <span><i class="fas fa-book"></i> ${Object.keys(recommendedCourse.lessons).length} 课时</span>
                     </div>
                     <div class="course-actions">
-                        <a href="#" class="start-button" data-course="${recommendation.id}" data-lesson="${recommendation.lessonId}">
+                        <a href="practice/practice.html?course=${recommendation.id}&lesson=${recommendation.lessonId}" class="start-button">
                             <i class="fas fa-play"></i> 开始学习
                         </a>
                     </div>
