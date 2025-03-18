@@ -316,22 +316,27 @@ export class CourseDisplay {
                         <p class="collection-description">${collection.description || '暂无描述'}</p>
                         <div class="collection-stats">
                             <span><i class="fas fa-book"></i> ${collection.sentences ? collection.sentences.length : 0} 个句子</span>
-                            <span><i class="fas fa-calendar"></i> ${new Date(collection.createdAt).toLocaleDateString()}</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                         </div>
-                        ${collection.sentences?.length ? `
-                            <button class="toggle-sentences" type="button">
-                                <i class="fas fa-chevron-down"></i>
-                                查看句子 (${collection.sentences.length})
-                            </button>
-                            <div class="sentences-list">
-                                ${collection.sentences.map(sentence => `
-                                    <div class="sentence-item">
-                                        <div class="sentence-japanese">${sentence.japanese}</div>
-                                        <div class="sentence-chinese">${sentence.meaning}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : '<div class="no-sentences">暂无句子</div>'}
+                        <div class="course-actions">
+                            ${collection.sentences && collection.sentences.length > 0 ? `
+                                <a href="practice/practice.html?collection=${collection.id}" class="start-button">
+                                    <i class="fas fa-play"></i> 去练习
+                                </a>
+                            ` : ''}
+                        </div>
+                        <button class="toggle-sentences" type="button">
+                            <i class="fas fa-chevron-down"></i>
+                            查看句子 (${collection.sentences ? collection.sentences.length : 0})
+                        </button>
+                        <div class="sentences-list">
+                            ${collection.sentences ? collection.sentences.map(sentence => `
+                                <div class="sentence-item">
+                                    <div class="sentence-japanese">${sentence.japanese}</div>
+                                    <div class="sentence-chinese">${sentence.meaning}</div>
+                                </div>
+                            `).join('') : '<div class="no-sentences">暂无句子</div>'}
+                        </div>
                     `;
 
                     // 添加展开/折叠功能

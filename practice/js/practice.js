@@ -35,77 +35,106 @@ export class PracticeManager {
         try {
             console.log('Starting initialization...');
             
-            // 从 URL 获取课程参数
+            // 从 URL 获取参数
             const urlParams = new URLSearchParams(window.location.search);
             const course = urlParams.get('course');
             const lesson = urlParams.get('lesson');
+            const collectionId = urlParams.get('collection');
 
-            console.log('URL parameters:', { course, lesson });
+            console.log('URL parameters:', { course, lesson, collectionId });
 
-            if (!course || !lesson) {
-                throw new Error('Course or lesson parameter is missing');
+            // 如果是收藏夹练习
+            if (collectionId) {
+                // 获取收藏夹数据
+                const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+                const collection = collections[collectionId];
+                
+                if (!collection) {
+                    throw new Error('Collection not found');
+                }
+
+                // 将收藏夹的句子转换为练习题目格式
+                this.questions = Object.values(collection.sentences).map(sentence => ({
+                    type: 'split',
+                    character: sentence.japanese,
+                    hiragana: sentence.hiragana,
+                    meaning: sentence.meaning,
+                    romaji: sentence.romaji,
+                    answers: [sentence.hiragana]
+                }));
+
+                // 保存课程信息
+                this.course = 'collection';
+                this.lesson = collectionId;
+            } else {
+                // 原有的课程练习逻辑
+                if (!course || !lesson) {
+                    throw new Error('Course or lesson parameter is missing');
+                }
+
+                this.course = course;
+                this.lesson = lesson;
+
+                // 加载课程数据
+                console.log('Loading course data...');
+                try {
+                    const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
+                    console.log('Loaded lesson data:', lessonData);
+                    
+                    if (!lessonData || !lessonData.questions || !Array.isArray(lessonData.questions)) {
+                        throw new Error('Invalid lesson data structure');
+                    }
+
+                    // 获取已掌握的句子
+                    const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+                    
+                    // 过滤掉已掌握的句子
+                    this.questions = lessonData.questions.filter(question => {
+                        const questionKey = `${course}:${lesson}:${question.character}`;
+                        return !masteredSentences[questionKey];
+                    });
+                } catch (loadError) {
+                    console.error('Error loading lesson data:', loadError);
+                    throw new Error(`Failed to load lesson data: ${loadError.message}`);
+                }
             }
 
-            // 保存课程和课程名到实例中
-            this.course = course;
-            this.lesson = lesson;
+            // 确保题目数组不为空
+            if (this.questions.length === 0) {
+                alert('没有可练习的句子！');
+                window.location.href = '../index.html';
+                return;
+            }
 
-            // 加载课程数据
-            console.log('Loading course data...');
-            try {
-                const lessonData = await DataLoader.getCourseWithLessonData(course, lesson);
-                console.log('Loaded lesson data:', lessonData);
-                
-                // 确保题目数组正确加载
-                if (!lessonData || !lessonData.questions || !Array.isArray(lessonData.questions)) {
-                    throw new Error('Invalid lesson data structure');
-                }
+            // 重置当前题目索引
+            this.currentQuestionIndex = 0;
 
-                // 获取已掌握的句子
-                const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
-                
-                // 过滤掉已掌握的句子
-                this.questions = lessonData.questions.filter(question => {
-                    const questionKey = `${course}:${lesson}:${question.character}`;
-                    return !masteredSentences[questionKey];
-                });
-                
-                // 确保题目数组不为空
-                if (this.questions.length === 0) {
-                    // 如果所有题目都已掌握，显示提示并返回课程列表
-                    alert('恭喜！本课程的所有内容你都已掌握！');
-                    window.location.href = '../courses.html';
-                    return;
-                }
-
-                // 重置当前题目索引
-                this.currentQuestionIndex = 0;
-
-                // 更新页面标题和进度
-                const titleElement = document.querySelector('.lesson-info span');
-                if (titleElement) {
+            // 更新页面标题和进度
+            const titleElement = document.querySelector('.lesson-info span');
+            if (titleElement) {
+                if (collectionId) {
+                    const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+                    const collection = collections[collectionId];
+                    titleElement.textContent = `${collection.name} (1/${this.questions.length})`;
+                } else {
                     const lessonNumber = parseInt(this.lesson.replace('lesson', ''));
                     titleElement.textContent = `第${lessonNumber}课 (1/${this.questions.length})`;
                 }
-                
-                // 显示第一个题目
-                this.showQuestion();
-
-                this.totalSentences = this.questions.length;
-                this.completedSentences = 0;
-
-                // 绑定事件监听器
-                this.bindEvents();
-
-            } catch (loadError) {
-                console.error('Error loading lesson data:', loadError);
-                throw new Error(`Failed to load lesson data: ${loadError.message}`);
             }
+            
+            // 显示第一个题目
+            this.showQuestion();
+
+            this.totalSentences = this.questions.length;
+            this.completedSentences = 0;
+
+            // 绑定事件监听器
+            this.bindEvents();
 
         } catch (error) {
             console.error('Error in init:', error);
-            alert('加载课程失败，请返回重试');
-            window.location.href = '../courses.html';
+            alert('加载失败，请返回重试');
+            window.location.href = '../index.html';
         }
     }
 
@@ -836,6 +865,49 @@ export class PracticeManager {
                 splitCount: splitCount
             });
             
+            // 如果是收藏夹练习
+            if (this.course === 'collection') {
+                // 创建完成界面
+                const completeScreen = document.createElement('div');
+                completeScreen.className = 'completion-screen';
+                completeScreen.innerHTML = `
+                    <h1>おめでとう！</h1>
+                    <p>练习完成！</p>
+                    <p>本次练习: ${splitCount} 个句子</p>
+                    <div class="button-group">
+                        <button class="restart-btn" onclick="location.reload()">重新练习</button>
+                        <button class="return-btn" onclick="window.location.href='/typingJapanese/'">返回首页</button>
+                    </div>
+                `;
+
+                // 添加到页面
+                const practiceContainer = document.querySelector('.practice-container');
+                if (practiceContainer) {
+                    practiceContainer.innerHTML = '';
+                    practiceContainer.appendChild(completeScreen);
+                }
+                
+                // 创建彩花和星星效果
+                this.createConfetti(completeScreen);
+                this.createStars(completeScreen);
+                
+                // 播放掌声和祝贺音效
+                const applause = new Audio('assets/audio/applause.mp3');
+                applause.play().catch(error => {
+                    console.warn('Failed to play applause:', error);
+                });
+
+                // 朗读祝贺语
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance('おめでとうございます');
+                    utterance.lang = 'ja-JP';
+                    window.speechSynthesis.speak(utterance);
+                }, 1000);
+
+                return;
+            }
+
+            // 原有的课程完成逻辑
             // 保存课程数据到 localStorage
             const courseKey = `course_${this.course}_${this.lesson}`;
             localStorage.setItem(courseKey, JSON.stringify({

@@ -223,39 +223,15 @@ export class CustomCollectionsManager {
         }
         
         Object.entries(this.collections).forEach(([id, collection]) => {
-            const sentenceCount = Object.keys(collection.sentences).length;
+            const sentenceCount = Object.keys(collection.sentences || {}).length;
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
             
-            // 创建句子列表HTML
-            let sentencesHtml = '';
-            if (sentenceCount > 0) {
-                sentencesHtml = '<div class="sentences-list">';
-                Object.values(collection.sentences).slice(0, 3).forEach(sentence => {
-                    sentencesHtml += `
-                        <div class="sentence-preview">
-                            <div class="japanese">${sentence.japanese}</div>
-                            <div class="meaning">${sentence.meaning}</div>
-                        </div>
-                    `;
-                });
-                if (sentenceCount > 3) {
-                    sentencesHtml += `<div class="more-sentences">还有 ${sentenceCount - 3} 个句子...</div>`;
-                }
-                sentencesHtml += '</div>';
-            }
-
             collectionElement.innerHTML = `
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
                     <div class="collection-actions">
-                        <button onclick="window.customCollections.showAddSentenceModal('${id}')" class="action-button" title="添加句子">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button onclick="window.customCollections.showEditCollectionModal('${id}')" class="action-button" title="编辑收藏夹">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="window.customCollections.deleteCollectionWithConfirm('${id}')" class="action-button" title="删除收藏夹">
+                        <button class="delete-btn" title="删除收藏夹">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -263,10 +239,17 @@ export class CustomCollectionsManager {
                 <p class="collection-description">${collection.description || '暂无描述'}</p>
                 <div class="collection-stats">
                     <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
-                    <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                 </div>
-                ${sentencesHtml}
             `;
+
+            // 添加删除功能
+            const deleteBtn = collectionElement.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.deleteCollectionWithConfirm(id);
+            });
+
             listContainer.appendChild(collectionElement);
         });
     }
