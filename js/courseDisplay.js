@@ -394,11 +394,22 @@ export class CourseDisplay {
                         flashcardButton.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            const sentences = this.getSentencesForFlashcard(collection.id);
-                            if (sentences.length === 0) {
+                            if (!collection.sentences || collection.sentences.length === 0) {
                                 alert('当前收藏夹没有句子，请先添加句子');
                                 return;
                             }
+                            const sentences = collection.sentences.map(sentence => ({
+                                id: sentence.id,
+                                japanese: sentence.japanese,
+                                hiragana: sentence.hiragana,
+                                romaji: sentence.romaji,
+                                meaning: sentence.meaning,
+                                type: 'custom',
+                                course: collection.name,
+                                lesson: '自定义',
+                                proficiency: 'low',
+                                lastReview: new Date().toISOString()
+                            }));
                             sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
                             window.location.href = 'review/flashcard.html';
                         });
