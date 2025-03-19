@@ -350,34 +350,10 @@ export class CourseDisplay {
                         toggleBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            
-                            // 关闭其他已展开的列表
-                            document.querySelectorAll('.sentences-list.expanded').forEach(list => {
-                                if (list !== sentencesList) {
-                                    list.classList.remove('expanded');
-                                    const btn = list.parentElement.querySelector('.toggle-sentences');
-                                    if (btn) btn.classList.remove('expanded');
-                                }
-                            });
-
-                            // 切换当前列表
                             toggleBtn.classList.toggle('expanded');
                             sentencesList.classList.toggle('expanded');
-                            
-                            // 如果展开，确保该卡片可见
-                            if (sentencesList.classList.contains('expanded')) {
-                                collectionCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                            }
                         });
                     }
-
-                    // 点击外部关闭展开的列表
-                    document.addEventListener('click', (e) => {
-                        if (!collectionCard.contains(e.target)) {
-                            toggleBtn.classList.remove('expanded');
-                            sentencesList.classList.remove('expanded');
-                        }
-                    });
 
                     // 添加句子按钮事件
                     const addSentenceBtn = collectionCard.querySelector('.add-sentence-btn');
