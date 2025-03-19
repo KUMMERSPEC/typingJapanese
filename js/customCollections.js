@@ -383,11 +383,16 @@ export class CustomCollectionsManager {
                         const result = await japaneseConverter.convert(japanese);
                         
                         // 更新输入框
-                        hiraganaInput.value = result.hiragana;
-                        romajiInput.value = result.romaji;
+                        hiraganaInput.value = result.hiragana || japanese;
+                        romajiInput.value = result.romaji || japanese;
                     } catch (error) {
                         console.error('转换失败:', error);
-                        alert('转换失败，请重试');
+                        alert('转换失败，请手动输入假名和罗马音');
+                        
+                        // 尝试分解日语句子为单个字符，用冒号分隔
+                        if (japanese) {
+                            hiraganaInput.value = japanese.split('').join(':');
+                        }
                     } finally {
                         // 隐藏加载动画
                         hiraganaSpinner.style.display = 'none';
@@ -418,10 +423,16 @@ export class CustomCollectionsManager {
                             const result = await japaneseConverter.convert(japanese);
                             
                             // 更新输入框
-                            hiraganaInput.value = result.hiragana;
-                            romajiInput.value = result.romaji;
+                            hiraganaInput.value = result.hiragana || japanese;
+                            romajiInput.value = result.romaji || japanese;
                         } catch (error) {
                             console.error('自动转换失败:', error);
+                            // 不显示错误提示以避免打断用户输入
+                            
+                            // 尝试分解日语句子为单个字符，用冒号分隔
+                            if (japanese) {
+                                hiraganaInput.value = japanese.split('').join(':');
+                            }
                         } finally {
                             // 隐藏加载动画
                             hiraganaSpinner.style.display = 'none';
@@ -432,9 +443,12 @@ export class CustomCollectionsManager {
             }).catch(error => {
                 console.error('加载转换器失败:', error);
                 if (convertBtn) {
-                    convertBtn.disabled = true;
-                    convertBtn.title = '转换器加载失败';
+                    convertBtn.disabled = false; // 保持按钮可用，用户可以手动尝试
+                    convertBtn.title = '日语转换器加载失败，但您仍可以点击尝试转换';
                 }
+                
+                // 为用户提供友好提示
+                alert('日语转换功能可能不可用，您需要手动填写假名和罗马音');
             });
 
             addSentenceForm.addEventListener('submit', (e) => {

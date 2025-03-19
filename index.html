@@ -14,8 +14,24 @@
     <link rel="stylesheet" href="practice/assets/fonts/css/all.min.css">
     
     <!-- 添加 Kuroshiro 相关依赖 -->
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js" crossorigin="anonymous"></script>
+    <!-- 验证 Kuroshiro 是否加载成功 -->
+    <script>
+        window.addEventListener('load', function() {
+            if (typeof Kuroshiro !== 'undefined') {
+                console.log('Kuroshiro 库加载成功');
+            } else {
+                console.error('Kuroshiro 库加载失败');
+            }
+            
+            if (typeof KuromojiAnalyzer !== 'undefined') {
+                console.log('KuromojiAnalyzer 库加载成功');
+            } else {
+                console.error('KuromojiAnalyzer 库加载失败');
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">
