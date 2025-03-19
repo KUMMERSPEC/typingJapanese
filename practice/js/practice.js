@@ -66,6 +66,9 @@ export class PracticeManager {
                 // 保存课程信息
                 this.course = 'collection';
                 this.lesson = collectionId;
+
+                // 初始化语音合成
+                await this.initVoice();
             } else {
                 // 原有的课程练习逻辑
                 if (!course || !lesson) {
@@ -862,11 +865,18 @@ export class PracticeManager {
                 course: this.course,
                 lesson: this.lesson,
                 totalQuestions: this.questions.length,
-                splitCount: splitCount
+                splitCount: splitCount,
+                completedSentences: this.completedSentences
             });
             
             // 如果是收藏夹练习
             if (this.course === 'collection') {
+                // 隐藏练习相关的元素
+                const practiceElements = document.querySelectorAll('.practice-container > *:not(.completion-screen)');
+                practiceElements.forEach(element => {
+                    if (element) element.style.display = 'none';
+                });
+
                 // 创建完成界面
                 const completeScreen = document.createElement('div');
                 completeScreen.className = 'completion-screen';
@@ -883,7 +893,6 @@ export class PracticeManager {
                 // 添加到页面
                 const practiceContainer = document.querySelector('.practice-container');
                 if (practiceContainer) {
-                    practiceContainer.innerHTML = '';
                     practiceContainer.appendChild(completeScreen);
                 }
                 
@@ -892,144 +901,18 @@ export class PracticeManager {
                 this.createStars(completeScreen);
                 
                 // 播放掌声和祝贺音效
-                const applause = new Audio('assets/audio/applause.mp3');
+                const applause = new Audio('../assets/audio/applause.mp3');
                 applause.play().catch(error => {
                     console.warn('Failed to play applause:', error);
                 });
 
-                // 朗读祝贺语
+                // 使用语音合成播放祝贺消息
                 setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance('おめでとうございます');
-                    utterance.lang = 'ja-JP';
-                    window.speechSynthesis.speak(utterance);
+                    this.speak('おめでとうございます！');
                 }, 1000);
-
-                return;
             }
-
-            // 原有的课程完成逻辑
-            // 保存课程数据到 localStorage
-            const courseKey = `course_${this.course}_${this.lesson}`;
-            localStorage.setItem(courseKey, JSON.stringify({
-                questions: this.questions,
-                title: document.querySelector('.lesson-info span')?.textContent || ''
-            }));
-
-            // 标记课程为已完成
-            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
-            if (!completedLessons[this.course]) {
-                completedLessons[this.course] = [];
-            }
-            if (!completedLessons[this.course].includes(this.lesson)) {
-                completedLessons[this.course].push(this.lesson);
-                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
-                
-                // 触发自定义事件通知课程列表更新
-                const event = new CustomEvent('lessonCompleted', {
-                    detail: {
-                        course: this.course,
-                        lesson: this.lesson
-                    }
-                });
-                window.dispatchEvent(event);
-            }
-            
-            // 更新统计，只传递 split 类型的题目
-            const lessonId = `${this.course}:${this.lesson}`;
-            const updatedTotal = statsData.updateDailyStats(lessonId, splitCount, splitQuestions);
-            
-            // 验证数据保存
-            console.log('Statistics updated:', {
-                lessonId,
-                splitCount,
-                updatedTotal
-            });
-
-            // 隐藏练习相关的元素
-            const practiceElements = document.querySelectorAll('.character, .input-area, .answer-display, .previous-question');
-            practiceElements.forEach(element => {
-                if (element) element.style.display = 'none';
-            });
-
-            // 创建完成界面
-            const completeScreen = document.createElement('div');
-            completeScreen.className = 'completion-screen';
-            completeScreen.innerHTML = `
-                <h1>おめでとう！</h1>
-                <p>课程完成！</p>
-                <p>今日已学习: ${splitCount} 个句子</p>
-                <p>连续学习: ${statsData.getLearningDays()} 天</p>
-                <div class="button-group">
-                    <button class="restart-btn" onclick="location.reload()">重新开始</button>
-                    <button class="next-lesson-btn">下一课</button>
-                    <button class="return-btn" onclick="window.location.href='/typingJapanese/'">返回首页</button>
-                </div>
-            `;
-
-            // 添加到页面
-            const practiceContainer = document.querySelector('.practice-container');
-            if (practiceContainer) {
-                practiceContainer.innerHTML = '';
-                practiceContainer.appendChild(completeScreen);
-            }
-            // 创建彩花和星星效果
-            this.createConfetti(completeScreen);
-            this.createStars(completeScreen);
-            // 绑定下一课按钮事件
-            const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
-            if (nextLessonBtn) {
-                nextLessonBtn.onclick = async () => {
-                    try {
-                        // 直接从当前课程信息构建下一课
-                        const currentLessonNumber = parseInt(this.lesson.replace('lesson', ''));
-                        const nextLessonNumber = currentLessonNumber + 1;
-                        const nextLesson = `lesson${nextLessonNumber}`;
-
-                        // 验证下一课是否存在
-                        try {
-                            // 尝试加载下一课的数据来验证其存在性
-                            await DataLoader.getCourseWithLessonData(this.course, nextLesson);
-                            
-                            // 如果成功加载，则跳转到下一课
-                            console.log('Navigating to next lesson:', {
-                                course: this.course,
-                                currentLesson: this.lesson,
-                                nextLesson: nextLesson
-                            });
-                            
-                            // 使用基于域名的绝对路径
-                            window.location.href = `/typingJapanese/practice/practice.html?course=${this.course}&lesson=${nextLesson}`;
-                        } catch (loadError) {
-                            // 如果无法加载下一课，说明已经是最后一课
-                            console.log('No more lessons available:', loadError);
-                            alert('恭喜！您已完成本课程的所有课时！');
-                            window.location.href = '/typingJapanese/';
-                        }
-                    } catch (error) {
-                        console.error('Error navigating to next lesson:', error);
-                        console.error('Course:', this.course);
-                        console.error('Current lesson:', this.lesson);
-                        alert('无法加载下一课，请返回首页重试');
-                        window.location.href = '/typingJapanese/';
-                    }
-                };
-            }
-            // 播放掌声和祝贺音效
-            const applause = new Audio('assets/audio/applause.mp3');
-            applause.play().catch(error => {
-                console.warn('Failed to play applause:', error);
-            });
-
-            // 朗读祝贺语
-            setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance('おめでとうございます');
-                utterance.lang = 'ja-JP';
-                window.speechSynthesis.speak(utterance);
-            }, 1000);
-
         } catch (error) {
             console.error('Error in showComplete:', error);
-            alert('完成界面显示出错，但您已完成本课程！');
         }
     }
 
@@ -1083,24 +966,18 @@ export class PracticeManager {
     }
 
     checkSplitAnswer() {
-        const question = this.questions[this.currentQuestionIndex];
         const inputs = document.querySelectorAll('.split-input');
         const answers = Array.from(inputs).map(input => input.value.trim());
-        
-        // 获取正确答案数组
-        const correctAnswers = question.answers.split('|').map(answer => {
-            const [kana, romaji] = answer.split(':');
-            return kana;
-        });
+        const question = this.questions[this.currentQuestionIndex];
 
         console.log('Checking answers:', {
             userAnswers: answers,
-            correctAnswers: correctAnswers
+            correctAnswers: question.answers
         });
 
         // 检查每个答案并标记
         const allCorrect = answers.every((answer, index) => {
-            const correctAnswer = correctAnswers[index];
+            const correctAnswer = question.answers[index];
             const input = inputs[index];
             const isCorrect = answer === correctAnswer;
 
@@ -1152,7 +1029,7 @@ export class PracticeManager {
                 <div class="meaning-text">${question.meaning}</div>
             `;
 
-            // 直接添加答案内容，不添加按钮
+            // 直接添加答案内容
             answerDisplay.appendChild(answerContent);
             
             // 播放声音
@@ -1162,19 +1039,11 @@ export class PracticeManager {
             if (this.nextQuestionTimer) {
                 clearTimeout(this.nextQuestionTimer);
             }
-            
-            // 2秒后进入下一题
+
+            // 设置定时器，2秒后进入下一题
             this.nextQuestionTimer = setTimeout(() => {
                 this.nextQuestion();
             }, 2000);
-        } else {
-            // 显示错误动画
-            inputs.forEach(input => {
-                if (input.classList.contains('error')) {
-                    input.classList.add('shake');
-                    setTimeout(() => input.classList.remove('shake'), 500);
-                }
-            });
         }
     }
 
