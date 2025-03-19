@@ -385,7 +385,14 @@ export class CustomCollectionsManager {
         const collection = this.collections[collectionId];
         if (!collection) return;
 
+        // 先移除可能存在的旧模态框
+        const existingModal = document.querySelector('#manageSentencesModal');
+        if (existingModal) {
+            document.body.removeChild(existingModal);
+        }
+
         const modal = document.createElement('div');
+        modal.id = 'manageSentencesModal';
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
@@ -396,67 +403,63 @@ export class CustomCollectionsManager {
                 <div class="sentences-container">
                     ${Object.entries(collection.sentences || {}).length === 0 
                         ? '<p class="no-sentences">暂无句子</p>'
-                        : '<div class="sentences-list"></div>'
+                        : `<div class="sentences-list">
+                            ${Object.entries(collection.sentences || {}).map(([id, sentence]) => `
+                                <div class="sentence-item">
+                                    <div class="sentence-content">
+                                        <div class="japanese">${sentence.japanese}</div>
+                                        <div class="chinese">${sentence.meaning}</div>
+                                    </div>
+                                    <div class="sentence-actions">
+                                        <button class="delete-sentence-btn" data-id="${id}" title="删除句子">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                           </div>`
                     }
                 </div>
             </div>
         `;
 
-        // 添加句子列表
-        const sentencesList = modal.querySelector('.sentences-list');
-        if (sentencesList) {
-            Object.entries(collection.sentences || {}).forEach(([id, sentence]) => {
-                const sentenceItem = document.createElement('div');
-                sentenceItem.className = 'sentence-item';
-                sentenceItem.innerHTML = `
-                    <div class="sentence-content">
-                        <div class="japanese">${sentence.japanese}</div>
-                        <div class="chinese">${sentence.meaning}</div>
-                    </div>
-                    <div class="sentence-actions">
-                        <button class="delete-sentence-btn" title="删除句子">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-
-                // 删除句子按钮事件
-                const deleteBtn = sentenceItem.querySelector('.delete-sentence-btn');
-                deleteBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (confirm('确定要删除这个句子吗？')) {
-                        delete collection.sentences[id];
-                        this.saveCollections();
-                        this.refreshCollectionsList();
-                        sentenceItem.remove();
-                        
-                        // 如果没有句子了，显示提示
-                        if (Object.keys(collection.sentences).length === 0) {
-                            modal.querySelector('.sentences-container').innerHTML = 
-                                '<p class="no-sentences">暂无句子</p>';
-                        }
-                    }
-                });
-
-                sentencesList.appendChild(sentenceItem);
-            });
-        }
-
-        // 关闭按钮事件
-        const closeBtn = modal.querySelector('.close-btn');
-        closeBtn.addEventListener('click', () => {
-            document.body.removeChild(modal);
-        });
-
-        // 点击模态框外部关闭
+        // 添加事件监听
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 document.body.removeChild(modal);
             }
         });
 
+        modal.querySelector('.close-btn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        // 添加删除句子的事件监听
+        modal.querySelectorAll('.delete-sentence-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const sentenceId = e.currentTarget.dataset.id;
+                if (confirm('确定要删除这个句子吗？')) {
+                    delete collection.sentences[sentenceId];
+                    this.saveCollections();
+                    this.refreshCollectionsList();
+                    
+                    // 更新模态框中的句子列表
+                    const sentenceItem = e.currentTarget.closest('.sentence-item');
+                    if (sentenceItem) {
+                        sentenceItem.remove();
+                    }
+                    
+                    // 如果没有句子了，显示提示
+                    if (Object.keys(collection.sentences).length === 0) {
+                        modal.querySelector('.sentences-container').innerHTML = 
+                            '<p class="no-sentences">暂无句子</p>';
+                    }
+                }
+            });
+        });
+
         document.body.appendChild(modal);
-        setTimeout(() => modal.classList.add('show'), 10);
+        // 使用 setTimeout 确保 DOM 更新后再添加 show 类
+        requestAnimationFrame(() => modal.classList.add('show'));
     }
 } 
