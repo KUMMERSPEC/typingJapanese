@@ -348,15 +348,7 @@ export class CourseDisplay {
                             e.preventDefault();
                             e.stopPropagation();
                             toggleBtn.classList.toggle('expanded');
-                            const icon = toggleBtn.querySelector('i');
-                            if (icon) {
-                                icon.style.transform = toggleBtn.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0)';
-                            }
-                            if (toggleBtn.classList.contains('expanded')) {
-                                sentencesList.style.display = 'block';
-                            } else {
-                                sentencesList.style.display = 'none';
-                            }
+                            sentencesList.classList.toggle('expanded');
                         });
                     }
 

@@ -202,6 +202,54 @@ export class CustomCollectionsManager {
             `;
             document.body.appendChild(addSentenceModal);
         }
+
+        // 创建编辑收藏夹模态框
+        if (!document.getElementById('editCollectionModal')) {
+            const editCollectionModal = document.createElement('div');
+            editCollectionModal.id = 'editCollectionModal';
+            editCollectionModal.className = 'modal';
+            editCollectionModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>编辑收藏夹</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <form id="editCollectionForm">
+                        <input type="hidden" id="editCollectionId">
+                        <div class="form-group">
+                            <label for="editCollectionName">名称</label>
+                            <input type="text" id="editCollectionName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCollectionDescription">描述</label>
+                            <textarea id="editCollectionDescription"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            <button type="submit" class="primary-btn">保存</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(editCollectionModal);
+        }
+
+        // 创建管理句子模态框
+        if (!document.getElementById('manageSentencesModal')) {
+            const manageSentencesModal = document.createElement('div');
+            manageSentencesModal.id = 'manageSentencesModal';
+            manageSentencesModal.className = 'modal';
+            manageSentencesModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>管理句子</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <div class="sentences-container"></div>
+                </div>
+            `;
+            document.body.appendChild(manageSentencesModal);
+        }
     }
 
     // 初始化事件监听
@@ -278,6 +326,20 @@ export class CustomCollectionsManager {
                 }
             });
         }
+
+        // 编辑收藏夹表单提交
+        const editCollectionForm = document.getElementById('editCollectionForm');
+        if (editCollectionForm) {
+            editCollectionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editCollectionId').value;
+                const name = document.getElementById('editCollectionName').value;
+                const description = document.getElementById('editCollectionDescription').value;
+                this.editCollection(id, name, description);
+                this.hideEditCollectionModal();
+                this.refreshCollectionsList();
+            });
+        }
     }
 
     // 显示收藏夹列表模态框
@@ -316,14 +378,12 @@ export class CustomCollectionsManager {
         Object.entries(this.collections).forEach(([id, collection]) => {
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
-            const sentenceCount = Object.keys(collection.sentences || {}).length;
-
             collectionElement.innerHTML = `
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
                     <div class="collection-actions">
-                        <button class="add-sentence-btn" title="添加句子">
-                            <i class="fas fa-plus"></i>
+                        <button class="edit-btn" title="编辑收藏夹">
+                            <i class="fas fa-edit"></i>
                         </button>
                         <button class="manage-sentences-btn" title="管理句子">
                             <i class="fas fa-list"></i>
@@ -333,19 +393,18 @@ export class CustomCollectionsManager {
                         </button>
                     </div>
                 </div>
-                <p class="collection-description">${collection.description || '暂无描述'}</p>
+                <p class="collection-description">${collection.description || ''}</p>
                 <div class="collection-stats">
-                    <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
+                    <span><i class="fas fa-book"></i>${Object.keys(collection.sentences || {}).length} 个句子</span>
                 </div>
-                <div class="sentences-list"></div>
             `;
 
-            // 添加句子按钮事件
-            const addSentenceBtn = collectionElement.querySelector('.add-sentence-btn');
-            addSentenceBtn.addEventListener('click', (e) => {
+            // 编辑按钮事件
+            const editBtn = collectionElement.querySelector('.edit-btn');
+            editBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.showAddSentenceModal(id);
+                this.showEditCollectionModal(id);
             });
 
             // 管理句子按钮事件
@@ -363,6 +422,7 @@ export class CustomCollectionsManager {
                 e.stopPropagation();
                 if (confirm('确定要删除这个收藏夹吗？')) {
                     this.deleteCollection(id);
+                    this.refreshCollectionsList();
                 }
             });
 
@@ -370,103 +430,74 @@ export class CustomCollectionsManager {
         });
     }
 
-    // 显示添加句子模态框
-    showAddSentenceModal(collectionId) {
-        const modal = document.getElementById('addSentenceModal');
+    // 显示编辑收藏夹模态框
+    showEditCollectionModal(collectionId) {
+        const collection = this.collections[collectionId];
+        if (!collection) return;
+
+        const modal = document.getElementById('editCollectionModal');
         if (modal) {
-            document.getElementById('addSentenceForm').dataset.collectionId = collectionId;
-            document.getElementById('addSentenceForm').reset();
+            document.getElementById('editCollectionId').value = collectionId;
+            document.getElementById('editCollectionName').value = collection.name;
+            document.getElementById('editCollectionDescription').value = collection.description || '';
             modal.classList.add('show');
         }
     }
 
-    // 添加显示管理句子模态框的方法
+    // 隐藏编辑收藏夹模态框
+    hideEditCollectionModal() {
+        const modal = document.getElementById('editCollectionModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
+    // 显示管理句子模态框
     showManageSentencesModal(collectionId) {
         const collection = this.collections[collectionId];
         if (!collection) return;
 
-        // 先移除可能存在的旧模态框
-        const existingModal = document.querySelector('#manageSentencesModal');
-        if (existingModal) {
-            document.body.removeChild(existingModal);
+        const modal = document.getElementById('manageSentencesModal');
+        if (!modal) return;
+
+        const container = modal.querySelector('.sentences-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (!collection.sentences || Object.keys(collection.sentences).length === 0) {
+            container.innerHTML = '<div class="no-sentences">暂无句子</div>';
+        } else {
+            Object.entries(collection.sentences).forEach(([sentenceId, sentence]) => {
+                const sentenceElement = document.createElement('div');
+                sentenceElement.className = 'sentence-item';
+                sentenceElement.innerHTML = `
+                    <div class="sentence-content">
+                        <div class="japanese">${sentence.japanese}</div>
+                        <div class="chinese">${sentence.meaning}</div>
+                    </div>
+                    <div class="sentence-actions">
+                        <button class="delete-sentence-btn" title="删除句子">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                // 删除句子按钮事件
+                const deleteBtn = sentenceElement.querySelector('.delete-sentence-btn');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (confirm('确定要删除这个句子吗？')) {
+                        this.deleteSentence(collectionId, sentenceId);
+                        this.showManageSentencesModal(collectionId); // 刷新列表
+                    }
+                });
+
+                container.appendChild(sentenceElement);
+            });
         }
 
-        const modal = document.createElement('div');
-        modal.id = 'manageSentencesModal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>管理句子 - ${collection.name}</h3>
-                    <button class="close-btn">&times;</button>
-                </div>
-                <div class="sentences-container">
-                    ${Object.keys(collection.sentences || {}).length === 0 
-                        ? '<p class="no-sentences">暂无句子</p>'
-                        : `<div class="sentences-list">
-                            ${Object.entries(collection.sentences || {}).map(([id, sentence]) => `
-                                <div class="sentence-item">
-                                    <div class="sentence-content">
-                                        <div class="japanese">${sentence.japanese}</div>
-                                        <div class="chinese">${sentence.meaning}</div>
-                                    </div>
-                                    <div class="sentence-actions">
-                                        <button class="delete-sentence-btn" data-id="${id}" title="删除句子">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                           </div>`
-                    }
-                </div>
-            </div>
-        `;
-
-        // 添加事件监听
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                document.body.removeChild(modal);
-            }
-        });
-
-        modal.querySelector('.close-btn').addEventListener('click', () => {
-            document.body.removeChild(modal);
-        });
-
-        // 添加删除句子的事件监听
-        modal.querySelectorAll('.delete-sentence-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const sentenceId = e.currentTarget.dataset.id;
-                if (confirm('确定要删除这个句子吗？')) {
-                    delete collection.sentences[sentenceId];
-                    this.saveCollections();
-                    this.refreshCollectionsList();
-                    
-                    // 更新模态框中的句子列表
-                    const sentenceItem = e.currentTarget.closest('.sentence-item');
-                    if (sentenceItem) {
-                        sentenceItem.remove();
-                    }
-                    
-                    // 如果没有句子了，显示提示
-                    if (Object.keys(collection.sentences).length === 0) {
-                        modal.querySelector('.sentences-container').innerHTML = 
-                            '<p class="no-sentences">暂无句子</p>';
-                    }
-                }
-            });
-        });
-
-        document.body.appendChild(modal);
-        // 使用 requestAnimationFrame 确保 DOM 更新后再添加 show 类
-        requestAnimationFrame(() => {
-            modal.classList.add('show');
-            const modalContent = modal.querySelector('.modal-content');
-            if (modalContent) {
-                modalContent.style.opacity = '1';
-                modalContent.style.transform = 'translateY(0)';
-            }
-        });
+        modal.classList.add('show');
     }
 } 

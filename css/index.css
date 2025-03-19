@@ -1353,15 +1353,16 @@ select option {
     color: #999;
 }
 
-/* 句子列表样式 */
+/* 句子列表通用样式 */
 .sentences-list {
-    display: none;
     margin-top: 15px;
     border-top: 1px solid #eee;
     padding-top: 15px;
+    display: none;
 }
 
-.sentences-list.show {
+.sentences-list.show,
+.sentences-list.expanded {
     display: block;
 }
 
@@ -1373,6 +1374,11 @@ select option {
     border-radius: 6px;
     background: #f8f9fa;
     margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+.sentence-item:hover {
+    background: #f0f0f0;
 }
 
 .sentence-content {
@@ -1397,7 +1403,28 @@ select option {
     text-overflow: ellipsis;
 }
 
-/* 展开/折叠按钮 */
+.sentence-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+.sentence-actions button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.sentence-actions button:hover {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* 展开/折叠按钮样式 */
 .toggle-sentences {
     display: flex;
     align-items: center;
@@ -1431,6 +1458,42 @@ select option {
     text-align: center;
     padding: 10px;
     font-size: 13px;
+}
+
+/* 收藏夹中的句子列表特殊样式 */
+.collection-item .sentences-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 1;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.collection-item .sentences-list.expanded {
+    position: relative;
+    max-height: 500px;
+    opacity: 1;
+    padding: 15px;
+    pointer-events: auto;
+}
+
+.collection-item .sentence-item {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.collection-item .sentences-list.expanded .sentence-item {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 /* 收藏夹操作按钮 */
@@ -1692,5 +1755,46 @@ select option {
 #manageSentencesModal .sentences-list {
     display: block;
     margin-top: 15px;
+}
+
+/* 句子列表新样式 */
+.collection-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.collection-item .sentences-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 1;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.collection-item .sentences-list.expanded {
+    position: relative;
+    max-height: 500px;
+    opacity: 1;
+    padding: 15px;
+    pointer-events: auto;
+}
+
+.collection-item .sentence-item {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.collection-item .sentences-list.expanded .sentence-item {
+    transform: translateY(0);
+    opacity: 1;
 }
 
