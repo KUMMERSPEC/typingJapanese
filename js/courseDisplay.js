@@ -306,18 +306,6 @@ export class CourseDisplay {
                     const collectionCard = document.createElement('div');
                     collectionCard.className = 'collection-item';
                     
-                    // 修改句子列表的渲染逻辑
-                    const sentencesHtml = collection.sentences && collection.sentences.length > 0
-                        ? collection.sentences.map(sentence => `
-                            <div class="sentence-item">
-                                <div class="sentence-content">
-                                    <div class="japanese">${sentence.japanese || ''}</div>
-                                    <div class="chinese">${sentence.meaning || ''}</div>
-                                </div>
-                            </div>
-                        `).join('')
-                        : '<div class="no-sentences">暂无句子</div>';
-
                     collectionCard.innerHTML = `
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
@@ -345,41 +333,57 @@ export class CourseDisplay {
                                 </a>
                             ` : ''}
                         </div>
-                        <button class="toggle-sentences" type="button">
-                            <i class="fas fa-chevron-down"></i>
+                        <button class="view-sentences-btn" type="button">
+                            <i class="fas fa-list"></i>
                             查看句子 (${collection.sentences ? collection.sentences.length : 0})
                         </button>
-                        <div class="sentences-list">
-                            ${sentencesHtml}
-                        </div>
                     `;
 
-                    // 添加展开/折叠功能
-                    const toggleBtn = collectionCard.querySelector('.toggle-sentences');
-                    const sentencesList = collectionCard.querySelector('.sentences-list');
-                    
-                    if (toggleBtn && sentencesList) {
-                        toggleBtn.addEventListener('click', (e) => {
+                    // 修改查看句子按钮的事件处理
+                    const viewSentencesBtn = collectionCard.querySelector('.view-sentences-btn');
+                    if (viewSentencesBtn) {
+                        viewSentencesBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             
-                            // 关闭其他展开的列表
-                            document.querySelectorAll('.sentences-list.expanded').forEach(list => {
-                                if (list !== sentencesList) {
-                                    list.classList.remove('expanded');
-                                    const btn = list.previousElementSibling;
-                                    if (btn && btn.classList.contains('toggle-sentences')) {
-                                        btn.classList.remove('expanded');
-                                        btn.querySelector('i').style.transform = 'rotate(0deg)';
-                                    }
+                            // 显示句子列表模态框
+                            const modal = document.getElementById('viewSentencesModal');
+                            const modalContent = modal.querySelector('.modal-content');
+                            const modalTitle = modal.querySelector('.modal-header h3');
+                            const sentencesContainer = modal.querySelector('.sentences-container');
+                            
+                            modalTitle.textContent = `${collection.name} - 句子列表`;
+                            
+                            // 生成句子列表内容
+                            if (collection.sentences && collection.sentences.length > 0) {
+                                sentencesContainer.innerHTML = collection.sentences.map(sentence => `
+                                    <div class="sentence-item">
+                                        <div class="sentence-content">
+                                            <div class="japanese">${sentence.japanese || ''}</div>
+                                            <div class="chinese">${sentence.meaning || ''}</div>
+                                        </div>
+                                    </div>
+                                `).join('');
+                            } else {
+                                sentencesContainer.innerHTML = '<div class="no-sentences">暂无句子</div>';
+                            }
+                            
+                            // 添加关闭按钮事件处理
+                            const closeBtn = modal.querySelector('.close-btn');
+                            if (closeBtn) {
+                                closeBtn.addEventListener('click', () => {
+                                    modal.classList.remove('show');
+                                });
+                            }
+
+                            // 点击模态框外部关闭
+                            modal.addEventListener('click', (e) => {
+                                if (e.target === modal) {
+                                    modal.classList.remove('show');
                                 }
                             });
                             
-                            // 切换当前列表
-                            const isExpanded = sentencesList.classList.contains('expanded');
-                            toggleBtn.classList.toggle('expanded');
-                            toggleBtn.querySelector('i').style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-                            sentencesList.classList.toggle('expanded');
+                            modal.classList.add('show');
                         });
                     }
 
@@ -423,11 +427,11 @@ export class CourseDisplay {
                     // 添加点击事件处理
                     collectionCard.addEventListener('click', (e) => {
                         // 如果点击的是按钮，不处理
-                        if (e.target.closest('.collection-actions') || e.target.closest('.toggle-sentences')) {
+                        if (e.target.closest('.collection-actions') || e.target.closest('.view-sentences-btn')) {
                             return;
                         }
                         // 否则展开/折叠句子列表
-                        const toggleBtn = collectionCard.querySelector('.toggle-sentences');
+                        const toggleBtn = collectionCard.querySelector('.view-sentences-btn');
                         if (toggleBtn) {
                             toggleBtn.click();
                         }
