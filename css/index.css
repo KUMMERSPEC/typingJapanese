@@ -1580,3 +1580,59 @@ select option {
     }
 }
 
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    flex: 1;
+}
+
+.convert-btn {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.3s;
+}
+
+.convert-btn:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.convert-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.auto-convert-toggle {
+    margin-top: 4px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+

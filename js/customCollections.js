@@ -208,19 +208,36 @@ export class CustomCollectionsManager {
                     <form id="addSentenceForm">
                         <div class="form-group">
                             <label for="japanese">日语</label>
-                            <input type="text" id="japanese" required>
+                            <div class="input-group">
+                                <input type="text" id="japanese" required placeholder="输入日语句子">
+                                <button type="button" class="convert-btn" id="convertBtn" disabled>
+                                    <i class="fas fa-sync"></i> 转换
+                                </button>
+                            </div>
+                            <div class="auto-convert-toggle">
+                                <label>
+                                    <input type="checkbox" id="autoConvert" checked>
+                                    自动转换
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="hiragana">平假名</label>
-                            <input type="text" id="hiragana" required>
+                            <div class="input-group">
+                                <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="romaji">罗马音</label>
-                            <input type="text" id="romaji" required>
+                            <div class="input-group">
+                                <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="meaning">含义</label>
-                            <input type="text" id="meaning" required>
+                            <input type="text" id="meaning" required placeholder="输入中文翻译">
                         </div>
                         <div class="form-actions">
                             <button type="button" class="secondary-btn cancel-btn">取消</button>
@@ -331,6 +348,93 @@ export class CustomCollectionsManager {
         // 添加句子表单提交
         const addSentenceForm = document.getElementById('addSentenceForm');
         if (addSentenceForm) {
+            // 获取相关元素
+            const japaneseInput = document.getElementById('japanese');
+            const hiraganaInput = document.getElementById('hiragana');
+            const romajiInput = document.getElementById('romaji');
+            const convertBtn = document.getElementById('convertBtn');
+            const autoConvertCheckbox = document.getElementById('autoConvert');
+            const hiraganaSpinner = hiraganaInput?.parentElement?.querySelector('.loading-spinner');
+            const romajiSpinner = romajiInput?.parentElement?.querySelector('.loading-spinner');
+
+            // 导入转换器
+            import('../js/common/japaneseConverter.js').then(module => {
+                const { japaneseConverter } = module;
+                
+                // 启用转换按钮
+                if (convertBtn) {
+                    convertBtn.disabled = false;
+                }
+
+                // 手动转换按钮点击事件
+                convertBtn?.addEventListener('click', async () => {
+                    const japanese = japaneseInput.value.trim();
+                    if (!japanese) return;
+
+                    try {
+                        // 显示加载动画
+                        hiraganaSpinner.style.display = 'block';
+                        romajiSpinner.style.display = 'block';
+                        convertBtn.disabled = true;
+
+                        // 执行转换
+                        const result = await japaneseConverter.convert(japanese);
+                        
+                        // 更新输入框
+                        hiraganaInput.value = result.hiragana;
+                        romajiInput.value = result.romaji;
+                    } catch (error) {
+                        console.error('转换失败:', error);
+                        alert('转换失败，请重试');
+                    } finally {
+                        // 隐藏加载动画
+                        hiraganaSpinner.style.display = 'none';
+                        romajiSpinner.style.display = 'none';
+                        convertBtn.disabled = false;
+                    }
+                });
+
+                // 自动转换功能
+                let conversionTimeout;
+                japaneseInput?.addEventListener('input', () => {
+                    if (!autoConvertCheckbox?.checked) return;
+                    
+                    // 清除之前的定时器
+                    clearTimeout(conversionTimeout);
+                    
+                    // 设置新的定时器，延迟500ms后执行转换
+                    conversionTimeout = setTimeout(async () => {
+                        const japanese = japaneseInput.value.trim();
+                        if (!japanese) return;
+
+                        try {
+                            // 显示加载动画
+                            hiraganaSpinner.style.display = 'block';
+                            romajiSpinner.style.display = 'block';
+
+                            // 执行转换
+                            const result = await japaneseConverter.convert(japanese);
+                            
+                            // 更新输入框
+                            hiraganaInput.value = result.hiragana;
+                            romajiInput.value = result.romaji;
+                        } catch (error) {
+                            console.error('自动转换失败:', error);
+                        } finally {
+                            // 隐藏加载动画
+                            hiraganaSpinner.style.display = 'none';
+                            romajiSpinner.style.display = 'none';
+                        }
+                    }, 500);
+                });
+            }).catch(error => {
+                console.error('加载转换器失败:', error);
+                if (convertBtn) {
+                    convertBtn.disabled = true;
+                    convertBtn.title = '转换器加载失败';
+                }
+            });
+
             addSentenceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const collectionId = e.target.dataset.collectionId;
