@@ -350,8 +350,21 @@ export class CourseDisplay {
                         toggleBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            toggleBtn.classList.toggle('expanded');
-                            sentencesList.classList.toggle('expanded');
+                            
+                            // 关闭其他展开的列表
+                            document.querySelectorAll('.sentences-list.show').forEach(list => {
+                                if (list !== sentencesList) {
+                                    list.classList.remove('show');
+                                    const btn = list.previousElementSibling;
+                                    if (btn && btn.classList.contains('toggle-sentences')) {
+                                        btn.querySelector('i').style.transform = 'rotate(0deg)';
+                                    }
+                                }
+                            });
+                            
+                            // 切换当前列表
+                            toggleBtn.querySelector('i').style.transform = sentencesList.classList.contains('show') ? 'rotate(0deg)' : 'rotate(180deg)';
+                            sentencesList.classList.toggle('show');
                         });
                     }
 
