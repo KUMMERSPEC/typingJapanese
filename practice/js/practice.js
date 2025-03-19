@@ -970,14 +970,17 @@ export class PracticeManager {
         const answers = Array.from(inputs).map(input => input.value.trim());
         const question = this.questions[this.currentQuestionIndex];
 
+        // 获取正确答案数组
+        const correctAnswers = question.hiragana.split(':');
+
         console.log('Checking answers:', {
             userAnswers: answers,
-            correctAnswers: question.answers
+            correctAnswers: correctAnswers
         });
 
         // 检查每个答案并标记
         const allCorrect = answers.every((answer, index) => {
-            const correctAnswer = question.answers[index];
+            const correctAnswer = correctAnswers[index];
             const input = inputs[index];
             const isCorrect = answer === correctAnswer;
 
@@ -1010,7 +1013,7 @@ export class PracticeManager {
             // 隐藏输入区域和字符
             inputArea.style.display = 'none';
             character.style.display = 'none';
-            functionButtons.style.display = 'none'; // 隐藏功能按钮组
+            functionButtons.style.display = 'none';
 
             // 清空并显示答案区域
             answerDisplay.innerHTML = '';
