@@ -265,7 +265,8 @@ class FlashcardManager {
         if (!text) return;
         
         const currentSentence = this.sentences[this.currentIndex];
-        if (currentSentence && currentSentence.audioUrl) {
+        if (currentSentence && currentSentence.audioUrl && currentSentence.audioUrl !== null) {
+            console.log('使用音频 URL 播放:', currentSentence.audioUrl);
             const audio = new Audio(currentSentence.audioUrl);
             audio.play().catch(error => {
                 console.error('播放音频失败:', error);
@@ -274,13 +275,24 @@ class FlashcardManager {
             });
         } else {
             // 如果没有音频 URL，使用 TTS
+            console.log('没有音频 URL，使用 TTS 播放');
             this.speakJapanese(text);
         }
     }
 
-    // 修改原有的语音播放方法
+    // 使用浏览器 TTS 功能播放语音
     speakJapanese(text) {
-        this.playJapanese(text);
+        if ('speechSynthesis' in window) {
+            try {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                window.speechSynthesis.speak(utterance);
+            } catch (error) {
+                console.error('TTS 失败:', error);
+            }
+        } else {
+            console.warn('浏览器不支持语音合成');
+        }
     }
 
     bindEvents() {

@@ -91,7 +91,9 @@ export class CustomCollectionsManager {
             course: collection.name,
             lesson: '自定义',
             proficiency: 'low', // 初始设置为生疏
-            lastReview: new Date().toISOString()
+            lastReview: new Date().toISOString(),
+            // 不设置 audioUrl，让系统使用 Web Speech API 播放
+            audioUrl: null
         }));
     }
 
@@ -236,7 +238,7 @@ export class CustomCollectionsManager {
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="meaning">含义</label>
+                            <label for="meaning">中文含义</label>
                             <input type="text" id="meaning" required placeholder="输入中文翻译">
                         </div>
                         <div class="form-actions">
@@ -501,6 +503,30 @@ export class CustomCollectionsManager {
         }
     }
 
+    // 显示添加句子模态框
+    showAddSentenceModal(collectionId) {
+        const modal = document.getElementById('addSentenceModal');
+        if (modal) {
+            // 重置表单
+            const form = modal.querySelector('#addSentenceForm');
+            if (form) {
+                form.reset();
+                form.dataset.collectionId = collectionId;
+            }
+            
+            // 显示模态框
+            modal.classList.add('show');
+        }
+    }
+
+    // 隐藏添加句子模态框
+    hideAddSentenceModal() {
+        const modal = document.getElementById('addSentenceModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
     // 刷新收藏夹列表
     refreshCollectionsList() {
         const collectionsContainer = document.querySelector('.collections-list');
@@ -515,6 +541,9 @@ export class CustomCollectionsManager {
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
                     <div class="collection-actions">
+                        <button class="add-sentence-btn" title="添加句子">
+                            <i class="fas fa-plus"></i>
+                        </button>
                         <button class="edit-btn" title="编辑收藏夹">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -534,6 +563,14 @@ export class CustomCollectionsManager {
                     <span><i class="fas fa-book"></i>${Object.keys(collection.sentences || {}).length} 个句子</span>
                 </div>
             `;
+
+            // 添加句子按钮事件
+            const addSentenceBtn = collectionElement.querySelector('.add-sentence-btn');
+            addSentenceBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showAddSentenceModal(id);
+            });
 
             // 编辑按钮事件
             const editBtn = collectionElement.querySelector('.edit-btn');

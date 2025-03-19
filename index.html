@@ -279,15 +279,32 @@
                 <form id="addSentenceForm">
                     <div class="form-group">
                         <label for="japanese">日语</label>
-                        <input type="text" id="japanese" required placeholder="输入日语句子">
+                        <div class="input-group">
+                            <input type="text" id="japanese" required placeholder="输入日语句子">
+                            <button type="button" class="convert-btn" id="convertBtn" disabled>
+                                <i class="fas fa-sync"></i> 转换
+                            </button>
+                        </div>
+                        <div class="auto-convert-toggle">
+                            <label>
+                                <input type="checkbox" id="autoConvert" checked>
+                                自动转换
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="hiragana">假名</label>
-                        <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                        <label for="hiragana">平假名</label>
+                        <div class="input-group">
+                            <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                            <div class="loading-spinner" style="display: none;"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="romaji">罗马音</label>
-                        <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                        <div class="input-group">
+                            <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                            <div class="loading-spinner" style="display: none;"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="meaning">中文含义</label>

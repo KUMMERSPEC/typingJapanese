@@ -1168,6 +1168,7 @@ select option {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Add Sentence button */
 .collection-actions .add-sentence-btn {
     color: #4CAF50;
 }
@@ -1581,11 +1582,10 @@ select option {
 }
 
 .input-group {
-    position: relative;
     display: flex;
-    align-items: center;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    align-items: center;
 }
 
 .input-group input {
@@ -1593,7 +1593,7 @@ select option {
 }
 
 .convert-btn {
-    padding: 8px 12px;
+    padding: 6px 12px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -1602,7 +1602,6 @@ select option {
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: background-color 0.3s;
 }
 
 .convert-btn:hover:not(:disabled) {
@@ -1616,23 +1615,74 @@ select option {
 
 .auto-convert-toggle {
     margin-top: 4px;
-    font-size: 0.9em;
+    font-size: 14px;
     color: #666;
 }
 
 .loading-spinner {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     border: 2px solid #f3f3f3;
     border-top: 2px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     display: none;
-    margin-left: 8px;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* 确保模态框内的表单元素样式正确 */
+.modal .form-group {
+    margin-bottom: 16px;
+}
+
+.modal input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.primary-btn, .secondary-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.primary-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #45a049;
+}
+
+.secondary-btn {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.secondary-btn:hover {
+    background-color: #e8e8e8;
 }
 

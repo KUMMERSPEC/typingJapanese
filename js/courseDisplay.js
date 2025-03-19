@@ -243,23 +243,23 @@ export class CourseDisplay {
                 courseCard.innerHTML = `
                     <div class="card-header">
                         <h2>${course.name.charAt(0)}</h2>
-                        <span class="continue-badge">继续学习</span>
+                    <span class="continue-badge">继续学习</span>
                     </div>
                     <div class="card-content">
-                        <h3>${course.name}</h3>
-                        <p>${course.description}</p>
-                        <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${progress.total} 课时</span>
-                            <span><i class="fas fa-check"></i> ${progress.completed} 已完成</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" style="width: ${progressPercentage}%"></div>
-                        </div>
-                        <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
-                        <div class="course-actions">
-                            <a href="practice/practice.html?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
-                                <i class="fas fa-play"></i> 继续学习
-                            </a>
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-book"></i> ${progress.total} 课时</span>
+                        <span><i class="fas fa-check"></i> ${progress.completed} 已完成</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
+                    <div class="course-actions">
+                        <a href="practice/practice.html?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
+                            <i class="fas fa-play"></i> 继续学习
+                        </a>
                         </div>
                     </div>
                 `;
@@ -275,18 +275,18 @@ export class CourseDisplay {
                 courseCard.innerHTML = `
                     <div class="card-header">
                         <h2>${recommendedCourse.name.charAt(0)}</h2>
-                        <span class="recommended-badge">今日推荐</span>
+                    <span class="recommended-badge">今日推荐</span>
                     </div>
                     <div class="card-content">
-                        <h3>${recommendedCourse.name}</h3>
-                        <p>${recommendedCourse.description}</p>
-                        <div class="course-stats">
-                            <span><i class="fas fa-book"></i> ${Object.keys(recommendedCourse.lessons).length} 课时</span>
-                        </div>
-                        <div class="course-actions">
-                            <a href="practice/practice.html?course=${recommendation.id}&lesson=${recommendation.lessonId}" class="start-button">
-                                <i class="fas fa-play"></i> 开始学习
-                            </a>
+                    <h3>${recommendedCourse.name}</h3>
+                    <p>${recommendedCourse.description}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-book"></i> ${Object.keys(recommendedCourse.lessons).length} 课时</span>
+                    </div>
+                    <div class="course-actions">
+                        <a href="practice/practice.html?course=${recommendation.id}&lesson=${recommendation.lessonId}" class="start-button">
+                            <i class="fas fa-play"></i> 开始学习
+                        </a>
                         </div>
                     </div>
                 `;
