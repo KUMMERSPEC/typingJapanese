@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- 添加 Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="practice/assets/fonts/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -54,11 +55,12 @@
                 <div class="section-header">
                     <h2>课程列表</h2>
                     <div class="header-buttons">
-                        <button class="action-button" data-action="custom-collection">
-                            <i class="fas fa-folder-plus"></i>
-                            <span>管理收藏夹</span>
+                        <button class="action-button" data-action="manage-collections">
+                            <i class="fas fa-folder"></i> 管理收藏夹
                         </button>
-                        <a href="practice/courses.html" class="view-all-btn">查看全部课程</a>
+                        <a href="courses.html" class="view-all-btn">
+                            查看全部课程
+                        </a>
                     </div>
                 </div>
                 <div class="course-list">
@@ -170,7 +172,7 @@
                 const addCollectionModal = document.getElementById('addCollectionModal');
                 
                 // 打开收藏夹列表
-                document.querySelector('[data-action="custom-collection"]').addEventListener('click', () => {
+                document.querySelector('[data-action="manage-collections"]').addEventListener('click', () => {
                     collectionsModal.classList.add('show');
                 });
 

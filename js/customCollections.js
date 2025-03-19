@@ -2,6 +2,7 @@ export class CustomCollectionsManager {
     constructor() {
         this.collections = this.loadCollections();
         this.initializeEventListeners();
+        this.initializeModals();
     }
 
     // 获取所有收藏夹
@@ -110,73 +111,173 @@ export class CustomCollectionsManager {
         return false;
     }
 
+    // 初始化模态框
+    initializeModals() {
+        // 创建收藏夹管理模态框
+        if (!document.getElementById('collectionsModal')) {
+            const collectionsModal = document.createElement('div');
+            collectionsModal.id = 'collectionsModal';
+            collectionsModal.className = 'modal';
+            collectionsModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>管理收藏夹</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <div class="collections-container">
+                        <button class="add-collection-btn">
+                            <i class="fas fa-plus"></i> 新建收藏夹
+                        </button>
+                        <div class="collections-list"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(collectionsModal);
+        }
+
+        // 创建添加收藏夹模态框
+        if (!document.getElementById('addCollectionModal')) {
+            const addCollectionModal = document.createElement('div');
+            addCollectionModal.id = 'addCollectionModal';
+            addCollectionModal.className = 'modal';
+            addCollectionModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>新建收藏夹</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <form id="addCollectionForm">
+                        <div class="form-group">
+                            <label for="collectionName">名称</label>
+                            <input type="text" id="collectionName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="collectionDescription">描述</label>
+                            <textarea id="collectionDescription"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            <button type="submit" class="primary-btn">创建</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(addCollectionModal);
+        }
+
+        // 创建添加句子模态框
+        if (!document.getElementById('addSentenceModal')) {
+            const addSentenceModal = document.createElement('div');
+            addSentenceModal.id = 'addSentenceModal';
+            addSentenceModal.className = 'modal';
+            addSentenceModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>添加句子</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <form id="addSentenceForm">
+                        <div class="form-group">
+                            <label for="japanese">日语</label>
+                            <input type="text" id="japanese" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hiragana">平假名</label>
+                            <input type="text" id="hiragana" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="romaji">罗马音</label>
+                            <input type="text" id="romaji" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meaning">含义</label>
+                            <input type="text" id="meaning" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            <button type="submit" class="primary-btn">添加</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(addSentenceModal);
+        }
+    }
+
     // 初始化事件监听
     initializeEventListeners() {
-        // 显示收藏夹模态框
-        document.querySelector('[data-action="custom-collection"]')?.addEventListener('click', () => {
-            this.showCollectionsModal();
-        });
+        // 管理收藏夹按钮点击事件
+        const manageBtn = document.querySelector('[data-action="manage-collections"]');
+        if (manageBtn) {
+            manageBtn.addEventListener('click', () => {
+                this.showCollectionsModal();
+            });
+        }
 
-        // 关闭按钮事件
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        // 全局事件委托
+        document.addEventListener('click', (e) => {
+            // 关闭按钮
+            if (e.target.matches('.close-btn')) {
                 const modal = e.target.closest('.modal');
                 if (modal) {
                     modal.classList.remove('show');
                 }
-            });
-        });
+            }
 
-        // 新建收藏夹按钮
-        document.querySelector('.add-collection-btn')?.addEventListener('click', () => {
-            this.showAddCollectionModal();
+            // 取消按钮
+            if (e.target.matches('.cancel-btn')) {
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
+            }
+
+            // 新建收藏夹按钮
+            if (e.target.matches('.add-collection-btn') || e.target.closest('.add-collection-btn')) {
+                this.showAddCollectionModal();
+            }
         });
 
         // 添加收藏夹表单提交
-        document.getElementById('addCollectionForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('collectionName').value;
-            const description = document.getElementById('collectionDescription').value;
-            this.createCollection(name, description);
-            this.hideAddCollectionModal();
-            this.refreshCollectionsList();
-        });
-
-        // 取消按钮
-        document.querySelectorAll('.cancel-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modal = e.target.closest('.modal');
-                if (modal) {
-                    modal.classList.remove('show');
-                }
+        const addCollectionForm = document.getElementById('addCollectionForm');
+        if (addCollectionForm) {
+            addCollectionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('collectionName').value;
+                const description = document.getElementById('collectionDescription').value;
+                this.createCollection(name, description);
+                this.hideAddCollectionModal();
+                this.refreshCollectionsList();
             });
-        });
+        }
 
         // 添加句子表单提交
-        document.getElementById('addSentenceForm')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const collectionId = e.target.dataset.collectionId;
-            const sentenceData = {
-                japanese: document.getElementById('japanese').value,
-                hiragana: document.getElementById('hiragana').value,
-                romaji: document.getElementById('romaji').value,
-                meaning: document.getElementById('meaning').value
-            };
-            
-            try {
-                this.addSentence(collectionId, sentenceData);
-                const modal = document.getElementById('addSentenceModal');
-                if (modal) {
-                    modal.classList.remove('show');
+        const addSentenceForm = document.getElementById('addSentenceForm');
+        if (addSentenceForm) {
+            addSentenceForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const collectionId = e.target.dataset.collectionId;
+                const sentenceData = {
+                    japanese: document.getElementById('japanese').value,
+                    hiragana: document.getElementById('hiragana').value,
+                    romaji: document.getElementById('romaji').value,
+                    meaning: document.getElementById('meaning').value
+                };
+                
+                try {
+                    this.addSentence(collectionId, sentenceData);
+                    const modal = document.getElementById('addSentenceModal');
+                    if (modal) {
+                        modal.classList.remove('show');
+                    }
+                    this.refreshCollectionsList();
+                    window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+                } catch (error) {
+                    console.error('Error adding sentence:', error);
+                    alert('添加句子失败，请重试');
                 }
-                this.refreshCollectionsList();
-                // 触发自定义事件通知 CourseDisplay 更新
-                window.dispatchEvent(new CustomEvent('collectionsUpdated'));
-            } catch (error) {
-                console.error('Error adding sentence:', error);
-                alert('添加句子失败，请重试');
-            }
-        });
+            });
+        }
     }
 
     // 显示收藏夹列表模态框
