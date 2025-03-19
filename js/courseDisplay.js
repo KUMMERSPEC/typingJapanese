@@ -333,12 +333,17 @@ export class CourseDisplay {
                             查看句子 (${collection.sentences ? collection.sentences.length : 0})
                         </button>
                         <div class="sentences-list">
-                            ${collection.sentences ? collection.sentences.map(sentence => `
-                                <div class="sentence-item">
-                                    <div class="sentence-japanese">${sentence.japanese}</div>
-                                    <div class="sentence-chinese">${sentence.meaning}</div>
-                                </div>
-                            `).join('') : '<div class="no-sentences">暂无句子</div>'}
+                            ${collection.sentences && collection.sentences.length > 0 ? 
+                                collection.sentences.map(sentence => `
+                                    <div class="sentence-item">
+                                        <div class="sentence-content">
+                                            <div class="japanese">${sentence.japanese}</div>
+                                            <div class="chinese">${sentence.meaning}</div>
+                                        </div>
+                                    </div>
+                                `).join('') 
+                                : '<div class="no-sentences">暂无句子</div>'
+                            }
                         </div>
                     `;
 
@@ -352,19 +357,22 @@ export class CourseDisplay {
                             e.stopPropagation();
                             
                             // 关闭其他展开的列表
-                            document.querySelectorAll('.sentences-list.show').forEach(list => {
+                            document.querySelectorAll('.sentences-list.expanded').forEach(list => {
                                 if (list !== sentencesList) {
-                                    list.classList.remove('show');
+                                    list.classList.remove('expanded');
                                     const btn = list.previousElementSibling;
                                     if (btn && btn.classList.contains('toggle-sentences')) {
+                                        btn.classList.remove('expanded');
                                         btn.querySelector('i').style.transform = 'rotate(0deg)';
                                     }
                                 }
                             });
                             
                             // 切换当前列表
-                            toggleBtn.querySelector('i').style.transform = sentencesList.classList.contains('show') ? 'rotate(0deg)' : 'rotate(180deg)';
-                            sentencesList.classList.toggle('show');
+                            const isExpanded = sentencesList.classList.contains('expanded');
+                            toggleBtn.classList.toggle('expanded');
+                            toggleBtn.querySelector('i').style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+                            sentencesList.classList.toggle('expanded');
                         });
                     }
 
