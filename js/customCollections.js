@@ -1,8 +1,101 @@
+import japaneseConverter from './common/japaneseConverter.js';
+
 export class CustomCollectionsManager {
     constructor() {
         this.collections = this.loadCollections();
         this.initializeEventListeners();
         this.initializeModals();
+        this.initializeConverter();
+    }
+
+    // 初始化转换器
+    async initializeConverter() {
+        try {
+            // 显示加载状态
+            const convertBtn = document.getElementById('convertBtn');
+            if (convertBtn) {
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 初始化中';
+            }
+
+            await japaneseConverter.initialize();
+
+            // 初始化完成后启用按钮
+            if (convertBtn) {
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<i class="fas fa-sync"></i> 转换';
+            }
+
+            // 设置自动转换事件
+            this.setupAutoConvert();
+        } catch (error) {
+            console.error('转换器初始化失败:', error);
+            // 显示错误状态
+            if (convertBtn) {
+                convertBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 初始化失败';
+            }
+        }
+    }
+
+    // 设置自动转换
+    setupAutoConvert() {
+        const japaneseInput = document.getElementById('japanese');
+        const autoConvertCheckbox = document.getElementById('autoConvert');
+        const convertBtn = document.getElementById('convertBtn');
+
+        if (japaneseInput && autoConvertCheckbox && convertBtn) {
+            // 监听日语输入框的失焦事件
+            japaneseInput.addEventListener('blur', async () => {
+                if (autoConvertCheckbox.checked && japaneseInput.value.trim()) {
+                    await this.convertJapanese();
+                }
+            });
+
+            // 监听转换按钮点击事件
+            convertBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                await this.convertJapanese();
+            });
+
+            // 监听日语输入框的输入事件
+            japaneseInput.addEventListener('input', () => {
+                // 有内容时启用转换按钮
+                convertBtn.disabled = !japaneseInput.value.trim();
+            });
+        }
+    }
+
+    // 转换日语文本
+    async convertJapanese() {
+        const japaneseInput = document.getElementById('japanese');
+        const hiraganaInput = document.getElementById('hiragana');
+        const romajiInput = document.getElementById('romaji');
+        const convertBtn = document.getElementById('convertBtn');
+        const spinners = document.querySelectorAll('.loading-spinner');
+
+        if (!japaneseInput.value.trim()) return;
+
+        try {
+            // 显示加载状态
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            spinners.forEach(spinner => spinner.style.display = 'block');
+
+            const result = await japaneseConverter.convert(japaneseInput.value);
+
+            // 填充结果
+            if (hiraganaInput) hiraganaInput.value = result.hiragana;
+            if (romajiInput) romajiInput.value = result.romaji;
+
+        } catch (error) {
+            console.error('转换失败:', error);
+            alert('转换失败，请重试');
+        } finally {
+            // 恢复按钮状态
+            convertBtn.disabled = false;
+            convertBtn.innerHTML = '<i class="fas fa-sync"></i> 转换';
+            spinners.forEach(spinner => spinner.style.display = 'none');
+        }
     }
 
     // 获取所有收藏夹
@@ -205,28 +298,47 @@ export class CustomCollectionsManager {
                         <h3>添加句子</h3>
                         <button class="close-btn">&times;</button>
                     </div>
-                    <form id="addSentenceForm">
-                        <div class="form-group">
-                            <label for="japanese">日语</label>
-                            <input type="text" id="japanese" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="hiragana">平假名</label>
-                            <input type="text" id="hiragana" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="romaji">罗马音</label>
-                            <input type="text" id="romaji" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="meaning">含义</label>
-                            <input type="text" id="meaning" required>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="secondary-btn cancel-btn">取消</button>
-                            <button type="submit" class="primary-btn">添加</button>
-                        </div>
-                    </form>
+                    <div class="modal-body">
+                        <form id="addSentenceForm">
+                            <div class="form-group">
+                                <label for="japanese">日语</label>
+                                <div class="input-group">
+                                    <input type="text" id="japanese" required placeholder="输入日语句子">
+                                    <button type="button" class="convert-btn" id="convertBtn" disabled>
+                                        <i class="fas fa-sync"></i> 转换
+                                    </button>
+                                </div>
+                                <div class="auto-convert-toggle">
+                                    <label>
+                                        <input type="checkbox" id="autoConvert" checked>
+                                        自动转换
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="hiragana">假名</label>
+                                <div class="input-group">
+                                    <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                                    <div class="loading-spinner" style="display: none;"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="romaji">罗马音</label>
+                                <div class="input-group">
+                                    <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                                    <div class="loading-spinner" style="display: none;"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="meaning">中文含义</label>
+                                <input type="text" id="meaning" required placeholder="输入中文翻译">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn">保存</button>
+                                <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             `;
             document.body.appendChild(addSentenceModal);
