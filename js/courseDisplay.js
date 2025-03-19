@@ -330,7 +330,7 @@ export class CourseDisplay {
                             <a href="practice/practice.html?collection=${collection.id}" class="start-button">
                                 <i class="fas fa-keyboard"></i> 打字练习
                             </a>
-                            <a href="practice/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
+                            <a href="review/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
                                 <i class="fas fa-graduation-cap"></i> 闪卡练习
                             </a>
                         </div>
@@ -372,19 +372,35 @@ export class CourseDisplay {
                             // 添加关闭按钮事件处理
                             const closeBtn = modal.querySelector('.close-btn');
                             if (closeBtn) {
-                                closeBtn.addEventListener('click', () => {
+                                closeBtn.onclick = () => {
                                     modal.classList.remove('show');
-                                });
+                                };
                             }
 
                             // 点击模态框外部关闭
-                            modal.addEventListener('click', (e) => {
+                            modal.onclick = (e) => {
                                 if (e.target === modal) {
                                     modal.classList.remove('show');
                                 }
-                            });
+                            };
                             
                             modal.classList.add('show');
+                        });
+                    }
+
+                    // 添加闪卡练习按钮事件
+                    const flashcardButton = collectionCard.querySelector('.flashcard-button');
+                    if (flashcardButton) {
+                        flashcardButton.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const sentences = this.getSentencesForFlashcard(collection.id);
+                            if (sentences.length === 0) {
+                                alert('当前收藏夹没有句子，请先添加句子');
+                                return;
+                            }
+                            sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
+                            window.location.href = 'review/flashcard.html';
                         });
                     }
 
