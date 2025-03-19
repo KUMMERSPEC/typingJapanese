@@ -207,33 +207,25 @@ export class CustomCollectionsManager {
 
     // 刷新收藏夹列表
     refreshCollectionsList() {
-        const listContainer = document.querySelector('.collections-list');
-        if (!listContainer) return;
+        const collectionsContainer = document.querySelector('.collections-list');
+        if (!collectionsContainer) return;
 
-        listContainer.innerHTML = '';
-        
-        if (Object.keys(this.collections).length === 0) {
-            listContainer.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-folder-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                    <p>还没有创建任何收藏夹</p>
-                    <p style="font-size: 14px; color: #666;">点击上方的"新建收藏夹"按钮开始创建</p>
-                </div>
-            `;
-            return;
-        }
-        
+        collectionsContainer.innerHTML = '';
+
         Object.entries(this.collections).forEach(([id, collection]) => {
-            const sentenceCount = Object.keys(collection.sentences || {}).length;
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
-            
+            const sentenceCount = Object.keys(collection.sentences || {}).length;
+
             collectionElement.innerHTML = `
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
                     <div class="collection-actions">
                         <button class="add-sentence-btn" title="添加句子">
                             <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="manage-sentences-btn" title="管理句子">
+                            <i class="fas fa-list"></i>
                         </button>
                         <button class="delete-btn" title="删除收藏夹">
                             <i class="fas fa-trash"></i>
@@ -244,6 +236,7 @@ export class CustomCollectionsManager {
                 <div class="collection-stats">
                     <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
                 </div>
+                <div class="sentences-list"></div>
             `;
 
             // 添加句子按钮事件
@@ -254,15 +247,25 @@ export class CustomCollectionsManager {
                 this.showAddSentenceModal(id);
             });
 
-            // 添加删除功能
+            // 管理句子按钮事件
+            const manageSentencesBtn = collectionElement.querySelector('.manage-sentences-btn');
+            manageSentencesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showManageSentencesModal(id);
+            });
+
+            // 删除按钮事件
             const deleteBtn = collectionElement.querySelector('.delete-btn');
             deleteBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.deleteCollectionWithConfirm(id);
+                if (confirm('确定要删除这个收藏夹吗？')) {
+                    this.deleteCollection(id);
+                }
             });
 
-            listContainer.appendChild(collectionElement);
+            collectionsContainer.appendChild(collectionElement);
         });
     }
 
@@ -276,59 +279,83 @@ export class CustomCollectionsManager {
         }
     }
 
-    // 删除收藏夹（带确认）
-    deleteCollectionWithConfirm(collectionId) {
-        if (confirm('确定要删除这个收藏夹吗？此操作不可撤销。')) {
-            this.deleteCollection(collectionId);
-            this.refreshCollectionsList();
-        }
-    }
-
-    showEditCollectionModal(collectionId) {
+    // 添加显示管理句子模态框的方法
+    showManageSentencesModal(collectionId) {
         const collection = this.collections[collectionId];
         if (!collection) return;
 
-        const modal = document.getElementById('addCollectionModal');
-        if (!modal) return;
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>管理句子 - ${collection.name}</h3>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="sentences-container">
+                    ${Object.entries(collection.sentences || {}).length === 0 
+                        ? '<p class="no-sentences">暂无句子</p>'
+                        : '<div class="sentences-list"></div>'
+                    }
+                </div>
+            </div>
+        `;
 
-        // 更新模态框标题
-        modal.querySelector('.modal-header h2').textContent = '编辑收藏夹';
-        
-        // 填充表单
-        const form = document.getElementById('addCollectionForm');
-        form.dataset.editId = collectionId;
-        document.getElementById('collectionName').value = collection.name;
-        document.getElementById('collectionDescription').value = collection.description || '';
+        // 添加句子列表
+        const sentencesList = modal.querySelector('.sentences-list');
+        if (sentencesList) {
+            Object.entries(collection.sentences || {}).forEach(([id, sentence]) => {
+                const sentenceItem = document.createElement('div');
+                sentenceItem.className = 'sentence-item';
+                sentenceItem.innerHTML = `
+                    <div class="sentence-content">
+                        <div class="japanese">${sentence.japanese}</div>
+                        <div class="chinese">${sentence.meaning}</div>
+                    </div>
+                    <div class="sentence-actions">
+                        <button class="delete-sentence-btn" title="删除句子">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
 
-        // 更新提交按钮文本
-        const submitBtn = form.querySelector('.primary-btn');
-        submitBtn.textContent = '保存修改';
+                // 删除句子按钮事件
+                const deleteBtn = sentenceItem.querySelector('.delete-sentence-btn');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (confirm('确定要删除这个句子吗？')) {
+                        delete collection.sentences[id];
+                        this.saveCollections();
+                        this.refreshCollectionsList();
+                        sentenceItem.remove();
+                        
+                        // 如果没有句子了，显示提示
+                        if (Object.keys(collection.sentences).length === 0) {
+                            modal.querySelector('.sentences-container').innerHTML = 
+                                '<p class="no-sentences">暂无句子</p>';
+                        }
+                    }
+                });
 
-        // 显示模态框
-        modal.classList.add('show');
+                sentencesList.appendChild(sentenceItem);
+            });
+        }
 
-        // 修改表单提交处理
-        const submitHandler = (e) => {
-            e.preventDefault();
-            const name = document.getElementById('collectionName').value;
-            const description = document.getElementById('collectionDescription').value;
-            
-            this.editCollection(collectionId, name, description);
-            modal.classList.remove('show');
-            form.reset();
-            delete form.dataset.editId;
-            submitBtn.textContent = '创建';
-            
-            // 刷新列表
-            this.refreshCollectionsList();
-            // 触发更新事件
-            window.dispatchEvent(new CustomEvent('collectionsUpdated'));
-            
-            // 移除这个特殊的提交处理函数
-            form.removeEventListener('submit', submitHandler);
-        };
+        // 关闭按钮事件
+        const closeBtn = modal.querySelector('.close-btn');
+        closeBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
 
-        // 添加一次性提交处理函数
-        form.addEventListener('submit', submitHandler, { once: true });
+        // 点击模态框外部关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+
+        document.body.appendChild(modal);
+        setTimeout(() => modal.classList.add('show'), 10);
     }
 } 
