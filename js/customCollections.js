@@ -76,6 +76,25 @@ export class CustomCollectionsManager {
         }));
     }
 
+    // 获取收藏夹中的句子用于复习
+    getSentencesForFlashcard(collectionId) {
+        const collection = this.collections[collectionId];
+        if (!collection) return [];
+        
+        return Object.entries(collection.sentences).map(([id, sentence]) => ({
+            id,
+            japanese: sentence.japanese,
+            hiragana: sentence.hiragana,
+            romaji: sentence.romaji,
+            meaning: sentence.meaning,
+            type: 'custom',
+            course: collection.name,
+            lesson: '自定义',
+            proficiency: 'low', // 初始设置为生疏
+            lastReview: new Date().toISOString()
+        }));
+    }
+
     // 删除收藏夹
     deleteCollection(collectionId) {
         if (this.collections[collectionId]) {
@@ -398,6 +417,9 @@ export class CustomCollectionsManager {
                         <button class="manage-sentences-btn" title="管理句子">
                             <i class="fas fa-list"></i>
                         </button>
+                        <button class="flashcard-btn" title="闪卡练习">
+                            <i class="fas fa-graduation-cap"></i>
+                        </button>
                         <button class="delete-btn" title="删除收藏夹">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -423,6 +445,20 @@ export class CustomCollectionsManager {
                 e.preventDefault();
                 e.stopPropagation();
                 this.showManageSentencesModal(id);
+            });
+
+            // 闪卡练习按钮事件
+            const flashcardBtn = collectionElement.querySelector('.flashcard-btn');
+            flashcardBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const sentences = this.getSentencesForFlashcard(id);
+                if (sentences.length === 0) {
+                    alert('当前收藏夹没有句子，请先添加句子');
+                    return;
+                }
+                sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
+                window.location.href = 'review/flashcard.html';
             });
 
             // 删除按钮事件

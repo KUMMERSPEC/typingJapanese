@@ -1115,28 +1115,86 @@ select option {
     align-items: center;
     gap: 5px;
     font-size: 14px;
+    transition: all 0.2s ease;
 }
 
 .action-button:hover {
     background-color: #357abd;
+    transform: translateY(-1px);
 }
 
 .action-button i {
     font-size: 16px;
 }
 
-.view-all-btn {
-    padding: 8px 15px;
-    border: 1px solid #4a90e2;
-    border-radius: 4px;
-    color: #4a90e2;
-    text-decoration: none;
-    font-size: 14px;
+/* 收藏夹操作按钮样式 */
+.collection-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
 }
 
-.view-all-btn:hover {
-    background-color: #4a90e2;
-    color: white;
+.collection-actions button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.collection-actions button:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.collection-actions .add-sentence-btn {
+    color: #4CAF50;
+}
+
+.collection-actions .add-sentence-btn:hover {
+    background: #f1f8e9;
+    color: #2e7d32;
+}
+
+.collection-actions .edit-btn {
+    color: #4a90e2;
+}
+
+.collection-actions .edit-btn:hover {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.collection-actions .flashcard-btn {
+    color: #9c27b0;
+}
+
+.collection-actions .flashcard-btn:hover {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.collection-actions .delete-btn {
+    color: #f44336;
+}
+
+.collection-actions .delete-btn:hover {
+    background: #fef2f2;
+    color: #d32f2f;
+}
+
+.collection-actions button i {
+    font-size: 16px;
 }
 
 .error-message {
