@@ -1366,30 +1366,35 @@ select option {
 }
 
 .sentence-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
     border-radius: 6px;
     background: #f8f9fa;
     margin-bottom: 8px;
-    transition: all 0.2s ease;
 }
 
-.sentence-item:hover {
-    background: #f0f0f0;
+.sentence-content {
+    flex: 1;
+    min-width: 0;
 }
 
-.sentence-item:last-child {
-    margin-bottom: 0;
-}
-
-.sentence-japanese {
-    font-size: 15px;
+.sentence-content .japanese {
+    font-size: 0.95em;
     color: #333;
     margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.sentence-chinese {
-    font-size: 13px;
+.sentence-content .chinese {
+    font-size: 0.85em;
     color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 展开/折叠按钮 */
@@ -1612,5 +1617,80 @@ select option {
 
 .start-button i {
     margin-right: 8px;
+}
+
+/* 管理句子模态框样式 */
+#manageSentencesModal.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#manageSentencesModal.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+#manageSentencesModal .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+#manageSentencesModal.show .modal-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#manageSentencesModal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#manageSentencesModal .modal-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+#manageSentencesModal .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+}
+
+#manageSentencesModal .close-btn:hover {
+    color: #333;
+}
+
+#manageSentencesModal .sentences-list {
+    display: block;
+    margin-top: 15px;
 }
 

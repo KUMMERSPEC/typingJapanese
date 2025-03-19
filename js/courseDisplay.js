@@ -352,7 +352,11 @@ export class CourseDisplay {
                             if (icon) {
                                 icon.style.transform = toggleBtn.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0)';
                             }
-                            sentencesList.classList.toggle('show');
+                            if (toggleBtn.classList.contains('expanded')) {
+                                sentencesList.style.display = 'block';
+                            } else {
+                                sentencesList.style.display = 'none';
+                            }
                         });
                     }
 

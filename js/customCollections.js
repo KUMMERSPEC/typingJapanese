@@ -401,7 +401,7 @@ export class CustomCollectionsManager {
                     <button class="close-btn">&times;</button>
                 </div>
                 <div class="sentences-container">
-                    ${Object.entries(collection.sentences || {}).length === 0 
+                    ${Object.keys(collection.sentences || {}).length === 0 
                         ? '<p class="no-sentences">暂无句子</p>'
                         : `<div class="sentences-list">
                             ${Object.entries(collection.sentences || {}).map(([id, sentence]) => `
@@ -459,7 +459,14 @@ export class CustomCollectionsManager {
         });
 
         document.body.appendChild(modal);
-        // 使用 setTimeout 确保 DOM 更新后再添加 show 类
-        requestAnimationFrame(() => modal.classList.add('show'));
+        // 使用 requestAnimationFrame 确保 DOM 更新后再添加 show 类
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.opacity = '1';
+                modalContent.style.transform = 'translateY(0)';
+            }
+        });
     }
 } 
