@@ -297,10 +297,27 @@ export class CourseDisplay {
             const customCollectionsManager = window.customCollectionsManager;
             if (customCollectionsManager) {
                 const collections = customCollectionsManager.getCollections();
+                console.log('Loading collections:', collections); // 添加调试日志
+
                 collections.forEach(collection => {
+                    console.log('Processing collection:', collection); // 添加调试日志
+                    console.log('Collection sentences:', collection.sentences); // 添加调试日志
+
                     const collectionCard = document.createElement('div');
                     collectionCard.className = 'collection-item';
                     
+                    // 修改句子列表的渲染逻辑
+                    const sentencesHtml = collection.sentences && collection.sentences.length > 0
+                        ? collection.sentences.map(sentence => `
+                            <div class="sentence-item">
+                                <div class="sentence-content">
+                                    <div class="japanese">${sentence.japanese || ''}</div>
+                                    <div class="chinese">${sentence.meaning || ''}</div>
+                                </div>
+                            </div>
+                        `).join('')
+                        : '<div class="no-sentences">暂无句子</div>';
+
                     collectionCard.innerHTML = `
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
@@ -333,17 +350,7 @@ export class CourseDisplay {
                             查看句子 (${collection.sentences ? collection.sentences.length : 0})
                         </button>
                         <div class="sentences-list">
-                            ${collection.sentences && collection.sentences.length > 0 ? 
-                                collection.sentences.map(sentence => `
-                                    <div class="sentence-item">
-                                        <div class="sentence-content">
-                                            <div class="japanese">${sentence.japanese}</div>
-                                            <div class="chinese">${sentence.meaning}</div>
-                                        </div>
-                                    </div>
-                                `).join('') 
-                                : '<div class="no-sentences">暂无句子</div>'
-                            }
+                            ${sentencesHtml}
                         </div>
                     `;
 

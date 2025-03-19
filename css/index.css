@@ -1353,79 +1353,67 @@ select option {
     color: #999;
 }
 
-/* 句子列表通用样式 */
+/* 句子列表样式 */
 .sentences-list {
     display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    background: white;
-    z-index: 10;
+    margin-top: 10px;
+    background: #fff;
     border: 1px solid #eee;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
     padding: 15px;
     max-height: 300px;
     overflow-y: auto;
 }
 
-.sentences-list.show {
+.sentences-list.expanded {
     display: block;
 }
 
-/* 收藏夹卡片样式 */
-.collection-item {
-    position: relative;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 15px;
-    transition: all 0.2s ease;
-    margin-bottom: 10px;
-}
-
-.collection-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* 句子项样式 */
 .sentence-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+    align-items: flex-start;
+    padding: 12px;
     background: #f8f9fa;
     border-radius: 6px;
     margin-bottom: 8px;
-    transition: all 0.2s ease;
 }
 
-.sentence-item:hover {
-    background: #f0f0f0;
+.sentence-item:last-child {
+    margin-bottom: 0;
 }
 
-/* 展开/折叠按钮样式 */
+.sentence-content {
+    flex: 1;
+}
+
+.sentence-content .japanese {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.sentence-content .chinese {
+    font-size: 0.9em;
+    color: #666;
+}
+
 .toggle-sentences {
     display: flex;
     align-items: center;
-    gap: 5px;
-    color: #4a90e2;
-    font-size: 13px;
-    padding: 8px;
-    cursor: pointer;
-    border: none;
-    background: none;
+    gap: 6px;
     width: 100%;
-    text-align: left;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-size: 0.9em;
     transition: all 0.2s ease;
 }
 
 .toggle-sentences:hover {
     background: #f5f5f5;
-    color: #357abd;
 }
 
 .toggle-sentences i {
@@ -1437,46 +1425,20 @@ select option {
 }
 
 .no-sentences {
-    color: #999;
     text-align: center;
+    color: #666;
     padding: 10px;
-    font-size: 13px;
+    font-style: italic;
 }
 
-/* 收藏夹中的句子列表特殊样式 */
-.collection-item .sentences-list {
-    position: absolute;
-    left: 0;
-    right: 0;
-    background: white;
-    z-index: 1;
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    pointer-events: none;
-}
-
-.collection-item .sentences-list.expanded {
+/* 确保收藏夹卡片有相对定位 */
+.collection-item {
     position: relative;
-    max-height: 500px;
-    opacity: 1;
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 15px;
-    pointer-events: auto;
-}
-
-.collection-item .sentence-item {
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.collection-item .sentences-list.expanded .sentence-item {
-    transform: translateY(0);
-    opacity: 1;
 }
 
 /* 收藏夹操作按钮 */

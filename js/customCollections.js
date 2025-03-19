@@ -7,11 +7,21 @@ export class CustomCollectionsManager {
 
     // 获取所有收藏夹
     getCollections() {
-        return Object.entries(this.collections).map(([id, collection]) => ({
-            id,
-            ...collection,
-            sentences: Object.values(collection.sentences || {})
-        }));
+        console.log('Raw collections:', this.collections); // 添加调试日志
+        const collections = Object.entries(this.collections).map(([id, collection]) => {
+            const sentences = Object.entries(collection.sentences || {}).map(([sentenceId, sentence]) => ({
+                id: sentenceId,
+                ...sentence
+            }));
+            console.log(`Collection ${id} sentences:`, sentences); // 添加调试日志
+            return {
+                id,
+                ...collection,
+                sentences
+            };
+        });
+        console.log('Processed collections:', collections); // 添加调试日志
+        return collections;
     }
 
     // 加载所有收藏夹
