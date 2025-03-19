@@ -408,7 +408,8 @@ export class CourseDisplay {
                                 course: collection.name,
                                 lesson: '自定义',
                                 proficiency: 'low',
-                                lastReview: new Date().toISOString()
+                                lastReview: new Date().toISOString(),
+                                audioUrl: `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(sentence.japanese)}`
                             }));
                             sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
                             window.location.href = 'review/flashcard.html';

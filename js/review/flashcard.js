@@ -262,14 +262,19 @@ class FlashcardManager {
 
     // 播放日语语音
     playJapanese(text) {
-        try {
-            const audio = new Audio();
-            audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(text)}`;
+        if (!text) return;
+        
+        const currentSentence = this.sentences[this.currentIndex];
+        if (currentSentence && currentSentence.audioUrl) {
+            const audio = new Audio(currentSentence.audioUrl);
             audio.play().catch(error => {
-                console.error('播放语音失败:', error);
+                console.error('播放音频失败:', error);
+                // 如果播放失败，尝试使用 TTS
+                this.speakJapanese(text);
             });
-        } catch (error) {
-            console.error('创建语音失败:', error);
+        } else {
+            // 如果没有音频 URL，使用 TTS
+            this.speakJapanese(text);
         }
     }
 
@@ -279,12 +284,26 @@ class FlashcardManager {
     }
 
     bindEvents() {
-        // 翻转按钮
+        console.log('绑定事件');
+        
+        // 绑定翻转按钮事件
         const flipBtn = document.querySelector('.flip-btn');
         if (flipBtn) {
-            flipBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // 防止事件冒泡
-                this.flipCard();
+            flipBtn.addEventListener('click', () => this.flipCard());
+        }
+
+        // 绑定播放按钮事件
+        const speakBtn = document.querySelector('.speak-btn');
+        if (speakBtn) {
+            speakBtn.addEventListener('click', () => {
+                const currentSentence = this.sentences[this.currentIndex];
+                if (this.mode === 'cn-jp') {
+                    // 在中文到日文模式下，播放背面的日文
+                    this.playJapanese(currentSentence.japanese);
+                } else {
+                    // 在日文到中文模式下，播放正面的日文
+                    this.playJapanese(currentSentence.japanese);
+                }
             });
         }
 
@@ -320,16 +339,6 @@ class FlashcardManager {
                     break;
             }
         });
-
-        // 添加朗读按钮事件
-        const speakBtn = document.querySelector('.speak-btn');
-        if (speakBtn) {
-            speakBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const current = this.sentences[this.currentIndex];
-                this.speakJapanese(current.japanese);
-            });
-        }
 
         // 添加触摸事件
         if (flashcard) {
