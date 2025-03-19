@@ -289,6 +289,9 @@ header h1 {
     padding-top: 15px;
     width: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .start-button {
@@ -316,6 +319,14 @@ header h1 {
 .start-button i {
     margin-right: 8px;
     font-size: 14px;
+}
+
+.start-button.flashcard-button {
+    background: #9c27b0;
+}
+
+.start-button.flashcard-button:hover {
+    background: #7b1fa2;
 }
 
 /* 统计信息样式优化 */

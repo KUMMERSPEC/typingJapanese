@@ -327,11 +327,12 @@ export class CourseDisplay {
                             <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                         </div>
                         <div class="course-actions">
-                            ${collection.sentences && collection.sentences.length > 0 ? `
-                                <a href="practice/practice.html?collection=${collection.id}" class="start-button">
-                                    <i class="fas fa-play"></i> 去练习
-                                </a>
-                            ` : ''}
+                            <a href="practice/practice.html?collection=${collection.id}" class="start-button">
+                                <i class="fas fa-keyboard"></i> 打字练习
+                            </a>
+                            <a href="practice/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
+                                <i class="fas fa-graduation-cap"></i> 闪卡练习
+                            </a>
                         </div>
                         <button class="view-sentences-btn" type="button">
                             <i class="fas fa-list"></i>
