@@ -1366,65 +1366,61 @@ select option {
     display: block;
 }
 
-.sentence-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 6px;
-    background: #f8f9fa;
+/* 收藏夹中的句子列表特殊样式 */
+.collection-item {
+    position: relative;
+}
+
+.collection-item .sentences-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: white;
+    z-index: 10;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    padding: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.collection-item .sentences-list.expanded {
+    max-height: 300px;
+    opacity: 1;
+    padding: 15px;
+    pointer-events: auto;
+    overflow-y: auto;
+}
+
+.collection-item .sentence-item {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
     margin-bottom: 8px;
-    transition: all 0.2s ease;
 }
 
-.sentence-item:hover {
-    background: #f0f0f0;
+.collection-item .sentences-list.expanded .sentence-item {
+    transform: translateY(0);
+    opacity: 1;
 }
 
-.sentence-content {
-    flex: 1;
-    min-width: 0;
+/* 确保卡片有足够的下边距来显示展开的列表 */
+.collection-item {
+    margin-bottom: 320px;
+    transition: margin-bottom 0.3s ease;
 }
 
-.sentence-content .japanese {
-    font-size: 0.95em;
-    color: #333;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.collection-item:not(:hover) {
+    margin-bottom: 0;
 }
 
-.sentence-content .chinese {
-    font-size: 0.85em;
-    color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.sentence-actions {
-    display: flex;
-    gap: 8px;
-    margin-left: 12px;
-}
-
-.sentence-actions button {
-    background: none;
-    border: none;
-    color: #666;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.sentence-actions button:hover {
-    background: #ffebee;
-    color: #c62828;
-}
-
-/* 展开/折叠按钮样式 */
+/* 修改展开按钮样式 */
 .toggle-sentences {
     display: flex;
     align-items: center;
@@ -1451,49 +1447,6 @@ select option {
 
 .toggle-sentences.expanded i {
     transform: rotate(180deg);
-}
-
-.no-sentences {
-    color: #999;
-    text-align: center;
-    padding: 10px;
-    font-size: 13px;
-}
-
-/* 收藏夹中的句子列表特殊样式 */
-.collection-item .sentences-list {
-    position: absolute;
-    left: 0;
-    right: 0;
-    background: white;
-    z-index: 1;
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    pointer-events: none;
-}
-
-.collection-item .sentences-list.expanded {
-    position: relative;
-    max-height: 500px;
-    opacity: 1;
-    padding: 15px;
-    pointer-events: auto;
-}
-
-.collection-item .sentence-item {
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.collection-item .sentences-list.expanded .sentence-item {
-    transform: translateY(0);
-    opacity: 1;
 }
 
 /* 收藏夹操作按钮 */
