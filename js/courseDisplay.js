@@ -305,6 +305,9 @@ export class CourseDisplay {
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
                             <div class="collection-actions">
+                                <button class="add-sentence-btn" type="button" title="添加句子">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                                 <button class="edit-btn" type="button" title="编辑收藏夹">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -352,7 +355,25 @@ export class CourseDisplay {
                         });
                     }
 
-                    // 添加编辑和删除功能
+                    // 添加句子按钮事件
+                    const addSentenceBtn = collectionCard.querySelector('.add-sentence-btn');
+                    if (addSentenceBtn) {
+                        addSentenceBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const addSentenceModal = document.getElementById('addSentenceModal');
+                            if (addSentenceModal) {
+                                const form = addSentenceModal.querySelector('#addSentenceForm');
+                                if (form) {
+                                    form.dataset.collectionId = collection.id;
+                                    form.reset();
+                                }
+                                addSentenceModal.classList.add('show');
+                            }
+                        });
+                    }
+
+                    // 编辑和删除按钮事件
                     const editBtn = collectionCard.querySelector('.edit-btn');
                     const deleteBtn = collectionCard.querySelector('.delete-btn');
                     
@@ -365,7 +386,10 @@ export class CourseDisplay {
                     deleteBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        window.customCollectionsManager.deleteCollectionWithConfirm(collection.id);
+                        if (confirm('确定要删除这个收藏夹吗？')) {
+                            window.customCollectionsManager.deleteCollection(collection.id);
+                            this.loadCourses();
+                        }
                     });
 
                     // 添加点击事件处理
