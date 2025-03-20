@@ -251,6 +251,53 @@ export class CustomCollectionsManager {
             document.body.appendChild(addSentenceModal);
         }
 
+        // 创建批量导入句子模态框
+        if (!document.getElementById('batchImportModal')) {
+            const batchImportModal = document.createElement('div');
+            batchImportModal.id = 'batchImportModal';
+            batchImportModal.className = 'modal';
+            batchImportModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>批量导入句子</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <form id="batchImportForm">
+                        <div class="form-group">
+                            <label for="batchImportText">导入内容</label>
+                            <textarea id="batchImportText" rows="10" required placeholder="每行一个句子，格式为「日语句子 = 中文翻译」&#10;例如：&#10;私は学生です = 我是学生&#10;こんにちは = 你好"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>分隔方式</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="separator" value="=" checked>
+                                    使用等号 (日语 = 中文)
+                                </label>
+                                <label>
+                                    <input type="radio" name="separator" value="tab">
+                                    使用制表符 Tab
+                                </label>
+                                <label>
+                                    <input type="radio" name="separator" value="comma">
+                                    使用逗号 (日语, 中文)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="previewImportBtn" class="secondary-btn">预览</button>
+                            <div id="importPreview" class="import-preview-container" style="display: none;"></div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            <button type="submit" class="primary-btn">导入</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(batchImportModal);
+        }
+
         // 创建编辑收藏夹模态框
         if (!document.getElementById('editCollectionModal')) {
             const editCollectionModal = document.createElement('div');
@@ -440,6 +487,57 @@ export class CustomCollectionsManager {
                         }
                     }, 500);
                 });
+
+                // 批量导入功能
+                const batchImportForm = document.getElementById('batchImportForm');
+                const previewBtn = document.getElementById('previewImportBtn');
+                
+                if (previewBtn) {
+                    previewBtn.addEventListener('click', async () => {
+                        const importText = document.getElementById('batchImportText').value.trim();
+                        const separator = document.querySelector('input[name="separator"]:checked').value;
+                        
+                        if (!importText) {
+                            alert('请输入要导入的内容');
+                            return;
+                        }
+                        
+                        const parsedData = await this.parseBatchImport(importText, separator, japaneseConverter);
+                        this.previewBatchImport(parsedData);
+                    });
+                }
+                
+                if (batchImportForm) {
+                    batchImportForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const importText = document.getElementById('batchImportText').value.trim();
+                        const separator = document.querySelector('input[name="separator"]:checked').value;
+                        const collectionId = batchImportForm.dataset.collectionId;
+                        
+                        if (!importText || !collectionId) {
+                            alert('请输入要导入的内容');
+                            return;
+                        }
+                        
+                        try {
+                            const parsedData = await this.parseBatchImport(importText, separator, japaneseConverter);
+                            await this.processBatchImport(parsedData, collectionId);
+                            
+                            // 关闭模态框
+                            const modal = document.getElementById('batchImportModal');
+                            if (modal) {
+                                modal.classList.remove('show');
+                            }
+                            
+                            // 刷新列表
+                            this.refreshCollectionsList();
+                            alert(`成功导入 ${parsedData.length} 条句子`);
+                        } catch (error) {
+                            console.error('批量导入失败:', error);
+                            alert('导入失败，请检查输入格式');
+                        }
+                    });
+                }
             }).catch(error => {
                 console.error('加载转换器失败:', error);
                 if (convertBtn) {
@@ -491,6 +589,129 @@ export class CustomCollectionsManager {
         }
     }
 
+    // 解析批量导入数据
+    async parseBatchImport(text, separatorType, converter) {
+        if (!text) return [];
+        
+        // 确定分隔符
+        let separator = '=';
+        if (separatorType === 'tab') {
+            separator = '\t';
+        } else if (separatorType === 'comma') {
+            separator = ',';
+        }
+        
+        // 按行分割文本
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        const result = [];
+        
+        // 处理每一行
+        for (const line of lines) {
+            // 跳过空行或注释
+            if (line.trim() === '' || line.trim().startsWith('#')) {
+                continue;
+            }
+            
+            const parts = line.split(separator);
+            
+            // 至少需要日语和中文两部分
+            if (parts.length < 2) {
+                continue;
+            }
+            
+            const japanese = parts[0].trim();
+            const meaning = parts[1].trim();
+            
+            // 转换日语为平假名和罗马字
+            try {
+                const converted = await converter.convert(japanese);
+                
+                result.push({
+                    japanese,
+                    hiragana: converted.hiragana,
+                    romaji: converted.romaji,
+                    meaning
+                });
+            } catch (error) {
+                console.error('转换失败:', error);
+                
+                // 即使转换失败，也添加到结果中，但使用简单的分词
+                result.push({
+                    japanese,
+                    hiragana: japanese.split('').join(':'),
+                    romaji: japanese,
+                    meaning
+                });
+            }
+        }
+        
+        return result;
+    }
+    
+    // 预览批量导入数据
+    previewBatchImport(sentences) {
+        const previewContainer = document.getElementById('importPreview');
+        if (!previewContainer) return;
+        
+        if (sentences.length === 0) {
+            previewContainer.innerHTML = '<div class="preview-empty">没有有效的句子可以导入</div>';
+            previewContainer.style.display = 'block';
+            return;
+        }
+        
+        // 最多显示 5 个
+        const previewItems = sentences.slice(0, 5);
+        let html = `
+            <div class="preview-header">预览 (${sentences.length} 个句子)</div>
+            <div class="preview-items">
+        `;
+        
+        previewItems.forEach(sentence => {
+            html += `
+                <div class="preview-item">
+                    <div class="preview-japanese">${sentence.japanese}</div>
+                    <div class="preview-meaning">${sentence.meaning}</div>
+                    <div class="preview-detail">
+                        <span class="preview-hiragana">${sentence.hiragana}</span>
+                        <span class="preview-romaji">${sentence.romaji}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        if (sentences.length > 5) {
+            html += `<div class="preview-more">...还有 ${sentences.length - 5} 个句子</div>`;
+        }
+        
+        html += '</div>';
+        
+        previewContainer.innerHTML = html;
+        previewContainer.style.display = 'block';
+    }
+    
+    // 处理批量导入数据
+    async processBatchImport(sentences, collectionId) {
+        if (!this.collections[collectionId]) {
+            throw new Error('收藏夹不存在');
+        }
+        
+        // 记录总共处理的句子数
+        let count = 0;
+        
+        // 批量添加句子
+        for (const sentence of sentences) {
+            if (sentence.japanese && sentence.meaning) {
+                this.addSentence(collectionId, sentence);
+                count++;
+            }
+        }
+        
+        // 保存到 localStorage
+        this.saveCollections();
+        
+        return count;
+    }
+
     // 显示收藏夹列表模态框
     showCollectionsModal() {
         const modal = document.getElementById('collectionsModal');
@@ -533,6 +754,29 @@ export class CustomCollectionsManager {
         }
     }
 
+    // 显示批量导入模态框
+    showBatchImportModal(collectionId) {
+        const modal = document.getElementById('batchImportModal');
+        if (modal) {
+            // 重置表单
+            const form = document.getElementById('batchImportForm');
+            if (form) {
+                form.reset();
+                form.dataset.collectionId = collectionId;
+            }
+            
+            // 隐藏预览区域
+            const previewContainer = document.getElementById('importPreview');
+            if (previewContainer) {
+                previewContainer.style.display = 'none';
+                previewContainer.innerHTML = '';
+            }
+            
+            // 显示模态框
+            modal.classList.add('show');
+        }
+    }
+
     // 隐藏添加句子模态框
     hideAddSentenceModal() {
         const modal = document.getElementById('addSentenceModal');
@@ -557,6 +801,9 @@ export class CustomCollectionsManager {
                     <div class="collection-actions">
                         <button class="add-sentence-btn" title="添加句子">
                             <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="batch-import-btn" title="批量导入">
+                            <i class="fas fa-file-import"></i>
                         </button>
                         <button class="edit-btn" title="编辑收藏夹">
                             <i class="fas fa-edit"></i>
@@ -584,6 +831,14 @@ export class CustomCollectionsManager {
                 e.preventDefault();
                 e.stopPropagation();
                 this.showAddSentenceModal(id);
+            });
+
+            // 批量导入按钮事件
+            const batchImportBtn = collectionElement.querySelector('.batch-import-btn');
+            batchImportBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showBatchImportModal(id);
             });
 
             // 编辑按钮事件

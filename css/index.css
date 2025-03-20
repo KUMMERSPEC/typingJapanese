@@ -1686,3 +1686,95 @@ select option {
     background-color: #e8e8e8;
 }
 
+/* 批量导入相关样式 */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 8px;
+}
+
+/* 预览区域样式 */
+.import-preview-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 15px;
+    background-color: #f9f9f9;
+}
+
+.preview-header {
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+}
+
+.preview-empty {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.preview-items {
+    padding: 10px;
+}
+
+.preview-item {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-japanese {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.preview-meaning {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.preview-detail {
+    display: flex;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.preview-hiragana {
+    margin-right: 10px;
+}
+
+.preview-more {
+    text-align: center;
+    padding: 5px;
+    font-style: italic;
+    color: #666;
+}
+
+/* 批量导入按钮样式 */
+.collection-actions .batch-import-btn {
+    color: #4285F4;
+}
+
+.collection-actions .batch-import-btn:hover {
+    background: #E8F0FE;
+    color: #2A56C6;
+}
+
