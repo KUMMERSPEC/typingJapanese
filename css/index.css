@@ -1144,7 +1144,11 @@ select option {
     top: 15px;
     right: 15px;
     display: flex;
-    gap: 8px;
+    flex-wrap: wrap;  /* 允许按钮换行 */
+    gap: 6px;
+    width: auto;
+    max-width: 74px;  /* 两个按钮的宽度加间距 */
+    justify-content: flex-end;
 }
 
 .collection-actions button {
@@ -1160,6 +1164,7 @@ select option {
     justify-content: center;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 4px;  /* 添加下边距 */
 }
 
 .collection-actions button:hover {
@@ -1385,8 +1390,8 @@ select option {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    padding-right: 60px; /* 为操作按钮留出空间 */
+    margin-bottom: 12px;
+    padding-right: 80px; /* 为操作按钮留出更多空间 */
 }
 
 .collection-header h3 {
@@ -1690,7 +1695,7 @@ select option {
 .radio-group {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
@@ -1698,10 +1703,15 @@ select option {
     display: flex;
     align-items: center;
     cursor: pointer;
+    margin-left: 0;
+    padding-left: 0;
+    position: relative;
 }
 
 .radio-group input[type="radio"] {
-    margin-right: 8px;
+    margin-right: 10px;
+    position: relative;
+    top: 1px;  /* 微调对齐 */
 }
 
 /* 预览区域样式 */
@@ -1710,7 +1720,7 @@ select option {
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-top: 15px;
+    margin: 15px 0;
     background-color: #f9f9f9;
 }
 
@@ -1776,5 +1786,83 @@ select option {
 .collection-actions .batch-import-btn:hover {
     background: #E8F0FE;
     color: #2A56C6;
+}
+
+/* 添加收藏夹底部按钮样式 */
+.collection-footer-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.collection-footer-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: #f8f9fa;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.collection-footer-actions .flashcard-btn {
+    color: #9c27b0;
+    background: #f8f0fc;
+}
+
+.collection-footer-actions .flashcard-btn:hover {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+.collection-footer-actions .delete-btn {
+    color: #f44336;
+    background: #fff1f0;
+}
+
+.collection-footer-actions .delete-btn:hover {
+    background: #fef2f2;
+    color: #d32f2f;
+}
+
+/* 修改收藏夹统计信息区域 */
+.collection-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #888;
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+/* 优化批量导入界面 */
+.preview-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#previewImportBtn {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.radio-label span {
+    margin-left: 5px;
 }
 

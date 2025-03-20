@@ -4,33 +4,48 @@ export class JapaneseConverter {
         this.kuroshiro = null;
         this.initialized = false;
         this.initializing = false;
+        this.initPromise = null;
     }
 
     async init() {
-        if (this.initialized || this.initializing) {
+        if (this.initialized) {
             return;
         }
 
-        try {
-            this.initializing = true;
-            
-            // 检查 Kuroshiro 是否存在
-            if (typeof Kuroshiro === 'undefined' || typeof KuromojiAnalyzer === 'undefined') {
-                console.error('Kuroshiro 或 KuromojiAnalyzer 未定义，请确保已正确加载相关库');
-                throw new Error('所需库未加载');
-            }
-            
-            this.kuroshiro = new Kuroshiro();
-            await this.kuroshiro.init(new KuromojiAnalyzer());
-            this.initialized = true;
-            console.log('日语转换器初始化成功');
-        } catch (error) {
-            console.error('日语转换器初始化失败:', error);
-            this.initialized = false;
-            throw error;
-        } finally {
-            this.initializing = false;
+        if (this.initializing) {
+            // 如果已经在初始化过程中，等待初始化完成
+            return this.initPromise;
         }
+
+        // 创建初始化Promise
+        this.initializing = true;
+        this.initPromise = new Promise(async (resolve, reject) => {
+            try {
+                console.log('开始初始化日语转换器...');
+                
+                // 检查 Kuroshiro 是否存在
+                if (typeof Kuroshiro === 'undefined' || typeof KuromojiAnalyzer === 'undefined') {
+                    console.error('Kuroshiro 或 KuromojiAnalyzer 未定义，请确保已正确加载相关库');
+                    throw new Error('所需库未加载');
+                }
+                
+                this.kuroshiro = new Kuroshiro();
+                await this.kuroshiro.init(new KuromojiAnalyzer({
+                    dictPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict"
+                }));
+                this.initialized = true;
+                console.log('日语转换器初始化成功');
+                resolve();
+            } catch (error) {
+                console.error('日语转换器初始化失败:', error);
+                this.initialized = false;
+                reject(error);
+            } finally {
+                this.initializing = false;
+            }
+        });
+
+        return this.initPromise;
     }
 
     async convert(text) {
@@ -43,10 +58,12 @@ export class JapaneseConverter {
                 await this.init();
             }
 
-            // 获取平假名
+            console.log('使用Kuroshiro转换:', text);
+
+            // 获取平假名 - 使用segmented模式以获得更好的分词
             const hiragana = await this.kuroshiro.convert(text, {
                 to: 'hiragana',
-                mode: 'spaced'
+                mode: 'furigana'
             });
 
             // 获取罗马字
@@ -55,8 +72,11 @@ export class JapaneseConverter {
                 mode: 'spaced'
             });
 
+            // 处理furigana模式的输出，提取纯平假名文本并用冒号分隔
+            const hiraganaText = this.extractTextFromFurigana(hiragana);
+            
             return {
-                hiragana: hiragana.replace(/\s+/g, ':'),
+                hiragana: hiraganaText,
                 romaji: romaji.toLowerCase()
             };
         } catch (error) {
@@ -67,14 +87,84 @@ export class JapaneseConverter {
         }
     }
     
-    // 简单的日文分词
+    // 从furigana HTML中提取纯文本并添加分隔符
+    extractTextFromFurigana(furiganaHtml) {
+        try {
+            // 创建临时DOM元素并设置innerHTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = furiganaHtml;
+            
+            // 提取所有ruby元素
+            const rubyElements = tempDiv.querySelectorAll('ruby');
+            
+            if (rubyElements.length === 0) {
+                // 如果没有ruby元素，返回原始文本并用冒号替换空格
+                return tempDiv.textContent.trim().replace(/\s+/g, ':');
+            }
+            
+            // 提取文本并适当分隔
+            const segments = [];
+            let currentText = '';
+            let lastNode = null;
+            
+            // 处理所有子节点
+            for (const node of tempDiv.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    // 处理文本节点
+                    const text = node.textContent.trim();
+                    if (text) {
+                        if (currentText) {
+                            segments.push(currentText);
+                        }
+                        // 文本节点按字符拆分并添加冒号
+                        const chars = text.split('');
+                        currentText = chars.join('');
+                    }
+                } else if (node.nodeName === 'RUBY') {
+                    // 处理ruby元素
+                    const rbText = node.querySelector('rb')?.textContent || '';
+                    const rtText = node.querySelector('rt')?.textContent || '';
+                    
+                    if (rtText) {
+                        if (currentText) {
+                            segments.push(currentText);
+                        }
+                        currentText = rtText;
+                    } else if (rbText) {
+                        currentText += rbText;
+                    }
+                }
+                
+                lastNode = node;
+            }
+            
+            // 添加最后一段文本
+            if (currentText) {
+                segments.push(currentText);
+            }
+            
+            // 连接所有段落并用冒号分隔
+            return segments.join(':');
+        } catch (error) {
+            console.error('提取furigana文本失败:', error);
+            return furiganaHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ':');
+        }
+    }
+    
+    // 检查是否是日本汉字
+    isKanji(char) {
+        return /[\u4E00-\u9FAF]/.test(char);
+    }
+    
+    // 简单的日文分词 - 加强版
     tokenizeJapanese(text) {
         if (!text) return [];
         
-        // 简单的分词规则：
+        // 分词规则：
         // 1. 遇到标点符号分词
         // 2. 日语和非日语之间分词
-        // 3. 尝试通过语法规则进行分词
+        // 3. 汉字和假名之间可能需要分词
+        // 4. 尝试通过语法规则进行分词
         
         const tokens = [];
         let currentToken = '';
@@ -88,6 +178,11 @@ export class JapaneseConverter {
             if (/[a-zA-Z0-9]/u.test(char)) return 'latin';
             if (/[！？。、．，：；'"（）［］【】「」『』〈〉《》〔〕…‥]/u.test(char)) return 'punctuation';
             return 'other';
+        };
+        
+        // 判断是否为助词
+        const isParticle = (token) => {
+            return ['は', 'が', 'を', 'に', 'へ', 'と', 'で', 'から', 'まで', 'より', 'の', 'や', 'な', 'ね'].includes(token);
         };
         
         for (let i = 0; i < text.length; i++) {
@@ -105,10 +200,29 @@ export class JapaneseConverter {
                 continue;
             }
             
-            // 如果字符类型改变了，可能需要分词
+            // 如果字符类型改变了，考虑是否需要分词
             if (lastCharType && charType !== lastCharType) {
-                // 如果从日语文字变成其他，或者从其他变成日语文字，则分词
-                if (
+                // 汉字后面跟假名，可能是同一个词
+                if (lastCharType === 'kanji' && (charType === 'hiragana' || charType === 'katakana')) {
+                    // 查看后续几个字符，如果只有很少的假名（1-2个），可能是一个词
+                    let hiraganaCount = 0;
+                    let j = i;
+                    while (j < text.length && (getCharType(text[j]) === 'hiragana' || getCharType(text[j]) === 'katakana')) {
+                        hiraganaCount++;
+                        j++;
+                    }
+                    
+                    // 如果后面跟很多假名或者是已知的助词，分词
+                    if (hiraganaCount > 2 || isParticle(text.substring(i, j))) {
+                        tokens.push(currentToken);
+                        currentToken = char;
+                        lastCharType = charType;
+                        continue;
+                    }
+                    // 否则不分词，继续添加
+                }
+                // 如果从日语文字变成非日语文字，则分词
+                else if (
                     (lastCharType === 'hiragana' || lastCharType === 'katakana' || lastCharType === 'kanji') &&
                     (charType !== 'hiragana' && charType !== 'katakana' && charType !== 'kanji')
                 ) {
@@ -117,8 +231,8 @@ export class JapaneseConverter {
                     lastCharType = charType;
                     continue;
                 }
-                
-                if (
+                // 如果从非日语文字变成日语文字，则分词
+                else if (
                     (charType === 'hiragana' || charType === 'katakana' || charType === 'kanji') &&
                     (lastCharType !== 'hiragana' && lastCharType !== 'katakana' && lastCharType !== 'kanji')
                 ) {
@@ -139,7 +253,24 @@ export class JapaneseConverter {
             tokens.push(currentToken);
         }
         
-        return tokens.filter(token => token.trim() !== '');
+        // 进一步处理分词结果，处理助词等特殊情况
+        const finalTokens = [];
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            // 检查常见的助词
+            if (token.length > 1) {
+                const lastChar = token.charAt(token.length - 1);
+                if (isParticle(lastChar) && getCharType(lastChar) === 'hiragana') {
+                    // 将助词单独分词
+                    finalTokens.push(token.substring(0, token.length - 1));
+                    finalTokens.push(lastChar);
+                    continue;
+                }
+            }
+            finalTokens.push(token);
+        }
+        
+        return finalTokens.filter(token => token.trim() !== '');
     }
     
     // 简易转换方法，不依赖外部库，使用基础映射表
@@ -253,6 +384,71 @@ export class JapaneseConverter {
                 let tokenRomaji = '';
                 let i = 0;
                 
+                // 检查是否包含汉字
+                const containsKanji = [...token].some(char => this.isKanji(char));
+                
+                // 对于纯汉字词，尝试基于常见汉字词映射
+                if (containsKanji) {
+                    // 常见汉字词的读音映射（这只是一个小例子，实际应用中需要更完整的词典）
+                    const kanjiDict = {
+                        '私': 'わたし',
+                        '僕': 'ぼく',
+                        '今日': 'きょう',
+                        '明日': 'あした',
+                        '昨日': 'きのう',
+                        '学生': 'がくせい',
+                        '先生': 'せんせい',
+                        '日本': 'にほん',
+                        '映画': 'えいが',
+                        '学校': 'がっこう',
+                        '図書館': 'としょかん',
+                        '大学': 'だいがく',
+                        '食べる': 'たべる',
+                        '飲む': 'のむ',
+                        '見る': 'みる',
+                        '来る': 'くる',
+                        '行く': 'いく',
+                        '帰る': 'かえる',
+                        '話す': 'はなす',
+                        '聞く': 'きく',
+                        '読む': 'よむ',
+                        '書く': 'かく',
+                        '勉強': 'べんきょう',
+                        '電話': 'でんわ',
+                        '携帯': 'けいたい',
+                        '時間': 'じかん',
+                        '自転車': 'じてんしゃ',
+                        '電車': 'でんしゃ',
+                        '新幹線': 'しんかんせん',
+                        '美味しい': 'おいしい',
+                        '早い': 'はやい',
+                        '遅い': 'おそい',
+                        '高い': 'たかい',
+                        '安い': 'やすい',
+                        '暑い': 'あつい',
+                        '寒い': 'さむい'
+                    };
+                    
+                    // 尝试在词典中查找
+                    if (kanjiDict[token]) {
+                        tokenHiragana = kanjiDict[token];
+                        // 遍历假名计算罗马字
+                        for (let j = 0; j < tokenHiragana.length; j++) {
+                            const char = tokenHiragana[j];
+                            if (hiraganaToRomaji[char]) {
+                                tokenRomaji += hiraganaToRomaji[char];
+                            } else {
+                                tokenRomaji += char;
+                            }
+                        }
+                        
+                        resultHiragana.push(tokenHiragana);
+                        resultRomaji.push(tokenRomaji);
+                        continue;
+                    }
+                }
+                
+                // 常规处理
                 while (i < token.length) {
                     // 检查双字符组合 (主要用于拗音)
                     if (i + 1 < token.length) {
@@ -286,6 +482,14 @@ export class JapaneseConverter {
                     // 如果是音调符号，直接跳过
                     if (char === 'ー') {
                         tokenRomaji += '-';
+                        tokenHiragana += char;
+                        i++;
+                        continue;
+                    }
+                    
+                    // 如果是汉字，我们无法简单转换，保持原样
+                    if (this.isKanji(char)) {
+                        tokenRomaji += char;
                         tokenHiragana += char;
                         i++;
                         continue;
