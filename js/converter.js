@@ -35,8 +35,6 @@ class JapaneseConverter {
         this.initialized = false;
         this.tokenizer = null;
         this.initializationPromise = null;
-        this.initializationAttempts = 0;
-        this.maxInitializationAttempts = 3;
 
         // 使用绝对路径
         this.dictPath = `${BASE_URL}/dict`;
@@ -63,6 +61,7 @@ class JapaneseConverter {
                 kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
                     if (err) {
                         console.error('分词器构建失败:', err);
+                        this.initializationPromise = null;
                         reject(err);
                         return;
                     }
@@ -75,6 +74,7 @@ class JapaneseConverter {
 
             } catch (error) {
                 console.error('分词器初始化失败:', error);
+                this.initializationPromise = null;
                 reject(error);
             }
         });
@@ -113,7 +113,7 @@ class JapaneseConverter {
             console.error('转换失败:', error);
             return {
                 success: false,
-                error: "转换失败: " + (error.message || "请手动输入假名和罗马音")
+                error: "转换失败，请稍后重试"
             };
         }
     }
@@ -191,22 +191,8 @@ function handleConversionResult(result, hiraganaInput, romajiInput) {
         hiraganaInput.value = result.data.hiragana;
         romajiInput.value = result.data.romaji;
     } else {
-        // 转换失败，启用手动输入
+        // 转换失败
         console.error(result.error);
-        alert(result.error);
-        enableManualInput(hiraganaInput, romajiInput);
-    }
-}
-
-// 添加启用手动输入的辅助函数
-function enableManualInput(hiraganaInput, romajiInput) {
-    if (hiraganaInput) {
-        hiraganaInput.removeAttribute('readonly');
-        hiraganaInput.placeholder = '请手动输入假名';
-    }
-    if (romajiInput) {
-        romajiInput.removeAttribute('readonly');
-        romajiInput.placeholder = '请手动输入罗马音';
     }
 }
 
@@ -217,17 +203,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         await converter.initTokenizer();
     } catch (error) {
         console.error('初始化失败:', error);
-        // 不再显示alert，而是直接切换到手动模式
-        const hiraganaInputs = document.querySelectorAll('.hiragana-input');
-        const romajiInputs = document.querySelectorAll('.romaji-input');
-        
-        hiraganaInputs.forEach(input => enableManualInput(input, null));
-        romajiInputs.forEach(input => enableManualInput(null, input));
-        
-        // 可以添加一个提示信息
-        const notice = document.createElement('div');
-        notice.className = 'notice';
-        notice.textContent = '自动转换功能暂时不可用，已切换到手动输入模式';
-        document.body.insertBefore(notice, document.body.firstChild);
     }
 }); 
