@@ -247,4 +247,42 @@
 .import-result.error {
     background-color: #ffebee;
     color: #c62828;
+}
+
+/* 复习提醒样式 */
+.review-reminder {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.review-reminder.overdue {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.review-reminder.upcoming {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.collection-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.review-btn:hover {
+    background-color: #388e3c;
 } 
