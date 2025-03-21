@@ -28,104 +28,111 @@ class JapaneseConverter {
             'ー': ''
         };
 
-        // 修改初始化策略
+        // 修改初始化状态管理
         this.initialized = false;
         this.tokenizer = null;
         this.initializationPromise = null;
+        this.initializationAttempts = 0;
+        this.maxInitializationAttempts = 3;
     }
 
     // 修改初始化方法
     async initTokenizer() {
-        // 如果已经在初始化中，返回现有的 promise
+        // 如果已经初始化成功，直接返回
+        if (this.initialized && this.tokenizer) {
+            return this.tokenizer;
+        }
+
+        // 如果正在初始化，返回现有的 promise
         if (this.initializationPromise) {
             return this.initializationPromise;
         }
 
-        // 创建新的初始化 promise
-        this.initializationPromise = new Promise((resolve, reject) => {
-            // 检查 kuromoji 是否已加载
-            if (typeof kuromoji === 'undefined') {
-                // 尝试动态加载 kuromoji
-                const script = document.createElement('script');
-                script.src = "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js";
-                script.onload = () => this.initKuromoji(resolve, reject);
-                script.onerror = () => reject(new Error('无法加载 kuromoji 库'));
-                document.head.appendChild(script);
-            } else {
-                this.initKuromoji(resolve, reject);
+        // 显示加载指示器
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('active');
+        }
+
+        this.initializationPromise = new Promise(async (resolve, reject) => {
+            try {
+                // 检查是否超过最大尝试次数
+                if (this.initializationAttempts >= this.maxInitializationAttempts) {
+                    throw new Error('初始化失败次数过多');
+                }
+
+                this.initializationAttempts++;
+
+                // 使用本地词典路径
+                const tokenizer = await new Promise((res, rej) => {
+                    kuromoji.builder({ dicPath: './dict' })
+                        .build((err, tokenizer) => {
+                            if (err) rej(err);
+                            else res(tokenizer);
+                        });
+                });
+
+                this.tokenizer = tokenizer;
+                this.initialized = true;
+                resolve(tokenizer);
+            } catch (error) {
+                console.error('分词器初始化失败:', error);
+                reject(error);
+            } finally {
+                // 隐藏加载指示器
+                if (loadingOverlay) {
+                    loadingOverlay.classList.remove('active');
+                }
+                // 清除初始化 promise
+                this.initializationPromise = null;
             }
         });
-
-        try {
-            await this.initializationPromise;
-            console.log("分词器初始化成功");
-            this.initialized = true;
-        } catch (error) {
-            console.error("分词器初始化失败:", error);
-            this.initialized = false;
-            throw error;
-        }
 
         return this.initializationPromise;
     }
 
-    // 分离 kuromoji 初始化逻辑
-    initKuromoji(resolve, reject) {
-        kuromoji.builder({ dicPath: "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict" })
-            .build((err, tokenizer) => {
-                if (err) {
-                    reject(err);
-                    return;
+    // 修改转换方法
+    async convert(text) {
+        try {
+            // 显示加载指示器
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('active');
+            }
+
+            // 如果未初始化，先初始化
+            if (!this.initialized) {
+                await this.initTokenizer();
+            }
+
+            // 执行转换
+            const tokens = this.tokenizer.tokenize(text);
+            const hiragana = tokens.map(token => {
+                const reading = this.getReading(token);
+                return token.pos === '助詞' ? `:${reading}:` : reading;
+            }).join('');
+
+            const romaji = this.hiraganaToRomaji(hiragana);
+
+            return {
+                success: true,
+                data: {
+                    original: text,
+                    hiragana: hiragana,
+                    romaji: romaji
                 }
-                this.tokenizer = tokenizer;
-                this.initialized = true;
-                resolve(tokenizer);
-            });
-    }
-
-    // 修改转换方法，添加重试逻辑
-    async convert(text, retryCount = 3) {
-        for (let i = 0; i < retryCount; i++) {
-            try {
-                // 如果未初始化，先尝试初始化
-                if (!this.initialized) {
-                    await this.initTokenizer();
-                }
-
-                // 确保 tokenizer 存在
-                if (!this.tokenizer) {
-                    throw new Error("分词器未就绪");
-                }
-
-                const tokens = this.tokenizer.tokenize(text);
-                const hiragana = tokens.map(token => {
-                    const reading = this.getReading(token);
-                    return token.pos === '助詞' ? `:${reading}:` : reading;
-                }).join('');
-
-                const romaji = this.hiraganaToRomaji(hiragana);
-
-                return {
-                    success: true,
-                    data: {
-                        original: text,
-                        hiragana: hiragana,
-                        romaji: romaji
-                    }
-                };
-            } catch (error) {
-                console.error(`转换失败 (尝试 ${i + 1}/${retryCount}):`, error);
-                
-                // 如果是最后一次尝试，返回错误
-                if (i === retryCount - 1) {
-                    return {
-                        success: false,
-                        error: "转换失败，请手动输入假名和罗马音"
-                    };
-                }
-                
-                // 等待一段时间后重试
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            };
+        } catch (error) {
+            console.error('转换失败:', error);
+            return {
+                success: false,
+                error: "转换失败，请手动输入假名和罗马音"
+            };
+        } finally {
+            // 隐藏加载指示器
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('active');
             }
         }
     }
@@ -221,4 +228,26 @@ async function example() {
     //   hiragana: "にほんご:を:べんきょうする",
     //   romaji: "nihongo:wo:benkyousuru"
     // }
-} 
+}
+
+// 在页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.classList.add('active');
+
+        // 初始化转换器
+        const converter = new JapaneseConverter();
+        await converter.initTokenizer();
+
+        // 初始化其他组件
+        // ...
+
+    } catch (error) {
+        console.error('初始化失败:', error);
+        alert('系统初始化失败，请刷新页面重试');
+    } finally {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.classList.remove('active');
+    }
+}); 

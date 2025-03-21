@@ -13,29 +13,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="practice/assets/fonts/css/all.min.css">
     
-    <!-- 添加 Kuroshiro 相关依赖 -->
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js" crossorigin="anonymous"></script>
-    <!-- 验证 Kuroshiro 是否加载成功 -->
-    <script>
-        window.addEventListener('load', function() {
-            if (typeof Kuroshiro !== 'undefined') {
-                console.log('Kuroshiro 库加载成功');
-            } else {
-                console.error('Kuroshiro 库加载失败');
-            }
-            
-            if (typeof KuromojiAnalyzer !== 'undefined') {
-                console.log('KuromojiAnalyzer 库加载成功');
-            } else {
-                console.error('KuromojiAnalyzer 库加载失败');
-            }
-        });
-    </script>
-    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js">
-    <link rel="preload" as="fetch" href="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/base.dat.gz" crossorigin>
+    <!-- 直接加载 kuromoji -->
+    <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
+    
+    <!-- 添加加载状态样式 -->
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
+    <!-- 添加加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
     <div class="container">
         <!-- 添加遮罩层 -->
         <div class="overlay"></div>
@@ -361,9 +381,6 @@
         </div>
     </div>
 
-    <!-- 首先加载核心依赖 -->
-    <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
-    
     <!-- 然后加载转换器 -->
     <script type="module">
         import converter from './js/converter.js';
