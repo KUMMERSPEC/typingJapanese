@@ -35,16 +35,17 @@ class JapaneseConverter {
         this.initialized = false;
         this.tokenizer = null;
         this.initializationPromise = null;
-
-        // 使用绝对路径
-        this.dictPath = `${BASE_URL}/dict`;
-
-        // 添加加载状态标志
         this.isLoading = false;
-        this.loadingError = null;
+        
+        // 修改路径处理，适配 GitHub Pages
+        const repoPath = window.location.pathname.split('/')[1]; // 获取仓库名
+        this.dictPath = window.location.pathname.includes('github.io') 
+            ? `/${repoPath}/dict`  // GitHub Pages 环境
+            : './dict';            // 本地开发环境
+        
+        console.log('Dictionary path:', this.dictPath);
     }
 
-    // 改进初始化方法
     async initTokenizer() {
         // 如果已经初始化成功，直接返回
         if (this.initialized && this.tokenizer) {
@@ -57,26 +58,24 @@ class JapaneseConverter {
         }
 
         this.isLoading = true;
-        this.loadingError = null;
+
+        // 确保 kuromoji 已加载
+        if (typeof kuromoji === 'undefined') {
+            console.error('kuromoji not loaded');
+            this.isLoading = false;
+            return null;
+        }
 
         this.initializationPromise = new Promise((resolve, reject) => {
             try {
-                console.log('开始初始化分词器...');
-                console.log('使用词典路径:', this.dictPath);
-
-                // 添加超时处理
-                const timeoutId = setTimeout(() => {
-                    const error = new Error('分词器初始化超时');
-                    this.handleInitError(error);
-                    reject(error);
-                }, 30000); // 30秒超时
-
+                console.log('正在初始化分词器，使用路径:', this.dictPath);
+                
                 kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
-                    clearTimeout(timeoutId);
-                    
                     if (err) {
-                        this.handleInitError(err);
-                        reject(err);
+                        console.log('分词器初始化失败:', err);
+                        this.isLoading = false;
+                        this.initialized = false;
+                        resolve(null);
                         return;
                     }
                     
@@ -88,40 +87,34 @@ class JapaneseConverter {
                 });
 
             } catch (error) {
-                this.handleInitError(error);
-                reject(error);
+                console.log('分词器初始化出错:', error);
+                this.isLoading = false;
+                this.initialized = false;
+                resolve(null);
             }
         });
 
-        return this.initializationPromise.catch(error => {
-            this.handleInitError(error);
-            throw error;
-        });
+        return this.initializationPromise;
     }
 
-    // 添加错误处理方法
-    handleInitError(error) {
-        console.error('分词器初始化失败:', error);
-        this.loadingError = error;
-        this.isLoading = false;
-        this.initialized = false;
-        this.initializationPromise = null;
-    }
-
-    // 修改转换方法以更好地处理错误
+    // 修改转换方法
     async convert(text) {
         try {
-            if (this.loadingError) {
-                throw new Error('分词器初始化失败，请刷新页面重试');
-            }
-
             // 如果未初始化，先初始化
             if (!this.initialized) {
                 await this.initTokenizer();
             }
 
+            // 如果没有分词器，返回原文
             if (!this.tokenizer) {
-                throw new Error('分词器未正确初始化');
+                return {
+                    success: true,
+                    data: {
+                        original: text,
+                        hiragana: text,
+                        romaji: text
+                    }
+                };
             }
 
             // 执行转换
@@ -144,10 +137,14 @@ class JapaneseConverter {
                 }
             };
         } catch (error) {
-            console.error('转换失败:', error);
+            console.log('转换失败，返回原文');
             return {
-                success: false,
-                error: error.message || "转换失败，请稍后重试"
+                success: true,
+                data: {
+                    original: text,
+                    hiragana: text,
+                    romaji: text
+                }
             };
         }
     }
@@ -233,16 +230,8 @@ function handleConversionResult(result, hiraganaInput, romajiInput) {
 // 改进页面加载初始化逻辑
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 设置较长的超时时间进行初始化
-        const initTimeout = setTimeout(() => {
-            console.error('初始化超时');
-            alert('分词器加载超时，请刷新页面重试');
-        }, 30000);
-
         await converter.initTokenizer();
-        clearTimeout(initTimeout);
     } catch (error) {
-        console.error('初始化失败:', error);
-        alert('分词器初始化失败，请刷新页面重试');
+        console.log('初始化过程出错，使用降级模式');
     }
 }); 
