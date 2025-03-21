@@ -409,16 +409,56 @@ export class CustomCollectionsManager {
             const romajiSpinner = romajiInput?.parentElement?.querySelector('.loading-spinner');
 
             // 导入转换器
-            import('./converter.js').then(module => {
-                const { japaneseConverter } = module;
-                
-                // 启用转换按钮
-                if (convertBtn) {
+            import converter from './converter.js';
+            
+            // 启用转换按钮
+            if (convertBtn) {
+                convertBtn.disabled = false;
+            }
+
+            // 手动转换按钮点击事件
+            convertBtn?.addEventListener('click', async () => {
+                const japanese = japaneseInput.value.trim();
+                if (!japanese) return;
+
+                try {
+                    // 显示加载动画
+                    hiraganaSpinner.style.display = 'block';
+                    romajiSpinner.style.display = 'block';
+                    convertBtn.disabled = true;
+
+                    // 执行转换
+                    const result = await converter.convert(japanese);
+                    
+                    // 更新输入框
+                    hiraganaInput.value = result.hiragana || japanese;
+                    romajiInput.value = result.romaji || japanese;
+                } catch (error) {
+                    console.error('转换失败:', error);
+                    alert('转换失败，请手动输入假名和罗马音');
+                    
+                    // 尝试分解日语句子为单个字符，用冒号分隔
+                    if (japanese) {
+                        hiraganaInput.value = japanese.split('').join(':');
+                    }
+                } finally {
+                    // 隐藏加载动画
+                    hiraganaSpinner.style.display = 'none';
+                    romajiSpinner.style.display = 'none';
                     convertBtn.disabled = false;
                 }
+            });
 
-                // 手动转换按钮点击事件
-                convertBtn?.addEventListener('click', async () => {
+            // 自动转换功能
+            let conversionTimeout;
+            japaneseInput?.addEventListener('input', () => {
+                if (!autoConvertCheckbox?.checked) return;
+                
+                // 清除之前的定时器
+                clearTimeout(conversionTimeout);
+                
+                // 设置新的定时器，延迟500ms后执行转换
+                conversionTimeout = setTimeout(async () => {
                     const japanese = japaneseInput.value.trim();
                     if (!japanese) return;
 
@@ -426,17 +466,16 @@ export class CustomCollectionsManager {
                         // 显示加载动画
                         hiraganaSpinner.style.display = 'block';
                         romajiSpinner.style.display = 'block';
-                        convertBtn.disabled = true;
 
                         // 执行转换
-                        const result = await japaneseConverter.convert(japanese);
+                        const result = await converter.convert(japanese);
                         
                         // 更新输入框
                         hiraganaInput.value = result.hiragana || japanese;
                         romajiInput.value = result.romaji || japanese;
                     } catch (error) {
-                        console.error('转换失败:', error);
-                        alert('转换失败，请手动输入假名和罗马音');
+                        console.error('自动转换失败:', error);
+                        // 不显示错误提示以避免打断用户输入
                         
                         // 尝试分解日语句子为单个字符，用冒号分隔
                         if (japanese) {
@@ -446,134 +485,60 @@ export class CustomCollectionsManager {
                         // 隐藏加载动画
                         hiraganaSpinner.style.display = 'none';
                         romajiSpinner.style.display = 'none';
-                        convertBtn.disabled = false;
                     }
-                });
-
-                // 自动转换功能
-                let conversionTimeout;
-                japaneseInput?.addEventListener('input', () => {
-                    if (!autoConvertCheckbox?.checked) return;
-                    
-                    // 清除之前的定时器
-                    clearTimeout(conversionTimeout);
-                    
-                    // 设置新的定时器，延迟500ms后执行转换
-                    conversionTimeout = setTimeout(async () => {
-                        const japanese = japaneseInput.value.trim();
-                        if (!japanese) return;
-
-                        try {
-                            // 显示加载动画
-                            hiraganaSpinner.style.display = 'block';
-                            romajiSpinner.style.display = 'block';
-
-                            // 执行转换
-                            const result = await japaneseConverter.convert(japanese);
-                            
-                            // 更新输入框
-                            hiraganaInput.value = result.hiragana || japanese;
-                            romajiInput.value = result.romaji || japanese;
-                        } catch (error) {
-                            console.error('自动转换失败:', error);
-                            // 不显示错误提示以避免打断用户输入
-                            
-                            // 尝试分解日语句子为单个字符，用冒号分隔
-                            if (japanese) {
-                                hiraganaInput.value = japanese.split('').join(':');
-                            }
-                        } finally {
-                            // 隐藏加载动画
-                            hiraganaSpinner.style.display = 'none';
-                            romajiSpinner.style.display = 'none';
-                        }
-                    }, 500);
-                });
-
-                // 批量导入功能
-                const batchImportForm = document.getElementById('batchImportForm');
-                const previewBtn = document.getElementById('previewImportBtn');
-                
-                if (previewBtn) {
-                    previewBtn.addEventListener('click', async () => {
-                        const importText = document.getElementById('batchImportText').value.trim();
-                        const separator = document.querySelector('input[name="separator"]:checked').value;
-                        
-                        if (!importText) {
-                            alert('请输入要导入的内容');
-                            return;
-                        }
-                        
-                        const parsedData = await this.parseBatchImport(importText, separator, japaneseConverter);
-                        this.previewBatchImport(parsedData);
-                    });
-                }
-                
-                if (batchImportForm) {
-                    batchImportForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const importText = document.getElementById('batchImportText').value.trim();
-                        const separator = document.querySelector('input[name="separator"]:checked').value;
-                        const collectionId = batchImportForm.dataset.collectionId;
-                        
-                        if (!importText || !collectionId) {
-                            alert('请输入要导入的内容');
-                            return;
-                        }
-                        
-                        try {
-                            const parsedData = await this.parseBatchImport(importText, separator, japaneseConverter);
-                            await this.processBatchImport(parsedData, collectionId);
-                            
-                            // 关闭模态框
-                            const modal = document.getElementById('batchImportModal');
-                            if (modal) {
-                                modal.classList.remove('show');
-                            }
-                            
-                            // 刷新列表
-                            this.refreshCollectionsList();
-                            alert(`成功导入 ${parsedData.length} 条句子`);
-                        } catch (error) {
-                            console.error('批量导入失败:', error);
-                            alert('导入失败，请检查输入格式');
-                        }
-                    });
-                }
-            }).catch(error => {
-                console.error('加载转换器失败:', error);
-                if (convertBtn) {
-                    convertBtn.disabled = false; // 保持按钮可用，用户可以手动尝试
-                    convertBtn.title = '日语转换器加载失败，但您仍可以点击尝试转换';
-                }
-                
-                // 为用户提供友好提示
-                alert('日语转换功能可能不可用，您需要手动填写假名和罗马音');
+                }, 500);
             });
 
-            addSentenceForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const collectionId = e.target.dataset.collectionId;
-                const sentenceData = {
-                    japanese: document.getElementById('japanese').value,
-                    hiragana: document.getElementById('hiragana').value,
-                    romaji: document.getElementById('romaji').value,
-                    meaning: document.getElementById('meaning').value
-                };
-                
-                try {
-                    this.addSentence(collectionId, sentenceData);
-                    const modal = document.getElementById('addSentenceModal');
-                    if (modal) {
-                        modal.classList.remove('show');
+            // 批量导入功能
+            const batchImportForm = document.getElementById('batchImportForm');
+            const previewBtn = document.getElementById('previewImportBtn');
+            
+            if (previewBtn) {
+                previewBtn.addEventListener('click', async () => {
+                    const importText = document.getElementById('batchImportText').value.trim();
+                    const separator = document.querySelector('input[name="separator"]:checked').value;
+                    
+                    if (!importText) {
+                        alert('请输入要导入的内容');
+                        return;
                     }
-                    this.refreshCollectionsList();
-                    window.dispatchEvent(new CustomEvent('collectionsUpdated'));
-                } catch (error) {
-                    console.error('Error adding sentence:', error);
-                    alert('添加句子失败，请重试');
-                }
-            });
+                    
+                    const parsedData = await this.parseBatchImport(importText, separator, converter);
+                    this.previewBatchImport(parsedData);
+                });
+            }
+            
+            if (batchImportForm) {
+                batchImportForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const importText = document.getElementById('batchImportText').value.trim();
+                    const separator = document.querySelector('input[name="separator"]:checked').value;
+                    const collectionId = batchImportForm.dataset.collectionId;
+                    
+                    if (!importText || !collectionId) {
+                        alert('请输入要导入的内容');
+                        return;
+                    }
+                    
+                    try {
+                        const parsedData = await this.parseBatchImport(importText, separator, converter);
+                        await this.processBatchImport(parsedData, collectionId);
+                        
+                        // 关闭模态框
+                        const modal = document.getElementById('batchImportModal');
+                        if (modal) {
+                            modal.classList.remove('show');
+                        }
+                        
+                        // 刷新列表
+                        this.refreshCollectionsList();
+                        alert(`成功导入 ${parsedData.length} 条句子`);
+                    } catch (error) {
+                        console.error('批量导入失败:', error);
+                        alert('导入失败，请检查输入格式');
+                    }
+                });
+            }
         }
 
         // 编辑收藏夹表单提交
