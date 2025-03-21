@@ -249,23 +249,83 @@
     color: #c62828;
 }
 
-/* 复习提醒样式 */
+/* 收藏夹列表容器 */
+.collections-container {
+    max-height: calc(100vh - 200px); /* 设置最大高度，留出顶部和底部空间 */
+    overflow-y: auto; /* 添加垂直滚动条 */
+    padding-right: 10px; /* 为滚动条留出空间 */
+    margin-right: -10px; /* 补偿padding-right */
+}
+
+/* 收藏夹标题组样式 */
+.collection-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0; /* 允许在flex容器中收缩 */
+}
+
+.collection-review-status {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+/* 复习提醒样式优化 */
 .review-reminder {
-    padding: 3px 6px;
+    padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.85em;
     white-space: nowrap;
-    flex: 0 0 auto;
+    display: inline-block; /* 确保显示 */
 }
 
-.review-reminder.overdue {
-    background-color: #ffebee;
-    color: #c62828;
+/* 自定义滚动条样式 */
+.collections-container::-webkit-scrollbar {
+    width: 8px;
 }
 
-.review-reminder.upcoming {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+.collections-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.collections-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.collections-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 确保内容不会被底部遮挡 */
+.collections-container {
+    padding-bottom: 20px;
+}
+
+/* 收藏夹卡片样式优化 */
+.collection-item {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative; /* 用于定位内部元素 */
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .collections-container {
+        max-height: calc(100vh - 150px);
+    }
+    
+    .collection-title-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
 }
 
 .collection-header {

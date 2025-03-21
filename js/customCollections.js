@@ -824,8 +824,12 @@ export class CustomCollectionsManager {
 
             collectionElement.innerHTML = `
                 <div class="collection-header">
-                    <h3>${collection.name}</h3>
-                    ${reviewStatus}
+                    <div class="collection-title-group">
+                        <h3>${collection.name}</h3>
+                        <div class="collection-review-status">
+                            ${reviewStatus}
+                        </div>
+                    </div>
                     <div class="collection-actions">
                         <button class="add-sentence-btn" title="添加句子">
                             <i class="fas fa-plus"></i>
