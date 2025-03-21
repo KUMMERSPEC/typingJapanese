@@ -43,7 +43,13 @@ export class CustomCollectionsManager {
             name,
             description,
             created_at: new Date().toISOString(),
-            sentences: {}
+            sentences: {},
+            review: {
+                last_review: null,          // 上次复习时间
+                next_review: null,          // 下次复习时间
+                interval_days: 7,           // 复习间隔（天）
+                review_count: 0             // 复习次数
+            }
         };
         this.saveCollections();
         return id;
@@ -798,9 +804,24 @@ export class CustomCollectionsManager {
         Object.entries(this.collections).forEach(([id, collection]) => {
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
+            
+            // 计算复习状态
+            let reviewStatus = '';
+            if (collection.review && collection.review.next_review) {
+                const nextReview = new Date(collection.review.next_review);
+                const now = new Date();
+                if (nextReview <= now) {
+                    reviewStatus = `<div class="review-reminder overdue">需要复习</div>`;
+                } else {
+                    const daysUntil = Math.ceil((nextReview - now) / (1000 * 60 * 60 * 24));
+                    reviewStatus = `<div class="review-reminder upcoming">${daysUntil}天后复习</div>`;
+                }
+            }
+
             collectionElement.innerHTML = `
                 <div class="collection-header">
                     <h3>${collection.name}</h3>
+                    ${reviewStatus}
                     <div class="collection-actions">
                         <button class="add-sentence-btn" title="添加句子">
                             <i class="fas fa-plus"></i>
@@ -813,6 +834,9 @@ export class CustomCollectionsManager {
                         </button>
                         <button class="manage-sentences-btn" title="管理">
                             <i class="fas fa-list"></i>
+                        </button>
+                        <button class="review-btn" title="标记已复习">
+                            <i class="fas fa-check"></i>
                         </button>
                     </div>
                 </div>
@@ -857,6 +881,15 @@ export class CustomCollectionsManager {
                 e.preventDefault();
                 e.stopPropagation();
                 this.showManageSentencesModal(id);
+            });
+
+            // 复习按钮事件
+            const reviewBtn = collectionElement.querySelector('.review-btn');
+            reviewBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.updateReviewStatus(id);
+                this.refreshCollectionsList();
             });
 
             // 删除按钮事件 - 移动到底部按钮
@@ -943,5 +976,43 @@ export class CustomCollectionsManager {
         }
 
         modal.classList.add('show');
+    }
+
+    // 添加复习相关方法
+    updateReviewStatus(collectionId) {
+        const collection = this.collections[collectionId];
+        if (!collection) return;
+
+        const now = new Date();
+        collection.review.last_review = now.toISOString();
+        
+        // 计算下次复习时间（默认7天后）
+        const nextReview = new Date(now);
+        nextReview.setDate(nextReview.getDate() + collection.review.interval_days);
+        collection.review.next_review = nextReview.toISOString();
+        
+        collection.review.review_count++;
+        this.saveCollections();
+    }
+
+    // 检查是否需要复习
+    checkReviewStatus() {
+        const now = new Date();
+        const needReview = [];
+
+        Object.entries(this.collections).forEach(([id, collection]) => {
+            if (collection.review && collection.review.next_review) {
+                const nextReview = new Date(collection.review.next_review);
+                if (nextReview <= now) {
+                    needReview.push({
+                        id,
+                        name: collection.name,
+                        daysOverdue: Math.floor((now - nextReview) / (1000 * 60 * 60 * 24))
+                    });
+                }
+            }
+        });
+
+        return needReview;
     }
 }
