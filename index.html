@@ -32,6 +32,8 @@
             }
         });
     </script>
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js">
+    <link rel="preload" as="fetch" href="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/base.dat.gz" crossorigin>
 </head>
 <body>
     <div class="container">
@@ -311,16 +313,26 @@
                     <div class="form-group">
                         <label for="hiragana">平假名</label>
                         <div class="input-group">
-                            <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                            <input type="text" 
+                                   id="hiragana" 
+                                   required 
+                                   placeholder="用冒号分隔，如：わたし:は:がくせい:です"
+                                   readonly>
                             <div class="loading-spinner" style="display: none;"></div>
                         </div>
+                        <small class="help-text">自动转换失败时可手动输入</small>
                     </div>
                     <div class="form-group">
                         <label for="romaji">罗马音</label>
                         <div class="input-group">
-                            <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                            <input type="text" 
+                                   id="romaji" 
+                                   required 
+                                   placeholder="watashi:wa:gakusei:desu"
+                                   readonly>
                             <div class="loading-spinner" style="display: none;"></div>
                         </div>
+                        <small class="help-text">自动转换失败时可手动输入</small>
                     </div>
                     <div class="form-group">
                         <label for="meaning">中文含义</label>
@@ -349,8 +361,19 @@
         </div>
     </div>
 
-    <!-- 添加 kuromoji.js 依赖 -->
+    <!-- 首先加载核心依赖 -->
     <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
-    <script src="converter.js"></script>
+    
+    <!-- 然后加载转换器 -->
+    <script type="module">
+        import converter from './js/converter.js';
+        
+        // 在页面加载完成后预初始化转换器
+        window.addEventListener('DOMContentLoaded', () => {
+            converter.initTokenizer().catch(error => {
+                console.warn('预初始化失败，将在首次使用时重试:', error);
+            });
+        });
+    </script>
 </body>
 </html> 
