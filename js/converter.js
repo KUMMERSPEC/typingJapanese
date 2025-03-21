@@ -1,15 +1,8 @@
-// 导入 kuroshiro 相关包
-import Kuroshiro from "kuroshiro";
-import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
-
 // 在类外部定义基础URL
 const BASE_URL = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
 
 class JapaneseConverter {
     constructor() {
-        // 初始化 Kuroshiro
-        this.kuroshiro = new Kuroshiro();
-        
         // 初始化假名到罗马字的映射
         this.hiraganaToRomajiMap = {
             // 基本假名
@@ -40,28 +33,20 @@ class JapaneseConverter {
 
         // 修改初始化状态管理
         this.initialized = false;
-        this.analyzer = null;
+        this.tokenizer = null;
         this.initializationPromise = null;
         this.initializationAttempts = 0;
         this.maxInitializationAttempts = 3;
 
         // 使用绝对路径
         this.dictPath = `${BASE_URL}/dict`;
-
-        // 添加状态标志
-        this.isError = false;
     }
 
     // 修改初始化方法
     async initTokenizer() {
         // 如果已经初始化成功，直接返回
-        if (this.initialized && this.analyzer) {
-            return this.analyzer;
-        }
-
-        // 如果在错误状态，直接返回null
-        if (this.isError) {
-            return null;
+        if (this.initialized && this.tokenizer) {
+            return this.tokenizer;
         }
 
         // 如果正在初始化，返回现有的 promise
@@ -69,28 +54,28 @@ class JapaneseConverter {
             return this.initializationPromise;
         }
 
-        this.initializationPromise = new Promise(async (resolve, reject) => {
+        this.initializationPromise = new Promise((resolve, reject) => {
             try {
                 console.log('开始初始化分词器...');
                 console.log('使用词典路径:', this.dictPath);
 
-                // 创建并初始化 analyzer
-                this.analyzer = new KuromojiAnalyzer({
-                    dictPath: this.dictPath
+                // 使用原生 kuromoji 初始化
+                kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
+                    if (err) {
+                        console.error('分词器构建失败:', err);
+                        reject(err);
+                        return;
+                    }
+                    
+                    console.log('分词器构建成功');
+                    this.tokenizer = tokenizer;
+                    this.initialized = true;
+                    resolve(tokenizer);
                 });
 
-                // 初始化 kuroshiro
-                await this.kuroshiro.init(this.analyzer);
-                
-                console.log('分词器初始化成功');
-                this.initialized = true;
-                resolve(this.analyzer);
             } catch (error) {
                 console.error('分词器初始化失败:', error);
-                this.isError = true;
                 reject(error);
-            } finally {
-                this.initializationPromise = null;
             }
         });
 
@@ -102,40 +87,25 @@ class JapaneseConverter {
         try {
             // 如果未初始化，先初始化
             if (!this.initialized) {
-                const analyzer = await this.initTokenizer();
-                if (!analyzer) {
-                    throw new Error("分词器未能正确初始化，将使用手动输入模式");
-                }
+                await this.initTokenizer();
             }
 
-            // 如果在错误状态，直接返回错误
-            if (this.isError) {
-                return {
-                    success: false,
-                    error: "系统处于错误状态，请使用手动输入模式"
-                };
-            }
-
-            // 使用 kuroshiro 进行转换
-            const result = await this.kuroshiro.convert(text, {
-                mode: "normal",
-                to: "hiragana",
-                romajiSystem: "hepburn"
-            });
-
+            // 执行转换
+            const tokens = this.tokenizer.tokenize(text);
+            
             // 获取平假名和罗马字
-            const hiragana = result;
-            const romaji = await this.kuroshiro.convert(text, {
-                mode: "normal",
-                to: "romaji",
-                romajiSystem: "hepburn"
-            });
+            const hiragana = tokens.map(token => {
+                const reading = token.reading || token.surface_form;
+                return token.pos === '助詞' ? `:${reading}:` : reading;
+            }).join('');
+
+            const romaji = this.hiraganaToRomaji(this.katakanaToHiragana(hiragana));
 
             return {
                 success: true,
                 data: {
                     original: text,
-                    hiragana: hiragana,
+                    hiragana: this.katakanaToHiragana(hiragana),
                     romaji: romaji
                 }
             };
@@ -143,7 +113,7 @@ class JapaneseConverter {
             console.error('转换失败:', error);
             return {
                 success: false,
-                error: "转换失败，已切换到手动输入模式"
+                error: "转换失败: " + (error.message || "请手动输入假名和罗马音")
             };
         }
     }
