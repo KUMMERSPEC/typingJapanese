@@ -196,4 +196,55 @@
     display: flex;
     gap: 10px;
     margin-top: 15px;
+}
+
+/* 批量导入预览表格样式 */
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.preview-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.preview-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.preview-table tr:hover {
+    background-color: #f0f0f0;
+}
+
+.preview-empty {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+/* 导入结果消息样式 */
+.import-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.import-result.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.import-result.error {
+    background-color: #ffebee;
+    color: #c62828;
 } 

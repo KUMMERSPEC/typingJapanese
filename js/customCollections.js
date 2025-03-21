@@ -615,67 +615,95 @@ export class CustomCollectionsManager {
     }
     
     // 预览批量导入数据
-    previewBatchImport(sentences) {
+    previewBatchImport(parsedData) {
         const previewContainer = document.getElementById('importPreview');
         if (!previewContainer) return;
-        
-        if (sentences.length === 0) {
-            previewContainer.innerHTML = '<div class="preview-empty">没有有效的句子可以导入</div>';
-            previewContainer.style.display = 'block';
+
+        if (!Array.isArray(parsedData) || parsedData.length === 0) {
+            previewContainer.innerHTML = '<div class="preview-empty">没有可导入的句子</div>';
             return;
         }
-        
-        // 最多显示 5 个
-        const previewItems = sentences.slice(0, 5);
-        let html = `
-            <div class="preview-header">预览 (${sentences.length} 个句子)</div>
-            <div class="preview-items">
+
+        // 创建预览表格
+        const table = document.createElement('table');
+        table.className = 'preview-table';
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>日语</th>
+                    <th>假名</th>
+                    <th>罗马字</th>
+                    <th>中文</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${parsedData.map((item, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.japanese}</td>
+                        <td>${item.hiragana}</td>
+                        <td>${item.romaji}</td>
+                        <td>${item.meaning}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
         `;
-        
-        previewItems.forEach(sentence => {
-            html += `
-                <div class="preview-item">
-                    <div class="preview-japanese">${sentence.japanese}</div>
-                    <div class="preview-meaning">${sentence.meaning}</div>
-                    <div class="preview-detail">
-                        <span class="preview-hiragana">${sentence.hiragana}</span>
-                        <span class="preview-romaji">${sentence.romaji}</span>
-                    </div>
-                </div>
-            `;
-        });
-        
-        if (sentences.length > 5) {
-            html += `<div class="preview-more">...还有 ${sentences.length - 5} 个句子</div>`;
-        }
-        
-        html += '</div>';
-        
-        previewContainer.innerHTML = html;
-        previewContainer.style.display = 'block';
+
+        previewContainer.innerHTML = '';
+        previewContainer.appendChild(table);
     }
     
     // 处理批量导入数据
-    async processBatchImport(sentences, collectionId) {
-        if (!this.collections[collectionId]) {
-            throw new Error('收藏夹不存在');
+    async processBatchImport(parsedData, collectionId) {
+        if (!Array.isArray(parsedData) || parsedData.length === 0) {
+            throw new Error('没有有效的句子可导入');
         }
-        
-        // 记录总共处理的句子数
-        let count = 0;
-        
-        // 批量添加句子
-        for (const sentence of sentences) {
-            if (sentence.japanese && sentence.meaning) {
-                this.addSentence(collectionId, sentence);
-                count++;
+
+        // 记录成功导入的数量
+        let successCount = 0;
+        const errors = [];
+
+        // 逐个添加句子
+        for (const sentence of parsedData) {
+            try {
+                // 验证数据完整性
+                if (!sentence.japanese || !sentence.hiragana || !sentence.romaji || !sentence.meaning) {
+                    errors.push(`句子格式不完整: ${sentence.japanese}`);
+                    continue;
+                }
+
+                // 添加到收藏夹
+                await this.addSentence(collectionId, {
+                    japanese: sentence.japanese,
+                    hiragana: sentence.hiragana,
+                    romaji: sentence.romaji,
+                    meaning: sentence.meaning
+                });
+
+                successCount++;
+            } catch (error) {
+                console.error('添加句子失败:', error, sentence);
+                errors.push(`导入失败: ${sentence.japanese}`);
             }
         }
-        
-        // 保存到 localStorage
+
+        // 保存更改
         this.saveCollections();
-        
-        return count;
+
+        // 如果有错误，显示错误信息
+        if (errors.length > 0) {
+            console.warn('部分句子导入失败:', errors);
+            alert(`成功导入 ${successCount} 个句子，${errors.length} 个句子导入失败。`);
+        } else {
+            alert(`成功导入 ${successCount} 个句子`);
+        }
+
+        // 返回导入结果
+        return {
+            success: successCount,
+            errors: errors
+        };
     }
 
     // 显示收藏夹列表模态框
