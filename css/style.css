@@ -251,10 +251,11 @@
 
 /* 复习提醒样式 */
 .review-reminder {
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 0.9em;
-    margin-left: 10px;
+    font-size: 0.85em;
+    white-space: nowrap;
+    flex: 0 0 auto;
 }
 
 .review-reminder.overdue {
@@ -270,19 +271,108 @@
 .collection-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
-.review-btn {
-    background-color: #4caf50;
-    color: white;
+.collection-header h3 {
+    margin: 0;
+    flex: 0 1 auto;
+    min-width: 100px;
+}
+
+.collection-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+.collection-actions button {
+    padding: 4px;
+    min-width: 28px;
+    height: 28px;
     border: none;
     border-radius: 4px;
-    padding: 4px 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: #f5f5f5;
 }
 
-.review-btn:hover {
+.collection-actions button:hover {
+    background: #e0e0e0;
+}
+
+/* 特殊按钮样式 */
+.collection-actions .review-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.collection-actions .review-btn:hover {
     background-color: #388e3c;
+}
+
+.collection-actions .delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.collection-actions .delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+.collection-description {
+    color: #666;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.collection-stats {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.collection-stats i {
+    margin-right: 5px;
+}
+
+/* 在小屏幕上进一步优化 */
+@media (max-width: 768px) {
+    .collection-header {
+        gap: 6px;
+    }
+    
+    .collection-actions button {
+        padding: 3px;
+        min-width: 24px;
+        height: 24px;
+    }
+    
+    .review-reminder {
+        font-size: 0.8em;
+        padding: 2px 4px;
+    }
+}
+
+/* 在更小的屏幕上调整布局 */
+@media (max-width: 480px) {
+    .collection-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .collection-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
 } 

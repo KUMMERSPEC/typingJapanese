@@ -807,14 +807,18 @@ export class CustomCollectionsManager {
             
             // 计算复习状态
             let reviewStatus = '';
-            if (collection.review && collection.review.next_review) {
-                const nextReview = new Date(collection.review.next_review);
+            if (collection.review) {
+                const nextReview = collection.review.next_review ? new Date(collection.review.next_review) : null;
                 const now = new Date();
-                if (nextReview <= now) {
-                    reviewStatus = `<div class="review-reminder overdue">需要复习</div>`;
-                } else {
-                    const daysUntil = Math.ceil((nextReview - now) / (1000 * 60 * 60 * 24));
-                    reviewStatus = `<div class="review-reminder upcoming">${daysUntil}天后复习</div>`;
+                
+                if (nextReview) {
+                    if (nextReview <= now) {
+                        const daysOverdue = Math.floor((now - nextReview) / (1000 * 60 * 60 * 24));
+                        reviewStatus = `<div class="review-reminder overdue">已超期${daysOverdue}天，需要复习</div>`;
+                    } else {
+                        const daysUntil = Math.ceil((nextReview - now) / (1000 * 60 * 60 * 24));
+                        reviewStatus = `<div class="review-reminder upcoming">${daysUntil}天后复习</div>`;
+                    }
                 }
             }
 
@@ -838,16 +842,14 @@ export class CustomCollectionsManager {
                         <button class="review-btn" title="标记已复习">
                             <i class="fas fa-check"></i>
                         </button>
+                        <button class="delete-btn" title="删除收藏夹">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </div>
                 <p class="collection-description">${collection.description || ''}</p>
                 <div class="collection-stats">
                     <span><i class="fas fa-book"></i>${Object.keys(collection.sentences || {}).length} 个句子</span>
-                    <div class="collection-footer-actions">
-                        <button class="delete-btn" title="删除收藏夹">
-                            <i class="fas fa-trash"></i> 删除
-                        </button>
-                    </div>
                 </div>
             `;
 
@@ -978,21 +980,53 @@ export class CustomCollectionsManager {
         modal.classList.add('show');
     }
 
-    // 添加复习相关方法
+    // 更新复习设置
+    updateReviewSettings(collectionId, settings) {
+        const collection = this.collections[collectionId];
+        if (!collection) return;
+
+        collection.review = {
+            ...collection.review,
+            ...settings
+        };
+        this.saveCollections();
+    }
+
+    // 修改复习状态更新方法
     updateReviewStatus(collectionId) {
         const collection = this.collections[collectionId];
         if (!collection) return;
 
         const now = new Date();
-        collection.review.last_review = now.toISOString();
+        const lastReview = collection.review.last_review ? new Date(collection.review.last_review) : null;
         
-        // 计算下次复习时间（默认7天后）
+        // 更新复习记录
+        collection.review.last_review = now.toISOString();
+        collection.review.review_count = (collection.review.review_count || 0) + 1;
+        
+        // 根据复习次数调整间隔（简单的间隔递增）
+        let interval = collection.review.interval_days || 7;
+        if (lastReview) {
+            // 如果是按时复习，增加间隔
+            const daysLate = Math.floor((now - new Date(collection.review.next_review)) / (1000 * 60 * 60 * 24));
+            if (daysLate <= 0) {
+                interval = Math.min(interval * 1.5, 30); // 最大30天
+            } else {
+                interval = Math.max(7, interval * 0.8); // 最小7天
+            }
+        }
+        
+        collection.review.interval_days = Math.round(interval);
+        
+        // 计算下次复习时间
         const nextReview = new Date(now);
         nextReview.setDate(nextReview.getDate() + collection.review.interval_days);
         collection.review.next_review = nextReview.toISOString();
-        
-        collection.review.review_count++;
+
         this.saveCollections();
+        
+        // 显示提示
+        alert(`已标记复习完成！\n下次复习时间：${nextReview.toLocaleDateString()}\n（${collection.review.interval_days}天后）`);
     }
 
     // 检查是否需要复习
