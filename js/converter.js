@@ -130,12 +130,18 @@ class JapaneseConverter {
             // 执行转换
             const tokens = this.tokenizer.tokenize(text);
             
-            // 获取平假名和罗马字
-            const hiragana = tokens.map(token => {
+            // 获取平假名和罗马字，按词分割
+            const readings = tokens.map(token => {
+                // 获取读音（假名）
                 const reading = token.reading || token.surface_form;
+                // 如果是助词，添加冒号
                 return token.pos === '助詞' ? `:${reading}:` : reading;
-            }).join('');
+            });
 
+            // 将读音连接成字符串
+            const hiragana = readings.join('');
+
+            // 转换为罗马字
             const romaji = this.hiraganaToRomaji(this.katakanaToHiragana(hiragana));
 
             return {
@@ -167,14 +173,14 @@ class JapaneseConverter {
         return this.katakanaToHiragana(token.reading);
     }
 
-    // 片假名转平假名
+    // 修改片假名转平假名方法
     katakanaToHiragana(str) {
         return str.replace(/[\u30A0-\u30FF]/g, char => 
             String.fromCharCode(char.charCodeAt(0) - 0x60)
         );
     }
 
-    // 转换为罗马字
+    // 修改平假名转罗马字方法
     hiraganaToRomaji(hiragana) {
         const parts = hiragana.split(':');
         return parts.map(part => {
@@ -184,7 +190,7 @@ class JapaneseConverter {
             let i = 0;
             
             while (i < part.length) {
-                // 检查双字符组合
+                // 检查双字符组合（拗音）
                 if (i + 1 < part.length) {
                     const pair = part.slice(i, i + 2);
                     if (this.hiraganaToRomajiMap[pair]) {
