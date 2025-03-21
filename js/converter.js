@@ -3,98 +3,108 @@ const BASE_URL = window.location.origin + window.location.pathname.substring(0, 
 
 class JapaneseConverter {
     constructor() {
-        // 初始化假名到罗马字的映射
-        this.hiraganaToRomajiMap = {
-            // 基本假名
-            'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
-            'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
-            'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
-            'た': 'ta', 'ち': 'chi', 'つ': 'tsu', 'て': 'te', 'と': 'to',
-            'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
-            'は': 'ha', 'ひ': 'hi', 'ふ': 'fu', 'へ': 'he', 'ほ': 'ho',
-            'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
-            'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
-            'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
-            'わ': 'wa', 'を': 'wo', 'ん': 'n',
-            'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
-            'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
-            'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
-            'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
-            'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
-            // 拗音
-            'きょ': 'kyo', 'しょ': 'sho', 'ちょ': 'cho', 'にょ': 'nyo',
-            'ひょ': 'hyo', 'みょ': 'myo', 'りょ': 'ryo', 'ぎょ': 'gyo',
-            'じょ': 'jo', 'びょ': 'byo', 'ぴょ': 'pyo',
-            // 促音
-            'っ': '',
-            // 长音
-            'ー': ''
-        };
+        try {
+            // 初始化假名到罗马字的映射
+            this.hiraganaToRomajiMap = {
+                // 基本假名
+                'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+                'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+                'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
+                'た': 'ta', 'ち': 'chi', 'つ': 'tsu', 'て': 'te', 'と': 'to',
+                'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+                'は': 'ha', 'ひ': 'hi', 'ふ': 'fu', 'へ': 'he', 'ほ': 'ho',
+                'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+                'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+                'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+                'わ': 'wa', 'を': 'wo', 'ん': 'n',
+                'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+                'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+                'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
+                'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+                'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
+                // 拗音
+                'きょ': 'kyo', 'しょ': 'sho', 'ちょ': 'cho', 'にょ': 'nyo',
+                'ひょ': 'hyo', 'みょ': 'myo', 'りょ': 'ryo', 'ぎょ': 'gyo',
+                'じょ': 'jo', 'びょ': 'byo', 'ぴょ': 'pyo',
+                // 促音
+                'っ': '',
+                // 长音
+                'ー': ''
+            };
 
-        // 修改初始化状态管理
-        this.initialized = false;
-        this.tokenizer = null;
-        this.initializationPromise = null;
-        this.isLoading = false;
-        
-        // 修改路径处理，适配 GitHub Pages
-        const repoPath = window.location.pathname.split('/')[1]; // 获取仓库名
-        this.dictPath = window.location.pathname.includes('github.io') 
-            ? `/${repoPath}/dict`  // GitHub Pages 环境
-            : './dict';            // 本地开发环境
-        
-        console.log('Dictionary path:', this.dictPath);
+            // 修改初始化状态管理
+            this.initialized = false;
+            this.tokenizer = null;
+            this.initializationPromise = null;
+            this.isLoading = false;
+            
+            // 修改路径处理，使用更可靠的方式
+            const pathSegments = window.location.pathname.split('/');
+            const repoName = pathSegments[1]; // 获取仓库名
+            
+            // 根据不同环境设置不同的路径
+            if (window.location.hostname === 'kummerspec.github.io') {
+                this.dictPath = `/${repoName}/dict`;  // GitHub Pages
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                this.dictPath = './dict';  // 本地开发
+            } else {
+                this.dictPath = '/dict';   // 其他环境
+            }
+            
+            console.log('Current hostname:', window.location.hostname);
+            console.log('Current pathname:', window.location.pathname);
+            console.log('Dictionary path:', this.dictPath);
+        } catch (error) {
+            console.error('Converter initialization error:', error);
+            // 确保基本属性被设置
+            this.initialized = false;
+            this.tokenizer = null;
+            this.dictPath = './dict';
+        }
     }
 
     async initTokenizer() {
-        // 如果已经初始化成功，直接返回
-        if (this.initialized && this.tokenizer) {
-            return this.tokenizer;
-        }
+        try {
+            if (this.initialized && this.tokenizer) {
+                return this.tokenizer;
+            }
 
-        // 如果正在加载中，等待现有的promise
-        if (this.isLoading && this.initializationPromise) {
-            return this.initializationPromise;
-        }
+            if (this.isLoading) {
+                return this.initializationPromise;
+            }
 
-        this.isLoading = true;
+            this.isLoading = true;
 
-        // 确保 kuromoji 已加载
-        if (typeof kuromoji === 'undefined') {
-            console.error('kuromoji not loaded');
+            if (typeof kuromoji === 'undefined') {
+                throw new Error('kuromoji not loaded');
+            }
+
+            return await new Promise((resolve) => {
+                try {
+                    kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
+                        if (err) {
+                            console.warn('Tokenizer initialization failed:', err);
+                            this.isLoading = false;
+                            resolve(null);
+                            return;
+                        }
+                        
+                        this.tokenizer = tokenizer;
+                        this.initialized = true;
+                        this.isLoading = false;
+                        resolve(tokenizer);
+                    });
+                } catch (error) {
+                    console.warn('Tokenizer build error:', error);
+                    this.isLoading = false;
+                    resolve(null);
+                }
+            });
+        } catch (error) {
+            console.warn('Tokenizer initialization error:', error);
             this.isLoading = false;
             return null;
         }
-
-        this.initializationPromise = new Promise((resolve, reject) => {
-            try {
-                console.log('正在初始化分词器，使用路径:', this.dictPath);
-                
-                kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
-                    if (err) {
-                        console.log('分词器初始化失败:', err);
-                        this.isLoading = false;
-                        this.initialized = false;
-                        resolve(null);
-                        return;
-                    }
-                    
-                    console.log('分词器构建成功');
-                    this.tokenizer = tokenizer;
-                    this.initialized = true;
-                    this.isLoading = false;
-                    resolve(tokenizer);
-                });
-
-            } catch (error) {
-                console.log('分词器初始化出错:', error);
-                this.isLoading = false;
-                this.initialized = false;
-                resolve(null);
-            }
-        });
-
-        return this.initializationPromise;
     }
 
     // 修改转换方法
@@ -209,10 +219,29 @@ class JapaneseConverter {
     }
 }
 
-// 创建单例实例
-const converter = new JapaneseConverter();
+// 修改初始化逻辑，使用 window.onerror 捕获全局错误
+window.onerror = function(msg, url, line, col, error) {
+    console.warn('Global error:', { msg, url, line, col, error });
+    return false;
+};
 
-// 导出单例实例
+// 创建单例实例
+let converter;
+try {
+    converter = new JapaneseConverter();
+} catch (error) {
+    console.error('Failed to create converter:', error);
+    // 创建一个降级版本的转换器
+    converter = {
+        async convert(text) {
+            return {
+                success: true,
+                data: { original: text, hiragana: text, romaji: text }
+            };
+        }
+    };
+}
+
 export default converter;
 
 // 修改处理转换结果的函数
