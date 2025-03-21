@@ -1,3 +1,6 @@
+// 在类外部定义基础URL
+const BASE_URL = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+
 class JapaneseConverter {
     constructor() {
         // 初始化假名到罗马字的映射
@@ -34,6 +37,9 @@ class JapaneseConverter {
         this.initializationPromise = null;
         this.initializationAttempts = 0;
         this.maxInitializationAttempts = 3;
+
+        // 使用绝对路径
+        this.dictPath = `${BASE_URL}/dict`;
     }
 
     // 修改初始化方法
@@ -56,19 +62,49 @@ class JapaneseConverter {
 
         this.initializationPromise = new Promise(async (resolve, reject) => {
             try {
-                // 检查是否超过最大尝试次数
-                if (this.initializationAttempts >= this.maxInitializationAttempts) {
-                    throw new Error('初始化失败次数过多');
+                console.log('开始初始化分词器...');
+                console.log('使用词典路径:', this.dictPath);
+
+                // 检查词典文件是否存在
+                try {
+                    const dictFiles = [
+                        'base.dat.gz',
+                        'cc.dat.gz',
+                        'check.dat.gz',
+                        'tid.dat.gz',
+                        'unk.dat.gz',
+                        'char.dat.gz',
+                        'matrix.bin.gz',
+                        'unk_char.dat.gz',
+                        'unk_compat.dat.gz',
+                        'unk_invoke.dat.gz',
+                        'unk_map.dat.gz',
+                        'unk_pos.dat.gz'
+                    ];
+
+                    for (const file of dictFiles) {
+                        const response = await fetch(`${this.dictPath}/${file}`);
+                        if (!response.ok) {
+                            throw new Error(`词典文件 ${file} 加载失败: ${response.status}`);
+                        }
+                        console.log(`词典文件 ${file} 检查成功`);
+                    }
+                } catch (error) {
+                    console.error('词典文件检查失败:', error);
+                    throw error;
                 }
 
-                this.initializationAttempts++;
-
-                // 使用本地词典路径
                 const tokenizer = await new Promise((res, rej) => {
-                    kuromoji.builder({ dicPath: './dict' })
+                    console.log('开始构建分词器...');
+                    kuromoji.builder({ dicPath: this.dictPath })
                         .build((err, tokenizer) => {
-                            if (err) rej(err);
-                            else res(tokenizer);
+                            if (err) {
+                                console.error('分词器构建失败:', err);
+                                rej(err);
+                            } else {
+                                console.log('分词器构建成功');
+                                res(tokenizer);
+                            }
                         });
                 });
 
