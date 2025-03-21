@@ -54,44 +54,36 @@ class JapaneseConverter {
             return this.initializationPromise;
         }
 
-        // 显示加载指示器
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        if (loadingOverlay) {
-            loadingOverlay.classList.add('active');
-        }
-
         this.initializationPromise = new Promise(async (resolve, reject) => {
             try {
                 console.log('开始初始化分词器...');
                 console.log('使用词典路径:', this.dictPath);
 
                 // 检查词典文件是否存在
-                try {
-                    const dictFiles = [
-                        'base.dat.gz',
-                        'cc.dat.gz',
-                        'check.dat.gz',
-                        'tid.dat.gz',
-                        'unk.dat.gz',
-                        'char.dat.gz',
-                        'matrix.bin.gz',
-                        'unk_char.dat.gz',
-                        'unk_compat.dat.gz',
-                        'unk_invoke.dat.gz',
-                        'unk_map.dat.gz',
-                        'unk_pos.dat.gz'
-                    ];
+                const requiredDictFiles = [
+                    'base.dat.gz',
+                    'cc.dat.gz',
+                    'check.dat.gz',
+                    'tid.dat.gz',
+                    'unk.dat.gz'
+                ];
 
-                    for (const file of dictFiles) {
+                const missingFiles = [];
+                for (const file of requiredDictFiles) {
+                    try {
                         const response = await fetch(`${this.dictPath}/${file}`);
                         if (!response.ok) {
-                            throw new Error(`词典文件 ${file} 加载失败: ${response.status}`);
+                            missingFiles.push(file);
                         }
-                        console.log(`词典文件 ${file} 检查成功`);
+                        console.log(`词典文件 ${file} 检查${response.ok ? '成功' : '失败'}`);
+                    } catch (error) {
+                        missingFiles.push(file);
+                        console.error(`检查词典文件 ${file} 时出错:`, error);
                     }
-                } catch (error) {
-                    console.error('词典文件检查失败:', error);
-                    throw error;
+                }
+
+                if (missingFiles.length > 0) {
+                    throw new Error(`缺少必要的词典文件: ${missingFiles.join(', ')}`);
                 }
 
                 const tokenizer = await new Promise((res, rej) => {
@@ -115,11 +107,6 @@ class JapaneseConverter {
                 console.error('分词器初始化失败:', error);
                 reject(error);
             } finally {
-                // 隐藏加载指示器
-                if (loadingOverlay) {
-                    loadingOverlay.classList.remove('active');
-                }
-                // 清除初始化 promise
                 this.initializationPromise = null;
             }
         });
@@ -130,12 +117,6 @@ class JapaneseConverter {
     // 修改转换方法
     async convert(text) {
         try {
-            // 显示加载指示器
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.classList.add('active');
-            }
-
             // 如果未初始化，先初始化
             if (!this.initialized) {
                 await this.initTokenizer();
@@ -162,14 +143,8 @@ class JapaneseConverter {
             console.error('转换失败:', error);
             return {
                 success: false,
-                error: "转换失败，请手动输入假名和罗马音"
+                error: "转换失败: " + (error.message || "请手动输入假名和罗马音")
             };
-        } finally {
-            // 隐藏加载指示器
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.classList.remove('active');
-            }
         }
     }
 
@@ -239,7 +214,7 @@ const converter = new JapaneseConverter();
 // 导出单例实例
 export default converter;
 
-// 添加一个全局函数来处理转换结果
+// 修改处理转换结果的函数
 function handleConversionResult(result, hiraganaInput, romajiInput) {
     if (result.success) {
         // 转换成功，自动填充
@@ -247,43 +222,21 @@ function handleConversionResult(result, hiraganaInput, romajiInput) {
         romajiInput.value = result.data.romaji;
     } else {
         // 转换失败，启用手动输入
+        console.error(result.error);
         alert(result.error);
         hiraganaInput.removeAttribute('readonly');
         romajiInput.removeAttribute('readonly');
     }
 }
 
-// 使用示例：
-async function example() {
-    const converter = new JapaneseConverter();
-    const result = await converter.convert('日本語を勉強する');
-    console.log(result);
-    // 输出:
-    // {
-    //   original: "日本語を勉強する",
-    //   hiragana: "にほんご:を:べんきょうする",
-    //   romaji: "nihongo:wo:benkyousuru"
-    // }
-}
-
 // 在页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.classList.add('active');
-
         // 初始化转换器
         const converter = new JapaneseConverter();
         await converter.initTokenizer();
-
-        // 初始化其他组件
-        // ...
-
     } catch (error) {
         console.error('初始化失败:', error);
-        alert('系统初始化失败，请刷新页面重试');
-    } finally {
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        loadingOverlay.classList.remove('active');
+        alert('系统初始化失败: ' + error.message);
     }
 }); 
