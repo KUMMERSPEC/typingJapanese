@@ -1,8 +1,15 @@
+// 导入 kuroshiro 相关包
+import Kuroshiro from "kuroshiro";
+import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
+
 // 在类外部定义基础URL
 const BASE_URL = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
 
 class JapaneseConverter {
     constructor() {
+        // 初始化 Kuroshiro
+        this.kuroshiro = new Kuroshiro();
+        
         // 初始化假名到罗马字的映射
         this.hiraganaToRomajiMap = {
             // 基本假名
@@ -33,20 +40,28 @@ class JapaneseConverter {
 
         // 修改初始化状态管理
         this.initialized = false;
-        this.tokenizer = null;
+        this.analyzer = null;
         this.initializationPromise = null;
         this.initializationAttempts = 0;
         this.maxInitializationAttempts = 3;
 
         // 使用绝对路径
         this.dictPath = `${BASE_URL}/dict`;
+
+        // 添加状态标志
+        this.isError = false;
     }
 
     // 修改初始化方法
     async initTokenizer() {
         // 如果已经初始化成功，直接返回
-        if (this.initialized && this.tokenizer) {
-            return this.tokenizer;
+        if (this.initialized && this.analyzer) {
+            return this.analyzer;
+        }
+
+        // 如果在错误状态，直接返回null
+        if (this.isError) {
+            return null;
         }
 
         // 如果正在初始化，返回现有的 promise
@@ -59,52 +74,20 @@ class JapaneseConverter {
                 console.log('开始初始化分词器...');
                 console.log('使用词典路径:', this.dictPath);
 
-                // 检查词典文件是否存在
-                const requiredDictFiles = [
-                    'base.dat.gz',
-                    'cc.dat.gz',
-                    'check.dat.gz',
-                    'tid.dat.gz',
-                    'unk.dat.gz'
-                ];
-
-                const missingFiles = [];
-                for (const file of requiredDictFiles) {
-                    try {
-                        const response = await fetch(`${this.dictPath}/${file}`);
-                        if (!response.ok) {
-                            missingFiles.push(file);
-                        }
-                        console.log(`词典文件 ${file} 检查${response.ok ? '成功' : '失败'}`);
-                    } catch (error) {
-                        missingFiles.push(file);
-                        console.error(`检查词典文件 ${file} 时出错:`, error);
-                    }
-                }
-
-                if (missingFiles.length > 0) {
-                    throw new Error(`缺少必要的词典文件: ${missingFiles.join(', ')}`);
-                }
-
-                const tokenizer = await new Promise((res, rej) => {
-                    console.log('开始构建分词器...');
-                    kuromoji.builder({ dicPath: this.dictPath })
-                        .build((err, tokenizer) => {
-                            if (err) {
-                                console.error('分词器构建失败:', err);
-                                rej(err);
-                            } else {
-                                console.log('分词器构建成功');
-                                res(tokenizer);
-                            }
-                        });
+                // 创建并初始化 analyzer
+                this.analyzer = new KuromojiAnalyzer({
+                    dictPath: this.dictPath
                 });
 
-                this.tokenizer = tokenizer;
+                // 初始化 kuroshiro
+                await this.kuroshiro.init(this.analyzer);
+                
+                console.log('分词器初始化成功');
                 this.initialized = true;
-                resolve(tokenizer);
+                resolve(this.analyzer);
             } catch (error) {
                 console.error('分词器初始化失败:', error);
+                this.isError = true;
                 reject(error);
             } finally {
                 this.initializationPromise = null;
@@ -119,17 +102,34 @@ class JapaneseConverter {
         try {
             // 如果未初始化，先初始化
             if (!this.initialized) {
-                await this.initTokenizer();
+                const analyzer = await this.initTokenizer();
+                if (!analyzer) {
+                    throw new Error("分词器未能正确初始化，将使用手动输入模式");
+                }
             }
 
-            // 执行转换
-            const tokens = this.tokenizer.tokenize(text);
-            const hiragana = tokens.map(token => {
-                const reading = this.getReading(token);
-                return token.pos === '助詞' ? `:${reading}:` : reading;
-            }).join('');
+            // 如果在错误状态，直接返回错误
+            if (this.isError) {
+                return {
+                    success: false,
+                    error: "系统处于错误状态，请使用手动输入模式"
+                };
+            }
 
-            const romaji = this.hiraganaToRomaji(hiragana);
+            // 使用 kuroshiro 进行转换
+            const result = await this.kuroshiro.convert(text, {
+                mode: "normal",
+                to: "hiragana",
+                romajiSystem: "hepburn"
+            });
+
+            // 获取平假名和罗马字
+            const hiragana = result;
+            const romaji = await this.kuroshiro.convert(text, {
+                mode: "normal",
+                to: "romaji",
+                romajiSystem: "hepburn"
+            });
 
             return {
                 success: true,
@@ -143,7 +143,7 @@ class JapaneseConverter {
             console.error('转换失败:', error);
             return {
                 success: false,
-                error: "转换失败: " + (error.message || "请手动输入假名和罗马音")
+                error: "转换失败，已切换到手动输入模式"
             };
         }
     }
@@ -224,8 +224,19 @@ function handleConversionResult(result, hiraganaInput, romajiInput) {
         // 转换失败，启用手动输入
         console.error(result.error);
         alert(result.error);
+        enableManualInput(hiraganaInput, romajiInput);
+    }
+}
+
+// 添加启用手动输入的辅助函数
+function enableManualInput(hiraganaInput, romajiInput) {
+    if (hiraganaInput) {
         hiraganaInput.removeAttribute('readonly');
+        hiraganaInput.placeholder = '请手动输入假名';
+    }
+    if (romajiInput) {
         romajiInput.removeAttribute('readonly');
+        romajiInput.placeholder = '请手动输入罗马音';
     }
 }
 
@@ -233,10 +244,20 @@ function handleConversionResult(result, hiraganaInput, romajiInput) {
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 初始化转换器
-        const converter = new JapaneseConverter();
         await converter.initTokenizer();
     } catch (error) {
         console.error('初始化失败:', error);
-        alert('系统初始化失败: ' + error.message);
+        // 不再显示alert，而是直接切换到手动模式
+        const hiraganaInputs = document.querySelectorAll('.hiragana-input');
+        const romajiInputs = document.querySelectorAll('.romaji-input');
+        
+        hiraganaInputs.forEach(input => enableManualInput(input, null));
+        romajiInputs.forEach(input => enableManualInput(null, input));
+        
+        // 可以添加一个提示信息
+        const notice = document.createElement('div');
+        notice.className = 'notice';
+        notice.textContent = '自动转换功能暂时不可用，已切换到手动输入模式';
+        document.body.insertBefore(notice, document.body.firstChild);
     }
 }); 
