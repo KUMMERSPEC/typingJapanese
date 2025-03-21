@@ -1,3 +1,5 @@
+import converter from './converter.js';
+
 export class CustomCollectionsManager {
     constructor() {
         this.collections = this.loadCollections();
@@ -408,9 +410,6 @@ export class CustomCollectionsManager {
             const hiraganaSpinner = hiraganaInput?.parentElement?.querySelector('.loading-spinner');
             const romajiSpinner = romajiInput?.parentElement?.querySelector('.loading-spinner');
 
-            // 导入转换器
-            import converter from './converter.js';
-            
             // 启用转换按钮
             if (convertBtn) {
                 convertBtn.disabled = false;
@@ -423,29 +422,24 @@ export class CustomCollectionsManager {
 
                 try {
                     // 显示加载动画
-                    hiraganaSpinner.style.display = 'block';
-                    romajiSpinner.style.display = 'block';
-                    convertBtn.disabled = true;
+                    if (hiraganaSpinner) hiraganaSpinner.style.display = 'block';
+                    if (romajiSpinner) romajiSpinner.style.display = 'block';
+                    if (convertBtn) convertBtn.disabled = true;
 
                     // 执行转换
                     const result = await converter.convert(japanese);
                     
                     // 更新输入框
-                    hiraganaInput.value = result.hiragana || japanese;
-                    romajiInput.value = result.romaji || japanese;
+                    if (hiraganaInput) hiraganaInput.value = result.data.hiragana || japanese;
+                    if (romajiInput) romajiInput.value = result.data.romaji || japanese;
                 } catch (error) {
                     console.error('转换失败:', error);
                     alert('转换失败，请手动输入假名和罗马音');
-                    
-                    // 尝试分解日语句子为单个字符，用冒号分隔
-                    if (japanese) {
-                        hiraganaInput.value = japanese.split('').join(':');
-                    }
                 } finally {
                     // 隐藏加载动画
-                    hiraganaSpinner.style.display = 'none';
-                    romajiSpinner.style.display = 'none';
-                    convertBtn.disabled = false;
+                    if (hiraganaSpinner) hiraganaSpinner.style.display = 'none';
+                    if (romajiSpinner) romajiSpinner.style.display = 'none';
+                    if (convertBtn) convertBtn.disabled = false;
                 }
             });
 
@@ -471,8 +465,8 @@ export class CustomCollectionsManager {
                         const result = await converter.convert(japanese);
                         
                         // 更新输入框
-                        hiraganaInput.value = result.hiragana || japanese;
-                        romajiInput.value = result.romaji || japanese;
+                        hiraganaInput.value = result.data.hiragana || japanese;
+                        romajiInput.value = result.data.romaji || japanese;
                     } catch (error) {
                         console.error('自动转换失败:', error);
                         // 不显示错误提示以避免打断用户输入
@@ -539,6 +533,31 @@ export class CustomCollectionsManager {
                     }
                 });
             }
+
+            // 添加表单提交事件
+            addSentenceForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const collectionId = e.target.dataset.collectionId;
+                const sentenceData = {
+                    japanese: document.getElementById('japanese').value,
+                    hiragana: document.getElementById('hiragana').value,
+                    romaji: document.getElementById('romaji').value,
+                    meaning: document.getElementById('meaning').value
+                };
+                
+                try {
+                    this.addSentence(collectionId, sentenceData);
+                    const modal = document.getElementById('addSentenceModal');
+                    if (modal) {
+                        modal.classList.remove('show');
+                    }
+                    this.refreshCollectionsList();
+                    window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+                } catch (error) {
+                    console.error('Error adding sentence:', error);
+                    alert('添加句子失败，请重试');
+                }
+            });
         }
 
         // 编辑收藏夹表单提交
