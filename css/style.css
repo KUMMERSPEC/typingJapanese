@@ -150,4 +150,35 @@
     .stats-item .value {
         font-size: 1.3rem;
     }
+}
+
+/* 批量导入单选按钮组样式 */
+.separator-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;  /* 调整选项之间的间距 */
+    margin-bottom: 15px;
+}
+
+.separator-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;  /* 调整单选按钮和文字之间的间距 */
+}
+
+.separator-option input[type="radio"] {
+    margin: 0;  /* 移除默认边距 */
+}
+
+.separator-option label {
+    margin: 0;  /* 移除默认边距 */
+    white-space: nowrap;  /* 防止文字换行 */
+}
+
+/* 提示文本样式 */
+.import-tips {
+    display: inline-block;  /* 让提示文本在一行显示 */
+    margin-left: 10px;  /* 与单选按钮组保持一定距离 */
+    color: #666;
+    font-size: 0.9em;
 } 

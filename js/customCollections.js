@@ -266,37 +266,27 @@ export class CustomCollectionsManager {
                     </div>
                     <form id="batchImportForm">
                         <div class="form-group">
-                            <label for="batchImportText">导入内容</label>
-                            <textarea id="batchImportText" rows="8" required placeholder="每行一个句子，格式为「日语句子 = 中文翻译」&#10;例如：&#10;私は学生です = 我是学生&#10;こんにちは = 你好"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>分隔方式</label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="separator" value="=" checked>
-                                    <span>使用等号 (日语 = 中文)</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="separator" value="space">
-                                    <span>使用空格 Space</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="separator" value="comma">
-                                    <span>使用逗号 (日语, 中文)</span>
-                                </label>
+                            <label for="batchImportText">输入要导入的句子：</label>
+                            <div class="separator-options">
+                                <div class="separator-option">
+                                    <input type="radio" id="newline" name="separator" value="newline" checked>
+                                    <label for="newline">换行分隔</label>
+                                </div>
+                                <div class="separator-option">
+                                    <input type="radio" id="tab" name="separator" value="tab">
+                                    <label for="tab">Tab分隔</label>
+                                </div>
+                                <span class="import-tips">格式：日语原文 [分隔符] 中文翻译</span>
                             </div>
-                        </div>
-                        <div class="form-group preview-section">
-                            <button type="button" id="previewImportBtn" class="secondary-btn">
-                                <i class="fas fa-eye"></i> 预览导入结果
-                            </button>
-                            <div id="importPreview" class="import-preview-container" style="display: none;"></div>
+                            <textarea id="batchImportText" rows="10" required></textarea>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="secondary-btn cancel-btn">取消</button>
-                            <button type="submit" class="primary-btn"><i class="fas fa-file-import"></i> 导入</button>
+                            <button type="button" id="previewImportBtn" class="secondary-btn">预览</button>
+                            <button type="submit" class="primary-btn">导入</button>
+                            <button type="button" class="cancel-btn">取消</button>
                         </div>
                     </form>
+                    <div id="importPreview" class="import-preview"></div>
                 </div>
             `;
             document.body.appendChild(batchImportModal);
@@ -803,9 +793,6 @@ export class CustomCollectionsManager {
                 <div class="collection-stats">
                     <span><i class="fas fa-book"></i>${Object.keys(collection.sentences || {}).length} 个句子</span>
                     <div class="collection-footer-actions">
-                        <button class="flashcard-btn" title="闪卡练习">
-                            <i class="fas fa-graduation-cap"></i> 闪卡练习
-                        </button>
                         <button class="delete-btn" title="删除收藏夹">
                             <i class="fas fa-trash"></i> 删除
                         </button>
@@ -843,20 +830,6 @@ export class CustomCollectionsManager {
                 e.preventDefault();
                 e.stopPropagation();
                 this.showManageSentencesModal(id);
-            });
-
-            // 闪卡练习按钮事件 - 移动到底部按钮
-            const flashcardBtn = collectionElement.querySelector('.flashcard-btn');
-            flashcardBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const sentences = this.getSentencesForFlashcard(id);
-                if (sentences.length === 0) {
-                    alert('当前收藏夹没有句子，请先添加句子');
-                    return;
-                }
-                sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
-                window.location.href = 'review/flashcard.html';
             });
 
             // 删除按钮事件 - 移动到底部按钮

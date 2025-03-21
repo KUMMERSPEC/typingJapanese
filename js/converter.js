@@ -23,9 +23,17 @@ class JapaneseConverter {
                 'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
                 'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
                 // 拗音
-                'きょ': 'kyo', 'しょ': 'sho', 'ちょ': 'cho', 'にょ': 'nyo',
-                'ひょ': 'hyo', 'みょ': 'myo', 'りょ': 'ryo', 'ぎょ': 'gyo',
-                'じょ': 'jo', 'びょ': 'byo', 'ぴょ': 'pyo',
+                'きょ': 'kyo', 'きゅ': 'kyu', 'きゃ': 'kya',
+                'しょ': 'sho', 'しゅ': 'shu', 'しゃ': 'sha',
+                'ちょ': 'cho', 'ちゅ': 'chu', 'ちゃ': 'cha',
+                'にょ': 'nyo', 'にゅ': 'nyu', 'にゃ': 'nya',
+                'ひょ': 'hyo', 'ひゅ': 'hyu', 'ひゃ': 'hya',
+                'みょ': 'myo', 'みゅ': 'myu', 'みゃ': 'mya',
+                'りょ': 'ryo', 'りゅ': 'ryu', 'りゃ': 'rya',
+                'ぎょ': 'gyo', 'ぎゅ': 'gyu', 'ぎゃ': 'gya',
+                'じょ': 'jo', 'じゅ': 'ju', 'じゃ': 'ja',
+                'びょ': 'byo', 'びゅ': 'byu', 'びゃ': 'bya',
+                'ぴょ': 'pyo', 'ぴゅ': 'pyu', 'ぴゃ': 'pya',
                 // 促音
                 'っ': '',
                 // 长音
@@ -190,7 +198,22 @@ class JapaneseConverter {
             let i = 0;
             
             while (i < part.length) {
-                // 检查双字符组合（拗音）
+                // 检查三字符拗音组合（っ + 拗音）
+                if (i + 2 < part.length && part[i] === 'っ') {
+                    const nextTwo = part.slice(i + 1, i + 3);
+                    if (this.hiraganaToRomajiMap[nextTwo]) {
+                        const romaji = this.hiraganaToRomajiMap[nextTwo];
+                        const firstConsonant = romaji.match(/^[^aeiou]/);
+                        if (firstConsonant) {
+                            result += firstConsonant[0];
+                        }
+                        result += romaji;
+                        i += 3;
+                        continue;
+                    }
+                }
+
+                // 检查双字符拗音组合
                 if (i + 1 < part.length) {
                     const pair = part.slice(i, i + 2);
                     if (this.hiraganaToRomajiMap[pair]) {
