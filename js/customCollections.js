@@ -409,7 +409,7 @@ export class CustomCollectionsManager {
             const romajiSpinner = romajiInput?.parentElement?.querySelector('.loading-spinner');
 
             // 导入转换器
-            import('../js/common/japaneseConverter.js').then(module => {
+            import('./converter.js').then(module => {
                 const { japaneseConverter } = module;
                 
                 // 启用转换按钮
