@@ -582,22 +582,34 @@ export class CustomCollectionsManager {
         }
     }
 
-    // 解析批量导入数据
+    // 解析批量导入文本
     async parseBatchImport(text, separator) {
+        if (!text) return [];
+        
+        // 按行分割文本
         const lines = text.trim().split('\n');
         const result = [];
         
         for (const line of lines) {
             if (!line.trim()) continue;
             
-            // 根据选择的分隔符分割
-            const [japanese, meaning] = line.split(separator).map(s => s.trim());
-            
-            if (!japanese || !meaning) continue;
-            
             try {
+                // 根据选择的分隔符分割
+                const parts = line.split(separator);
+                if (parts.length < 2) continue;
+                
+                const japanese = parts[0].trim();
+                const meaning = parts[1].trim();
+                
+                if (!japanese || !meaning) continue;
+                
                 // 转换日语
                 const converted = await converter.convert(japanese);
+                if (!converted.success) {
+                    console.warn('转换失败:', japanese);
+                    continue;
+                }
+                
                 result.push({
                     japanese,
                     hiragana: converted.data.hiragana,
@@ -605,9 +617,7 @@ export class CustomCollectionsManager {
                     meaning
                 });
             } catch (error) {
-                console.warn('转换失败:', japanese, error);
-                // 继续处理下一行
-                continue;
+                console.error('处理行失败:', line, error);
             }
         }
         
@@ -618,12 +628,12 @@ export class CustomCollectionsManager {
     previewBatchImport(parsedData) {
         const previewContainer = document.getElementById('importPreview');
         if (!previewContainer) return;
-
+        
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
             previewContainer.innerHTML = '<div class="preview-empty">没有可导入的句子</div>';
             return;
         }
-
+        
         // 创建预览表格
         const table = document.createElement('table');
         table.className = 'preview-table';
@@ -649,9 +659,10 @@ export class CustomCollectionsManager {
                 `).join('')}
             </tbody>
         `;
-
+        
         previewContainer.innerHTML = '';
         previewContainer.appendChild(table);
+        previewContainer.style.display = 'block'; // 确保预览区域可见
     }
     
     // 处理批量导入数据
@@ -659,11 +670,15 @@ export class CustomCollectionsManager {
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
             throw new Error('没有有效的句子可导入');
         }
-
+        
+        if (!this.collections[collectionId]) {
+            throw new Error('收藏夹不存在');
+        }
+        
         // 记录成功导入的数量
         let successCount = 0;
         const errors = [];
-
+        
         // 逐个添加句子
         for (const sentence of parsedData) {
             try {
@@ -672,33 +687,27 @@ export class CustomCollectionsManager {
                     errors.push(`句子格式不完整: ${sentence.japanese}`);
                     continue;
                 }
-
+                
                 // 添加到收藏夹
-                await this.addSentence(collectionId, {
-                    japanese: sentence.japanese,
-                    hiragana: sentence.hiragana,
-                    romaji: sentence.romaji,
-                    meaning: sentence.meaning
-                });
-
+                const id = `sentence_${Date.now()}_${successCount}`; // 确保 ID 唯一
+                this.collections[collectionId].sentences[id] = {
+                    ...sentence,
+                    created_at: new Date().toISOString()
+                };
+                
                 successCount++;
             } catch (error) {
                 console.error('添加句子失败:', error, sentence);
                 errors.push(`导入失败: ${sentence.japanese}`);
             }
         }
-
+        
         // 保存更改
         this.saveCollections();
-
-        // 如果有错误，显示错误信息
-        if (errors.length > 0) {
-            console.warn('部分句子导入失败:', errors);
-            alert(`成功导入 ${successCount} 个句子，${errors.length} 个句子导入失败。`);
-        } else {
-            alert(`成功导入 ${successCount} 个句子`);
-        }
-
+        
+        // 刷新收藏夹列表
+        this.refreshCollectionsList();
+        
         // 返回导入结果
         return {
             success: successCount,
