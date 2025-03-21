@@ -198,22 +198,7 @@ class JapaneseConverter {
             let i = 0;
             
             while (i < part.length) {
-                // 检查三字符拗音组合（っ + 拗音）
-                if (i + 2 < part.length && part[i] === 'っ') {
-                    const nextTwo = part.slice(i + 1, i + 3);
-                    if (this.hiraganaToRomajiMap[nextTwo]) {
-                        const romaji = this.hiraganaToRomajiMap[nextTwo];
-                        const firstConsonant = romaji.match(/^[^aeiou]/);
-                        if (firstConsonant) {
-                            result += firstConsonant[0];
-                        }
-                        result += romaji;
-                        i += 3;
-                        continue;
-                    }
-                }
-
-                // 检查双字符拗音组合
+                // 检查双字符组合（拗音）
                 if (i + 1 < part.length) {
                     const pair = part.slice(i, i + 2);
                     if (this.hiraganaToRomajiMap[pair]) {

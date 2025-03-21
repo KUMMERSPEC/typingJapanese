@@ -152,33 +152,48 @@
     }
 }
 
-/* 批量导入单选按钮组样式 */
+/* 批量导入相关样式 */
 .separator-options {
     display: flex;
     align-items: center;
-    gap: 20px;  /* 调整选项之间的间距 */
-    margin-bottom: 15px;
+    gap: 15px;
+    margin: 10px 0;
 }
 
 .separator-option {
     display: flex;
     align-items: center;
-    gap: 5px;  /* 调整单选按钮和文字之间的间距 */
+    gap: 5px;
 }
 
 .separator-option input[type="radio"] {
-    margin: 0;  /* 移除默认边距 */
+    margin: 0;
 }
 
 .separator-option label {
-    margin: 0;  /* 移除默认边距 */
-    white-space: nowrap;  /* 防止文字换行 */
+    margin: 0;
+    white-space: nowrap;
 }
 
-/* 提示文本样式 */
 .import-tips {
-    display: inline-block;  /* 让提示文本在一行显示 */
-    margin-left: 10px;  /* 与单选按钮组保持一定距离 */
     color: #666;
     font-size: 0.9em;
+    margin-left: 15px;
+}
+
+#batchImportText {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
 } 

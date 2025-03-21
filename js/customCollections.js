@@ -269,12 +269,12 @@ export class CustomCollectionsManager {
                             <label for="batchImportText">输入要导入的句子：</label>
                             <div class="separator-options">
                                 <div class="separator-option">
-                                    <input type="radio" id="newline" name="separator" value="newline" checked>
-                                    <label for="newline">换行分隔</label>
+                                    <input type="radio" id="comma" name="separator" value="," checked>
+                                    <label for="comma">逗号分隔</label>
                                 </div>
                                 <div class="separator-option">
-                                    <input type="radio" id="tab" name="separator" value="tab">
-                                    <label for="tab">Tab分隔</label>
+                                    <input type="radio" id="space" name="separator" value=" ">
+                                    <label for="space">空格分隔</label>
                                 </div>
                                 <span class="import-tips">格式：日语原文 [分隔符] 中文翻译</span>
                             </div>
@@ -290,6 +290,23 @@ export class CustomCollectionsManager {
                 </div>
             `;
             document.body.appendChild(batchImportModal);
+        }
+
+        // 添加事件处理，防止 Tab 键跳转
+        const textarea = batchImportModal.querySelector('#batchImportText');
+        if (textarea) {
+            textarea.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault(); // 阻止默认的 Tab 行为
+                    // 在光标位置插入制表符
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    textarea.value = textarea.value.substring(0, start) + '\t' + 
+                                   textarea.value.substring(end);
+                    // 将光标移动到插入位置之后
+                    textarea.selectionStart = textarea.selectionEnd = start + 1;
+                }
+            });
         }
 
         // 创建编辑收藏夹模态框
@@ -487,7 +504,7 @@ export class CustomCollectionsManager {
                         return;
                     }
                     
-                    const parsedData = await this.parseBatchImport(importText, separator, converter);
+                    const parsedData = await this.parseBatchImport(importText, separator);
                     this.previewBatchImport(parsedData);
                 });
             }
@@ -505,7 +522,7 @@ export class CustomCollectionsManager {
                     }
                     
                     try {
-                        const parsedData = await this.parseBatchImport(importText, separator, converter);
+                        const parsedData = await this.parseBatchImport(importText, separator);
                         await this.processBatchImport(parsedData, collectionId);
                         
                         // 关闭模态框
@@ -566,58 +583,31 @@ export class CustomCollectionsManager {
     }
 
     // 解析批量导入数据
-    async parseBatchImport(text, separatorType, converter) {
-        if (!text) return [];
-        
-        // 确定分隔符
-        let separator = '=';
-        if (separatorType === 'tab') {
-            separator = '\t';
-        } else if (separatorType === 'comma') {
-            separator = ',';
-        }
-        
-        // 按行分割文本
-        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+    async parseBatchImport(text, separator) {
+        const lines = text.trim().split('\n');
         const result = [];
         
-        // 处理每一行
         for (const line of lines) {
-            // 跳过空行或注释
-            if (line.trim() === '' || line.trim().startsWith('#')) {
-                continue;
-            }
+            if (!line.trim()) continue;
             
-            const parts = line.split(separator);
+            // 根据选择的分隔符分割
+            const [japanese, meaning] = line.split(separator).map(s => s.trim());
             
-            // 至少需要日语和中文两部分
-            if (parts.length < 2) {
-                continue;
-            }
+            if (!japanese || !meaning) continue;
             
-            const japanese = parts[0].trim();
-            const meaning = parts[1].trim();
-            
-            // 转换日语为平假名和罗马字
             try {
+                // 转换日语
                 const converted = await converter.convert(japanese);
-                
                 result.push({
                     japanese,
-                    hiragana: converted.hiragana,
-                    romaji: converted.romaji,
+                    hiragana: converted.data.hiragana,
+                    romaji: converted.data.romaji,
                     meaning
                 });
             } catch (error) {
-                console.error('转换失败:', error);
-                
-                // 即使转换失败，也添加到结果中，但使用简单的分词
-                result.push({
-                    japanese,
-                    hiragana: japanese.split('').join(':'),
-                    romaji: japanese,
-                    meaning
-                });
+                console.warn('转换失败:', japanese, error);
+                // 继续处理下一行
+                continue;
             }
         }
         
