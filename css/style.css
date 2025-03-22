@@ -307,7 +307,6 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: relative;
-    padding-bottom: 60px; /* 为底部按钮留出空间 */
 }
 
 /* 标题和复习提醒样式 */
@@ -339,10 +338,10 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    bottom: 15px; /* 距离底部的距离 */
+    top: 15px; /* 改回顶部定位 */
     right: 15px;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* 水平排列 */
     gap: 8px;
     align-items: center;
 }
@@ -357,7 +356,7 @@
 
 /* 标题区域留出按钮空间 */
 .collection-item .collection-title-row {
-    padding-right: 120px; /* 为3个按钮留出足够空间 */
+    padding-right: 130px; /* 为3个按钮留出足够空间 */
 }
 
 /* 收藏夹内的按钮组样式 */
@@ -405,14 +404,14 @@
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-    .collection-item {
-        padding-bottom: 55px;
-    }
-
     .collection-item .collection-actions {
-        bottom: 12px;
+        top: 12px;
         right: 12px;
         gap: 6px;
+    }
+
+    .collection-item .collection-title-row {
+        padding-right: 120px;
     }
 
     .collection-item .collection-actions button {
@@ -422,14 +421,14 @@
 }
 
 @media (max-width: 480px) {
-    .collection-item {
-        padding-bottom: 50px;
-    }
-
     .collection-item .collection-actions {
-        bottom: 10px;
+        top: 10px;
         right: 10px;
         gap: 5px;
+    }
+
+    .collection-item .collection-title-row {
+        padding-right: 110px;
     }
 
     .collection-item .collection-actions button {
