@@ -307,6 +307,7 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: relative;
+    padding-bottom: 60px; /* 为底部按钮留出空间 */
 }
 
 /* 标题和复习提醒样式 */
@@ -338,10 +339,25 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    display: flex; /* 水平排列 */
-    gap: 6px;
+    bottom: 15px; /* 距离底部的距离 */
+    right: 15px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 主页卡片的按钮样式 */
+.collection-item .collection-actions button {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* 标题区域留出按钮空间 */
+.collection-item .collection-title-row {
+    padding-right: 120px; /* 为3个按钮留出足够空间 */
 }
 
 /* 收藏夹内的按钮组样式 */
@@ -389,57 +405,36 @@
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-    .collection-title-row {
-        padding-right: 85px; /* 调整按钮组空间 */
-    }
-
-    .collection-review-status {
-        font-size: 0.85em;
-        padding: 3px 6px;
+    .collection-item {
+        padding-bottom: 55px;
     }
 
     .collection-item .collection-actions {
-        gap: 8px;
+        bottom: 12px;
+        right: 12px;
+        gap: 6px;
     }
 
-    .modal .collection-actions {
-        gap: 10px;
-    }
-
-    .collection-actions button {
-        width: 40px;
-        height: 40px;
+    .collection-item .collection-actions button {
+        width: 34px;
+        height: 34px;
     }
 }
 
 @media (max-width: 480px) {
-    .today-panel {
-        padding: 10px;
-    }
-    
-    .stats-overview {
-        gap: 10px;
-    }
-    
-    .stats-item {
-        padding: 10px;
-    }
-    
-    .stats-item .label {
-        font-size: 0.85rem;
-    }
-    
-    .stats-item .value {
-        font-size: 1.3rem;
+    .collection-item {
+        padding-bottom: 50px;
     }
 
     .collection-item .collection-actions {
-        gap: 6px;
+        bottom: 10px;
+        right: 10px;
+        gap: 5px;
     }
 
-    .collection-actions button {
-        width: 36px;
-        height: 36px;
+    .collection-item .collection-actions button {
+        width: 32px;
+        height: 32px;
     }
 }
 
