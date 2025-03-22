@@ -299,40 +299,125 @@
     margin-right: -10px; /* 补偿padding-right */
 }
 
-/* 收藏夹标题组样式 */
+/* 收藏夹卡片布局优化 */
+.collection-item {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.collection-header {
+    display: flex;
+    flex-direction: column; /* 改为纵向排列 */
+    gap: 12px;
+}
+
 .collection-title-group {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0; /* 允许在flex容器中收缩 */
+    justify-content: space-between; /* 标题和复习提醒分两端对齐 */
+    width: 100%;
 }
 
-.collection-review-status {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
+.collection-title-group h3 {
+    margin: 0;
+    font-size: 1.1em;
+    flex-shrink: 0; /* 防止标题被压缩 */
 }
 
-/* 复习提醒样式优化 */
 .review-reminder {
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.85em;
     white-space: nowrap;
-    display: inline-block;
     background: #f5f5f5;
-    margin-left: 8px;
+    flex-shrink: 0; /* 防止提醒文字被压缩 */
 }
 
-.review-reminder.upcoming {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+.collection-actions {
+    display: flex;
+    flex-wrap: wrap; /* 允许按钮在需要时换行 */
+    gap: 8px;
+    justify-content: flex-end; /* 按钮靠右对齐 */
+    margin-top: 8px;
 }
 
-.review-reminder.overdue {
-    background-color: #ffebee;
-    color: #c62828;
+.collection-actions button {
+    padding: 6px;
+    min-width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    flex-shrink: 0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .collection-header {
+        gap: 10px;
+    }
+
+    .collection-title-group {
+        flex-wrap: wrap; /* 允许在更小屏幕上换行 */
+        gap: 8px;
+    }
+
+    .collection-actions {
+        justify-content: flex-start; /* 在小屏幕上左对齐 */
+        gap: 10px;
+    }
+
+    .collection-actions button {
+        padding: 8px;
+        min-width: 36px;
+        height: 36px;
+    }
+}
+
+/* 小屏幕进一步优化 */
+@media (max-width: 480px) {
+    .collection-item {
+        padding: 12px;
+    }
+
+    .collection-title-group h3 {
+        font-size: 1em;
+    }
+
+    .review-reminder {
+        font-size: 0.8em;
+        padding: 3px 6px;
+    }
+
+    .collection-actions button {
+        padding: 8px;
+        min-width: 38px;
+        height: 38px;
+    }
+}
+
+.collection-description {
+    color: #666;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.collection-stats {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.collection-stats i {
+    margin-right: 5px;
 }
 
 /* 自定义滚动条样式 */
@@ -357,155 +442,6 @@
 /* 确保内容不会被底部遮挡 */
 .collections-container {
     padding-bottom: 20px;
-}
-
-/* 收藏夹卡片样式优化 */
-.collection-item {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden; /* 防止内容溢出 */
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .collections-container {
-        max-height: calc(100vh - 150px);
-    }
-    
-    .collection-title-group {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-}
-
-.collection-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.collection-header h3 {
-    margin: 0;
-    flex: 0 1 auto;
-    min-width: 200px; /* 确保标题组有足够宽度 */
-}
-
-.collection-actions {
-    display: flex;
-    flex-wrap: nowrap; /* 防止按钮换行 */
-    gap: 6px;
-    margin-left: auto;
-}
-
-.collection-actions button {
-    padding: 6px;
-    min-width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    background: #f5f5f5;
-    flex-shrink: 0; /* 防止按钮被压缩 */
-}
-
-.collection-actions button:hover {
-    background: #e0e0e0;
-}
-
-/* 特殊按钮样式 */
-.collection-actions .review-btn {
-    background-color: #4caf50;
-    color: white;
-}
-
-.collection-actions .review-btn:hover {
-    background-color: #388e3c;
-}
-
-.collection-actions .delete-btn {
-    background-color: #f44336;
-    color: white;
-}
-
-.collection-actions .delete-btn:hover {
-    background-color: #d32f2f;
-}
-
-.collection-description {
-    color: #666;
-    margin: 10px 0;
-    font-size: 0.9em;
-}
-
-.collection-stats {
-    display: flex;
-    align-items: center;
-    color: #666;
-    font-size: 0.9em;
-}
-
-.collection-stats i {
-    margin-right: 5px;
-}
-
-/* 平板和移动端响应式优化 */
-@media (max-width: 768px) {
-    .collection-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .collection-title-group {
-        flex-direction: row;
-        justify-content: space-between;
-        min-width: 0;
-    }
-
-    .collection-actions {
-        margin-left: 0;
-        margin-top: 10px;
-        justify-content: flex-end;
-        flex-wrap: wrap; /* 允许按钮在需要时换行 */
-        gap: 8px;
-    }
-
-    .collection-actions button {
-        padding: 8px;
-        min-width: 36px;
-        height: 36px;
-    }
-
-    .review-reminder {
-        font-size: 0.8em;
-        padding: 4px 6px;
-        margin-left: auto; /* 将提醒推到右侧 */
-    }
-}
-
-/* 小屏幕进一步优化 */
-@media (max-width: 480px) {
-    .collection-actions {
-        justify-content: flex-start;
-        gap: 10px;
-    }
-
-    .collection-actions button {
-        flex: 0 0 auto;
-        padding: 10px;
-        min-width: 40px;
-        height: 40px;
-    }
 }
 
 /* 句子列表模态框样式 */
