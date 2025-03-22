@@ -293,9 +293,12 @@
 
 /* 收藏夹列表容器 */
 .collections-container {
+    width: 100%;
+    padding: 15px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
     max-height: calc(100vh - 200px); /* 设置最大高度，留出顶部和底部空间 */
     overflow-y: auto; /* 添加垂直滚动条 */
-    padding-right: 10px; /* 为滚动条留出空间 */
     margin-right: -10px; /* 补偿padding-right */
 }
 
@@ -307,6 +310,8 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: relative;
+    overflow: hidden; /* 防止内容溢出 */
+    width: 100%; /* 确保卡片占满容器宽度 */
 }
 
 /* 标题和复习提醒样式 */
@@ -338,22 +343,30 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 12px;
+    right: 12px;
     display: flex;
-    flex-direction: row; /* 水平排列 */
-    gap: 8px;
+    flex-direction: row;
+    gap: 6px;
     align-items: center;
-    flex-wrap: nowrap; /* 防止换行 */
+    flex-wrap: nowrap;
+    z-index: 1; /* 确保按钮在其他内容之上 */
 }
 
 /* 主页卡片的按钮样式 */
 .collection-item .collection-actions button {
-    width: 36px;
-    height: 36px;
-    margin: 0;
-    flex-shrink: 0; /* 防止按钮被压缩 */
-    order: 2; /* 默认顺序 */
+    width: 32px; /* 稍微减小按钮尺寸 */
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 /* 设置特定按钮的顺序 */
@@ -387,8 +400,8 @@
 
 /* 按钮基础样式 */
 .collection-actions button {
-    width: 36px;
-    height: 36px;
+    width: 32px; /* 稍微减小按钮尺寸 */
+    height: 32px;
     padding: 0;
     border: none;
     border-radius: 4px;
@@ -398,6 +411,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 /* 按钮悬停效果 */
@@ -417,41 +431,6 @@
     color: white;
 }
 
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .collection-item .collection-actions {
-        top: 12px;
-        right: 12px;
-        gap: 6px;
-    }
-
-    .collection-item .collection-title-row {
-        padding-right: 120px;
-    }
-
-    .collection-item .collection-actions button {
-        width: 34px;
-        height: 34px;
-    }
-}
-
-@media (max-width: 480px) {
-    .collection-item .collection-actions {
-        top: 10px;
-        right: 10px;
-        gap: 5px;
-    }
-
-    .collection-item .collection-title-row {
-        padding-right: 110px;
-    }
-
-    .collection-item .collection-actions button {
-        width: 32px;
-        height: 32px;
-    }
-}
-
 /* 自定义滚动条样式 */
 .collections-container::-webkit-scrollbar {
     width: 8px;
@@ -469,11 +448,6 @@
 
 .collections-container::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-/* 确保内容不会被底部遮挡 */
-.collections-container {
-    padding-bottom: 20px;
 }
 
 /* 句子列表模态框样式 */
@@ -515,4 +489,37 @@
 
 .sentences-container::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+    /* iPad 样式 */
+    .collection-item {
+        margin: 0 0 15px 0;
+    }
+
+    .collection-item .collection-actions {
+        top: 10px;
+        right: 10px;
+        gap: 5px;
+    }
+
+    .collection-actions button {
+        width: 30px; /* iPad上进一步减小按钮尺寸 */
+        height: 30px;
+    }
+
+    .collection-item .collection-title-row {
+        padding-right: 110px; /* 调整右侧间距 */
+    }
+}
+
+@media (max-width: 768px) {
+    .collections-container {
+        padding: 10px;
+    }
+
+    .collection-item {
+        padding: 12px;
+    }
 } 
