@@ -306,6 +306,7 @@
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative; /* 为绝对定位的删除按钮提供参考 */
 }
 
 .collection-header {
@@ -358,39 +359,71 @@
 
 /* 按钮组 */
 .collection-actions {
-    grid-column: 2;
-    grid-row: 2 / 4; /* 跨越第2-3行 */
     display: flex;
     gap: 6px;
-    justify-self: end;
-    align-self: start;
+    align-items: center;
 }
 
-/* 删除按钮特殊定位 */
-.delete-btn {
+/* 主页卡片的按钮组样式 */
+.collection-item .collection-actions {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 12px;
+    right: 12px;
+}
+
+/* 收藏夹内的按钮组样式 */
+.modal .collection-actions {
+    position: static;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+/* 按钮基础样式 */
+.collection-actions button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* 删除按钮样式 */
+.collection-actions .delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+/* 标题区域样式 */
+.collection-title-group {
+    padding-right: 90px; /* 为按钮组留出空间 */
+}
+
+.collection-name {
+    font-size: 1.1em;
+    margin: 0;
+    padding: 0;
+    word-break: break-word;
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-    .collection-title-row {
-        flex-wrap: wrap;
-        gap: 8px;
+    .collection-item {
+        padding: 12px;
     }
 
-    .collection-date {
-        margin-right: 45px; /* 在小屏幕上增加间距 */
+    .collection-title-group {
+        padding-right: 100px; /* 在小屏幕上增加空间 */
     }
 
-    .collection-actions {
-        grid-column: 1 / -1;
-        grid-row: auto;
-        justify-content: flex-start;
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px solid #eee;
+    .collection-actions button {
+        width: 36px;
+        height: 36px;
     }
 }
 
@@ -400,16 +433,8 @@
         padding: 10px;
     }
 
-    .collection-name {
-        font-size: 1em;
-    }
-
-    .collection-date {
-        font-size: 0.8em;
-    }
-
-    .collection-actions {
-        gap: 6px;
+    .collection-title-group {
+        padding-right: 85px;
     }
 
     .collection-actions button {
