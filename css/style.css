@@ -338,12 +338,13 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    top: 15px; /* 改回顶部定位 */
+    top: 15px;
     right: 15px;
     display: flex;
     flex-direction: row; /* 水平排列 */
     gap: 8px;
     align-items: center;
+    flex-wrap: nowrap; /* 防止换行 */
 }
 
 /* 主页卡片的按钮样式 */
@@ -351,7 +352,21 @@
     width: 36px;
     height: 36px;
     margin: 0;
-    flex-shrink: 0;
+    flex-shrink: 0; /* 防止按钮被压缩 */
+    order: 2; /* 默认顺序 */
+}
+
+/* 设置特定按钮的顺序 */
+.collection-item .collection-actions .add-btn {
+    order: 1; /* 最左边 */
+}
+
+.collection-item .collection-actions .edit-btn {
+    order: 2; /* 中间 */
+}
+
+.collection-item .collection-actions .delete-btn {
+    order: 3; /* 最右边 */
 }
 
 /* 标题区域留出按钮空间 */
