@@ -310,8 +310,9 @@
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: relative;
-    overflow: hidden; /* 防止内容溢出 */
-    width: 100%; /* 确保卡片占满容器宽度 */
+    overflow: hidden;
+    width: 100%;
+    min-height: 120px; /* 添加最小高度 */
 }
 
 /* 标题和复习提醒样式 */
@@ -343,11 +344,11 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    top: 10px; /* 减小顶部距离 */
-    right: 10px; /* 减小右侧距离 */
+    top: 10px;
+    right: 10px;
     display: flex;
     flex-direction: row;
-    gap: 4px; /* 减小按钮间距 */
+    gap: 4px;
     align-items: center;
     flex-wrap: nowrap;
     z-index: 1;
@@ -483,30 +484,46 @@
     background: #555;
 }
 
-/* 响应式调整 */
+/* iPad 和平板设备的响应式调整 */
 @media (max-width: 1024px) {
+    .collection-item {
+        padding: 15px 15px 25px; /* 增加底部内边距 */
+        min-height: 140px; /* iPad下增加最小高度 */
+        margin-bottom: 20px; /* 增加卡片间距 */
+    }
+
     .collection-item .collection-actions {
-        top: 8px;
-        right: 8px;
-        gap: 3px;
+        top: 12px;
+        right: 12px;
+        gap: 6px;
     }
 
     .collection-item .collection-actions button {
-        width: 26px;
-        height: 26px;
+        width: 32px; /* 稍微增加按钮大小 */
+        height: 32px;
     }
 
-    .collection-item .collection-title-row {
-        padding-right: 90px;
+    /* 调整内容区域的间距 */
+    .collection-stats {
+        margin-top: 15px; /* 增加与上方内容的间距 */
+        padding-bottom: 10px; /* 增加底部内边距 */
     }
 }
 
+/* 小屏幕设备的响应式调整 */
 @media (max-width: 768px) {
     .collections-container {
         padding: 10px;
     }
 
     .collection-item {
-        padding: 12px;
+        padding: 12px 12px 20px;
+        min-height: 130px;
+        margin-bottom: 15px;
+    }
+
+    .collection-item .collection-actions button {
+        width: 30px;
+        height: 30px;
     }
 } 
