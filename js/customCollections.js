@@ -5,6 +5,7 @@ export class CustomCollectionsManager {
         this.collections = this.loadCollections();
         this.initializeEventListeners();
         this.initializeModals();
+        this.initializeReviewProperties();
     }
 
     // 获取所有收藏夹
@@ -807,18 +808,16 @@ export class CustomCollectionsManager {
             
             // 计算复习状态
             let reviewStatus = '';
-            if (collection.review) {
-                const nextReview = collection.review.next_review ? new Date(collection.review.next_review) : null;
+            if (collection.review && collection.review.next_review) {
+                const nextReview = new Date(collection.review.next_review);
                 const now = new Date();
                 
-                if (nextReview) {
-                    if (nextReview <= now) {
-                        const daysOverdue = Math.floor((now - nextReview) / (1000 * 60 * 60 * 24));
-                        reviewStatus = `<div class="review-reminder overdue">已超期${daysOverdue}天，需要复习</div>`;
-                    } else {
-                        const daysUntil = Math.ceil((nextReview - now) / (1000 * 60 * 60 * 24));
-                        reviewStatus = `<div class="review-reminder upcoming">${daysUntil}天后复习</div>`;
-                    }
+                if (nextReview <= now) {
+                    const daysOverdue = Math.floor((now - nextReview) / (1000 * 60 * 60 * 24));
+                    reviewStatus = `<div class="review-reminder overdue">需要复习</div>`;
+                } else {
+                    const daysUntil = Math.ceil((nextReview - now) / (1000 * 60 * 60 * 24));
+                    reviewStatus = `<div class="review-reminder upcoming">${daysUntil}天后复习</div>`;
                 }
             }
 
@@ -984,53 +983,50 @@ export class CustomCollectionsManager {
         modal.classList.add('show');
     }
 
-    // 更新复习设置
-    updateReviewSettings(collectionId, settings) {
-        const collection = this.collections[collectionId];
-        if (!collection) return;
-
-        collection.review = {
-            ...collection.review,
-            ...settings
-        };
+    // 初始化复习属性
+    initializeReviewProperties() {
+        Object.values(this.collections).forEach(collection => {
+            if (!collection.review) {
+                collection.review = {
+                    last_review: null,
+                    next_review: null,
+                    interval_days: 7,
+                    review_count: 0
+                };
+            }
+        });
         this.saveCollections();
     }
 
-    // 修改复习状态更新方法
+    // 更新复习状态
     updateReviewStatus(collectionId) {
         const collection = this.collections[collectionId];
         if (!collection) return;
 
-        const now = new Date();
-        const lastReview = collection.review.last_review ? new Date(collection.review.last_review) : null;
-        
-        // 更新复习记录
-        collection.review.last_review = now.toISOString();
-        collection.review.review_count = (collection.review.review_count || 0) + 1;
-        
-        // 根据复习次数调整间隔（简单的间隔递增）
-        let interval = collection.review.interval_days || 7;
-        if (lastReview) {
-            // 如果是按时复习，增加间隔
-            const daysLate = Math.floor((now - new Date(collection.review.next_review)) / (1000 * 60 * 60 * 24));
-            if (daysLate <= 0) {
-                interval = Math.min(interval * 1.5, 30); // 最大30天
-            } else {
-                interval = Math.max(7, interval * 0.8); // 最小7天
-            }
+        // 确保有复习属性
+        if (!collection.review) {
+            collection.review = {
+                last_review: null,
+                next_review: null,
+                interval_days: 7,
+                review_count: 0
+            };
         }
+
+        const now = new Date();
+        collection.review.last_review = now.toISOString();
         
-        collection.review.interval_days = Math.round(interval);
-        
-        // 计算下次复习时间
+        // 计算下次复习时间（7天后）
         const nextReview = new Date(now);
         nextReview.setDate(nextReview.getDate() + collection.review.interval_days);
         collection.review.next_review = nextReview.toISOString();
-
+        
+        collection.review.review_count++;
+        
         this.saveCollections();
         
         // 显示提示
-        alert(`已标记复习完成！\n下次复习时间：${nextReview.toLocaleDateString()}\n（${collection.review.interval_days}天后）`);
+        alert(`已标记复习完成！\n下次复习时间：${nextReview.toLocaleDateString()}`);
     }
 
     // 检查是否需要复习

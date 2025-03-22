@@ -152,9 +152,10 @@
     }
 }
 
-/* 批量导入相关样式 */
+/* 批量导入相关样式优化 */
 .separator-options {
     display: flex;
+    flex-wrap: wrap; /* 允许在小屏幕上换行 */
     align-items: center;
     gap: 15px;
     margin: 10px 0;
@@ -163,22 +164,27 @@
 .separator-option {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    min-width: 120px; /* 确保选项有足够的宽度 */
 }
 
 .separator-option input[type="radio"] {
     margin: 0;
+    width: 16px;
+    height: 16px;
 }
 
 .separator-option label {
     margin: 0;
     white-space: nowrap;
+    font-size: 14px;
 }
 
 .import-tips {
     color: #666;
     font-size: 0.9em;
-    margin-left: 15px;
+    margin-top: 8px;
+    width: 100%; /* 在小屏幕上独占一行 */
 }
 
 #batchImportText {
@@ -192,10 +198,46 @@
     resize: vertical;
 }
 
+/* 按钮容器样式优化 */
 .form-actions {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    padding: 15px 0;
+    background: white;
+    border-top: 1px solid #eee;
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .separator-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .separator-option {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .import-tips {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .form-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .form-actions button {
+        flex: 1;
+        min-width: 120px;
+    }
 }
 
 /* 批量导入预览表格样式 */
@@ -312,7 +354,8 @@
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative; /* 用于定位内部元素 */
+    position: relative;
+    overflow: hidden; /* 防止内容溢出 */
 }
 
 /* 响应式调整 */
@@ -330,10 +373,10 @@
 
 .collection-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
     margin-bottom: 10px;
-    flex-wrap: wrap;
 }
 
 .collection-header h3 {
@@ -344,10 +387,9 @@
 
 .collection-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
-    align-items: center;
     margin-left: auto;
-    flex: 0 0 auto;
 }
 
 .collection-actions button {
@@ -431,8 +473,53 @@
     }
     
     .collection-actions {
-        margin-left: 0;
         width: 100%;
+        margin-top: 10px;
         justify-content: flex-end;
     }
+
+    .collection-actions button {
+        flex: 0 0 auto;
+    }
+}
+
+/* 句子列表模态框样式 */
+.modal-content {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background: white;
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto; /* 添加垂直滚动 */
+    padding: 15px;
+}
+
+.sentences-container {
+    max-height: calc(70vh - 100px); /* 设置最大高度，留出头部和底部空间 */
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 自定义滚动条样式 */
+.sentences-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sentences-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.sentences-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.sentences-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
 } 
