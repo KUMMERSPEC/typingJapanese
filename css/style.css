@@ -359,23 +359,26 @@
 
 /* 按钮组基础样式 */
 .collection-actions {
-    display: grid;
+    display: flex;
     gap: 6px;
     align-items: center;
 }
 
-/* 主页卡片的按钮组样式（保持水平排列） */
+/* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
     top: 12px;
     right: 12px;
     display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-/* 收藏夹内的按钮组样式（2x3网格布局） */
+/* 收藏夹内的按钮组样式 */
 .modal .collection-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 两列等宽 */
-    grid-template-rows: repeat(3, auto); /* 三行 */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 两列等宽 */
+    gap: 8px;
     width: fit-content;
     margin-left: auto; /* 靠右对齐 */
     padding-top: 10px;
@@ -400,7 +403,7 @@
 @media (max-width: 1024px) {
     /* iPad 和较小屏幕的样式 */
     .modal .collection-actions {
-        gap: 8px;
+        gap: 10px;
     }
 
     .collection-actions button {
@@ -410,32 +413,13 @@
 }
 
 @media (max-width: 768px) {
-    .collection-item {
-        padding: 12px;
-    }
-
-    .modal .collection-actions {
+    .collection-item .collection-actions {
         gap: 6px;
     }
 
     .collection-actions button {
         width: 38px;
         height: 38px;
-    }
-}
-
-@media (max-width: 480px) {
-    .collection-item {
-        padding: 10px;
-    }
-
-    .modal .collection-actions {
-        gap: 5px;
-    }
-
-    .collection-actions button {
-        width: 36px;
-        height: 36px;
     }
 }
 
