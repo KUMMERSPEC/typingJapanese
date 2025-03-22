@@ -343,20 +343,20 @@
 /* 主页卡片的按钮组样式 */
 .collection-item .collection-actions {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px; /* 减小顶部距离 */
+    right: 10px; /* 减小右侧距离 */
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 4px; /* 减小按钮间距 */
     align-items: center;
     flex-wrap: nowrap;
-    z-index: 1; /* 确保按钮在其他内容之上 */
+    z-index: 1;
 }
 
 /* 主页卡片的按钮样式 */
 .collection-item .collection-actions button {
-    width: 32px; /* 稍微减小按钮尺寸 */
-    height: 32px;
+    width: 28px; /* 减小按钮尺寸 */
+    height: 28px;
     padding: 0;
     border: none;
     border-radius: 4px;
@@ -369,22 +369,14 @@
     flex-shrink: 0;
 }
 
-/* 设置特定按钮的顺序 */
-.collection-item .collection-actions .add-btn {
-    order: 1; /* 最左边 */
-}
-
-.collection-item .collection-actions .edit-btn {
-    order: 2; /* 中间 */
-}
-
-.collection-item .collection-actions .delete-btn {
-    order: 3; /* 最右边 */
+/* 按钮图标大小调整 */
+.collection-item .collection-actions button i {
+    font-size: 14px; /* 减小图标大小 */
 }
 
 /* 标题区域留出按钮空间 */
 .collection-item .collection-title-row {
-    padding-right: 130px; /* 为3个按钮留出足够空间 */
+    padding-right: 100px; /* 减小右侧预留空间 */
 }
 
 /* 收藏夹内的按钮组样式 */
@@ -493,24 +485,19 @@
 
 /* 响应式调整 */
 @media (max-width: 1024px) {
-    /* iPad 样式 */
-    .collection-item {
-        margin: 0 0 15px 0;
-    }
-
     .collection-item .collection-actions {
-        top: 10px;
-        right: 10px;
-        gap: 5px;
+        top: 8px;
+        right: 8px;
+        gap: 3px;
     }
 
-    .collection-actions button {
-        width: 30px; /* iPad上进一步减小按钮尺寸 */
-        height: 30px;
+    .collection-item .collection-actions button {
+        width: 26px;
+        height: 26px;
     }
 
     .collection-item .collection-title-row {
-        padding-right: 110px; /* 调整右侧间距 */
+        padding-right: 90px;
     }
 }
 
