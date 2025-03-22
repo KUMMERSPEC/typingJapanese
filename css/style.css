@@ -306,101 +306,91 @@
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow: hidden; /* 防止内容溢出 */
 }
 
 .collection-header {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto; /* 两列：内容区和按钮组 */
+    grid-template-rows: auto auto auto; /* 三行布局 */
+    gap: 8px;
 }
 
+/* 标题和日期行 */
 .collection-title-row {
+    grid-column: 1 / -1; /* 跨越所有列 */
+    grid-row: 1;
     display: flex;
-    align-items: flex-start; /* 改为顶部对齐 */
     justify-content: space-between;
-    gap: 10px;
-    min-height: 32px; /* 确保有最小高度 */
+    align-items: center;
 }
 
 .collection-name {
     font-size: 1.1em;
     margin: 0;
-    padding: 4px 0;
-    flex: 1;
-    min-width: 0; /* 允许文字在需要时换行 */
-    word-break: break-word; /* 允许在单词内换行 */
-}
-
-.collection-review-status {
-    flex-shrink: 0; /* 防止状态被压缩 */
-    padding: 4px 8px;
-    background: #f5f5f5;
-    border-radius: 4px;
-    font-size: 0.85em;
-    white-space: nowrap;
-}
-
-.collection-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding-top: 8px;
-    border-top: 1px solid #eee;
-}
-
-.collection-actions button {
-    width: 32px;
-    height: 32px;
     padding: 0;
-    border: none;
-    border-radius: 4px;
-    background: #f5f5f5;
-    cursor: pointer;
+}
+
+.collection-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-right: 40px; /* 为删除按钮留出空间 */
+}
+
+/* 描述文本 */
+.collection-description {
+    grid-column: 1;
+    grid-row: 2;
+    color: #666;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+/* 句子统计 */
+.collection-stats {
+    grid-column: 1;
+    grid-row: 3;
+    color: #666;
+    font-size: 0.9em;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    margin: 0;
 }
 
-/* 特殊按钮样式 */
-.collection-actions .review-btn {
-    background-color: #4caf50;
-    color: white;
+/* 按钮组 */
+.collection-actions {
+    grid-column: 2;
+    grid-row: 2 / 4; /* 跨越第2-3行 */
+    display: flex;
+    gap: 6px;
+    justify-self: end;
+    align-self: start;
 }
 
-.collection-actions .delete-btn {
-    background-color: #f44336;
-    color: white;
+/* 删除按钮特殊定位 */
+.delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
-    .collection-item {
-        padding: 12px;
-    }
-
     .collection-title-row {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: 8px;
     }
 
-    .collection-name {
-        width: 100%;
-    }
-
-    .collection-review-status {
-        align-self: flex-start;
+    .collection-date {
+        margin-right: 45px; /* 在小屏幕上增加间距 */
     }
 
     .collection-actions {
-        padding-top: 10px;
-        gap: 8px;
-    }
-
-    .collection-actions button {
-        width: 36px;
-        height: 36px;
+        grid-column: 1 / -1;
+        grid-row: auto;
+        justify-content: flex-start;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #eee;
     }
 }
 
@@ -414,7 +404,7 @@
         font-size: 1em;
     }
 
-    .collection-review-status {
+    .collection-date {
         font-size: 0.8em;
     }
 
@@ -426,23 +416,6 @@
         width: 34px;
         height: 34px;
     }
-}
-
-.collection-description {
-    color: #666;
-    margin: 10px 0;
-    font-size: 0.9em;
-}
-
-.collection-stats {
-    display: flex;
-    align-items: center;
-    color: #666;
-    font-size: 0.9em;
-}
-
-.collection-stats i {
-    margin-right: 5px;
 }
 
 /* 自定义滚动条样式 */
