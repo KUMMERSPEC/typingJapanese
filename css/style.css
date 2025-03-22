@@ -340,9 +340,51 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    display: flex;
-    flex-direction: column; /* 按钮垂直排列 */
+    display: flex; /* 水平排列 */
     gap: 6px;
+}
+
+/* 收藏夹内的按钮组样式 */
+.modal .collection-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 两列布局 */
+    grid-template-rows: repeat(3, auto); /* 三行布局 */
+    gap: 8px;
+    width: fit-content;
+    margin-left: auto; /* 靠右对齐 */
+    padding-top: 10px;
+}
+
+/* 按钮基础样式 */
+.collection-actions button {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* 按钮悬停效果 */
+.collection-actions button:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+/* 特殊按钮样式 */
+.collection-actions .delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.collection-actions .review-btn {
+    background-color: #4caf50;
+    color: white;
 }
 
 /* 响应式调整 */
@@ -354,6 +396,50 @@
     .collection-review-status {
         font-size: 0.85em;
         padding: 3px 6px;
+    }
+
+    .collection-item .collection-actions {
+        gap: 8px;
+    }
+
+    .modal .collection-actions {
+        gap: 10px;
+    }
+
+    .collection-actions button {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .today-panel {
+        padding: 10px;
+    }
+    
+    .stats-overview {
+        gap: 10px;
+    }
+    
+    .stats-item {
+        padding: 10px;
+    }
+    
+    .stats-item .label {
+        font-size: 0.85rem;
+    }
+    
+    .stats-item .value {
+        font-size: 1.3rem;
+    }
+
+    .collection-item .collection-actions {
+        gap: 6px;
+    }
+
+    .collection-actions button {
+        width: 36px;
+        height: 36px;
     }
 }
 
