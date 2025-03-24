@@ -528,7 +528,51 @@
     }
 }
 
-/* 复习状态标签的基础样式 */
+/* 修改复习项布局 */
+.review-item {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sentence-content {
+    margin-bottom: 12px;
+}
+
+.japanese {
+    font-size: 1.1em;
+    margin-bottom: 4px;
+}
+
+.hiragana {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+.sentence-content .meaning {
+    color: #444;
+    margin-bottom: 4px;
+}
+
+.course-info {
+    color: #888;
+    font-size: 0.85em;
+}
+
+/* 修改状态显示区域布局 */
+.review-status {
+    display: flex;
+    flex-direction: column;  /* 改为纵向排列 */
+    gap: 8px;               /* 增加间距 */
+    margin-top: 8px;        /* 与上方内容分隔 */
+    border-top: 1px solid #eee;  /* 添加分隔线 */
+    padding-top: 8px;       /* 分隔线上方间距 */
+}
+
+/* 状态标签样式 */
 .status-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -536,11 +580,55 @@
     font-size: 0.9em;
     color: white;
     font-weight: 500;
-    margin-right: 8px;
     min-width: 60px;
     text-align: center;
     white-space: nowrap;
-    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; /* 添加中文字体支持 */
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+/* 下次复习时间样式 */
+.next-review {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .review-item {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .japanese {
+        font-size: 1em;
+    }
+
+    .hiragana {
+        font-size: 0.85em;
+    }
+
+    .sentence-content .meaning {
+        font-size: 0.9em;
+    }
+
+    .course-info {
+        font-size: 0.8em;
+    }
+
+    .review-status {
+        gap: 6px;
+        margin-top: 6px;
+        padding-top: 6px;
+    }
+
+    .status-badge {
+        padding: 3px 10px;
+        font-size: 0.85em;
+    }
+
+    .next-review {
+        font-size: 0.85em;
+    }
 }
 
 /* 未复习状态 - 绿色 */
@@ -556,7 +644,7 @@
 /* 一般状态 - 黄色 */
 .status-badge.status-medium {
     background-color: #FFC107;
-    color: #333;  /* 黄色背景配深色文字 */
+    color: #333;
 }
 
 /* 熟练状态 - 蓝色 */
