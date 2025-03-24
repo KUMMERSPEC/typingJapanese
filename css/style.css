@@ -531,20 +531,21 @@
 /* 复习状态标签的基础样式 */
 .status-badge {
     display: inline-block;
-    padding: 4px 12px;  /* 增加水平内边距 */
+    padding: 4px 12px;
     border-radius: 4px;
     font-size: 0.9em;
     color: white;
     font-weight: 500;
     margin-right: 8px;
-    min-width: 60px;    /* 添加最小宽度 */
-    text-align: center; /* 文字居中 */
-    white-space: nowrap; /* 防止文字换行 */
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; /* 添加中文字体支持 */
 }
 
 /* 未复习状态 - 绿色 */
 .status-badge.status-new {
-    background-color: #4CAF50;
+    background-color: #4bb04e;
 }
 
 /* 生疏状态 - 红色 */
