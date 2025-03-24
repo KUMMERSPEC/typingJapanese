@@ -976,8 +976,10 @@ export class PracticeManager {
                 <h2>🎉 课程完成！</h2>
                 <p>恭喜你完成了本课程的学习！</p>
                 <p>本次练习: ${splitCount} 个句子</p>
-                <button class="review-btn">复习本课程</button>
-                <button class="next-btn">返回课程列表</button>
+                <div class="button-group">
+                    <button class="review-btn">复习本课程</button>
+                    <button class="next-btn">返回首页</button>
+                </div>
             `;
             
             completeScreen.appendChild(content);
@@ -1002,7 +1004,7 @@ export class PracticeManager {
                     this.speak('おめでとうございます！');
                 }, 1000);
 
-                // 添加按钮事件
+                // 修改按钮事件
                 const reviewBtn = content.querySelector('.review-btn');
                 const nextBtn = content.querySelector('.next-btn');
                 
@@ -1014,7 +1016,8 @@ export class PracticeManager {
                 
                 if (nextBtn) {
                     nextBtn.addEventListener('click', () => {
-                        window.location.href = 'courses.html';
+                        // 修改为返回首页
+                        window.location.href = '../index.html';
                     });
                 }
             }
@@ -1362,36 +1365,59 @@ export class PracticeManager {
             .complete-content {
                 text-align: center;
                 animation: fadeInUp 0.5s ease-out;
+                background: white;
+                padding: 40px;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             }
 
-            .confetti {
-                position: fixed;
-                width: 10px;
-                height: 10px;
-                pointer-events: none;
+            .button-group {
+                display: flex;
+                gap: 16px;
+                margin-top: 24px;
+                justify-content: center;
             }
 
-            .star {
-                position: fixed;
-                background: #FFD700;
-                clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-                pointer-events: none;
+            .review-btn, .next-btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
             }
 
-            @keyframes confettiFall {
-                0% {
-                    transform: translateY(-100vh) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: translateY(100vh) rotate(720deg);
-                    opacity: 0;
-                }
+            .review-btn {
+                background: #4CAF50;
+                color: white;
             }
 
-            @keyframes starTwinkle {
-                0%, 100% { opacity: 0.3; transform: scale(1); }
-                50% { opacity: 1; transform: scale(1.2); }
+            .next-btn {
+                background: #2196F3;
+                color: white;
+            }
+
+            .review-btn:hover, .next-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+
+            .review-btn:active, .next-btn:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            }
+
+            h2 {
+                font-size: 28px;
+                color: #333;
+                margin-bottom: 16px;
+            }
+
+            p {
+                color: #666;
+                margin: 8px 0;
+                font-size: 16px;
             }
 
             @keyframes fadeInUp {
