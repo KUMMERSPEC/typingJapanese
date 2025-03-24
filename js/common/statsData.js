@@ -552,6 +552,11 @@ class Statistics {
     updateDisplay() {
         try {
             const stats = this.getStatistics();
+            console.log('=== Stats Display Update ===');
+            console.log('Current stats:', stats);
+            console.log('Review history:', stats.reviewHistory);
+            console.log('Daily stats:', stats.dailyStats);
+
             console.log('Updating display with stats:', {
                 totalSentences: stats.totalSentences,
                 stats: stats

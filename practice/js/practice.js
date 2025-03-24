@@ -882,43 +882,81 @@ export class PracticeManager {
             const splitQuestions = this.questions.filter(q => q.type === 'split');
             const splitCount = splitQuestions.length;
             
-            console.log('Course completion details:', {
+            // 添加详细的调试信息
+            console.log('=== Course Completion Debug ===');
+            console.log('Questions:', this.questions);
+            console.log('Split questions:', splitQuestions);
+            console.log('Course info:', {
                 course: this.course,
                 lesson: this.lesson,
-                totalQuestions: this.questions.length,
-                splitCount: splitCount,
-                completedSentences: this.completedSentences
+                courseId: this.courseId,
+                lessonId: this.lessonId
             });
 
             // 确保在显示完成效果之前保存统计数据
             if (this.course && this.lesson) {
                 // 保存课程完成状态
                 const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+                console.log('Current stats before update:', stats);
+
                 if (!stats.completedLessons) {
                     stats.completedLessons = {};
+                }
+                if (!stats.reviewHistory) {
+                    stats.reviewHistory = {};
                 }
                 
                 // 只处理 split 类型的句子
                 const lessonKey = `${this.course}_${this.lesson}`;
                 splitQuestions.forEach(question => {
-                    if (!stats.completedLessons[lessonKey]) {
-                        stats.completedLessons[lessonKey] = {
-                            completedAt: new Date().toISOString(),
-                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                            proficiency: 'low',
-                            reviewCount: 0,
-                            correctCount: 0,
-                            course: this.course,
-                            lesson: this.lesson,
-                            sentence: question.character,
-                            hiragana: question.hiragana,
-                            meaning: question.meaning
-                        };
-                    }
+                    const questionKey = `${lessonKey}_${question.character}`;
+                    console.log('Processing question:', {
+                        questionKey,
+                        question
+                    });
+
+                    // 添加到复习历史
+                    stats.reviewHistory[questionKey] = {
+                        completedAt: new Date().toISOString(),
+                        nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                        proficiency: 'low',
+                        reviewCount: 0,
+                        correctCount: 0,
+                        course: this.course,
+                        lesson: this.lesson,
+                        sentence: question.character,
+                        hiragana: question.hiragana,
+                        meaning: question.meaning
+                    };
+
+                    // 更新课程完成状态
+                    stats.completedLessons[lessonKey] = {
+                        completedAt: new Date().toISOString(),
+                        course: this.course,
+                        lesson: this.lesson
+                    };
                 });
                 
+                // 更新每日统计
+                const today = new Date().toLocaleDateString();
+                if (!stats.dailyStats) {
+                    stats.dailyStats = {};
+                }
+                if (!stats.dailyStats[today]) {
+                    stats.dailyStats[today] = {
+                        sentencesLearned: 0,
+                        studyTime: 0
+                    };
+                }
+                stats.dailyStats[today].sentencesLearned += splitCount;
+                
                 localStorage.setItem('typing_statistics', JSON.stringify(stats));
-                console.log('Saved completion status:', stats.completedLessons[lessonKey]);
+                console.log('Updated stats:', stats);
+                
+                // 触发统计更新事件
+                window.dispatchEvent(new CustomEvent('statisticsUpdated', {
+                    detail: { stats }
+                }));
             }
 
             // 创建完成界面

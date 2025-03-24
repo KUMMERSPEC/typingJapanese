@@ -150,6 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 检查课程完成状态
     checkCourseCompletion();
+
+    // 监听统计更新事件
+    window.addEventListener('statisticsUpdated', (event) => {
+        console.log('Statistics update event received:', event.detail);
+        // 刷新统计显示
+        updateReviewList();
+        // 如果使用了 statsData
+        if (window.statsData) {
+            window.statsData.updateDisplay();
+        }
+    });
 });
 
 // 显示复习面板
