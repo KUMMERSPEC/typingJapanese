@@ -187,6 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 更新复习列表
         updateReviewList();
     });
+
+    // 添加已学句子点击事件
+    const learnedSentencesElement = document.querySelector('.learned-sentences');
+    if (learnedSentencesElement) {
+        learnedSentencesElement.style.cursor = 'pointer';
+        learnedSentencesElement.addEventListener('click', showLearnedSentencesPanel);
+    }
 });
 
 // 显示复习面板
@@ -232,115 +239,143 @@ function updateReviewList() {
     const reviewHistory = stats.reviewHistory || {};
     let items = [];
     
-    // 根据选择的筛选条件过滤句子
-    const today = new Date().toISOString().split('T')[0];
-    
-    // 只处理有效的复习历史项
+    console.log('Updating review list with filter:', selectedFilter);
+    console.log('Review history:', reviewHistory);
+
+    // 遍历复习历史
     for (const key in reviewHistory) {
         const item = reviewHistory[key];
-        // 检查项目是否有效
-        if (item && item.sentence && item.course && item.lesson) {
-            const nextReviewDate = item.nextReviewDate ? 
-                new Date(item.nextReviewDate).toISOString().split('T')[0] : null;
-            
+        if (item && item.sentence) {
             // 添加调试信息
-            console.log('Processing valid item:', {
+            console.log('Processing review item:', {
                 key,
-                sentence: item.sentence,
-                course: item.course,
-                lesson: item.lesson,
-                nextReviewDate
+                item,
+                nextReviewDate: item.nextReviewDate,
+                currentTime: new Date().toISOString()
             });
-            
-            if (selectedFilter === 'all') {
-                // 显示所有有效的句子
-                items.push(item);
-            } else if (selectedFilter === 'today' && nextReviewDate && nextReviewDate <= today) {
-                // 显示今日需要复习的句子
-                items.push(item);
-            } else if (selectedFilter === 'weak' && 
-                      (item.proficiency === 'low' || 
-                       (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6))) {
-                // 显示需要加强的句子
-                items.push(item);
+
+            // 根据筛选条件处理
+            switch (selectedFilter) {
+                case 'all':
+                    // 显示所有句子
+                    items.push(item);
+                    break;
+                    
+                case 'today':
+                    // 显示今天需要复习的句子
+                    const nextReview = new Date(item.nextReviewDate);
+                    const now = new Date();
+                    if (nextReview <= now) {
+                        items.push(item);
+                    }
+                    break;
+                    
+                case 'weak':
+                    // 显示需要加强的句子
+                    if (item.proficiency === 'low' || 
+                        (item.reviewCount > 0 && item.correctCount / item.reviewCount < 0.6)) {
+                        items.push(item);
+                    }
+                    break;
             }
-        } else {
-            console.log('Skipping invalid item:', key, item);
         }
     }
-    
-    // 添加调试信息
-    console.log('Valid items found:', items.length);
-    console.log('Items:', items);
-    
+
+    console.log('Filtered items:', items);
+
     // 更新复习数量显示
     if (reviewCountDiv) {
         reviewCountDiv.textContent = `待复习：${items.length}`;
     }
-    
-    // 清空并重新生成列表
-    if (reviewList) {
-        reviewList.innerHTML = '';
-        
-        if (items.length === 0) {
-            reviewList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">没有需要复习的句子</div>';
-            return;
-        }
-        
-        items.forEach(item => {
-            if (!item.sentence) {
-                console.log('Skipping item without sentence:', item);
-                return;
-            }
 
-            const reviewItem = document.createElement('div');
-            reviewItem.className = 'review-item';
-            
-            const sentenceInfo = document.createElement('div');
-            sentenceInfo.className = 'sentence-info';
-            
-            const japanese = document.createElement('div');
-            japanese.className = 'japanese';
-            japanese.textContent = item.sentence;
-            
-            const meaning = document.createElement('div');
-            meaning.className = 'meaning';
-            meaning.textContent = item.meaning || '';
-            
-            const courseInfo = document.createElement('div');
-            courseInfo.className = 'course-info';
-            courseInfo.textContent = `${item.course} - ${item.lesson}`;
-            
-            sentenceInfo.appendChild(japanese);
-            sentenceInfo.appendChild(meaning);
-            sentenceInfo.appendChild(courseInfo);
-            
-            const reviewStatus = document.createElement('div');
-            reviewStatus.className = 'review-status';
-            
-            const lastReview = document.createElement('span');
-            lastReview.className = 'last-review';
-            lastReview.textContent = item.lastReview ? 
-                `上次复习: ${new Date(item.lastReview).toLocaleDateString()}` : 
-                '未复习';
-            
-            const proficiency = document.createElement('span');
-            proficiency.className = `proficiency ${item.proficiency || 'low'}`;
-            proficiency.textContent = {
-                'low': '需加强',
-                'medium': '一般',
-                'high': '熟练'
-            }[item.proficiency || 'low'];
-            
-            reviewStatus.appendChild(lastReview);
-            reviewStatus.appendChild(proficiency);
-            
-            reviewItem.appendChild(sentenceInfo);
-            reviewItem.appendChild(reviewStatus);
-            
-            reviewList.appendChild(reviewItem);
-        });
+    // 更新复习列表
+    if (reviewList) {
+        if (items.length === 0) {
+            reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
+        } else {
+            reviewList.innerHTML = items.map(item => `
+                <div class="review-item">
+                    <div class="sentence-content">
+                        <div class="japanese">${item.sentence || ''}</div>
+                        <div class="hiragana">${item.hiragana || ''}</div>
+                        <div class="meaning">${item.meaning || ''}</div>
+                        <div class="course-info">${item.course} - ${item.lesson}</div>
+                    </div>
+                    <div class="review-status">
+                        <span class="proficiency ${item.proficiency || 'low'}">${
+                            item.proficiency === 'high' ? '熟练' :
+                            item.proficiency === 'medium' ? '一般' : '需加强'
+                        }</span>
+                        <span class="next-review">下次复习: ${
+                            new Date(item.nextReviewDate).toLocaleDateString()
+                        }</span>
+                    </div>
+                </div>
+            `).join('');
+        }
     }
+
+    // 添加样式
+    const style = document.createElement('style');
+    style.textContent = `
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .review-item {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .sentence-content {
+            margin-bottom: 8px;
+        }
+        .japanese {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .hiragana {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .meaning {
+            color: #444;
+            margin-bottom: 4px;
+        }
+        .course-info {
+            font-size: 12px;
+            color: #888;
+        }
+        .review-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        .proficiency {
+            padding: 2px 8px;
+            border-radius: 12px;
+            color: white;
+        }
+        .proficiency.low {
+            background: #ff6b6b;
+        }
+        .proficiency.medium {
+            background: #ffd93d;
+            color: #333;
+        }
+        .proficiency.high {
+            background: #6bcb77;
+        }
+        .next-review {
+            color: #666;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // 格式化日期
@@ -650,4 +685,141 @@ function markLessonAsCompleted(courseId, lessonId) {
     
     localStorage.setItem('typing_statistics', JSON.stringify(stats));
     checkCourseCompletion(); // 检查并显示完成提示
+}
+
+// 添加显示已学句子面板的函数
+function showLearnedSentencesPanel() {
+    const stats = statsData.getStatistics();
+    const reviewHistory = stats.reviewHistory || {};
+    
+    // 创建面板
+    const learnedPanel = document.createElement('div');
+    learnedPanel.className = 'learned-panel';
+    learnedPanel.innerHTML = `
+        <div class="panel-header">
+            <h3>已学句子</h3>
+            <button class="close-btn" onclick="closeLearnedPanel()">×</button>
+        </div>
+        <div class="learned-list"></div>
+    `;
+    
+    // 添加所有学过的句子
+    const learnedList = learnedPanel.querySelector('.learned-list');
+    const items = Object.values(reviewHistory).filter(item => item && item.sentence);
+    
+    if (items.length === 0) {
+        learnedList.innerHTML = '<div class="empty-message">还没有学习过的句子</div>';
+    } else {
+        learnedList.innerHTML = items.map(item => `
+            <div class="learned-item">
+                <div class="sentence-content">
+                    <div class="japanese">${item.sentence || ''}</div>
+                    <div class="hiragana">${item.hiragana || ''}</div>
+                    <div class="meaning">${item.meaning || ''}</div>
+                    <div class="course-info">${item.course} - ${item.lesson}</div>
+                </div>
+                <div class="mastery-status">
+                    <span class="proficiency ${item.proficiency || 'low'}">${
+                        item.proficiency === 'high' ? '已掌握' :
+                        item.proficiency === 'medium' ? '熟练' : '学习中'
+                    }</span>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // 添加样式
+    const style = document.createElement('style');
+    style.textContent = `
+        .learned-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .learned-list {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 80px);
+        }
+        
+        .learned-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mastery-status {
+            margin-left: 16px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // 添加到页面
+    document.body.appendChild(learnedPanel);
+    
+    // 显示遮罩
+    const overlay = document.querySelector('.overlay');
+    if (overlay) {
+        overlay.style.display = 'block';
+        overlay.classList.add('show');
+    }
+}
+
+// 关闭已学句子面板
+function closeLearnedPanel() {
+    const learnedPanel = document.querySelector('.learned-panel');
+    const overlay = document.querySelector('.overlay');
+    
+    if (learnedPanel) {
+        learnedPanel.remove();
+    }
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
+    }
 } 
