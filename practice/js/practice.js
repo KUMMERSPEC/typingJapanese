@@ -29,6 +29,9 @@ export class PracticeManager {
         
         // 绑定完成事件
         this.bindCompletionEvents();
+        
+        // 添加完成效果所需的样式
+        this.addCompletionStyles();
     }
 
     async init() {
@@ -779,60 +782,78 @@ export class PracticeManager {
     }
 
     nextQuestion() {
-        console.log('=== nextQuestion START ===');
-        
-        // 防止快速连续调用
-        if (this.isTransitioning) {
-            console.log('Already transitioning to next question, ignoring call');
-            return;
-        }
-        this.isTransitioning = true;
+        try {
+            // 添加调试信息
+            console.log('Current question index:', this.currentQuestionIndex);
+            console.log('Total questions:', this.questions.length);
 
-        // 获取必要的DOM元素
-        const answerDisplay = document.querySelector('.answer-display');
-        const inputArea = document.querySelector('.input-area');
-        const character = document.querySelector('.character');
-        const functionButtons = document.querySelector('.function-buttons');
-        
-        if (!answerDisplay || !inputArea || !character) {
-            console.error('Required elements not found in nextQuestion');
-            this.isTransitioning = false;
-            return;
-        }
+            // 防止快速连续调用
+            if (this.isTransitioning) {
+                console.log('Already transitioning to next question, ignoring call');
+                return;
+            }
+            this.isTransitioning = true;
 
-        // 隐藏答案显示区域
-        answerDisplay.classList.remove('show');
-        answerDisplay.style.display = 'none';
-        answerDisplay.innerHTML = '';
-        
-        // 检查是否是最后一个问题
-        if (this.currentQuestionIndex >= this.questions.length - 1) {
-            console.log('Course complete, showing completion screen');
-            this.showComplete();
-            this.isTransitioning = false;
-            return;
-        }
+            // 获取必要的DOM元素
+            const answerDisplay = document.querySelector('.answer-display');
+            const inputArea = document.querySelector('.input-area');
+            const character = document.querySelector('.character');
+            const functionButtons = document.querySelector('.function-buttons');
+            
+            if (!answerDisplay || !inputArea || !character) {
+                console.error('Required elements not found in nextQuestion');
+                this.isTransitioning = false;
+                return;
+            }
 
-        // 增加题目索引并显示下一题
-        this.currentQuestionIndex++;
-        console.log('Moving to next question:', this.currentQuestionIndex);
-        
-        // 显示输入区域和功能按钮
-        inputArea.style.display = 'flex';
-        character.style.display = 'block';
-        if (functionButtons) {
-            functionButtons.style.display = 'flex';
+            // 隐藏答案显示区域
+            answerDisplay.classList.remove('show');
+            answerDisplay.style.display = 'none';
+            answerDisplay.innerHTML = '';
+            
+            // 检查是否是最后一个问题
+            if (this.currentQuestionIndex >= this.questions.length - 1) {
+                console.log('Course complete, showing completion screen');
+                // 只统计 split 类型的题目数量
+                const splitQuestions = this.questions.filter(q => q.type === 'split');
+                const splitCount = splitQuestions.length;
+                
+                console.log('Course completion details:', {
+                    course: this.course,
+                    lesson: this.lesson,
+                    totalQuestions: this.questions.length,
+                    splitCount: splitCount,
+                    completedSentences: this.completedSentences
+                });
+                
+                this.showComplete();
+                this.isTransitioning = false;
+                return;
+            }
+            
+            // 增加题目索引并显示下一题
+            this.currentQuestionIndex++;
+            console.log('Moving to next question:', this.currentQuestionIndex);
+            
+            // 显示输入区域和功能按钮
+            inputArea.style.display = 'flex';
+            character.style.display = 'block';
+            if (functionButtons) {
+                functionButtons.style.display = 'flex';
+            }
+            
+            // 显示下一题
+            this.showQuestion();
+            
+            // 重置转换状态
+            setTimeout(() => {
+                this.isTransitioning = false;
+            }, 500);
+            
+            console.log('=== nextQuestion END ===');
+        } catch (error) {
+            console.error('Error in nextQuestion:', error);
         }
-        
-        // 显示下一题
-        this.showQuestion();
-        
-        // 重置转换状态
-        setTimeout(() => {
-            this.isTransitioning = false;
-        }, 500);
-        
-        console.log('=== nextQuestion END ===');
     }
 
     showError() {
@@ -857,44 +878,24 @@ export class PracticeManager {
 
     showComplete() {
         try {
-            // 只统计 split 类型的题目数量
-            const splitQuestions = this.questions.filter(q => q.type === 'split');
-            const splitCount = splitQuestions.length;
+            const completeScreen = document.createElement('div');
+            completeScreen.className = 'complete-screen';
             
-            console.log('Course completion details:', {
-                course: this.course,
-                lesson: this.lesson,
-                totalQuestions: this.questions.length,
-                splitCount: splitCount,
-                completedSentences: this.completedSentences
-            });
+            const content = document.createElement('div');
+            content.className = 'complete-content';
+            content.innerHTML = `
+                <h2>🎉 课程完成！</h2>
+                <p>恭喜你完成了本课程的学习！</p>
+                <button class="review-btn">复习本课程</button>
+                <button class="next-btn">返回课程列表</button>
+            `;
             
-            // 如果是收藏夹练习
-            if (this.course === 'collection') {
-                // 隐藏练习相关的元素
-                const practiceElements = document.querySelectorAll('.practice-container > *:not(.completion-screen)');
-                practiceElements.forEach(element => {
-                    if (element) element.style.display = 'none';
-                });
-
-                // 创建完成界面
-                const completeScreen = document.createElement('div');
-                completeScreen.className = 'completion-screen';
-                completeScreen.innerHTML = `
-                    <h1>おめでとう！</h1>
-                    <p>练习完成！</p>
-                    <p>本次练习: ${splitCount} 个句子</p>
-                    <div class="button-group">
-                        <button class="restart-btn" onclick="location.reload()">重新练习</button>
-                        <button class="return-btn" onclick="window.location.href='/typingJapanese/'">返回首页</button>
-                    </div>
-                `;
-
-                // 添加到页面
-                const practiceContainer = document.querySelector('.practice-container');
-                if (practiceContainer) {
-                    practiceContainer.appendChild(completeScreen);
-                }
+            completeScreen.appendChild(content);
+            
+            // 添加到页面
+            const practiceContainer = document.querySelector('.practice-container');
+            if (practiceContainer) {
+                practiceContainer.appendChild(completeScreen);
                 
                 // 创建彩花和星星效果
                 this.createConfetti(completeScreen);
@@ -910,9 +911,58 @@ export class PracticeManager {
                 setTimeout(() => {
                     this.speak('おめでとうございます！');
                 }, 1000);
+
+                // 添加按钮事件
+                const reviewBtn = content.querySelector('.review-btn');
+                const nextBtn = content.querySelector('.next-btn');
+                
+                if (reviewBtn) {
+                    reviewBtn.addEventListener('click', () => {
+                        location.reload();
+                    });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        window.location.href = 'courses.html';
+                    });
+                }
+
+                // 保存完成状态
+                this.markLessonAsCompleted();
             }
         } catch (error) {
             console.error('Error in showComplete:', error);
+        }
+    }
+
+    // 标记课程为已完成
+    markLessonAsCompleted() {
+        try {
+            const courseId = this.courseId;
+            const lessonId = this.lessonId;
+            
+            if (courseId && lessonId) {
+                const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+                if (!stats.completedLessons) {
+                    stats.completedLessons = {};
+                }
+                
+                const lessonKey = `${courseId}_${lessonId}`;
+                stats.completedLessons[lessonKey] = {
+                    completedAt: new Date().toISOString(),
+                    nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                    proficiency: 'low',
+                    reviewCount: 0,
+                    correctCount: 0,
+                    course: this.courseName,
+                    lesson: this.lessonName
+                };
+                
+                localStorage.setItem('typing_statistics', JSON.stringify(stats));
+            }
+        } catch (error) {
+            console.error('Error in markLessonAsCompleted:', error);
         }
     }
 
@@ -1201,6 +1251,89 @@ export class PracticeManager {
             window.dispatchEvent(new Event('lessonCompleted'));
         } catch (error) {
             console.error('Error in completePractice:', error);
+        }
+    }
+
+    // 添加完成效果的样式
+    addCompletionStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .complete-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.9);
+                z-index: 1000;
+            }
+
+            .complete-content {
+                text-align: center;
+                animation: fadeInUp 0.5s ease-out;
+            }
+
+            .confetti {
+                position: fixed;
+                width: 10px;
+                height: 10px;
+                pointer-events: none;
+            }
+
+            .star {
+                position: fixed;
+                background: #FFD700;
+                clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+                pointer-events: none;
+            }
+
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(-100vh) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes starTwinkle {
+                0%, 100% { opacity: 0.3; transform: scale(1); }
+                50% { opacity: 1; transform: scale(1.2); }
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // 添加保存完成状态的方法
+    saveCompletionStatus() {
+        try {
+            // 保存现有的统计数据
+            if (this.course === 'collection') {
+                // 收藏夹练习的处理逻辑
+                // ... 保持现有代码不变 ...
+            } else {
+                // 课程练习的处理逻辑
+                // ... 保持现有代码不变 ...
+            }
+        } catch (error) {
+            console.error('Error in saveCompletionStatus:', error);
         }
     }
 }
