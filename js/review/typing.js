@@ -105,64 +105,83 @@ class ReviewManager {
         // 按冒号分割假名
         const units = hiragana.split(':');
         
-        // 添加虚拟输入框
-        const virtualInput = document.createElement('input');
-        virtualInput.type = 'text';
-        virtualInput.className = 'virtual-input';
-        virtualInput.style.fontSize = '16px';
-        virtualInput.autocomplete = 'off';  // 禁用自动完成
-        virtualInput.autocapitalize = 'none';  // 禁用自动大写
-        virtualInput.spellcheck = false;  // 禁用拼写检查
+        // 创建输入框容器
+        const inputsContainer = document.createElement('div');
+        inputsContainer.style.display = 'flex';
+        inputsContainer.style.flexWrap = 'wrap';
+        inputsContainer.style.justifyContent = 'center';
+        inputsContainer.style.gap = '10px';
 
-        // 处理虚拟输入框的输入
-        virtualInput.addEventListener('input', (e) => {
-            const targetIndex = parseInt(virtualInput.dataset.targetIndex);
-            if (!isNaN(targetIndex)) {
-                const targetInput = inputArea.querySelector(`[data-index="${targetIndex}"]`);
-                if (targetInput) {
-                    targetInput.value = e.target.value;
-                    // 如果输入完成，自动检查答案
-                    if (targetInput.value.length > 0) {
-                        const allInputs = Array.from(document.querySelectorAll('.split-input'));
-                        const answer = allInputs.map(input => input.value).join(':');
-                        if (answer.split(':').length === units.length) {
-                            this.checkAnswer(answer);
-                            virtualInput.value = ''; // 清空虚拟输入框
-                        }
-                    }
-                }
-            }
-        });
-
-        inputArea.appendChild(virtualInput);
-
-        // 创建显示用的输入框
         units.forEach((unit, unitIndex) => {
-            const unitContainer = document.createElement('div');
-            unitContainer.className = 'input-unit';
+            const inputWrapper = document.createElement('div');
+            inputWrapper.className = 'split-input-wrapper';
 
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'split-input';
             input.dataset.index = unitIndex;
             input.style.width = `${Math.max(unit.length * 20 + 40, 80)}px`;
-            input.readOnly = true;
-            
-            // 点击时显示虚拟键盘输入框
-            input.addEventListener('click', () => {
-                virtualInput.value = ''; // 清空虚拟输入框
-                virtualInput.dataset.targetIndex = unitIndex;
-                virtualInput.focus();
+
+            // 添加输入法事件监听
+            let isComposing = false;
+            input.addEventListener('compositionstart', () => {
+                isComposing = true;
+            });
+            input.addEventListener('compositionend', () => {
+                isComposing = false;
             });
 
-            unitContainer.appendChild(input);
-            inputArea.appendChild(unitContainer);
+            // 处理键盘事件
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (unitIndex < units.length - 1) {
+                        const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
+                        if (nextInput) {
+                            input.value = input.value.trim();
+                            nextInput.focus();
+                        }
+                    } else {
+                        // 检查所有输入是否已完成
+                        const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                        const allFilled = allInputs.every(input => input.value.trim() !== '');
+                        if (allFilled) {
+                            const answer = allInputs.map(input => input.value.trim()).join(':');
+                            this.checkAnswer(answer);
+                        }
+                    }
+                } else if (e.code === 'Space' && !isComposing) {
+                    e.preventDefault();
+                    if (unitIndex < units.length - 1) {
+                        const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                        }
+                    }
+                }
+            });
+
+            // 阻止空格键的默认行为
+            input.addEventListener('keypress', (e) => {
+                if (!isComposing && e.code === 'Space') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            inputWrapper.appendChild(input);
+            inputsContainer.appendChild(inputWrapper);
         });
-        
-        // 自动聚焦虚拟输入框
-        setTimeout(() => {
-            virtualInput.focus();
-        }, 100);
+
+        inputArea.appendChild(inputsContainer);
+
+        // 自动聚焦第一个输入框
+        const firstInput = inputsContainer.querySelector('input');
+        if (firstInput) {
+            setTimeout(() => {
+                firstInput.focus();
+            }, 100);
+        }
     }
 
     checkAnswer(answer) {

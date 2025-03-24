@@ -60,6 +60,13 @@ html {
     min-height: 100px;
 }
 
+/* 输入框容器样式 */
+.split-input-wrapper {
+    display: inline-block;
+    margin: 5px;
+}
+
+/* 输入框样式 */
 .split-input {
     min-width: 80px;
     height: 45px;
@@ -71,8 +78,6 @@ html {
     text-align: center;
     transition: all 0.3s;
     background-color: transparent;
-    cursor: text;
-    pointer-events: auto;  /* 确保可以接收点击事件 */
 }
 
 .split-input:focus {
@@ -85,6 +90,11 @@ html {
     border-bottom-color: #dc2626;
     background-color: rgba(220, 38, 38, 0.05);
     animation: shake 0.5s;
+}
+
+.split-input.correct {
+    border-bottom-color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.05);
 }
 
 /* 顶部信息栏 */
