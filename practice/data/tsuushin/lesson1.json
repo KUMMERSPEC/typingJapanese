@@ -219,10 +219,10 @@
     {
       "character": "携帯",
       "hiragana": "けいたい",
-      "romaji": "keetai",
+      "romaji": "keitai",
       "meaning": "手机",
       "type": "normal",
-      "answers": "けいたい:keetai"
+      "answers": "けいたい:keitai"
     },
     {
       "character": "鳴る",
@@ -235,10 +235,10 @@
     {
       "character": "けいたいが鳴る",
       "hiragana": "けいたい:が:なる",
-      "romaji": "keitaidenwa(keetai):ga:naru",
+      "romaji": "keitai:ga:naru",
       "meaning": "手机响了",
       "type": "split",
-      "answers": "けいたい:keitaidenwa(keetai)|が:ga|なる:naru"
+      "answers": "けいたい:keitai|が:ga|なる:naru"
     },
     {
       "character": "かける",
@@ -251,10 +251,10 @@
     {
       "character": "携帯にかける",
       "hiragana": "けいたい:に:かける",
-      "romaji": "keetai:ni:kakeru",
+      "romaji": "keitai:ni:kakeru",
       "meaning": "拨打手机",
       "type": "split",
-      "answers": "けいたい:keetai|に:ni|かける:kakeru"
+      "answers": "けいたい:keitai|に:ni|かける:kakeru"
     },
     {
       "character": "切る",
@@ -267,10 +267,10 @@
     {
       "character": "携帯を切る",
       "hiragana": "けいたい:を:きる",
-      "romaji": "keetai:ni:kakeru",
+      "romaji": "keitai:ni:kakeru",
       "meaning": "关闭手机",
       "type": "split",
-      "answers": "けいたい:keetai|を:ni|きる:kakeru"
+      "answers": "けいたい:keitai|を:ni|きる:kakeru"
     },
     {
       "character": "チェックする",
@@ -283,10 +283,10 @@
     {
       "character": "けいたいをチェックする",
       "hiragana": "けいたい:を:チェックする",
-      "romaji": "keetai:ni:kakeru",
+      "romaji": "keitai:ni:chekkusuru",
       "meaning": "检查手机",
       "type": "split",
-      "answers": "けいたい:keetai|を:ni|チェックする:kakeru"
+      "answers": "けいたい:keitai|を:ni|チェックする:chekkusuru"
     }
   ]
 }
