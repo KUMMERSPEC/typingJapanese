@@ -257,15 +257,23 @@ function updateReviewList() {
             // 根据筛选条件处理
             switch (selectedFilter) {
                 case 'all':
-                    // 显示所有句子
-                    items.push(item);
+                    // 只显示需要复习的句子
+                    const nextReview = new Date(item.nextReviewDate);
+                    const now = new Date();
+                    if (nextReview <= now) {
+                        items.push(item);
+                    }
                     break;
                     
                 case 'today':
                     // 显示今天需要复习的句子
-                    const nextReview = new Date(item.nextReviewDate);
-                    const now = new Date();
-                    if (nextReview <= now) {
+                    const reviewDate = new Date(item.nextReviewDate);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    if (reviewDate >= today && reviewDate < tomorrow) {
                         items.push(item);
                     }
                     break;
@@ -280,6 +288,9 @@ function updateReviewList() {
             }
         }
     }
+
+    // 按复习日期排序
+    items.sort((a, b) => new Date(a.nextReviewDate) - new Date(b.nextReviewDate));
 
     console.log('Filtered items:', items);
 
@@ -687,10 +698,18 @@ function markLessonAsCompleted(courseId, lessonId) {
     checkCourseCompletion(); // 检查并显示完成提示
 }
 
-// 添加显示已学句子面板的函数
+// 修改 showLearnedSentencesPanel 函数
 function showLearnedSentencesPanel() {
     const stats = statsData.getStatistics();
     const reviewHistory = stats.reviewHistory || {};
+    
+    // 确保遮罩层存在
+    let overlay = document.querySelector('.overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        document.body.appendChild(overlay);
+    }
     
     // 创建面板
     const learnedPanel = document.createElement('div');
@@ -801,11 +820,35 @@ function showLearnedSentencesPanel() {
     document.body.appendChild(learnedPanel);
     
     // 显示遮罩
-    const overlay = document.querySelector('.overlay');
     if (overlay) {
         overlay.style.display = 'block';
         overlay.classList.add('show');
     }
+
+    // 添加遮罩层样式
+    const overlayStyle = document.createElement('style');
+    overlayStyle.textContent = `
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+        }
+        
+        ${style.textContent}  // 保留原有样式
+    `;
+    
+    // 添加遮罩层点击事件
+    overlay.addEventListener('click', closeLearnedPanel);
 }
 
 // 关闭已学句子面板
