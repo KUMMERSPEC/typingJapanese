@@ -306,35 +306,21 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 let status = '未复习';
-                let statusClass = 'status-new';
+                let statusClass = 'status-badge status-new';  // 默认为未复习状态
 
-                // 根据复习次数和正确率确定状态
-                if (!item.reviewCount) {
-                    status = '未复习';
-                    statusClass = 'status-new';
-                } else {
-                    const correctRate = item.correctCount / item.reviewCount;
-                    if (correctRate < 0.3) {
-                        status = '需要加强';
-                        statusClass = 'status-weak';
-                    } else if (correctRate < 0.6) {
-                        status = '初学';
-                        statusClass = 'status-learning';
-                    } else if (correctRate < 0.7) {
-                        status = '基础';
-                        statusClass = 'status-basic';
-                    } else if (correctRate < 0.8) {
-                        status = '熟悉';
-                        statusClass = 'status-familiar';
-                    } else if (correctRate < 0.9) {
-                        status = '掌握';
-                        statusClass = 'status-good';
-                    } else {
-                        status = '精通';
-                        statusClass = 'status-mastered';
+                if (item.reviewCount) {
+                    if (item.proficiency === 'high') {
+                        status = '熟练';
+                        statusClass = 'status-badge status-high';
+                    } else if (item.proficiency === 'medium') {
+                        status = '一般';
+                        statusClass = 'status-badge status-medium';
+                    } else if (item.proficiency === 'low') {
+                        status = '生疏';
+                        statusClass = 'status-badge status-low';
                     }
                 }
-                
+
                 return `
                     <div class="review-item">
                         <div class="sentence-content">
@@ -345,7 +331,7 @@ function updateReviewList() {
                         </div>
                         <div class="review-status">
                             <div class="status-wrapper">
-                                <span class="mastery-badge ${statusClass}">${status}</span>
+                                <span class="${statusClass}">${status}</span>
                             </div>
                             <span class="next-review">下次复习: ${
                                 new Date(item.nextReviewDate).toLocaleDateString()
