@@ -306,7 +306,7 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 let status = '未复习';
-                let statusClass = 'status-new';  // 只保留状态类名
+                let statusClass = 'status-new';  // 只使用状态类名，不包含 status-badge
 
                 // 根据复习次数和掌握度设置状态
                 if (item.reviewCount > 0) {
@@ -338,7 +338,7 @@ function updateReviewList() {
                             <div class="course-info">${item.course} - ${item.lesson}</div>
                         </div>
                         <div class="review-status">
-                            <div class="status-badge ${statusClass}">${status}</div>
+                            <span class="status-badge ${statusClass}">${status}</span>
                             <span class="next-review">下次复习: ${
                                 new Date(item.nextReviewDate).toLocaleDateString()
                             }</span>
