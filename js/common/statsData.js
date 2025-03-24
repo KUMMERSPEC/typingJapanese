@@ -96,7 +96,15 @@ class Statistics {
     // 获取已学习的句子总数
     getLearnedSentences() {
         const stats = this.getStatistics();
-        return stats.totalSentences || 0;
+        // 从复习历史中计算总句子数
+        const reviewHistory = stats.reviewHistory || {};
+        const totalSentences = Object.keys(reviewHistory).length;
+        console.log('Calculating learned sentences:', {
+            reviewHistory,
+            totalSentences,
+            storedTotal: stats.totalSentences
+        });
+        return totalSentences;
     }
 
     // 获取待复习数量
@@ -163,29 +171,25 @@ class Statistics {
 
     // 获取统计数据
     getStatistics() {
+        if (this._stats) return this._stats;
+
         try {
-            const statsStr = localStorage.getItem(STATS_STORAGE_KEY);
-            let stats = statsStr ? JSON.parse(statsStr) : {};
+            const stats = JSON.parse(localStorage.getItem(STATS_STORAGE_KEY) || '{}');
+            console.log('Loading statistics from storage:', stats);
             
-            // 初始化基本属性
-            stats.totalSentences = stats.totalSentences || 0;
-            stats.dailyStats = stats.dailyStats || {};
-            stats.reviewHistory = stats.reviewHistory || {};
+            // 确保必要的属性存在
+            if (!stats.reviewHistory) stats.reviewHistory = {};
+            if (!stats.completedLessons) stats.completedLessons = {};
+            if (!stats.dailyStats) stats.dailyStats = {};
             
-            // 只在非更新状态时计算 masteryStats
-            if (!this._isUpdating) {
-                stats.masteryStats = this.calculateMasteryStats(stats);
-            }
+            // 重新计算总句子数
+            stats.totalSentences = Object.keys(stats.reviewHistory).length;
             
+            this._stats = stats;
             return stats;
         } catch (error) {
-            console.error('Error getting statistics:', error);
-            return {
-                totalSentences: 0,
-                dailyStats: {},
-                reviewHistory: {},
-                masteryStats: { low: 0, medium: 0, high: 0, master: 0 }
-            };
+            console.error('Error loading statistics:', error);
+            return this.initializeStats();
         }
     }
 
@@ -556,31 +560,27 @@ class Statistics {
             console.log('Current stats:', stats);
             console.log('Review history:', stats.reviewHistory);
             console.log('Daily stats:', stats.dailyStats);
-
-            console.log('Updating display with stats:', {
-                totalSentences: stats.totalSentences,
-                stats: stats
-            });
+            console.log('Total sentences:', stats.totalSentences);
 
             // 更新总句子数显示
             const totalSentencesElement = document.getElementById('totalSentences');
+            const learnedSentencesElement = document.querySelector('.learned-sentences');
+            const totalSentences = this.getLearnedSentences();
+
             if (totalSentencesElement) {
-                totalSentencesElement.textContent = stats.totalSentences || 0;
-                console.log('Updated totalSentences display to:', stats.totalSentences);
-            } else {
-                console.log('totalSentences element not found');
+                totalSentencesElement.textContent = totalSentences;
+                console.log('Updated totalSentences display to:', totalSentences);
+            }
+
+            if (learnedSentencesElement) {
+                learnedSentencesElement.textContent = totalSentences;
+                console.log('Updated learnedSentences display to:', totalSentences);
             }
 
             // 更新学习天数
             const learningDaysElement = document.querySelector('.learning-days');
             if (learningDaysElement) {
                 learningDaysElement.textContent = stats.consecutiveDays || 0;
-            }
-
-            // 更新已学句子数
-            const learnedSentencesElement = document.querySelector('.learned-sentences');
-            if (learnedSentencesElement) {
-                learnedSentencesElement.textContent = stats.totalSentences || 0;
             }
 
             // 更新待复习列表

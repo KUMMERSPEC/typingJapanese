@@ -95,9 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 批量更新统计数据
-    if (elements.learningDays) elements.learningDays.textContent = statsData.getLearningDays();
-    if (elements.learnedSentences) elements.learnedSentences.textContent = statsData.getLearnedSentences();
-    if (elements.reviewItems) elements.reviewItems.textContent = statsData.getReviewCount();
+    const stats = statsData.getStatistics();
+    const learnedSentences = statsData.getLearnedSentences();
+    console.log('Initial stats:', { stats, learnedSentences });
+
+    if (elements.learningDays) {
+        elements.learningDays.textContent = stats.consecutiveDays || 0;
+    }
+    if (elements.learnedSentences) {
+        elements.learnedSentences.textContent = learnedSentences;
+    }
+    if (elements.reviewItems) {
+        elements.reviewItems.textContent = Object.keys(stats.reviewHistory || {}).length;
+    }
 
     // 添加事件监听
     if (elements.reviewItem) {
@@ -154,8 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 监听统计更新事件
     window.addEventListener('statisticsUpdated', (event) => {
         console.log('Statistics update event received:', event.detail);
-        // 刷新统计显示
         const stats = event.detail.stats;
+        const learnedSentences = statsData.getLearnedSentences();
         
         // 更新首页统计数据
         const elements = {
@@ -168,11 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.learningDays.textContent = stats.consecutiveDays || 0;
         }
         if (elements.learnedSentences) {
-            elements.learnedSentences.textContent = stats.totalSentences || 0;
+            elements.learnedSentences.textContent = learnedSentences;
         }
         if (elements.reviewItems) {
-            const reviewItems = Object.values(stats.reviewHistory || {}).length;
-            elements.reviewItems.textContent = reviewItems;
+            elements.reviewItems.textContent = Object.keys(stats.reviewHistory || {}).length;
         }
 
         // 更新复习列表
@@ -221,41 +230,47 @@ function updateReviewList() {
     // 获取所有复习项
     const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
-    const completedLessons = stats.completedLessons || {}; // 添加已完成课程的检查
     let items = [];
     
     // 根据选择的筛选条件过滤句子
     const today = new Date().toISOString().split('T')[0];
     
-    // 合并复习历史和已完成课程
-    const allItems = {
-        ...reviewHistory,
-        ...completedLessons
-    };
-
-    for (const key in allItems) {
-        const item = allItems[key];
-        const nextReviewDate = item.nextReviewDate ? new Date(item.nextReviewDate).toISOString().split('T')[0] : null;
-        
-        // 添加调试信息
-        console.log('Processing item:', key, item);
-        
-        if (selectedFilter === 'all') {
-            // 显示所有学习过的句子
-            items.push(item);
-        } else if (selectedFilter === 'today' && nextReviewDate && nextReviewDate <= today) {
-            // 显示今日需要复习的句子
-            items.push(item);
-        } else if (selectedFilter === 'weak' && 
-                  (item.proficiency === 'low' || 
-                   (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6))) {
-            // 显示需要加强的句子
-            items.push(item);
+    // 只处理有效的复习历史项
+    for (const key in reviewHistory) {
+        const item = reviewHistory[key];
+        // 检查项目是否有效
+        if (item && item.sentence && item.course && item.lesson) {
+            const nextReviewDate = item.nextReviewDate ? 
+                new Date(item.nextReviewDate).toISOString().split('T')[0] : null;
+            
+            // 添加调试信息
+            console.log('Processing valid item:', {
+                key,
+                sentence: item.sentence,
+                course: item.course,
+                lesson: item.lesson,
+                nextReviewDate
+            });
+            
+            if (selectedFilter === 'all') {
+                // 显示所有有效的句子
+                items.push(item);
+            } else if (selectedFilter === 'today' && nextReviewDate && nextReviewDate <= today) {
+                // 显示今日需要复习的句子
+                items.push(item);
+            } else if (selectedFilter === 'weak' && 
+                      (item.proficiency === 'low' || 
+                       (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6))) {
+                // 显示需要加强的句子
+                items.push(item);
+            }
+        } else {
+            console.log('Skipping invalid item:', key, item);
         }
     }
     
     // 添加调试信息
-    console.log('Total items found:', items.length);
+    console.log('Valid items found:', items.length);
     console.log('Items:', items);
     
     // 更新复习数量显示
@@ -273,6 +288,11 @@ function updateReviewList() {
         }
         
         items.forEach(item => {
+            if (!item.sentence) {
+                console.log('Skipping item without sentence:', item);
+                return;
+            }
+
             const reviewItem = document.createElement('div');
             reviewItem.className = 'review-item';
             
@@ -281,15 +301,15 @@ function updateReviewList() {
             
             const japanese = document.createElement('div');
             japanese.className = 'japanese';
-            japanese.textContent = item.japanese || item.sentence || '';
+            japanese.textContent = item.sentence;
             
             const meaning = document.createElement('div');
             meaning.className = 'meaning';
-            meaning.textContent = item.meaning || item.translation || '';
+            meaning.textContent = item.meaning || '';
             
             const courseInfo = document.createElement('div');
             courseInfo.className = 'course-info';
-            courseInfo.textContent = `课程：${item.course || '未知'} - ${item.lesson || '未知'}`;
+            courseInfo.textContent = `${item.course} - ${item.lesson}`;
             
             sentenceInfo.appendChild(japanese);
             sentenceInfo.appendChild(meaning);
