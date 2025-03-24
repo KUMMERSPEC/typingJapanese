@@ -147,6 +147,7 @@
     border-radius: 16px;
     font-size: 14px;
     color: white;
+    background-color: #4CAF50;  /* 默认背景色 */
 }
 
 /* 未复习状态 - 绿色 */
