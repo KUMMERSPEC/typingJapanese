@@ -304,7 +304,17 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 const status = getMasteryStatus(item);
-                const statusClass = getStatusClass(item);  // 使用 getStatusClass 获取正确的类名
+                const statusClass = getStatusClass(item);
+                
+                // 添加调试信息
+                console.log('Item status:', {
+                    item,
+                    status,
+                    statusClass,
+                    proficiency: item.proficiency,
+                    reviewCount: item.reviewCount,
+                    correctCount: item.correctCount
+                });
                 
                 return `
                     <div class="review-item">
@@ -315,7 +325,9 @@ function updateReviewList() {
                             <div class="course-info">${item.course} - ${item.lesson}</div>
                         </div>
                         <div class="review-status">
-                            <span class="mastery-badge ${statusClass}">${status}</span>
+                            <div class="status-wrapper">
+                                <span class="mastery-badge ${statusClass}">${status}</span>
+                            </div>
                             <span class="next-review">下次复习: ${
                                 new Date(item.nextReviewDate).toLocaleDateString()
                             }</span>
@@ -618,19 +630,14 @@ function showLearnedSentencesPanel() {
     console.log('=== Show Learned Panel Start ===');
     
     try {
-        // 先移除已存在的面板和遮罩
-        const existingPanel = document.querySelector('.learned-panel');
-        if (existingPanel) {
-            existingPanel.remove();
-        }
+        // 先移除所有已存在的面板和遮罩
+        const existingPanels = document.querySelectorAll('.learned-panel, .overlay');
+        existingPanels.forEach(panel => panel.remove());
         
-        // 获取或创建遮罩层
-        let overlay = document.querySelector('.overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            document.body.appendChild(overlay);
-        }
+        // 创建新的遮罩层
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        document.body.appendChild(overlay);
 
         // 从 statsData 获取数据
         const stats = statsData.getStatistics();
@@ -664,7 +671,7 @@ function showLearnedSentencesPanel() {
         learnedPanel.innerHTML = `
             <div class="panel-header">
                 <h3>已学句子 (${items.length})</h3>
-                <button class="close-btn">×</button>
+                <button class="close-btn" type="button">×</button>
             </div>
             <div class="learned-list">
                 ${items.length === 0 ? 
@@ -703,9 +710,15 @@ function showLearnedSentencesPanel() {
         // 添加关闭事件
         const closeBtn = learnedPanel.querySelector('.close-btn');
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => closeLearnedPanel());
+            closeBtn.addEventListener('click', () => {
+                learnedPanel.remove();
+                overlay.remove();
+            });
         }
-        overlay.addEventListener('click', () => closeLearnedPanel());
+        overlay.addEventListener('click', () => {
+            learnedPanel.remove();
+            overlay.remove();
+        });
 
     } catch (error) {
         console.error('Error in showLearnedSentencesPanel:', error);
@@ -713,22 +726,6 @@ function showLearnedSentencesPanel() {
             message: error.message,
             stack: error.stack
         });
-    }
-}
-
-// 关闭已学句子面板
-function closeLearnedPanel() {
-    const learnedPanel = document.querySelector('.learned-panel');
-    const overlay = document.querySelector('.overlay');
-    
-    if (learnedPanel) {
-        learnedPanel.remove();
-    }
-    if (overlay) {
-        overlay.classList.remove('show');
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 300);
     }
 }
 

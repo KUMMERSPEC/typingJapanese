@@ -1,43 +1,53 @@
 /* 掌握度标签样式 */
 .mastery-badge {
+    display: inline-block;
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
     color: white;
+    min-width: 60px;
+    text-align: center;
 }
 
-.status-new {
-    background-color: #9575cd;  /* 紫色 - 新学习 */
+/* 确保背景色应用到正确的类 */
+.mastery-badge.status-new {
+    background-color: #9575cd !important;  /* 紫色 - 新学习 */
 }
 
-.status-weak {
-    background-color: #f44336;  /* 红色 - 需要加强 */
+.mastery-badge.status-weak {
+    background-color: #f44336 !important;  /* 红色 - 需要加强 */
 }
 
-.status-learning {
-    background-color: #ff7043;  /* 橙色 - 初学 */
+.mastery-badge.status-learning {
+    background-color: #ff7043 !important;  /* 橙色 - 初学 */
 }
 
-.status-basic {
-    background-color: #ffa726;  /* 浅橙色 - 基础 */
+.mastery-badge.status-basic {
+    background-color: #ffa726 !important;  /* 浅橙色 - 基础 */
 }
 
-.status-familiar {
-    background-color: #ffd54f;  /* 黄色 - 熟悉 */
-    color: #333;
+.mastery-badge.status-familiar {
+    background-color: #ffd54f !important;  /* 黄色 - 熟悉 */
+    color: #333 !important;
 }
 
-.status-good {
-    background-color: #aed581;  /* 浅绿色 - 掌握 */
+.mastery-badge.status-good {
+    background-color: #aed581 !important;  /* 浅绿色 - 掌握 */
 }
 
-.status-skilled {
-    background-color: #66bb6a;  /* 绿色 - 熟练 */
+.mastery-badge.status-skilled {
+    background-color: #66bb6a !important;  /* 绿色 - 熟练 */
 }
 
-.status-mastered {
-    background-color: #26a69a;  /* 青色 - 精通 */
+.mastery-badge.status-mastered {
+    background-color: #26a69a !important;  /* 青色 - 精通 */
+}
+
+/* 添加状态包装器样式 */
+.status-wrapper {
+    display: inline-block;
+    margin-right: 10px;
 }
 
 .review-status {
