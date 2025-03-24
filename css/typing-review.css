@@ -303,4 +303,17 @@ body {
         gap: 8px;
         padding: 10px;
     }
+}
+
+/* 键盘维持输入框样式 */
+.keyboard-maintain {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0.01;
+    pointer-events: none;
+    /* 确保输入框不会干扰用户操作 */
+    z-index: -1;
 } 

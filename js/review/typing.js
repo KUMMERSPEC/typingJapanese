@@ -6,6 +6,7 @@ class ReviewManager {
         this.sentences = [];
         this.questionStartTime = null;
         this.init();
+        this.initKeyboardMaintain();
     }
 
     async init() {
@@ -233,6 +234,9 @@ class ReviewManager {
 
         // 显示答案
         this.showAnswer(current, isCorrect);
+
+        // 触发答案检查事件
+        document.dispatchEvent(new Event('answer-checked'));
     }
 
     showAnswer(question, isCorrect) {
@@ -484,6 +488,27 @@ class ReviewManager {
         } catch (error) {
             console.error('Error decreasing proficiency:', error);
         }
+    }
+
+    initKeyboardMaintain() {
+        // 获取隐藏的输入框
+        const keyboardInput = document.querySelector('.keyboard-maintain');
+        if (!keyboardInput) return;
+
+        // 在每次答案检查后保持键盘焦点
+        const maintainKeyboard = () => {
+            if (this.currentIndex < this.sentences.length) {
+                setTimeout(() => {
+                    keyboardInput.focus();
+                }, 100);
+            }
+        };
+
+        // 监听答案检查事件
+        document.addEventListener('answer-checked', maintainKeyboard);
+
+        // 初始聚焦
+        keyboardInput.focus();
     }
 }
 
