@@ -147,6 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 初始化复习面板
     initReviewPanel();
+
+    // 检查课程完成状态
+    checkCourseCompletion();
 });
 
 // 显示复习面板
@@ -183,21 +186,31 @@ window.closeReviewPanel = function() {
 // 更新复习列表
 function updateReviewList() {
     const filterSelect = document.getElementById('reviewFilter');
-    const selectedFilter = filterSelect.value;
+    const selectedFilter = filterSelect ? filterSelect.value : 'all';
     const reviewList = document.querySelector('.review-list');
     const reviewCountDiv = document.querySelector('.review-count');
     
     // 获取所有复习项
     const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
+    const completedLessons = stats.completedLessons || {}; // 添加已完成课程的检查
     let items = [];
     
     // 根据选择的筛选条件过滤句子
     const today = new Date().toISOString().split('T')[0];
     
-    for (const key in reviewHistory) {
-        const item = reviewHistory[key];
+    // 合并复习历史和已完成课程
+    const allItems = {
+        ...reviewHistory,
+        ...completedLessons
+    };
+
+    for (const key in allItems) {
+        const item = allItems[key];
         const nextReviewDate = item.nextReviewDate ? new Date(item.nextReviewDate).toISOString().split('T')[0] : null;
+        
+        // 添加调试信息
+        console.log('Processing item:', key, item);
         
         if (selectedFilter === 'all') {
             // 显示所有学习过的句子
@@ -208,68 +221,78 @@ function updateReviewList() {
         } else if (selectedFilter === 'weak' && 
                   (item.proficiency === 'low' || 
                    (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6))) {
-            // 显示需要加强的句子（掌握度低或正确率低于60%）
+            // 显示需要加强的句子
             items.push(item);
         }
     }
     
+    // 添加调试信息
+    console.log('Total items found:', items.length);
+    console.log('Items:', items);
+    
     // 更新复习数量显示
-    reviewCountDiv.textContent = `待复习：${items.length}`;
-    
-    // 清空并重新生成列表
-    reviewList.innerHTML = '';
-    
-    if (items.length === 0) {
-        reviewList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">没有需要复习的句子</div>';
-        return;
+    if (reviewCountDiv) {
+        reviewCountDiv.textContent = `待复习：${items.length}`;
     }
     
-    items.forEach(item => {
-        const reviewItem = document.createElement('div');
-        reviewItem.className = 'review-item';
+    // 清空并重新生成列表
+    if (reviewList) {
+        reviewList.innerHTML = '';
         
-        const sentenceInfo = document.createElement('div');
-        sentenceInfo.className = 'sentence-info';
+        if (items.length === 0) {
+            reviewList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">没有需要复习的句子</div>';
+            return;
+        }
         
-        const japanese = document.createElement('div');
-        japanese.className = 'japanese';
-        japanese.textContent = item.japanese;
-        
-        const meaning = document.createElement('div');
-        meaning.className = 'meaning';
-        meaning.textContent = item.meaning;
-        
-        const courseInfo = document.createElement('div');
-        courseInfo.className = 'course-info';
-        courseInfo.textContent = `课程：${item.course || '未知'} - ${item.lesson || '未知'}`;
-        
-        sentenceInfo.appendChild(japanese);
-        sentenceInfo.appendChild(meaning);
-        sentenceInfo.appendChild(courseInfo);
-        
-        const reviewStatus = document.createElement('div');
-        reviewStatus.className = 'review-status';
-        
-        const lastReview = document.createElement('span');
-        lastReview.className = 'last-review';
-        lastReview.textContent = item.lastReview ? `上次复习: ${new Date(item.lastReview).toLocaleDateString()}` : '未复习';
-        
-        const proficiency = document.createElement('span');
-        proficiency.className = `proficiency ${item.proficiency || 'low'}`;
-        proficiency.textContent = {
-            'low': '需加强',
-            'medium': '一般',
-            'high': '熟练'
-        }[item.proficiency || 'low'];
-        
-        reviewStatus.appendChild(lastReview);
-        reviewStatus.appendChild(proficiency);
-        
-        reviewItem.appendChild(sentenceInfo);
-        reviewItem.appendChild(reviewStatus);
-        
-        reviewList.appendChild(reviewItem);
-    });
+        items.forEach(item => {
+            const reviewItem = document.createElement('div');
+            reviewItem.className = 'review-item';
+            
+            const sentenceInfo = document.createElement('div');
+            sentenceInfo.className = 'sentence-info';
+            
+            const japanese = document.createElement('div');
+            japanese.className = 'japanese';
+            japanese.textContent = item.japanese || item.sentence || '';
+            
+            const meaning = document.createElement('div');
+            meaning.className = 'meaning';
+            meaning.textContent = item.meaning || item.translation || '';
+            
+            const courseInfo = document.createElement('div');
+            courseInfo.className = 'course-info';
+            courseInfo.textContent = `课程：${item.course || '未知'} - ${item.lesson || '未知'}`;
+            
+            sentenceInfo.appendChild(japanese);
+            sentenceInfo.appendChild(meaning);
+            sentenceInfo.appendChild(courseInfo);
+            
+            const reviewStatus = document.createElement('div');
+            reviewStatus.className = 'review-status';
+            
+            const lastReview = document.createElement('span');
+            lastReview.className = 'last-review';
+            lastReview.textContent = item.lastReview ? 
+                `上次复习: ${new Date(item.lastReview).toLocaleDateString()}` : 
+                '未复习';
+            
+            const proficiency = document.createElement('span');
+            proficiency.className = `proficiency ${item.proficiency || 'low'}`;
+            proficiency.textContent = {
+                'low': '需加强',
+                'medium': '一般',
+                'high': '熟练'
+            }[item.proficiency || 'low'];
+            
+            reviewStatus.appendChild(lastReview);
+            reviewStatus.appendChild(proficiency);
+            
+            reviewItem.appendChild(sentenceInfo);
+            reviewItem.appendChild(reviewStatus);
+            
+            reviewList.appendChild(reviewItem);
+        });
+    }
 }
 
 // 格式化日期
@@ -460,3 +483,123 @@ function updateDate() {
 
 // 添加下拉框变化事件监听
 document.getElementById('reviewFilter')?.addEventListener('change', updateReviewList); 
+
+// 添加课程完成检查函数
+function checkCourseCompletion() {
+    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+    const completedLessons = stats.completedLessons || {};
+    const todayRecommendation = document.querySelector('.today-recommendation');
+    
+    if (todayRecommendation) {
+        const courseId = todayRecommendation.getAttribute('data-course-id');
+        const lessonId = todayRecommendation.getAttribute('data-lesson-id');
+        
+        if (courseId && lessonId) {
+            const lessonKey = `${courseId}_${lessonId}`;
+            if (completedLessons[lessonKey]) {
+                showCompletionMessage();
+            }
+        }
+    }
+}
+
+// 添加完成提示函数
+function showCompletionMessage() {
+    const recommendationSection = document.querySelector('.today-recommendation');
+    if (recommendationSection) {
+        // 创建完成提示元素
+        const completionMessage = document.createElement('div');
+        completionMessage.className = 'completion-message';
+        completionMessage.innerHTML = `
+            <div class="completion-content">
+                <i class="fas fa-check-circle"></i>
+                <h3>恭喜完成今日推荐课程！</h3>
+                <p>继续保持学习热情，明天再来完成新的课程吧。</p>
+                <button class="review-now-btn">立即复习</button>
+            </div>
+        `;
+
+        // 替换原有内容
+        recommendationSection.innerHTML = '';
+        recommendationSection.appendChild(completionMessage);
+
+        // 添加复习按钮点击事件
+        const reviewButton = completionMessage.querySelector('.review-now-btn');
+        if (reviewButton) {
+            reviewButton.addEventListener('click', () => {
+                showReviewPanel();
+            });
+        }
+    }
+}
+
+// 在 CSS 中添加相关样式
+const style = document.createElement('style');
+style.textContent = `
+    .completion-message {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .completion-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .completion-message i {
+        font-size: 48px;
+        color: #4caf50;
+    }
+
+    .completion-message h3 {
+        margin: 0;
+        color: #333;
+    }
+
+    .completion-message p {
+        color: #666;
+        margin: 0;
+    }
+
+    .review-now-btn {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .review-now-btn:hover {
+        background: #45a049;
+        transform: translateY(-1px);
+    }
+`;
+document.head.appendChild(style);
+
+// 在课程完成时调用此函数
+function markLessonAsCompleted(courseId, lessonId) {
+    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+    if (!stats.completedLessons) {
+        stats.completedLessons = {};
+    }
+    
+    const lessonKey = `${courseId}_${lessonId}`;
+    stats.completedLessons[lessonKey] = {
+        completedAt: new Date().toISOString(),
+        nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24小时后复习
+        proficiency: 'low',
+        reviewCount: 0,
+        correctCount: 0
+    };
+    
+    localStorage.setItem('typing_statistics', JSON.stringify(stats));
+    checkCourseCompletion(); // 检查并显示完成提示
+} 
