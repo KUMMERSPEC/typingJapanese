@@ -305,22 +305,32 @@ function updateReviewList() {
         } else {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
-                const status = getMasteryStatus(item);
-                let statusClass = 'status-new';  // 默认为新学习
+                let status = '未复习';
+                let statusClass = 'status-new';
 
-                // 根据 proficiency 和 correctRate 确定状态
-                if (item.reviewCount) {
+                // 根据复习次数和正确率确定状态
+                if (!item.reviewCount) {
+                    status = '未复习';
+                    statusClass = 'status-new';
+                } else {
                     const correctRate = item.correctCount / item.reviewCount;
-                    
-                    if (item.proficiency === 'low') {
-                        if (correctRate < 0.3) statusClass = 'status-weak';
-                        else if (correctRate < 0.6) statusClass = 'status-learning';
-                        else statusClass = 'status-basic';
-                    } else if (item.proficiency === 'medium') {
-                        if (correctRate < 0.7) statusClass = 'status-familiar';
-                        else if (correctRate < 0.9) statusClass = 'status-good';
-                        else statusClass = 'status-skilled';
-                    } else if (item.proficiency === 'high') {
+                    if (correctRate < 0.3) {
+                        status = '需要加强';
+                        statusClass = 'status-weak';
+                    } else if (correctRate < 0.6) {
+                        status = '初学';
+                        statusClass = 'status-learning';
+                    } else if (correctRate < 0.7) {
+                        status = '基础';
+                        statusClass = 'status-basic';
+                    } else if (correctRate < 0.8) {
+                        status = '熟悉';
+                        statusClass = 'status-familiar';
+                    } else if (correctRate < 0.9) {
+                        status = '掌握';
+                        statusClass = 'status-good';
+                    } else {
+                        status = '精通';
                         statusClass = 'status-mastered';
                     }
                 }
