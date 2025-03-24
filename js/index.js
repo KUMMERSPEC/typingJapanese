@@ -308,13 +308,6 @@ function updateReviewList() {
                 let status = '未复习';
                 let statusClass = 'status-badge status-new';  // 默认为未复习状态
 
-                // 检查 item 的状态
-                console.log('Item details:', {
-                    reviewCount: item.reviewCount,
-                    proficiency: item.proficiency,
-                    correctCount: item.correctCount
-                });
-
                 // 根据复习次数和掌握度设置状态
                 if (item.reviewCount > 0) {  // 确保有复习记录
                     if (item.proficiency === 'high') {
@@ -329,6 +322,13 @@ function updateReviewList() {
                     }
                 }
 
+                // 添加调试日志
+                console.log('Rendering item:', {
+                    status,
+                    statusClass,
+                    item
+                });
+
                 return `
                     <div class="review-item">
                         <div class="sentence-content">
@@ -338,7 +338,7 @@ function updateReviewList() {
                             <div class="course-info">${item.course} - ${item.lesson}</div>
                         </div>
                         <div class="review-status">
-                            <span class="${statusClass}">${status}</span>
+                            <div class="status-badge ${statusClass}">${status}</div>
                             <span class="next-review">下次复习: ${
                                 new Date(item.nextReviewDate).toLocaleDateString()
                             }</span>
@@ -346,6 +346,9 @@ function updateReviewList() {
                     </div>
                 `;
             }).join('');
+
+            // 添加调试日志
+            console.log('Generated HTML:', reviewList.innerHTML);
         }
     }
 
