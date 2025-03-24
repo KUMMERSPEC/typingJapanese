@@ -630,42 +630,28 @@ function showLearnedSentencesPanel() {
     console.log('=== Show Learned Panel Start ===');
     
     try {
-        // 先移除所有已存在的面板和遮罩
+        // 先移除已存在的面板和遮罩
         const existingPanels = document.querySelectorAll('.learned-panel, .overlay');
         existingPanels.forEach(panel => panel.remove());
         
-        // 创建新的遮罩层
+        // 创建遮罩层和面板
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
-        document.body.appendChild(overlay);
-
+        
+        const learnedPanel = document.createElement('div');
+        learnedPanel.className = 'learned-panel';
+        
         // 从 statsData 获取数据
         const stats = statsData.getStatistics();
         const reviewHistory = stats.reviewHistory || {};
         
-        console.log('Stats:', stats);
-        console.log('Review history:', reviewHistory);
-
-        // 创建面板
-        const learnedPanel = document.createElement('div');
-        learnedPanel.className = 'learned-panel';
-        
-        // 过滤并处理句子数据
+        // 获取所有已学句子
         const items = Object.entries(reviewHistory)
             .filter(([_, item]) => item && (item.japanese || item.sentence))
-            .map(([key, item]) => ({
-                key,
-                sentence: item.japanese || item.sentence,
-                hiragana: item.hiragana || '',
-                meaning: item.meaning || '',
-                course: item.course || '',
-                lesson: item.lesson || '',
-                proficiency: item.proficiency || 'low',
-                reviewCount: item.reviewCount || 0,
-                correctCount: item.correctCount || 0
+            .map(([_, item]) => ({
+                japanese: item.japanese || item.sentence,
+                meaning: item.meaning || ''
             }));
-        
-        console.log('Processed items:', items);
         
         // 构建面板内容
         learnedPanel.innerHTML = `
@@ -676,28 +662,18 @@ function showLearnedSentencesPanel() {
             <div class="learned-list">
                 ${items.length === 0 ? 
                     '<div class="empty-message">还没有学习过的句子</div>' :
-                    items.map(item => {
-                        const status = getMasteryStatus(item);
-                        const statusClass = getStatusClass(item);
-                        return `
-                            <div class="learned-item">
-                                <div class="sentence-content">
-                                    <div class="japanese">${item.sentence}</div>
-                                    <div class="hiragana">${item.hiragana}</div>
-                                    <div class="meaning">${item.meaning}</div>
-                                    <div class="course-info">${item.course} - ${item.lesson}</div>
-                                </div>
-                                <div class="mastery-status">
-                                    <span class="mastery-badge ${statusClass}">${status}</span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')
+                    items.map(item => `
+                        <div class="learned-item">
+                            <div class="japanese">${item.japanese}</div>
+                            <div class="meaning">${item.meaning}</div>
+                        </div>
+                    `).join('')
                 }
             </div>
         `;
 
         // 添加到页面
+        document.body.appendChild(overlay);
         document.body.appendChild(learnedPanel);
         
         // 显示遮罩和面板
@@ -722,28 +698,31 @@ function showLearnedSentencesPanel() {
 
     } catch (error) {
         console.error('Error in showLearnedSentencesPanel:', error);
-        console.log('Error details:', {
-            message: error.message,
-            stack: error.stack
-        });
     }
 }
 
-// 在显示句子时的掌握程度判断
+// 修改 getMasteryStatus 函数
 function getMasteryStatus(item) {
     if (!item.reviewCount) {
-        return '未复习';
+        return '未复习';  // 对应 status-new
     }
     const correctRate = item.correctCount / item.reviewCount;
+    
     if (item.proficiency === 'low') {
-        if (correctRate < 0.3) return '需要加强';
-        if (correctRate < 0.6) return '初学';
-        return '基础';
+        if (correctRate < 0.3) return '需要加强';  // 对应 status-weak
+        if (correctRate < 0.6) return '初学';      // 对应 status-learning
+        return '基础';                            // 对应 status-basic
     }
+    
     if (item.proficiency === 'medium') {
-        if (correctRate < 0.7) return '熟悉';
-        if (correctRate < 0.9) return '掌握';
-        return '熟练';
+        if (correctRate < 0.7) return '熟悉';      // 对应 status-familiar
+        if (correctRate < 0.9) return '掌握';      // 对应 status-good
+        return '熟练';                            // 对应 status-skilled
     }
-    return '精通';
+    
+    if (item.proficiency === 'high') {
+        return '精通';                            // 对应 status-mastered
+    }
+    
+    return '未知';  // 默认状态
 } 

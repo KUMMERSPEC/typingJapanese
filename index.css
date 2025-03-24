@@ -153,6 +153,15 @@
     margin-bottom: 12px;
 }
 
+.japanese {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.meaning {
+    color: #666;
+}
+
 .close-btn {
     background: none;
     border: none;
