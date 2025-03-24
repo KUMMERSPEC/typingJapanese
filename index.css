@@ -147,25 +147,26 @@
     border-radius: 16px;
     font-size: 14px;
     color: white;
+    margin-right: 8px;
 }
 
 /* 未复习状态 - 绿色 */
 .status-badge.status-new {
-    background-color: #4CAF50;
+    background-color: #4CAF50 !important;
 }
 
 /* 生疏状态 - 红色 */
 .status-badge.status-low {
-    background-color: #f44336;
+    background-color: #f44336 !important;
 }
 
 /* 一般状态 - 黄色 */
 .status-badge.status-medium {
-    background-color: #FFC107;
-    color: #333;
+    background-color: #FFC107 !important;
+    color: #333 !important;
 }
 
 /* 熟练状态 - 蓝色 */
 .status-badge.status-high {
-    background-color: #2196F3;
+    background-color: #2196F3 !important;
 } 

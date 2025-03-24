@@ -306,10 +306,10 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 let status = '未复习';
-                let statusClass = 'status-new';  // 移除重复的 status-badge
+                let statusClass = 'status-new';  // 只保留状态类名
 
                 // 根据复习次数和掌握度设置状态
-                if (item.reviewCount > 0) {  // 确保有复习记录
+                if (item.reviewCount > 0) {
                     if (item.proficiency === 'high') {
                         status = '熟练';
                         statusClass = 'status-high';
