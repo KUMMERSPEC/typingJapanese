@@ -250,19 +250,22 @@ function updateReviewList() {
             console.log('Processing review item:', {
                 key,
                 item,
-                nextReviewDate: item.nextReviewDate,
-                currentTime: new Date().toISOString()
+                proficiency: item.proficiency,
+                nextReviewDate: item.nextReviewDate
             });
+
+            // 跳过已完全掌握的句子
+            if (item.proficiency === 'high' && 
+                item.correctCount / item.reviewCount > 0.9) {
+                console.log('Skipping mastered item:', key);
+                continue;
+            }
 
             // 根据筛选条件处理
             switch (selectedFilter) {
                 case 'all':
-                    // 只显示需要复习的句子
-                    const nextReview = new Date(item.nextReviewDate);
-                    const now = new Date();
-                    if (nextReview <= now) {
-                        items.push(item);
-                    }
+                    // 显示所有未掌握的句子
+                    items.push(item);
                     break;
                     
                 case 'today':
@@ -273,7 +276,7 @@ function updateReviewList() {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     
-                    if (reviewDate >= today && reviewDate < tomorrow) {
+                    if (reviewDate <= tomorrow) {
                         items.push(item);
                     }
                     break;
@@ -291,7 +294,7 @@ function updateReviewList() {
 
     // 按复习日期排序
     items.sort((a, b) => new Date(a.nextReviewDate) - new Date(b.nextReviewDate));
-
+    
     console.log('Filtered items:', items);
 
     // 更新复习数量显示
@@ -700,155 +703,77 @@ function markLessonAsCompleted(courseId, lessonId) {
 
 // 修改 showLearnedSentencesPanel 函数
 function showLearnedSentencesPanel() {
-    const stats = statsData.getStatistics();
+    console.log('Showing learned sentences panel');
+    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
     
-    // 确保遮罩层存在
+    console.log('Current stats:', stats);
+    console.log('Review history:', reviewHistory);
+    
+    // 创建遮罩层
     let overlay = document.querySelector('.overlay');
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.className = 'overlay';
         document.body.appendChild(overlay);
     }
-    
+
     // 创建面板
     const learnedPanel = document.createElement('div');
     learnedPanel.className = 'learned-panel';
-    learnedPanel.innerHTML = `
-        <div class="panel-header">
-            <h3>已学句子</h3>
-            <button class="close-btn" onclick="closeLearnedPanel()">×</button>
-        </div>
-        <div class="learned-list"></div>
-    `;
     
     // 添加所有学过的句子
-    const learnedList = learnedPanel.querySelector('.learned-list');
-    const items = Object.values(reviewHistory).filter(item => item && item.sentence);
+    const items = Object.entries(reviewHistory)
+        .filter(([_, item]) => item && item.sentence)
+        .map(([key, item]) => ({
+            key,
+            ...item
+        }));
     
-    if (items.length === 0) {
-        learnedList.innerHTML = '<div class="empty-message">还没有学习过的句子</div>';
-    } else {
-        learnedList.innerHTML = items.map(item => `
-            <div class="learned-item">
-                <div class="sentence-content">
-                    <div class="japanese">${item.sentence || ''}</div>
-                    <div class="hiragana">${item.hiragana || ''}</div>
-                    <div class="meaning">${item.meaning || ''}</div>
-                    <div class="course-info">${item.course} - ${item.lesson}</div>
-                </div>
-                <div class="mastery-status">
-                    <span class="proficiency ${item.proficiency || 'low'}">${
-                        item.proficiency === 'high' ? '已掌握' :
-                        item.proficiency === 'medium' ? '熟练' : '学习中'
-                    }</span>
-                </div>
-            </div>
-        `).join('');
-    }
+    console.log('Filtered learned items:', items);
     
-    // 添加样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .learned-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-            z-index: 1001;
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .panel-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .panel-header h3 {
-            margin: 0;
-            font-size: 20px;
-            color: #333;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-        
-        .learned-list {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: calc(80vh - 80px);
-        }
-        
-        .learned-item {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .mastery-status {
-            margin-left: 16px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    learnedPanel.innerHTML = `
+        <div class="panel-header">
+            <h3>已学句子 (${items.length})</h3>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="learned-list">
+            ${items.length === 0 ? 
+                '<div class="empty-message">还没有学习过的句子</div>' :
+                items.map(item => `
+                    <div class="learned-item">
+                        <div class="sentence-content">
+                            <div class="japanese">${item.sentence || ''}</div>
+                            <div class="hiragana">${item.hiragana || ''}</div>
+                            <div class="meaning">${item.meaning || ''}</div>
+                            <div class="course-info">${item.course} - ${item.lesson}</div>
+                        </div>
+                        <div class="mastery-status">
+                            <span class="proficiency ${item.proficiency || 'low'}">${
+                                item.proficiency === 'high' ? '已掌握' :
+                                item.proficiency === 'medium' ? '熟练' : '学习中'
+                            }</span>
+                        </div>
+                    </div>
+                `).join('')
+            }
+        </div>
     `;
-    document.head.appendChild(style);
     
     // 添加到页面
     document.body.appendChild(learnedPanel);
     
-    // 显示遮罩
-    if (overlay) {
-        overlay.style.display = 'block';
+    // 显示遮罩和面板
+    overlay.style.display = 'block';
+    setTimeout(() => {
         overlay.classList.add('show');
-    }
-
-    // 添加遮罩层样式
-    const overlayStyle = document.createElement('style');
-    overlayStyle.textContent = `
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .overlay.show {
-            opacity: 1;
-        }
-        
-        ${style.textContent}  // 保留原有样式
-    `;
+        learnedPanel.classList.add('show');
+    }, 10);
     
-    // 添加遮罩层点击事件
-    overlay.addEventListener('click', closeLearnedPanel);
+    // 添加关闭事件
+    const closeBtn = learnedPanel.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => closeLearnedPanel());
+    overlay.addEventListener('click', () => closeLearnedPanel());
 }
 
 // 关闭已学句子面板
