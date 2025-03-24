@@ -257,19 +257,9 @@ function updateReviewList() {
         console.log('=== Review Item Details ===');
         console.log('Key:', key);
         console.log('Full item:', item);
-        console.log('Properties:', {
-            sentence: item?.sentence,
-            japanese: item?.japanese,  // 检查是否使用了不同的属性名
-            text: item?.text,          // 检查是否使用了不同的属性名
-            proficiency: item?.proficiency,
-            nextReviewDate: item?.nextReviewDate,
-            course: item?.course,
-            lesson: item?.lesson
-        });
-        console.log('Object.keys:', Object.keys(item || {}));
-        console.log('=========================');
 
-        if (item && item.sentence) {
+        // 修改判断条件，使用 japanese 属性
+        if (item && (item.sentence || item.japanese)) {  // 检查两个属性
             // 根据筛选条件处理
             switch (selectedFilter) {
                 case 'all':
@@ -311,25 +301,28 @@ function updateReviewList() {
         if (items.length === 0) {
             reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
         } else {
-            reviewList.innerHTML = items.map(item => `
-                <div class="review-item">
-                    <div class="sentence-content">
-                        <div class="japanese">${item.sentence}</div>
-                        <div class="hiragana">${item.hiragana || ''}</div>
-                        <div class="meaning">${item.meaning || ''}</div>
-                        <div class="course-info">${item.course} - ${item.lesson}</div>
+            reviewList.innerHTML = items.map(item => {
+                // 获取掌握状态和对应的样式
+                const status = getMasteryStatus(item);
+                const statusClass = getStatusClass(item);
+                
+                return `
+                    <div class="review-item">
+                        <div class="sentence-content">
+                            <div class="japanese">${item.sentence || item.japanese}</div>
+                            <div class="hiragana">${item.hiragana || ''}</div>
+                            <div class="meaning">${item.meaning || ''}</div>
+                            <div class="course-info">${item.course} - ${item.lesson}</div>
+                        </div>
+                        <div class="review-status">
+                            <span class="mastery-badge ${statusClass}">${status}</span>
+                            <span class="next-review">下次复习: ${
+                                new Date(item.nextReviewDate).toLocaleDateString()
+                            }</span>
+                        </div>
                     </div>
-                    <div class="review-status">
-                        <span class="proficiency ${item.proficiency || 'low'}">${
-                            item.proficiency === 'high' ? '已掌握' :
-                            item.proficiency === 'medium' ? '熟练' : '学习中'
-                        }</span>
-                        <span class="next-review">下次复习: ${
-                            new Date(item.nextReviewDate).toLocaleDateString()
-                        }</span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
     }
 
@@ -337,6 +330,29 @@ function updateReviewList() {
     if (reviewCountDiv) {
         reviewCountDiv.textContent = `待复习：${items.length}`;
     }
+}
+
+// 添加获取状态样式的函数
+function getStatusClass(item) {
+    if (!item.reviewCount) {
+        return 'status-new';  // 新学习的句子
+    }
+    
+    const correctRate = item.correctCount / item.reviewCount;
+    
+    if (item.proficiency === 'low') {
+        if (correctRate < 0.3) return 'status-weak';
+        if (correctRate < 0.6) return 'status-learning';
+        return 'status-basic';
+    }
+    
+    if (item.proficiency === 'medium') {
+        if (correctRate < 0.7) return 'status-familiar';
+        if (correctRate < 0.9) return 'status-good';
+        return 'status-skilled';
+    }
+    
+    return 'status-mastered';
 }
 
 // 格式化日期
@@ -576,57 +592,6 @@ function showCompletionMessage() {
         }
     }
 }
-
-// 在 CSS 中添加相关样式
-const style = document.createElement('style');
-style.textContent = `
-    .completion-message {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 30px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .completion-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .completion-message i {
-        font-size: 48px;
-        color: #4caf50;
-    }
-
-    .completion-message h3 {
-        margin: 0;
-        color: #333;
-    }
-
-    .completion-message p {
-        color: #666;
-        margin: 0;
-    }
-
-    .review-now-btn {
-        background: #4caf50;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s ease;
-    }
-
-    .review-now-btn:hover {
-        background: #45a049;
-        transform: translateY(-1px);
-    }
-`;
-document.head.appendChild(style);
 
 // 在课程完成时调用此函数
 function markLessonAsCompleted(courseId, lessonId) {
