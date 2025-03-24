@@ -190,9 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 添加已学句子点击事件
     const learnedSentencesElement = document.querySelector('.learned-sentences');
+    console.log('Found learned sentences element:', learnedSentencesElement);
+    
     if (learnedSentencesElement) {
         learnedSentencesElement.style.cursor = 'pointer';
-        learnedSentencesElement.addEventListener('click', showLearnedSentencesPanel);
+        learnedSentencesElement.addEventListener('click', (e) => {
+            console.log('Learned sentences clicked');
+            showLearnedSentencesPanel();
+        });
     }
 });
 
@@ -234,33 +239,27 @@ function updateReviewList() {
     const reviewList = document.querySelector('.review-list');
     const reviewCountDiv = document.querySelector('.review-count');
     
+    console.log('=== Update Review List Start ===');
+    console.log('Selected filter:', selectedFilter);
+    
     // 获取所有复习项
     const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
     let items = [];
     
-    console.log('Updating review list with filter:', selectedFilter);
-    console.log('Review history:', reviewHistory);
+    console.log('Full review history:', reviewHistory);
 
     // 遍历复习历史
     for (const key in reviewHistory) {
         const item = reviewHistory[key];
+        console.log('Processing review item:', {
+            key,
+            sentence: item?.sentence,
+            proficiency: item?.proficiency,
+            nextReviewDate: item?.nextReviewDate
+        });
+
         if (item && item.sentence) {
-            // 添加调试信息
-            console.log('Processing review item:', {
-                key,
-                item,
-                proficiency: item.proficiency,
-                nextReviewDate: item.nextReviewDate
-            });
-
-            // 跳过已完全掌握的句子
-            if (item.proficiency === 'high' && 
-                item.correctCount / item.reviewCount > 0.9) {
-                console.log('Skipping mastered item:', key);
-                continue;
-            }
-
             // 根据筛选条件处理
             switch (selectedFilter) {
                 case 'all':
@@ -297,12 +296,7 @@ function updateReviewList() {
     
     console.log('Filtered items:', items);
 
-    // 更新复习数量显示
-    if (reviewCountDiv) {
-        reviewCountDiv.textContent = `待复习：${items.length}`;
-    }
-
-    // 更新复习列表
+    // 更新复习列表显示
     if (reviewList) {
         if (items.length === 0) {
             reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
@@ -310,15 +304,15 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => `
                 <div class="review-item">
                     <div class="sentence-content">
-                        <div class="japanese">${item.sentence || ''}</div>
+                        <div class="japanese">${item.sentence}</div>
                         <div class="hiragana">${item.hiragana || ''}</div>
                         <div class="meaning">${item.meaning || ''}</div>
                         <div class="course-info">${item.course} - ${item.lesson}</div>
                     </div>
                     <div class="review-status">
                         <span class="proficiency ${item.proficiency || 'low'}">${
-                            item.proficiency === 'high' ? '熟练' :
-                            item.proficiency === 'medium' ? '一般' : '需加强'
+                            item.proficiency === 'high' ? '已掌握' :
+                            item.proficiency === 'medium' ? '熟练' : '学习中'
                         }</span>
                         <span class="next-review">下次复习: ${
                             new Date(item.nextReviewDate).toLocaleDateString()
@@ -329,67 +323,10 @@ function updateReviewList() {
         }
     }
 
-    // 添加样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .empty-message {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-        .review-item {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .sentence-content {
-            margin-bottom: 8px;
-        }
-        .japanese {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-        .hiragana {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-        .meaning {
-            color: #444;
-            margin-bottom: 4px;
-        }
-        .course-info {
-            font-size: 12px;
-            color: #888;
-        }
-        .review-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-        }
-        .proficiency {
-            padding: 2px 8px;
-            border-radius: 12px;
-            color: white;
-        }
-        .proficiency.low {
-            background: #ff6b6b;
-        }
-        .proficiency.medium {
-            background: #ffd93d;
-            color: #333;
-        }
-        .proficiency.high {
-            background: #6bcb77;
-        }
-        .next-review {
-            color: #666;
-        }
-    `;
-    document.head.appendChild(style);
+    // 更新复习数量显示
+    if (reviewCountDiv) {
+        reviewCountDiv.textContent = `待复习：${items.length}`;
+    }
 }
 
 // 格式化日期
@@ -703,20 +640,87 @@ function markLessonAsCompleted(courseId, lessonId) {
 
 // 修改 showLearnedSentencesPanel 函数
 function showLearnedSentencesPanel() {
-    console.log('Showing learned sentences panel');
+    console.log('=== Show Learned Panel Start ===');
     const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
     
-    console.log('Current stats:', stats);
+    console.log('Stats from storage:', stats);
     console.log('Review history:', reviewHistory);
     
     // 创建遮罩层
     let overlay = document.querySelector('.overlay');
     if (!overlay) {
+        console.log('Creating new overlay');
         overlay = document.createElement('div');
         overlay.className = 'overlay';
         document.body.appendChild(overlay);
     }
+
+    // 添加样式
+    const style = document.createElement('style');
+    style.textContent = `
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+        }
+        
+        .learned-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .learned-list {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 80px);
+        }
+
+        .learned-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+    `;
+    document.head.appendChild(style);
 
     // 创建面板
     const learnedPanel = document.createElement('div');
@@ -774,6 +778,8 @@ function showLearnedSentencesPanel() {
     const closeBtn = learnedPanel.querySelector('.close-btn');
     closeBtn.addEventListener('click', () => closeLearnedPanel());
     overlay.addEventListener('click', () => closeLearnedPanel());
+
+    console.log('=== Show Learned Panel End ===');
 }
 
 // 关闭已学句子面板
