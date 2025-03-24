@@ -109,7 +109,10 @@ class ReviewManager {
         const virtualInput = document.createElement('input');
         virtualInput.type = 'text';
         virtualInput.className = 'virtual-input';
-        virtualInput.style.fontSize = '16px'; // 防止 iOS 自动缩放
+        virtualInput.style.fontSize = '16px';
+        virtualInput.autocomplete = 'off';  // 禁用自动完成
+        virtualInput.autocapitalize = 'none';  // 禁用自动大写
+        virtualInput.spellcheck = false;  // 禁用拼写检查
 
         // 处理虚拟输入框的输入
         virtualInput.addEventListener('input', (e) => {
@@ -143,8 +146,7 @@ class ReviewManager {
             input.className = 'split-input';
             input.dataset.index = unitIndex;
             input.style.width = `${Math.max(unit.length * 20 + 40, 80)}px`;
-            input.readOnly = true; // 设置为只读
-            input.inputMode = "none"; // 禁用输入法
+            input.readOnly = true;
             
             // 点击时显示虚拟键盘输入框
             input.addEventListener('click', () => {

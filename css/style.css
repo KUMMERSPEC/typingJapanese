@@ -562,19 +562,20 @@
     font-size: 0.85em;
 }
 
-/* 修改状态显示区域布局 */
+/* 修改状态显示区域布局 - 确保在所有设备上都是纵向排列 */
 .review-status {
-    display: flex;
-    flex-direction: column;  /* 改为纵向排列 */
-    gap: 8px;               /* 增加间距 */
-    margin-top: 8px;        /* 与上方内容分隔 */
-    border-top: 1px solid #eee;  /* 添加分隔线 */
-    padding-top: 8px;       /* 分隔线上方间距 */
+    display: flex !important;           /* 强制使用 flex 布局 */
+    flex-direction: column !important;  /* 强制使用纵向排列 */
+    gap: 8px;
+    margin-top: 8px;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
 }
 
-/* 状态标签样式 */
+/* 状态标签容器 */
 .status-badge {
-    display: inline-block;
+    display: block;  /* 改为块级显示 */
+    width: fit-content;  /* 宽度适应内容 */
     padding: 4px 12px;
     border-radius: 4px;
     font-size: 0.9em;
@@ -588,6 +589,7 @@
 
 /* 下次复习时间样式 */
 .next-review {
+    display: block;  /* 改为块级显示 */
     color: #666;
     font-size: 0.9em;
 }
@@ -619,15 +621,18 @@
         gap: 6px;
         margin-top: 6px;
         padding-top: 6px;
+        flex-direction: column !important;  /* 确保在移动端也是纵向排列 */
     }
 
     .status-badge {
         padding: 3px 10px;
         font-size: 0.85em;
+        width: fit-content;  /* 确保在移动端也是适应内容宽度 */
     }
 
     .next-review {
         font-size: 0.85em;
+        display: block;  /* 确保在移动端是块级显示 */
     }
 }
 

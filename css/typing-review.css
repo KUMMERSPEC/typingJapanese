@@ -72,6 +72,7 @@ html {
     transition: all 0.3s;
     background-color: transparent;
     cursor: text;
+    pointer-events: auto;  /* 确保可以接收点击事件 */
 }
 
 .split-input:focus {
@@ -350,10 +351,27 @@ html {
     transform: translateX(-50%) !important;
     width: 80% !important;
     height: 40px !important;
-    opacity: 0.01 !important; /* 改为0.01以确保在iOS上可以接收输入 */
-    z-index: 1 !important;
-    /* 确保输入框可以接收输入 */
+    opacity: 0.01 !important;
+    z-index: 100 !important;  /* 提高 z-index 确保可以接收输入 */
     pointer-events: auto !important;
-    /* 防止iOS缩放 */
     font-size: 16px !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* 显示用的输入框样式 */
+.split-input {
+    min-width: 80px;
+    height: 45px;
+    font-size: 1.3em;
+    padding: 6px 12px;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    border-radius: 0;
+    text-align: center;
+    transition: all 0.3s;
+    background-color: transparent;
+    cursor: text;
+    pointer-events: auto;  /* 确保可以接收点击事件 */
 } 
