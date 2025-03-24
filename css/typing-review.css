@@ -55,23 +55,24 @@ body {
     height: 45px;
     font-size: 1.3em;
     padding: 6px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    border-radius: 0;
     text-align: center;
     transition: all 0.3s;
-    background-color: #f8f8f8;
+    background-color: transparent;
 }
 
 .split-input:focus {
-    border-color: #4f46e5;
+    border-bottom-color: #4f46e5;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    background-color: white;
+    box-shadow: none;
+    background-color: transparent;
 }
 
 .split-input.error {
-    border-color: #dc2626;
-    background-color: #fee2e2;
+    border-bottom-color: #dc2626;
+    background-color: rgba(220, 38, 38, 0.05);
     animation: shake 0.5s;
 }
 
@@ -287,4 +288,19 @@ body {
 @keyframes starTwinkle {
     0%, 100% { opacity: 0; transform: scale(0.3); }
     50% { opacity: 1; transform: scale(1); }
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .split-input {
+        min-width: 60px;
+        height: 40px;
+        font-size: 1.2em;
+        padding: 4px 8px;
+    }
+    
+    .input-area {
+        gap: 8px;
+        padding: 10px;
+    }
 } 
