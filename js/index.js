@@ -121,12 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 获取基础路径
-    const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+    const basePath = window.location.hostname === 'kummerspec.github.io' 
+        ? '/typingJapanese'  // GitHub Pages 仓库名
+        : '';  // 本地开发
     
     // 修改"查看全部课程"按钮的链接
     const viewAllBtn = document.querySelector('.view-all-btn');
     if (viewAllBtn) {
-        // 根据当前环境设置正确的路径
         if (window.location.hostname === 'kummerspec.github.io') {
             viewAllBtn.href = `${basePath}/courses.html`;  // GitHub Pages
         } else {
