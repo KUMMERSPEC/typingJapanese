@@ -338,9 +338,7 @@ function updateReviewList() {
                             <div class="course-info">${item.course} - ${item.lesson}</div>
                         </div>
                         <div class="review-status">
-                            <div class="status-wrapper">
-                                <span class="${statusClass}">${status}</span>
-                            </div>
+                            <span class="${statusClass}">${status}</span>
                             <span class="next-review">下次复习: ${
                                 new Date(item.nextReviewDate).toLocaleDateString()
                             }</span>
