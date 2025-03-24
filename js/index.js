@@ -189,15 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 添加已学句子点击事件
-    const learnedSentencesElement = document.querySelector('.learned-sentences');
-    console.log('Found learned sentences element:', learnedSentencesElement);
+    const learnedSentencesContainer = document.querySelector('.statistics-item[data-action="learned"]');
+    console.log('Found learned sentences container:', learnedSentencesContainer);
     
-    if (learnedSentencesElement) {
-        learnedSentencesElement.style.cursor = 'pointer';
-        learnedSentencesElement.addEventListener('click', (e) => {
+    if (learnedSentencesContainer) {
+        learnedSentencesContainer.style.cursor = 'pointer';
+        learnedSentencesContainer.addEventListener('click', (e) => {
             console.log('Learned sentences clicked');
             showLearnedSentencesPanel();
         });
+    } else {
+        console.warn('Learned sentences container not found');
     }
 });
 
@@ -304,17 +306,24 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 const status = getMasteryStatus(item);
-                const statusClass = getStatusClass(item);
-                
-                // 添加调试信息
-                console.log('Item status:', {
-                    item,
-                    status,
-                    statusClass,
-                    proficiency: item.proficiency,
-                    reviewCount: item.reviewCount,
-                    correctCount: item.correctCount
-                });
+                let statusClass = 'status-new';  // 默认为新学习
+
+                // 根据 proficiency 和 correctRate 确定状态
+                if (item.reviewCount) {
+                    const correctRate = item.correctCount / item.reviewCount;
+                    
+                    if (item.proficiency === 'low') {
+                        if (correctRate < 0.3) statusClass = 'status-weak';
+                        else if (correctRate < 0.6) statusClass = 'status-learning';
+                        else statusClass = 'status-basic';
+                    } else if (item.proficiency === 'medium') {
+                        if (correctRate < 0.7) statusClass = 'status-familiar';
+                        else if (correctRate < 0.9) statusClass = 'status-good';
+                        else statusClass = 'status-skilled';
+                    } else if (item.proficiency === 'high') {
+                        statusClass = 'status-mastered';
+                    }
+                }
                 
                 return `
                     <div class="review-item">
