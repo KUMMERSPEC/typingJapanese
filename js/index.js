@@ -130,9 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (viewAllBtn) {
         // 根据环境设置正确的路径
         if (window.location.hostname === 'kummerspec.github.io') {
-            viewAllBtn.href = '/typingJapanese/courses.html';  // 使用小写
+            viewAllBtn.href = '/typingJapanese/practice/courses.html';  // 添加 practice 路径
         } else {
-            viewAllBtn.href = 'courses.html';  // 本地开发环境
+            viewAllBtn.href = './practice/courses.html';  // 本地开发环境也添加 practice 路径
         }
         
         // 添加点击事件监听器来调试
