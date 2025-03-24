@@ -155,11 +155,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('statisticsUpdated', (event) => {
         console.log('Statistics update event received:', event.detail);
         // 刷新统计显示
-        updateReviewList();
-        // 如果使用了 statsData
-        if (window.statsData) {
-            window.statsData.updateDisplay();
+        const stats = event.detail.stats;
+        
+        // 更新首页统计数据
+        const elements = {
+            learningDays: document.querySelector('.learning-days'),
+            learnedSentences: document.querySelector('.learned-sentences'),
+            reviewItems: document.querySelector('.review-items')
+        };
+
+        if (elements.learningDays) {
+            elements.learningDays.textContent = stats.consecutiveDays || 0;
         }
+        if (elements.learnedSentences) {
+            elements.learnedSentences.textContent = stats.totalSentences || 0;
+        }
+        if (elements.reviewItems) {
+            const reviewItems = Object.values(stats.reviewHistory || {}).length;
+            elements.reviewItems.textContent = reviewItems;
+        }
+
+        // 更新复习列表
+        updateReviewList();
     });
 });
 

@@ -905,6 +905,9 @@ export class PracticeManager {
                 if (!stats.reviewHistory) {
                     stats.reviewHistory = {};
                 }
+                if (!stats.totalSentences) {
+                    stats.totalSentences = 0;
+                }
                 
                 // 只处理 split 类型的句子
                 const lessonKey = `${this.course}_${this.lesson}`;
@@ -916,26 +919,30 @@ export class PracticeManager {
                     });
 
                     // 添加到复习历史
-                    stats.reviewHistory[questionKey] = {
-                        completedAt: new Date().toISOString(),
-                        nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                        proficiency: 'low',
-                        reviewCount: 0,
-                        correctCount: 0,
-                        course: this.course,
-                        lesson: this.lesson,
-                        sentence: question.character,
-                        hiragana: question.hiragana,
-                        meaning: question.meaning
-                    };
-
-                    // 更新课程完成状态
-                    stats.completedLessons[lessonKey] = {
-                        completedAt: new Date().toISOString(),
-                        course: this.course,
-                        lesson: this.lesson
-                    };
+                    if (!stats.reviewHistory[questionKey]) {
+                        stats.reviewHistory[questionKey] = {
+                            completedAt: new Date().toISOString(),
+                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                            proficiency: 'low',
+                            reviewCount: 0,
+                            correctCount: 0,
+                            course: this.course,
+                            lesson: this.lesson,
+                            sentence: question.character,
+                            hiragana: question.hiragana,
+                            meaning: question.meaning
+                        };
+                        // 增加总句子数
+                        stats.totalSentences++;
+                    }
                 });
+
+                // 更新课程完成状态
+                stats.completedLessons[lessonKey] = {
+                    completedAt: new Date().toISOString(),
+                    course: this.course,
+                    lesson: this.lesson
+                };
                 
                 // 更新每日统计
                 const today = new Date().toLocaleDateString();
