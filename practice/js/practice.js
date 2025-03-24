@@ -878,6 +878,50 @@ export class PracticeManager {
 
     showComplete() {
         try {
+            // 只统计 split 类型的题目数量
+            const splitQuestions = this.questions.filter(q => q.type === 'split');
+            const splitCount = splitQuestions.length;
+            
+            console.log('Course completion details:', {
+                course: this.course,
+                lesson: this.lesson,
+                totalQuestions: this.questions.length,
+                splitCount: splitCount,
+                completedSentences: this.completedSentences
+            });
+
+            // 确保在显示完成效果之前保存统计数据
+            if (this.course && this.lesson) {
+                // 保存课程完成状态
+                const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+                if (!stats.completedLessons) {
+                    stats.completedLessons = {};
+                }
+                
+                // 只处理 split 类型的句子
+                const lessonKey = `${this.course}_${this.lesson}`;
+                splitQuestions.forEach(question => {
+                    if (!stats.completedLessons[lessonKey]) {
+                        stats.completedLessons[lessonKey] = {
+                            completedAt: new Date().toISOString(),
+                            nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                            proficiency: 'low',
+                            reviewCount: 0,
+                            correctCount: 0,
+                            course: this.course,
+                            lesson: this.lesson,
+                            sentence: question.character,
+                            hiragana: question.hiragana,
+                            meaning: question.meaning
+                        };
+                    }
+                });
+                
+                localStorage.setItem('typing_statistics', JSON.stringify(stats));
+                console.log('Saved completion status:', stats.completedLessons[lessonKey]);
+            }
+
+            // 创建完成界面
             const completeScreen = document.createElement('div');
             completeScreen.className = 'complete-screen';
             
@@ -886,6 +930,7 @@ export class PracticeManager {
             content.innerHTML = `
                 <h2>🎉 课程完成！</h2>
                 <p>恭喜你完成了本课程的学习！</p>
+                <p>本次练习: ${splitCount} 个句子</p>
                 <button class="review-btn">复习本课程</button>
                 <button class="next-btn">返回课程列表</button>
             `;
@@ -927,9 +972,6 @@ export class PracticeManager {
                         window.location.href = 'courses.html';
                     });
                 }
-
-                // 保存完成状态
-                this.markLessonAsCompleted();
             }
         } catch (error) {
             console.error('Error in showComplete:', error);
