@@ -128,18 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 修改"查看全部课程"按钮的链接
     const viewAllBtn = document.querySelector('.view-all-btn');
     if (viewAllBtn) {
-        // 使用相对路径，让浏览器根据当前页面位置自动解析
-        viewAllBtn.href = 'courses.html';
+        // 根据环境设置正确的路径
+        if (window.location.hostname === 'kummerspec.github.io') {
+            viewAllBtn.href = '/TypingJapanese/courses.html';  // 注意大小写
+        } else {
+            viewAllBtn.href = 'courses.html';  // 本地开发环境
+        }
         
         // 添加点击事件监听器来调试
         viewAllBtn.addEventListener('click', (e) => {
             console.log('Button clicked');
             console.log('Target href:', e.currentTarget.href);
             console.log('Resolved URL:', new URL(e.currentTarget.href, window.location.href).href);
-            
-            // 如果需要，可以阻止默认行为并手动处理导航
-            // e.preventDefault();
-            // window.location.href = 正确的URL;
         });
     } else {
         console.warn('View all button not found');
