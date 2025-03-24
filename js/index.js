@@ -252,12 +252,22 @@ function updateReviewList() {
     // 遍历复习历史
     for (const key in reviewHistory) {
         const item = reviewHistory[key];
-        console.log('Processing review item:', {
-            key,
+        
+        // 添加详细的调试信息
+        console.log('=== Review Item Details ===');
+        console.log('Key:', key);
+        console.log('Full item:', item);
+        console.log('Properties:', {
             sentence: item?.sentence,
+            japanese: item?.japanese,  // 检查是否使用了不同的属性名
+            text: item?.text,          // 检查是否使用了不同的属性名
             proficiency: item?.proficiency,
-            nextReviewDate: item?.nextReviewDate
+            nextReviewDate: item?.nextReviewDate,
+            course: item?.course,
+            lesson: item?.lesson
         });
+        console.log('Object.keys:', Object.keys(item || {}));
+        console.log('=========================');
 
         if (item && item.sentence) {
             // 根据筛选条件处理
@@ -641,145 +651,95 @@ function markLessonAsCompleted(courseId, lessonId) {
 // 修改 showLearnedSentencesPanel 函数
 function showLearnedSentencesPanel() {
     console.log('=== Show Learned Panel Start ===');
-    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
-    const reviewHistory = stats.reviewHistory || {};
     
-    console.log('Stats from storage:', stats);
-    console.log('Review history:', reviewHistory);
-    
-    // 创建遮罩层
-    let overlay = document.querySelector('.overlay');
-    if (!overlay) {
-        console.log('Creating new overlay');
-        overlay = document.createElement('div');
-        overlay.className = 'overlay';
-        document.body.appendChild(overlay);
-    }
-
-    // 添加样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    try {
+        // 从 statsData 获取数据而不是直接从 localStorage
+        const stats = statsData.getStatistics();
+        const reviewHistory = stats.reviewHistory || {};
         
-        .overlay.show {
-            opacity: 1;
-        }
+        console.log('Stats:', stats);
+        console.log('Review history:', reviewHistory);
         
-        .learned-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-            z-index: 1001;
-            display: flex;
-            flex-direction: column;
+        // 创建遮罩层
+        let overlay = document.querySelector('.overlay');
+        if (!overlay) {
+            console.log('Creating new overlay');
+            overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
         }
+
+        // 创建面板
+        const learnedPanel = document.createElement('div');
+        learnedPanel.className = 'learned-panel';
         
-        .panel-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .learned-list {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: calc(80vh - 80px);
-        }
-
-        .learned-item {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 8px;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // 创建面板
-    const learnedPanel = document.createElement('div');
-    learnedPanel.className = 'learned-panel';
-    
-    // 添加所有学过的句子
-    const items = Object.entries(reviewHistory)
-        .filter(([_, item]) => item && item.sentence)
-        .map(([key, item]) => ({
-            key,
-            ...item
-        }));
-    
-    console.log('Filtered learned items:', items);
-    
-    learnedPanel.innerHTML = `
-        <div class="panel-header">
-            <h3>已学句子 (${items.length})</h3>
-            <button class="close-btn">×</button>
-        </div>
-        <div class="learned-list">
-            ${items.length === 0 ? 
-                '<div class="empty-message">还没有学习过的句子</div>' :
-                items.map(item => `
-                    <div class="learned-item">
-                        <div class="sentence-content">
-                            <div class="japanese">${item.sentence || ''}</div>
-                            <div class="hiragana">${item.hiragana || ''}</div>
-                            <div class="meaning">${item.meaning || ''}</div>
-                            <div class="course-info">${item.course} - ${item.lesson}</div>
-                        </div>
-                        <div class="mastery-status">
-                            <span class="proficiency ${item.proficiency || 'low'}">${
-                                item.proficiency === 'high' ? '已掌握' :
-                                item.proficiency === 'medium' ? '熟练' : '学习中'
-                            }</span>
-                        </div>
-                    </div>
-                `).join('')
+        // 过滤并处理句子数据
+        const items = [];
+        for (const key in reviewHistory) {
+            const item = reviewHistory[key];
+            if (item && (item.sentence || item.japanese)) {  // 检查 sentence 或 japanese 属性
+                items.push({
+                    key,
+                    sentence: item.sentence || item.japanese, // 使用 sentence 或 japanese
+                    hiragana: item.hiragana || '',
+                    meaning: item.meaning || '',
+                    course: item.course || '',
+                    lesson: item.lesson || '',
+                    proficiency: item.proficiency || 'low',
+                    reviewCount: item.reviewCount || 0,
+                    correctCount: item.correctCount || 0
+                });
             }
-        </div>
-    `;
-    
-    // 添加到页面
-    document.body.appendChild(learnedPanel);
-    
-    // 显示遮罩和面板
-    overlay.style.display = 'block';
-    setTimeout(() => {
-        overlay.classList.add('show');
-        learnedPanel.classList.add('show');
-    }, 10);
-    
-    // 添加关闭事件
-    const closeBtn = learnedPanel.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () => closeLearnedPanel());
-    overlay.addEventListener('click', () => closeLearnedPanel());
-
-    console.log('=== Show Learned Panel End ===');
+        }
+        
+        console.log('Processed items:', items);
+        
+        // 构建面板内容
+        learnedPanel.innerHTML = `
+            <div class="panel-header">
+                <h3>已学句子 (${items.length})</h3>
+                <button class="close-btn">×</button>
+            </div>
+            <div class="learned-list">
+                ${items.length === 0 ? 
+                    '<div class="empty-message">还没有学习过的句子</div>' :
+                    items.map(item => `
+                        <div class="learned-item">
+                            <div class="sentence-content">
+                                <div class="japanese">${item.sentence}</div>
+                                <div class="hiragana">${item.hiragana}</div>
+                                <div class="meaning">${item.meaning}</div>
+                                <div class="course-info">${item.course} - ${item.lesson}</div>
+                            </div>
+                            <div class="mastery-status">
+                                <span class="proficiency ${item.proficiency}">${getMasteryStatus(item)}</span>
+                            </div>
+                        </div>
+                    `).join('')
+                }
+            </div>
+        `;
+        
+        // 添加到页面并显示
+        document.body.appendChild(learnedPanel);
+        overlay.style.display = 'block';
+        
+        // 使用 requestAnimationFrame 确保 DOM 更新后再添加动画类
+        requestAnimationFrame(() => {
+            overlay.classList.add('show');
+            learnedPanel.classList.add('show');
+        });
+        
+        // 添加关闭事件
+        const closeBtn = learnedPanel.querySelector('.close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => closeLearnedPanel());
+        }
+        overlay.addEventListener('click', () => closeLearnedPanel());
+        
+    } catch (error) {
+        console.error('Error in showLearnedSentencesPanel:', error);
+    }
 }
 
 // 关闭已学句子面板
@@ -796,4 +756,23 @@ function closeLearnedPanel() {
             overlay.style.display = 'none';
         }, 300);
     }
+}
+
+// 在显示句子时的掌握程度判断
+function getMasteryStatus(item) {
+    if (!item.reviewCount) {
+        return '未复习';
+    }
+    const correctRate = item.correctCount / item.reviewCount;
+    if (item.proficiency === 'low') {
+        if (correctRate < 0.3) return '需要加强';
+        if (correctRate < 0.6) return '初学';
+        return '基础';
+    }
+    if (item.proficiency === 'medium') {
+        if (correctRate < 0.7) return '熟悉';
+        if (correctRate < 0.9) return '掌握';
+        return '熟练';
+    }
+    return '精通';
 } 
