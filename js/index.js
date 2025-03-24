@@ -304,7 +304,7 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 const status = getMasteryStatus(item);
-                const statusClass = getStatusClass(item);
+                const statusClass = getStatusClass(item);  // 使用 getStatusClass 获取正确的类名
                 
                 return `
                     <div class="review-item">
@@ -618,44 +618,45 @@ function showLearnedSentencesPanel() {
     console.log('=== Show Learned Panel Start ===');
     
     try {
-        // 从 statsData 获取数据而不是直接从 localStorage
+        // 先移除已存在的面板和遮罩
+        const existingPanel = document.querySelector('.learned-panel');
+        if (existingPanel) {
+            existingPanel.remove();
+        }
+        
+        // 获取或创建遮罩层
+        let overlay = document.querySelector('.overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+        }
+
+        // 从 statsData 获取数据
         const stats = statsData.getStatistics();
         const reviewHistory = stats.reviewHistory || {};
         
         console.log('Stats:', stats);
         console.log('Review history:', reviewHistory);
-        
-        // 创建遮罩层
-        let overlay = document.querySelector('.overlay');
-        if (!overlay) {
-            console.log('Creating new overlay');
-            overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            document.body.appendChild(overlay);
-        }
 
         // 创建面板
         const learnedPanel = document.createElement('div');
         learnedPanel.className = 'learned-panel';
         
         // 过滤并处理句子数据
-        const items = [];
-        for (const key in reviewHistory) {
-            const item = reviewHistory[key];
-            if (item && (item.sentence || item.japanese)) {  // 检查 sentence 或 japanese 属性
-                items.push({
-                    key,
-                    sentence: item.sentence || item.japanese, // 使用 sentence 或 japanese
-                    hiragana: item.hiragana || '',
-                    meaning: item.meaning || '',
-                    course: item.course || '',
-                    lesson: item.lesson || '',
-                    proficiency: item.proficiency || 'low',
-                    reviewCount: item.reviewCount || 0,
-                    correctCount: item.correctCount || 0
-                });
-            }
-        }
+        const items = Object.entries(reviewHistory)
+            .filter(([_, item]) => item && (item.japanese || item.sentence))
+            .map(([key, item]) => ({
+                key,
+                sentence: item.japanese || item.sentence,
+                hiragana: item.hiragana || '',
+                meaning: item.meaning || '',
+                course: item.course || '',
+                lesson: item.lesson || '',
+                proficiency: item.proficiency || 'low',
+                reviewCount: item.reviewCount || 0,
+                correctCount: item.correctCount || 0
+            }));
         
         console.log('Processed items:', items);
         
@@ -668,42 +669,50 @@ function showLearnedSentencesPanel() {
             <div class="learned-list">
                 ${items.length === 0 ? 
                     '<div class="empty-message">还没有学习过的句子</div>' :
-                    items.map(item => `
-                        <div class="learned-item">
-                            <div class="sentence-content">
-                                <div class="japanese">${item.sentence}</div>
-                                <div class="hiragana">${item.hiragana}</div>
-                                <div class="meaning">${item.meaning}</div>
-                                <div class="course-info">${item.course} - ${item.lesson}</div>
+                    items.map(item => {
+                        const status = getMasteryStatus(item);
+                        const statusClass = getStatusClass(item);
+                        return `
+                            <div class="learned-item">
+                                <div class="sentence-content">
+                                    <div class="japanese">${item.sentence}</div>
+                                    <div class="hiragana">${item.hiragana}</div>
+                                    <div class="meaning">${item.meaning}</div>
+                                    <div class="course-info">${item.course} - ${item.lesson}</div>
+                                </div>
+                                <div class="mastery-status">
+                                    <span class="mastery-badge ${statusClass}">${status}</span>
+                                </div>
                             </div>
-                            <div class="mastery-status">
-                                <span class="proficiency ${item.proficiency}">${getMasteryStatus(item)}</span>
-                            </div>
-                        </div>
-                    `).join('')
+                        `;
+                    }).join('')
                 }
             </div>
         `;
-        
-        // 添加到页面并显示
+
+        // 添加到页面
         document.body.appendChild(learnedPanel);
-        overlay.style.display = 'block';
         
-        // 使用 requestAnimationFrame 确保 DOM 更新后再添加动画类
+        // 显示遮罩和面板
+        overlay.style.display = 'block';
         requestAnimationFrame(() => {
             overlay.classList.add('show');
             learnedPanel.classList.add('show');
         });
-        
+
         // 添加关闭事件
         const closeBtn = learnedPanel.querySelector('.close-btn');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => closeLearnedPanel());
         }
         overlay.addEventListener('click', () => closeLearnedPanel());
-        
+
     } catch (error) {
         console.error('Error in showLearnedSentencesPanel:', error);
+        console.log('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
     }
 }
 
