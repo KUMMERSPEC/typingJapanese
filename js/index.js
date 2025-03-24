@@ -120,6 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, document.title, '/');
     }
 
+    // 获取基础路径
+    const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+    
+    // 修改"查看全部课程"按钮的链接
+    const viewAllBtn = document.querySelector('.view-all-btn');
+    if (viewAllBtn) {
+        // 根据当前环境设置正确的路径
+        if (window.location.hostname === 'kummerspec.github.io') {
+            viewAllBtn.href = `${basePath}/courses.html`;  // GitHub Pages
+        } else {
+            viewAllBtn.href = './courses.html';  // 本地开发
+        }
+    }
+
     // 初始化复习面板
     initReviewPanel();
 });
