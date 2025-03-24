@@ -241,25 +241,15 @@ function updateReviewList() {
     const reviewList = document.querySelector('.review-list');
     const reviewCountDiv = document.querySelector('.review-count');
     
-    console.log('=== Update Review List Start ===');
-    console.log('Selected filter:', selectedFilter);
-    
     // 获取所有复习项
     const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
     const reviewHistory = stats.reviewHistory || {};
     let items = [];
-    
-    console.log('Full review history:', reviewHistory);
 
     // 遍历复习历史
     for (const key in reviewHistory) {
         const item = reviewHistory[key];
         
-        // 添加详细的调试信息
-        console.log('=== Review Item Details ===');
-        console.log('Key:', key);
-        console.log('Full item:', item);
-
         // 修改判断条件，使用 japanese 属性
         if (item && (item.sentence || item.japanese)) {  // 检查两个属性
             // 根据筛选条件处理
@@ -295,8 +285,6 @@ function updateReviewList() {
 
     // 按复习日期排序
     items.sort((a, b) => new Date(a.nextReviewDate) - new Date(b.nextReviewDate));
-    
-    console.log('Filtered items:', items);
 
     // 更新复习列表显示
     if (reviewList) {
