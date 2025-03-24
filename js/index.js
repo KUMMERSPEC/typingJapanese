@@ -306,19 +306,19 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 let status = '未复习';
-                let statusClass = 'status-badge status-new';  // 默认为未复习状态
+                let statusClass = 'status-new';  // 移除重复的 status-badge
 
                 // 根据复习次数和掌握度设置状态
                 if (item.reviewCount > 0) {  // 确保有复习记录
                     if (item.proficiency === 'high') {
                         status = '熟练';
-                        statusClass = 'status-badge status-high';
+                        statusClass = 'status-high';
                     } else if (item.proficiency === 'medium') {
                         status = '一般';
-                        statusClass = 'status-badge status-medium';
+                        statusClass = 'status-medium';
                     } else if (item.proficiency === 'low') {
                         status = '生疏';
-                        statusClass = 'status-badge status-low';
+                        statusClass = 'status-low';
                     }
                 }
 
