@@ -306,7 +306,7 @@ function updateReviewList() {
             reviewList.innerHTML = items.map(item => {
                 // 获取掌握状态和对应的样式
                 let status = '未复习';
-                let statusClass = 'status-new';  // 只使用状态类名，不包含 status-badge
+                let statusClass = 'status-new';
 
                 // 根据复习次数和掌握度设置状态
                 if (item.reviewCount > 0) {
@@ -321,13 +321,6 @@ function updateReviewList() {
                         statusClass = 'status-low';
                     }
                 }
-
-                // 添加调试日志
-                console.log('Rendering item:', {
-                    status,
-                    statusClass,
-                    item
-                });
 
                 return `
                     <div class="review-item">
@@ -346,9 +339,6 @@ function updateReviewList() {
                     </div>
                 `;
             }).join('');
-
-            // 添加调试日志
-            console.log('Generated HTML:', reviewList.innerHTML);
         }
     }
 

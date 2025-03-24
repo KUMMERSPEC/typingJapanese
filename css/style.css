@@ -526,4 +526,36 @@
         width: 30px;
         height: 30px;
     }
+}
+
+/* 复习状态标签的基础样式 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: white;
+    font-weight: 500;
+    margin-right: 8px;
+}
+
+/* 未复习状态 - 绿色 */
+.status-badge.status-new {
+    background-color: #4CAF50;
+}
+
+/* 生疏状态 - 红色 */
+.status-badge.status-low {
+    background-color: #f44336;
+}
+
+/* 一般状态 - 黄色 */
+.status-badge.status-medium {
+    background-color: #FFC107;
+    color: #333;  /* 黄色背景配深色文字 */
+}
+
+/* 熟练状态 - 蓝色 */
+.status-badge.status-high {
+    background-color: #2196F3;
 } 
