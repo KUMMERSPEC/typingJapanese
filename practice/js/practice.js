@@ -198,152 +198,93 @@ export class PracticeManager {
             // 获取当前问题
             const currentQuestion = this.questions[this.currentQuestionIndex];
             
-            // 始终使用平假名版本，移除分隔符
-            let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
+            // 使用日语原文
+            const textToSpeak = currentQuestion.japanese || text;
             
-            console.log('准备播放音频:', textToSpeak);
+            console.log('准备播放音频:', {
+                text: textToSpeak,
+                length: textToSpeak.length,
+                isMobile: this.isMobile()
+            });
+
+            // 创建音频元素
+            const audio = document.getElementById('practiceAudioPlayer') || document.createElement('audio');
+            audio.id = 'practiceAudioPlayer';
             
-            // 停止任何正在播放的音频
-            if (this.currentAudio) {
-                this.currentAudio.pause();
-                this.currentAudio = null;
+            if (!document.getElementById('practiceAudioPlayer')) {
+                document.body.appendChild(audio);
             }
-            
-            // 尝试使用有道 API
+
+            // 尝试直接播放完整句子
             try {
-                // 创建一个新的音频元素
-                const audio = new Audio();
-                this.currentAudio = audio;
+                // 使用 type=3 参数来播放句子
+                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(textToSpeak)}`;
                 
-                // 使用有道 API
-                audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
-                
-                // 添加音频加载事件
-                audio.addEventListener('canplaythrough', () => {
-                    console.log('有道 API 音频已加载完成，准备播放');
+                // 等待音频加载
+                await new Promise((resolve, reject) => {
+                    audio.oncanplaythrough = resolve;
+                    audio.onerror = reject;
+                    audio.load();
                 });
-                
-                // 添加音频错误事件
-                audio.addEventListener('error', (e) => {
-                    console.error('有道 API 音频加载失败:', e);
-                    this.tryGoogleTTS(textToSpeak);
-                });
-                
-                // 预加载音频
-                audio.load();
-                
-                // 尝试播放
+
                 await audio.play();
-                console.log('有道 API 音频播放成功');
-                
-            } catch (youdaoError) {
-                console.warn('有道 API 播放失败，尝试 Google TTS:', youdaoError);
-                this.tryGoogleTTS(textToSpeak);
+                console.log('句子播放成功');
+
+            } catch (error) {
+                console.warn('句子播放失败，尝试分词播放:', error);
+                await this.splitAndPlay(textToSpeak);
             }
+
         } catch (error) {
-            console.error('播放语音失败:', error);
+            console.error('音频播放失败:', error);
         }
     }
 
-    // 尝试使用 Google TTS
-    async tryGoogleTTS(text) {
+    // 添加分词播放方法
+    async splitAndPlay(text) {
         try {
-            console.log('尝试使用 Google TTS 播放:', text);
-            
-            // 创建一个新的音频元素
+            // 分词策略：按照日语语法结构分割
+            const parts = text.split(/([はがをにでとへもの。、！？]+)/).filter(part => part.trim());
+            console.log('分词结果:', parts);
+
+            // 创建一个音频元素用于播放
             const audio = new Audio();
             
-            // 使用 Google Translate TTS
-            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
-            
-            // 添加音频错误事件
-            audio.addEventListener('error', (e) => {
-                console.error('Google TTS 音频加载失败:', e);
-                this.tryWebSpeech(text);
-            });
-            
-            // 预加载音频
-            audio.load();
-            
-            // 尝试播放
-            await audio.play();
-            console.log('Google TTS 音频播放成功');
-            
-        } catch (googleError) {
-            console.warn('Google TTS 播放失败，尝试 Web Speech API:', googleError);
-            this.tryWebSpeech(text);
-        }
-    }
+            // 依次播放每个部分
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (!part.trim()) continue;
 
-    // 尝试使用 Web Speech API
-    tryWebSpeech(text) {
-        try {
-            console.log('尝试使用 Web Speech API 播放:', text);
-            
-            if ('speechSynthesis' in window) {
-                // 停止任何正在播放的语音
-                window.speechSynthesis.cancel();
-                
-                // 创建新的语音实例
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ja-JP';
-                utterance.rate = 0.9;
-                
-                // 播放语音
-                window.speechSynthesis.speak(utterance);
-                console.log('Web Speech API 播放成功');
-            } else {
-                console.warn('浏览器不支持 Web Speech API');
-                this.trySplitWordPlay(text);
-            }
-        } catch (speechError) {
-            console.error('Web Speech API 播放失败:', speechError);
-            this.trySplitWordPlay(text);
-        }
-    }
-
-    // 尝试分词播放
-    async trySplitWordPlay(text) {
-        try {
-            console.log('尝试分词播放:', text);
-            
-            // 对于长句子，尝试分割成单词
-            if (text.length > 5) {
-                // 这可能是一个句子，尝试分割成单词播放
-                console.log('检测到长句子，尝试分割成单词播放');
-                
-                // 简单分割，以空格或常见助词为界
-                const parts = text.split(/(\s+|が|は|を|に|で|と|も|へ)/);
-                const validParts = parts.filter(part => part.trim().length > 0);
-                
-                console.log('分割后的单词:', validParts);
-                
-                // 依次播放每个单词
-                for (const part of validParts) {
-                    if (part.trim().length === 0) continue;
+                try {
+                    // 对于单词使用 type=1
+                    audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=1&audio=${encodeURIComponent(part)}`;
                     
-                    try {
-                        // 使用有道 API 播放单词
-                        const wordAudio = new Audio();
-                        wordAudio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(part)}&le=jap`;
-                        
-                        // 等待播放完成
-                        await new Promise((resolve, reject) => {
-                            wordAudio.onended = resolve;
-                            wordAudio.onerror = reject;
-                            wordAudio.play().catch(reject);
-                        });
-                        
-                        // 短暂停顿
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                        
-                    } catch (wordError) {
-                        console.warn(`单词 "${part}" 播放失败:`, wordError);
+                    // 等待音频加载和播放完成
+                    await new Promise((resolve, reject) => {
+                        audio.oncanplaythrough = () => {
+                            audio.play()
+                                .then(() => {
+                                    audio.onended = resolve;
+                                })
+                                .catch(reject);
+                        };
+                        audio.onerror = reject;
+                        audio.load();
+                    });
+
+                    // 如果不是最后一个部分，添加短暂停顿
+                    if (i < parts.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
                     }
+
+                } catch (error) {
+                    console.warn(`部分 "${part}" 播放失败:`, error);
+                    continue;
                 }
-            } else {
-                console.warn('所有播放方法都失败了');
             }
+            
+            console.log('分词播放完成');
+
         } catch (error) {
             console.error('分词播放失败:', error);
         }
@@ -1549,8 +1490,18 @@ export class PracticeManager {
     // 新增方法：与用户交互直接关联的音频播放
     async playAudioWithUserInteraction(text) {
         try {
-            console.log('准备播放音频:', text);
+            // 获取当前问题
+            const currentQuestion = this.questions[this.currentQuestionIndex];
             
+            // 使用日语原文
+            const textToSpeak = currentQuestion.japanese || text;
+            
+            console.log('准备播放音频:', {
+                text: textToSpeak,
+                length: textToSpeak.length,
+                isMobile: this.isMobile()
+            });
+
             // 创建音频元素
             const audio = document.getElementById('practiceAudioPlayer') || document.createElement('audio');
             audio.id = 'practiceAudioPlayer';
@@ -1559,42 +1510,78 @@ export class PracticeManager {
                 document.body.appendChild(audio);
             }
 
-            // 设置音频源
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
-            
-            // 添加加载事件
-            await new Promise((resolve, reject) => {
-                audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();
-            });
-
-            // 尝试播放
+            // 尝试直接播放完整句子
             try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.warn('播放失败，尝试用户交互方式:', error);
+                // 使用 type=3 参数来播放句子
+                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(textToSpeak)}`;
                 
-                // 创建一个临时的播放按钮
-                const playButton = document.createElement('button');
-                playButton.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:9999;padding:10px;background:#4CAF50;color:white;border:none;border-radius:5px;';
-                playButton.textContent = '点击播放';
-                document.body.appendChild(playButton);
+                // 等待音频加载
+                await new Promise((resolve, reject) => {
+                    audio.oncanplaythrough = resolve;
+                    audio.onerror = reject;
+                    audio.load();
+                });
 
-                // 点击按钮播放
-                playButton.onclick = async () => {
-                    try {
-                        await audio.play();
-                        console.log('通过按钮触发播放成功');
-                        document.body.removeChild(playButton);
-                    } catch (buttonError) {
-                        console.error('按钮触发播放失败:', buttonError);
-                    }
-                };
+                await audio.play();
+                console.log('句子播放成功');
+
+            } catch (error) {
+                console.warn('句子播放失败，尝试分词播放:', error);
+                await this.splitAndPlay(textToSpeak);
             }
+
         } catch (error) {
             console.error('音频播放失败:', error);
+        }
+    }
+
+    // 添加分词播放方法
+    async splitAndPlay(text) {
+        try {
+            // 分词策略：按照日语语法结构分割
+            const parts = text.split(/([はがをにでとへもの。、！？]+)/).filter(part => part.trim());
+            console.log('分词结果:', parts);
+
+            // 创建一个音频元素用于播放
+            const audio = new Audio();
+            
+            // 依次播放每个部分
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (!part.trim()) continue;
+
+                try {
+                    // 对于单词使用 type=1
+                    audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=1&audio=${encodeURIComponent(part)}`;
+                    
+                    // 等待音频加载和播放完成
+                    await new Promise((resolve, reject) => {
+                        audio.oncanplaythrough = () => {
+                            audio.play()
+                                .then(() => {
+                                    audio.onended = resolve;
+                                })
+                                .catch(reject);
+                        };
+                        audio.onerror = reject;
+                        audio.load();
+                    });
+
+                    // 如果不是最后一个部分，添加短暂停顿
+                    if (i < parts.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+
+                } catch (error) {
+                    console.warn(`部分 "${part}" 播放失败:`, error);
+                    continue;
+                }
+            }
+            
+            console.log('分词播放完成');
+
+        } catch (error) {
+            console.error('分词播放失败:', error);
         }
     }
 }

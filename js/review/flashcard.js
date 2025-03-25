@@ -265,14 +265,15 @@ class FlashcardManager {
         try {
             // 确保使用平假名版本
             const currentCard = this.sentences[this.currentIndex];
-            const textToSpeak = currentCard.hiragana || text;
+            const textToSpeak = currentCard.japanese || text; // 改用 japanese 而不是 hiragana
             
             console.log('闪卡播放音频:', {
                 text: textToSpeak,
+                length: textToSpeak.length,
                 isMobile: this.isMobile()
             });
 
-            // 创建音频元素
+            // 创建音频元素（如果不存在）
             const audio = document.getElementById('flashcardAudioPlayer') || document.createElement('audio');
             audio.id = 'flashcardAudioPlayer';
             
@@ -280,45 +281,78 @@ class FlashcardManager {
                 document.body.appendChild(audio);
             }
 
-            // 设置音频源
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
-            
-            // 添加加载事件
-            await new Promise((resolve, reject) => {
-                audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();
-            });
-
-            // 尝试播放
+            // 尝试直接播放完整句子
             try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.warn('播放失败，尝试用户交互方式:', error);
+                // 使用 type=3 参数来播放句子
+                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(textToSpeak)}`;
                 
-                // 创建一个临时的播放按钮（如果还没有）
-                if (!document.getElementById('tempPlayButton')) {
-                    const playButton = document.createElement('button');
-                    playButton.id = 'tempPlayButton';
-                    playButton.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:9999;padding:10px;background:#4CAF50;color:white;border:none;border-radius:5px;';
-                    playButton.textContent = '点击播放';
-                    document.body.appendChild(playButton);
+                // 等待音频加载
+                await new Promise((resolve, reject) => {
+                    audio.oncanplaythrough = resolve;
+                    audio.onerror = reject;
+                    audio.load();
+                });
 
-                    // 点击按钮播放
-                    playButton.onclick = async () => {
-                        try {
-                            await audio.play();
-                            console.log('通过按钮触发播放成功');
-                            document.body.removeChild(playButton);
-                        } catch (buttonError) {
-                            console.error('按钮触发播放失败:', buttonError);
-                        }
-                    };
-                }
+                await audio.play();
+                console.log('句子播放成功');
+
+            } catch (error) {
+                console.warn('句子播放失败，尝试分词播放:', error);
+                await this.splitAndPlay(textToSpeak);
             }
+
         } catch (error) {
             console.error('音频播放失败:', error);
+        }
+    }
+
+    // 添加分词播放方法
+    async splitAndPlay(text) {
+        try {
+            // 分词策略：按照日语语法结构分割
+            const parts = text.split(/([はがをにでとへもの。、！？]+)/).filter(part => part.trim());
+            console.log('分词结果:', parts);
+
+            // 创建一个音频元素用于播放
+            const audio = new Audio();
+            
+            // 依次播放每个部分
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (!part.trim()) continue;
+
+                try {
+                    // 对于单词使用 type=1
+                    audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=1&audio=${encodeURIComponent(part)}`;
+                    
+                    // 等待音频加载和播放完成
+                    await new Promise((resolve, reject) => {
+                        audio.oncanplaythrough = () => {
+                            audio.play()
+                                .then(() => {
+                                    audio.onended = resolve;
+                                })
+                                .catch(reject);
+                        };
+                        audio.onerror = reject;
+                        audio.load();
+                    });
+
+                    // 如果不是最后一个部分，添加短暂停顿
+                    if (i < parts.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+
+                } catch (error) {
+                    console.warn(`部分 "${part}" 播放失败:`, error);
+                    continue;
+                }
+            }
+            
+            console.log('分词播放完成');
+
+        } catch (error) {
+            console.error('分词播放失败:', error);
         }
     }
 
@@ -479,10 +513,14 @@ class FlashcardManager {
         if (card.classList.contains('flipped')) {
             if (this.mode === 'cn-jp') {
                 // 在中文到日文模式下，播放背面的日文
-                this.speak(currentSentence.japanese);
+                setTimeout(() => {
+                    this.speak(currentSentence.japanese);
+                }, 300); // 增加延迟，确保翻转动画完成
             } else {
                 // 在日文到中文模式下，播放正面的日文
-                this.speak(currentSentence.japanese);
+                setTimeout(() => {
+                    this.speak(currentSentence.japanese);
+                }, 300);
             }
         }
     }
