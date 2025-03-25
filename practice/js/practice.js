@@ -201,6 +201,8 @@ export class PracticeManager {
             // 始终使用平假名版本，移除分隔符
             let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
             
+            console.log('准备播放音频:', textToSpeak);
+            
             // 创建音频元素前先停止之前的音频
             if (this.currentAudio) {
                 this.currentAudio.pause();
@@ -212,52 +214,105 @@ export class PracticeManager {
             this.currentAudio = audio;
             
             // 设置音频源之前添加事件监听
-            audio.addEventListener('error', () => {
-                console.warn('有道发音失败，使用备选方案');
+            audio.addEventListener('error', (e) => {
+                console.warn('有道发音失败，使用备选方案', e);
                 this.fallbackSpeak(textToSpeak);
             });
 
-            // 设置音频源
+            // 设置音频源 - 尝试不同的参数组合
+            // 移除 type 参数，使用默认设置
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
             
-            // 尝试播放
+            // 添加调试事件
+            audio.addEventListener('loadstart', () => console.log('音频开始加载'));
+            audio.addEventListener('canplaythrough', () => console.log('音频加载完成'));
+            audio.addEventListener('play', () => console.log('音频开始播放'));
+            audio.addEventListener('playing', () => console.log('音频正在播放'));
+            audio.addEventListener('ended', () => console.log('音频播放结束'));
+            
+            // 确保音频已加载
+            audio.load();
+            
+            // 使用用户交互触发播放
             try {
-                await audio.play();
+                // 使用 Promise 包装播放操作
+                await new Promise((resolve, reject) => {
+                    // 设置超时
+                    const timeout = setTimeout(() => {
+                        reject(new Error('音频播放超时'));
+                    }, 3000);
+                    
+                    // 播放成功时
+                    audio.onplaying = () => {
+                        clearTimeout(timeout);
+                        resolve();
+                    };
+                    
+                    // 播放失败时
+                    audio.onerror = (e) => {
+                        clearTimeout(timeout);
+                        reject(new Error(`音频播放失败: ${e.message}`));
+                    };
+                    
+                    // 尝试播放
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            clearTimeout(timeout);
+                            reject(error);
+                        });
+                    }
+                });
             } catch (error) {
                 console.warn('音频播放失败，使用备选方案:', error);
                 this.fallbackSpeak(textToSpeak);
             }
-
         } catch (error) {
             console.error('播放语音失败:', error);
             this.fallbackSpeak(text);
         }
     }
 
-    // 添加备选发音方案
+    // 改进备选发音方案
     fallbackSpeak(text) {
         try {
+            console.log('使用备选发音方案:', text);
+            
             // 停止任何正在播放的语音
-            window.speechSynthesis.cancel();
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
 
             // 创建新的语音实例
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ja-JP';
             utterance.rate = 0.9; // 稍微放慢语速
             utterance.pitch = 1;
+            utterance.volume = 1;
             
             // 获取日语声音
-            const voices = window.speechSynthesis.getVoices();
-            const japaneseVoice = voices.find(voice => 
-                voice.lang.includes('ja') || voice.lang.includes('JP')
-            );
-            
-            if (japaneseVoice) {
-                utterance.voice = japaneseVoice;
+            if (window.speechSynthesis && window.speechSynthesis.getVoices) {
+                const voices = window.speechSynthesis.getVoices();
+                console.log('可用语音:', voices.map(v => `${v.name} (${v.lang})`).join(', '));
+                
+                const japaneseVoice = voices.find(voice => 
+                    voice.lang.includes('ja') || voice.lang.includes('JP')
+                );
+                
+                if (japaneseVoice) {
+                    console.log('使用日语语音:', japaneseVoice.name);
+                    utterance.voice = japaneseVoice;
+                } else {
+                    console.log('未找到日语语音，使用默认语音');
+                }
             }
 
             // 播放语音
-            window.speechSynthesis.speak(utterance);
+            if (window.speechSynthesis) {
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.error('浏览器不支持语音合成');
+            }
         } catch (error) {
             console.error('备选发音方案也失败了:', error);
         }
