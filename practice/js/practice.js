@@ -208,11 +208,20 @@ export class PracticeManager {
 
             console.log('Speaking text:', textToSpeak);
 
-            // 创建音频元素
+            // 预加载音频
             const audio = new Audio();
+            audio.preload = 'auto';  // 设置预加载
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
 
+            // 等待音频加载完成
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();  // 开始加载
+            });
+
             try {
+                // 尝试播放
                 await audio.play();
                 console.log('音频播放成功');
             } catch (error) {
@@ -581,8 +590,10 @@ export class PracticeManager {
             console.log('Correct answer!');
             this.showCorrectAnswer(currentQuestion);
             
-            // 播放音频
-            this.speak(currentQuestion.hiragana.replace(/:/g, ''));
+            // 在用户交互后播放音频
+            setTimeout(() => {
+                this.speak(currentQuestion.hiragana.replace(/:/g, ''));
+            }, 100);
             
             // 延迟 2 秒后进入下一题
             setTimeout(() => {

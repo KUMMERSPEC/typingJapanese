@@ -268,8 +268,17 @@ class FlashcardManager {
 
             console.log('Speaking text:', textToSpeak);
 
+            // 预加载音频
             const audio = new Audio();
+            audio.preload = 'auto';  // 设置预加载
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+
+            // 等待音频加载完成
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();  // 开始加载
+            });
 
             try {
                 await audio.play();
