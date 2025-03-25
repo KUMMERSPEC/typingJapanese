@@ -200,6 +200,8 @@ class ReviewManager {
         const current = this.sentences[this.currentIndex];
         const isCorrect = answer === current.hiragana;
         
+        console.log('检查答案:', answer, '正确答案:', current.hiragana, '结果:', isCorrect);
+        
         // 更新复习记录
         statsData.updateReviewProgress(current.id, isCorrect);
 
@@ -207,6 +209,8 @@ class ReviewManager {
             // 显示错误提示
             const inputs = document.querySelectorAll('.split-input');
             inputs.forEach(input => input.classList.add('error'));
+            
+            console.log('答案错误，显示错误提示');
             
             // 1秒后移除错误样式
             setTimeout(() => {
@@ -216,18 +220,22 @@ class ReviewManager {
             return;
         }
 
-        // 答案正确，直接显示下一题
+        console.log('答案正确，准备显示下一题');
+        
+        // 尝试播放声音
         this.speak(current.japanese);
         
-        // 简化答案显示逻辑
+        // 直接跳转到下一题
         setTimeout(() => {
             if (this.currentIndex < this.sentences.length - 1) {
                 this.currentIndex++;
                 this.showQuestion();
+                console.log('已跳转到下一题');
             } else {
                 this.showComplete();
+                console.log('已完成所有题目');
             }
-        }, 1500);
+        }, 1000);
     }
 
     showAnswer(question, isCorrect) {
@@ -341,22 +349,45 @@ class ReviewManager {
                 this.currentAudio = null;
             }
 
-            // 使用 Google Translate TTS API
+            // 尝试使用 Web Speech API 直接播放
+            try {
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                
+                // 获取日语声音
+                const voices = window.speechSynthesis.getVoices();
+                const japaneseVoice = voices.find(voice => 
+                    voice.lang.includes('ja') || voice.lang.includes('JP')
+                );
+                
+                if (japaneseVoice) {
+                    utterance.voice = japaneseVoice;
+                }
+                
+                // 播放语音
+                window.speechSynthesis.speak(utterance);
+                console.log('使用 Web Speech API 播放');
+                
+                return; // 成功播放后直接返回
+            } catch (speechError) {
+                console.warn('Web Speech API 失败，尝试其他方法:', speechError);
+            }
+
+            // 如果 Web Speech API 失败，尝试使用音频文件
             const audio = new Audio();
             this.currentAudio = audio;
             
-            // 设置音频源
-            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(textToSpeak)}&tl=ja&client=tw-ob`;
+            // 尝试使用 Voicerss API (需要替换为您自己的 API 密钥)
+            audio.src = `https://api.voicerss.org/?key=YOUR_API_KEY&hl=ja-jp&src=${encodeURIComponent(textToSpeak)}`;
             
             // 简化播放逻辑
             audio.play().catch(error => {
-                console.warn('Google TTS 播放失败，使用备选方案:', error);
-                this.fallbackSpeak(textToSpeak);
+                console.warn('音频播放失败:', error);
             });
 
         } catch (error) {
             console.error('播放语音失败:', error);
-            this.fallbackSpeak(text);
         }
     }
 
@@ -544,6 +575,13 @@ class ReviewManager {
         const keyboardInput = document.querySelector('.keyboard-maintain');
         if (!keyboardInput) return;
 
+        // 修复无障碍性问题 - 移除 aria-hidden 属性，改用 inert 属性
+        keyboardInput.removeAttribute('aria-hidden');
+        keyboardInput.setAttribute('inert', '');
+        keyboardInput.style.opacity = '0.01';
+        keyboardInput.style.position = 'fixed';
+        keyboardInput.style.pointerEvents = 'none';
+
         // 在每次答案检查后保持键盘焦点
         const maintainKeyboard = () => {
             if (this.currentIndex < this.sentences.length) {
@@ -558,6 +596,9 @@ class ReviewManager {
 
         // 初始聚焦
         keyboardInput.focus();
+        
+        // 记录日志
+        console.log('键盘维持初始化完成');
     }
 
     // 添加移动设备检测
