@@ -383,17 +383,55 @@ class ReviewManager {
                 this.currentAudio = null;
             }
             
-            // 创建一个新的音频元素
-            const audio = new Audio();
-            this.currentAudio = audio;
+            // 使用 Google Translate TTS API
+            try {
+                // 创建一个新的音频元素
+                const audio = new Audio();
+                this.currentAudio = audio;
+                
+                // 使用 Google Translate TTS
+                // 注意：这个 API 没有官方支持，可能随时变化
+                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(textToSpeak)}&tl=ja&client=tw-ob`;
+                
+                // 添加音频加载事件
+                audio.addEventListener('canplaythrough', () => {
+                    console.log('Google TTS 音频已加载完成，准备播放');
+                });
+                
+                // 添加音频错误事件
+                audio.addEventListener('error', (e) => {
+                    console.error('Google TTS 音频加载失败:', e);
+                    this.fallbackToYoudao(textToSpeak);
+                });
+                
+                // 预加载音频
+                audio.load();
+                
+                // 尝试播放
+                await audio.play();
+                console.log('Google TTS 音频播放成功');
+                
+            } catch (googleError) {
+                console.warn('Google TTS 播放失败，尝试备选方案:', googleError);
+                this.fallbackToYoudao(textToSpeak);
+            }
+        } catch (error) {
+            console.error('播放语音失败:', error);
+        }
+    }
+
+    // 回退到有道 API
+    async fallbackToYoudao(text) {
+        try {
+            console.log('使用有道 API 作为备选');
             
-            // 关键修改：对于句子，尝试按单词分割播放
-            if (textToSpeak.length > 10 && textToSpeak.includes('が')) {
-                // 这可能是一个句子，尝试分割成单词
-                console.log('检测到句子，尝试分割成单词播放');
+            // 对于长句子，尝试分割成单词
+            if (text.length > 10) {
+                // 这可能是一个句子，尝试分割成单词播放
+                console.log('检测到长句子，尝试分割成单词播放');
                 
                 // 简单分割，以空格或常见助词为界
-                const parts = textToSpeak.split(/(\s+|が|は|を|に|で|と|も|へ)/);
+                const parts = text.split(/(\s+|が|は|を|に|で|と|も|へ)/);
                 const validParts = parts.filter(part => part.trim().length > 0);
                 
                 console.log('分割后的单词:', validParts);
@@ -426,72 +464,28 @@ class ReviewManager {
             }
             
             // 对于短词，直接使用有道 API
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
-            
-            // 添加音频加载事件
-            audio.addEventListener('canplaythrough', () => {
-                console.log('音频已加载完成，准备播放');
-            });
-            
-            // 添加音频错误事件
-            audio.addEventListener('error', (e) => {
-                console.error('音频加载失败:', e);
-                
-                // 尝试使用备选 API
-                const backupAudio = new Audio();
-                backupAudio.src = `https://fanyi.baidu.com/gettts?lan=jp&text=${encodeURIComponent(textToSpeak)}&spd=3&source=web`;
-                
-                backupAudio.play().catch(backupError => {
-                    console.warn('备选 API 也失败了:', backupError);
-                });
-            });
-            
-            // 预加载音频
-            audio.load();
+            const audio = new Audio();
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
             
             // 尝试播放
-            try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.warn('自动播放失败:', error);
-                
-                // 在页面上显示一个小的播放按钮
-                const soundButton = document.querySelector('.toggle-sound-btn');
-                if (soundButton) {
-                    // 添加闪烁效果提示用户点击
-                    soundButton.classList.add('blink');
-                    setTimeout(() => {
-                        soundButton.classList.remove('blink');
-                    }, 2000);
-                }
-            }
-        } catch (error) {
-            console.error('播放语音失败:', error);
-        }
-    }
-
-    // 使用 Web Speech API 作为备选
-    useFallbackTTS(text) {
-        try {
-            console.log('使用 Web Speech API 播放:', text);
+            await audio.play();
+            console.log('有道 API 播放成功');
             
-            if ('speechSynthesis' in window) {
-                // 停止任何正在播放的语音
-                window.speechSynthesis.cancel();
-                
-                // 创建新的语音实例
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ja-JP';
-                utterance.rate = 0.9;
-                
-                // 播放语音
-                window.speechSynthesis.speak(utterance);
-            } else {
-                console.warn('浏览器不支持语音合成');
+        } catch (youdaoError) {
+            console.warn('有道 API 播放失败:', youdaoError);
+            
+            // 尝试使用 Web Speech API 作为最后的备选
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    window.speechSynthesis.speak(utterance);
+                    console.log('使用 Web Speech API 播放');
+                }
+            } catch (speechError) {
+                console.error('所有播放方法都失败了:', speechError);
             }
-        } catch (error) {
-            console.error('Web Speech API 播放失败:', error);
         }
     }
 
