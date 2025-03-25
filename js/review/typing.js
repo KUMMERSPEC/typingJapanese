@@ -131,9 +131,22 @@ class ReviewManager {
                 isComposing = false;
             });
 
+            // 处理输入事件 - 只在最后一个输入框检查答案
+            input.addEventListener('input', () => {
+                if (!isComposing && unitIndex === units.length - 1) {
+                    // 如果是最后一个输入框，检查所有答案
+                    const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                    const allFilled = allInputs.every(input => input.value.trim() !== '');
+                    if (allFilled) {
+                        const answer = allInputs.map(input => input.value.trim()).join(':');
+                        this.checkAnswer(answer);
+                    }
+                }
+            });
+
             // 处理键盘事件
             input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' || (e.code === 'Space' && !isComposing)) {
                     e.preventDefault();
                     if (unitIndex < units.length - 1) {
                         const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
@@ -150,22 +163,6 @@ class ReviewManager {
                             this.checkAnswer(answer);
                         }
                     }
-                } else if (e.code === 'Space' && !isComposing) {
-                    e.preventDefault();
-                    if (unitIndex < units.length - 1) {
-                        const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
-                        if (nextInput) {
-                            nextInput.focus();
-                        }
-                    }
-                }
-            });
-
-            // 阻止空格键的默认行为
-            input.addEventListener('keypress', (e) => {
-                if (!isComposing && e.code === 'Space') {
-                    e.preventDefault();
-                    return false;
                 }
             });
 
