@@ -198,45 +198,37 @@ export class PracticeManager {
             // 获取当前问题
             const currentQuestion = this.questions[this.currentQuestionIndex];
             
-            // 使用日语原文
-            const textToSpeak = currentQuestion.japanese || text;
+            // 优先使用平假名版本
+            let textToSpeak = currentQuestion.hiragana || currentQuestion.character;
             
-            console.log('准备播放音频:', {
-                text: textToSpeak,
-                length: textToSpeak.length,
-                isMobile: this.isMobile()
-            });
-
-            // 创建音频元素
-            const audio = document.getElementById('practiceAudioPlayer') || document.createElement('audio');
-            audio.id = 'practiceAudioPlayer';
-            
-            if (!document.getElementById('practiceAudioPlayer')) {
-                document.body.appendChild(audio);
+            // 如果是分词类型的问题，移除分隔符
+            if (currentQuestion.type === 'split') {
+                textToSpeak = textToSpeak.replace(/:/g, '');
             }
 
-            // 尝试直接播放完整句子
+            console.log('Speaking text:', textToSpeak);
+
+            // 使用有道词典 API
+            const audio = new Audio();
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+            
+            // 添加错误处理
+            audio.onerror = (error) => {
+                console.error('Audio playback error:', error);
+                this.fallbackSpeak(textToSpeak);  // 使用后备方案
+            };
+
+            // 播放音频
             try {
-                // 使用 type=3 参数来播放句子
-                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(textToSpeak)}`;
-                
-                // 等待音频加载
-                await new Promise((resolve, reject) => {
-                    audio.oncanplaythrough = resolve;
-                    audio.onerror = reject;
-                    audio.load();
-                });
-
                 await audio.play();
-                console.log('句子播放成功');
-
             } catch (error) {
-                console.warn('句子播放失败，尝试分词播放:', error);
-                await this.splitAndPlay(textToSpeak);
+                console.error('Failed to play audio:', error);
+                this.fallbackSpeak(textToSpeak);  // 使用后备方案
             }
 
         } catch (error) {
-            console.error('音频播放失败:', error);
+            console.error('播放语音失败:', error);
+            this.fallbackSpeak(text);  // 使用后备方案
         }
     }
 

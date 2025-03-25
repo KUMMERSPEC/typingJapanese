@@ -447,95 +447,68 @@ class ReviewManager {
             // 获取当前问题
             const currentQuestion = this.sentences[this.currentIndex];
             
-            // 使用日语原文，而不是平假名
-            const textToSpeak = currentQuestion.japanese || text;
+            // 优先使用平假名版本
+            let textToSpeak = currentQuestion.hiragana || text;
             
-            console.log('准备播放音频:', {
-                text: textToSpeak,
-                length: textToSpeak.length,
-                isMobile: this.isMobile()
-            });
+            // 移除分隔符
+            textToSpeak = textToSpeak.replace(/:/g, '');
 
-            // 创建音频元素
-            const audio = document.getElementById('typingAudioPlayer') || document.createElement('audio');
-            audio.id = 'typingAudioPlayer';
+            console.log('Speaking text:', textToSpeak);
+
+            // 使用有道词典 API
+            const audio = new Audio();
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
             
-            if (!document.getElementById('typingAudioPlayer')) {
-                document.body.appendChild(audio);
-            }
+            // 添加错误处理
+            audio.onerror = (error) => {
+                console.error('Audio playback error:', error);
+                this.fallbackSpeak(textToSpeak);
+            };
 
-            // 尝试直接播放完整句子
+            // 播放音频
             try {
-                // 使用 type=3 参数来播放句子
-                audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=3&audio=${encodeURIComponent(textToSpeak)}`;
-                
-                // 等待音频加载
-                await new Promise((resolve, reject) => {
-                    audio.oncanplaythrough = resolve;
-                    audio.onerror = reject;
-                    audio.load();
-                });
-
                 await audio.play();
-                console.log('句子播放成功');
-
             } catch (error) {
-                console.warn('句子播放失败，尝试分词播放:', error);
-                await this.splitAndPlay(textToSpeak);
+                console.error('Failed to play audio:', error);
+                this.fallbackSpeak(textToSpeak);
             }
 
         } catch (error) {
-            console.error('音频播放失败:', error);
+            console.error('播放语音失败:', error);
+            this.fallbackSpeak(text);
         }
     }
 
-    // 添加分词播放方法
-    async splitAndPlay(text) {
+    // 添加后备播放方法
+    fallbackSpeak(text) {
         try {
-            // 分词策略：按照日语语法结构分割
-            const parts = text.split(/([はがをにでとへもの。、！？]+)/).filter(part => part.trim());
-            console.log('分词结果:', parts);
-
-            // 创建一个音频元素用于播放
-            const audio = new Audio();
-            
-            // 依次播放每个部分
-            for (let i = 0; i < parts.length; i++) {
-                const part = parts[i];
-                if (!part.trim()) continue;
-
-                try {
-                    // 对于单词使用 type=1
-                    audio.src = `http://dict.youdao.com/dictvoice?le=jap&type=1&audio=${encodeURIComponent(part)}`;
-                    
-                    // 等待音频加载和播放完成
-                    await new Promise((resolve, reject) => {
-                        audio.oncanplaythrough = () => {
-                            audio.play()
-                                .then(() => {
-                                    audio.onended = resolve;
-                                })
-                                .catch(reject);
-                        };
-                        audio.onerror = reject;
-                        audio.load();
-                    });
-
-                    // 如果不是最后一个部分，添加短暂停顿
-                    if (i < parts.length - 1) {
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                    }
-
-                } catch (error) {
-                    console.warn(`部分 "${part}" 播放失败:`, error);
-                    continue;
-                }
+            if (!('speechSynthesis' in window)) {
+                console.warn('浏览器不支持语音合成');
+                return;
             }
-            
-            console.log('分词播放完成');
 
+            // 取消所有正在进行的语音
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            utterance.lang = 'ja-JP';
+
+            // 获取日语语音
+            const voices = window.speechSynthesis.getVoices();
+            const japaneseVoice = voices.find(voice => 
+                voice.lang.includes('ja') || voice.lang.includes('JP')
+            );
+            
+            if (japaneseVoice) {
+                utterance.voice = japaneseVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
         } catch (error) {
-            console.error('分词播放失败:', error);
+            console.error('后备语音播放失败:', error);
         }
     }
 
