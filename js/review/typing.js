@@ -253,8 +253,9 @@ class ReviewManager {
             answerDisplay.style.display = 'block';
         }
         
-        // 关键修改：使用日语平假名版本，而不是汉字
-        this.playAudioWithUserInteraction(current.hiragana.replace(/:/g, ''));
+        // 确保使用平假名版本播放
+        const textToSpeak = current.hiragana.replace(/:/g, '');
+        this.playAudioWithUserInteraction(textToSpeak);
         
         // 触发答案检查事件
         document.dispatchEvent(new Event('answer-checked'));
@@ -272,275 +273,77 @@ class ReviewManager {
         }, 2000); // 2秒后自动跳转，给用户足够时间看答案
     }
 
-    // 修改 playAudioWithUserInteraction 方法，确保使用正确的文本
+    // 修改 playAudioWithUserInteraction 方法
     async playAudioWithUserInteraction(text) {
         try {
             // 添加详细的调试信息
             console.log('准备播放音频:', {
                 text: text,
-                isJapanese: /[\u3040-\u309F\u30A0-\u30FF]/.test(text), // 检测是否包含日语字符
-                isChinese: /[\u4e00-\u9fa5]/.test(text), // 检测是否包含汉字
-                length: text.length,
-                currentSentence: this.sentences[this.currentIndex]
+                isJapanese: /[\u3040-\u309F\u30A0-\u30FF]/.test(text),
+                isChinese: /[\u4e00-\u9fa5]/.test(text),
+                isMobile: this.isMobile(),
+                platform: navigator.platform,
+                userAgent: navigator.userAgent
             });
-            
-            // 确保使用的是日语文本
-            if (!text || text.match(/[\u4e00-\u9fa5]/)) {
-                console.warn('检测到汉字，尝试使用平假名版本');
-                // 如果传入的是汉字，尝试获取当前句子的平假名版本
-                const current = this.sentences[this.currentIndex];
-                if (current && current.hiragana) {
-                    text = current.hiragana.replace(/:/g, '');
+
+            // 在移动设备上，使用 Web Speech API 作为首选
+            if (this.isMobile()) {
+                try {
+                    if ('speechSynthesis' in window) {
+                        // 停止任何正在播放的语音
+                        window.speechSynthesis.cancel();
+                        
+                        // 创建新的语音实例
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = 'ja-JP';
+                        utterance.rate = 0.9;
+                        
+                        // 获取日语声音
+                        const voices = window.speechSynthesis.getVoices();
+                        const japaneseVoice = voices.find(voice => 
+                            voice.lang.includes('ja') || voice.lang.includes('JP')
+                        );
+                        
+                        if (japaneseVoice) {
+                            utterance.voice = japaneseVoice;
+                        }
+                        
+                        // 播放语音
+                        window.speechSynthesis.speak(utterance);
+                        console.log('Web Speech API 播放成功');
+                        return;
+                    }
+                } catch (speechError) {
+                    console.warn('Web Speech API 播放失败:', speechError);
                 }
             }
-            
-            // 停止任何正在播放的音频
-            if (this.currentAudio) {
-                this.currentAudio.pause();
-                this.currentAudio = null;
-            }
-            
-            // 创建一个可见的音频元素，这有助于在某些移动设备上触发播放
-            const audioElement = document.createElement('audio');
-            audioElement.controls = true; // 显示控件
-            audioElement.style.position = 'fixed';
-            audioElement.style.bottom = '10px';
-            audioElement.style.left = '10px';
-            audioElement.style.zIndex = '9999';
-            audioElement.style.width = '80px';
-            audioElement.style.height = '30px';
-            
-            // 添加到页面
-            document.body.appendChild(audioElement);
-            
-            // 设置音频源
-            audioElement.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
+
+            // 如果 Web Speech API 失败或不是移动设备，尝试使用有道 API
+            const audio = new Audio();
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
             
             // 添加事件监听
-            audioElement.addEventListener('canplaythrough', () => {
-                console.log('音频已加载完成，准备播放');
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();
             });
-            
-            audioElement.addEventListener('play', () => {
-                console.log('音频开始播放');
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                console.log('音频播放完成');
-                // 播放完成后移除元素
-                setTimeout(() => {
-                    if (document.body.contains(audioElement)) {
-                        document.body.removeChild(audioElement);
-                    }
-                }, 500);
-            });
-            
-            audioElement.addEventListener('error', (e) => {
-                console.error('音频播放出错:', e);
-                // 尝试使用 Google TTS
-                this.tryGoogleTTSWithVisibleControls(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            });
-            
+
             // 尝试播放
-            try {
-                // 先加载
-                audioElement.load();
-                // 然后播放
-                const playPromise = audioElement.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('有道 API 音频播放成功（用户交互触发）');
-                        // 播放成功后3秒移除控件
-                        setTimeout(() => {
-                            if (document.body.contains(audioElement)) {
-                                document.body.removeChild(audioElement);
-                            }
-                        }, 3000);
-                    }).catch(error => {
-                        console.warn('有道 API 播放失败，尝试 Google TTS:', error);
-                        this.tryGoogleTTSWithVisibleControls(text);
-                        // 移除出错的元素
-                        if (document.body.contains(audioElement)) {
-                            document.body.removeChild(audioElement);
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('播放尝试失败:', error);
-                this.tryGoogleTTSWithVisibleControls(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            }
+            await audio.play();
+            console.log('有道 API 音频播放成功');
+
         } catch (error) {
             console.error('音频播放失败:', error);
-        }
-    }
-
-    // 使用可见控件的 Google TTS
-    async tryGoogleTTSWithVisibleControls(text) {
-        try {
-            console.log('尝试使用 Google TTS 播放:', text);
-            
-            // 创建一个可见的音频元素
-            const audioElement = document.createElement('audio');
-            audioElement.controls = true;
-            audioElement.style.position = 'fixed';
-            audioElement.style.bottom = '10px';
-            audioElement.style.left = '10px';
-            audioElement.style.zIndex = '9999';
-            audioElement.style.width = '80px';
-            audioElement.style.height = '30px';
-            
-            // 添加到页面
-            document.body.appendChild(audioElement);
-            
-            // 设置音频源
-            audioElement.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
-            
-            // 添加事件监听
-            audioElement.addEventListener('canplaythrough', () => {
-                console.log('Google TTS 音频已加载完成，准备播放');
-            });
-            
-            audioElement.addEventListener('play', () => {
-                console.log('Google TTS 音频开始播放');
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                console.log('Google TTS 音频播放完成');
-                // 播放完成后移除元素
-                setTimeout(() => {
-                    if (document.body.contains(audioElement)) {
-                        document.body.removeChild(audioElement);
-                    }
-                }, 500);
-            });
-            
-            audioElement.addEventListener('error', (e) => {
-                console.error('Google TTS 音频播放出错:', e);
-                // 尝试使用 Web Speech API
-                this.tryWebSpeechWithFeedback(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            });
-            
-            // 尝试播放
+            // 最后尝试 Google TTS
             try {
-                // 先加载
-                audioElement.load();
-                // 然后播放
-                const playPromise = audioElement.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Google TTS 音频播放成功');
-                        // 播放成功后3秒移除控件
-                        setTimeout(() => {
-                            if (document.body.contains(audioElement)) {
-                                document.body.removeChild(audioElement);
-                            }
-                        }, 3000);
-                    }).catch(error => {
-                        console.warn('Google TTS 播放失败，尝试 Web Speech API:', error);
-                        this.tryWebSpeechWithFeedback(text);
-                        // 移除出错的元素
-                        if (document.body.contains(audioElement)) {
-                            document.body.removeChild(audioElement);
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('Google TTS 播放尝试失败:', error);
-                this.tryWebSpeechWithFeedback(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
+                const googleAudio = new Audio();
+                googleAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
+                await googleAudio.play();
+                console.log('Google TTS 播放成功');
+            } catch (googleError) {
+                console.error('所有播放方法都失败了:', googleError);
             }
-        } catch (error) {
-            console.error('Google TTS 播放失败:', error);
-            this.tryWebSpeechWithFeedback(text);
-        }
-    }
-
-    // 使用 Web Speech API 并提供视觉反馈
-    tryWebSpeechWithFeedback(text) {
-        try {
-            console.log('尝试使用 Web Speech API 播放:', text);
-            
-            // 创建一个视觉反馈元素
-            const feedbackElement = document.createElement('div');
-            feedbackElement.textContent = '正在使用浏览器语音合成...';
-            feedbackElement.style.position = 'fixed';
-            feedbackElement.style.bottom = '10px';
-            feedbackElement.style.left = '10px';
-            feedbackElement.style.backgroundColor = 'rgba(0,0,0,0.7)';
-            feedbackElement.style.color = 'white';
-            feedbackElement.style.padding = '5px 10px';
-            feedbackElement.style.borderRadius = '5px';
-            feedbackElement.style.zIndex = '9999';
-            
-            // 添加到页面
-            document.body.appendChild(feedbackElement);
-            
-            if ('speechSynthesis' in window) {
-                // 停止任何正在播放的语音
-                window.speechSynthesis.cancel();
-                
-                // 创建新的语音实例
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ja-JP';
-                utterance.rate = 0.9;
-                
-                // 添加事件监听
-                utterance.onstart = () => {
-                    console.log('Web Speech API 开始播放');
-                    feedbackElement.textContent = '正在播放...';
-                };
-                
-                utterance.onend = () => {
-                    console.log('Web Speech API 播放完成');
-                    // 播放完成后移除元素
-                    setTimeout(() => {
-                        if (document.body.contains(feedbackElement)) {
-                            document.body.removeChild(feedbackElement);
-                        }
-                    }, 500);
-                };
-                
-                utterance.onerror = (e) => {
-                    console.error('Web Speech API 播放出错:', e);
-                    feedbackElement.textContent = '语音合成失败';
-                    // 3秒后移除元素
-                    setTimeout(() => {
-                        if (document.body.contains(feedbackElement)) {
-                            document.body.removeChild(feedbackElement);
-                        }
-                    }, 3000);
-                };
-                
-                // 播放语音
-                window.speechSynthesis.speak(utterance);
-                console.log('Web Speech API 播放请求已发送');
-            } else {
-                console.warn('浏览器不支持 Web Speech API');
-                feedbackElement.textContent = '您的浏览器不支持语音合成';
-                // 3秒后移除元素
-                setTimeout(() => {
-                    if (document.body.contains(feedbackElement)) {
-                        document.body.removeChild(feedbackElement);
-                    }
-                }, 3000);
-            }
-        } catch (error) {
-            console.error('Web Speech API 播放失败:', error);
         }
     }
 

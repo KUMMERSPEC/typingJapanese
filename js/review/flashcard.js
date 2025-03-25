@@ -261,38 +261,73 @@ class FlashcardManager {
     }
 
     // 播放日语语音
-    playJapanese(text) {
-        if (!text) return;
-        
-        const currentSentence = this.sentences[this.currentIndex];
-        if (currentSentence && currentSentence.audioUrl && currentSentence.audioUrl !== null) {
-            console.log('使用音频 URL 播放:', currentSentence.audioUrl);
-            const audio = new Audio(currentSentence.audioUrl);
-            audio.play().catch(error => {
-                console.error('播放音频失败:', error);
-                // 如果播放失败，尝试使用 TTS
-                this.speakJapanese(text);
+    async speak(text, isUserTriggered = false) {
+        try {
+            // 确保使用平假名版本
+            const currentCard = this.sentences[this.currentIndex];
+            const textToSpeak = currentCard.hiragana || text;
+            
+            console.log('闪卡播放音频:', {
+                text: textToSpeak,
+                isUserTriggered,
+                mode: this.mode,
+                isMobile: this.isMobile()
             });
-        } else {
-            // 如果没有音频 URL，使用 TTS
-            console.log('没有音频 URL，使用 TTS 播放');
-            this.speakJapanese(text);
+
+            // 创建音频元素
+            const audio = document.getElementById('audioPlayer') || document.createElement('audio');
+            audio.id = 'audioPlayer';
+            
+            // 确保音频元素在DOM中
+            if (!document.getElementById('audioPlayer')) {
+                document.body.appendChild(audio);
+            }
+
+            // 设置音频源
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
+            
+            // 尝试播放
+            try {
+                await audio.play();
+                console.log('音频播放成功');
+            } catch (error) {
+                console.warn('播放失败，尝试模拟用户交互:', error);
+                // 如果播放失败，模拟用户交互并重试
+                this.simulateUserInteraction();
+                try {
+                    await audio.play();
+                    console.log('模拟用户交互后播放成功');
+                } catch (retryError) {
+                    console.error('模拟用户交互后播放仍然失败:', retryError);
+                }
+            }
+
+        } catch (error) {
+            console.error('音频播放失败:', error);
         }
     }
 
-    // 使用浏览器 TTS 功能播放语音
-    speakJapanese(text) {
-        if ('speechSynthesis' in window) {
-            try {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ja-JP';
-                window.speechSynthesis.speak(utterance);
-            } catch (error) {
-                console.error('TTS 失败:', error);
-            }
-        } else {
-            console.warn('浏览器不支持语音合成');
-        }
+    // 添加模拟用户交互的方法
+    simulateUserInteraction() {
+        // 创建一个临时的、不可见的按钮
+        const tempButton = document.createElement('button');
+        tempButton.style.position = 'fixed';
+        tempButton.style.opacity = '0';
+        tempButton.style.pointerEvents = 'none';
+        document.body.appendChild(tempButton);
+
+        // 模拟点击
+        tempButton.click();
+
+        // 移除临时按钮
+        document.body.removeChild(tempButton);
+    }
+
+    // 添加移动设备检测方法
+    isMobile() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+               ('ontouchstart' in window) ||
+               (navigator.maxTouchPoints > 0);
     }
 
     bindEvents() {
@@ -311,10 +346,10 @@ class FlashcardManager {
                 const currentSentence = this.sentences[this.currentIndex];
                 if (this.mode === 'cn-jp') {
                     // 在中文到日文模式下，播放背面的日文
-                    this.playJapanese(currentSentence.japanese);
+                    this.speak(currentSentence.japanese);
                 } else {
                     // 在日文到中文模式下，播放正面的日文
-                    this.playJapanese(currentSentence.japanese);
+                    this.speak(currentSentence.japanese);
                 }
             });
         }
@@ -397,15 +432,14 @@ class FlashcardManager {
         const front = document.querySelector('.card-front');
         const back = document.querySelector('.card-back');
         
-        // 根据选定的模式显示内容
         if (this.mode === 'meaning') {
             front.textContent = current.meaning;
             back.textContent = current.japanese;
         } else {
             front.textContent = current.japanese;
             back.textContent = current.meaning;
-            // 如果正面是日语，立即朗读
-            this.speakJapanese(current.japanese);
+            // 如果正面是日语，尝试自动朗读（不标记为用户触发）
+            this.speak(current.japanese, false);
         }
 
         // 重置卡片状态
@@ -423,10 +457,18 @@ class FlashcardManager {
         
         card.classList.toggle('flipped');
 
-        // 如果是中文->日文模式，且翻到背面，播放日语
-        if (this.mode === 'cn-jp' && card.classList.contains('flipped')) {
-            const current = this.sentences[this.currentIndex];
-            this.speakJapanese(current.japanese);
+        // 获取当前句子
+        const currentSentence = this.sentences[this.currentIndex];
+        
+        // 根据模式播放音频
+        if (card.classList.contains('flipped')) {
+            if (this.mode === 'cn-jp') {
+                // 在中文到日文模式下，播放背面的日文
+                this.speak(currentSentence.japanese);
+            } else {
+                // 在日文到中文模式下，播放正面的日文
+                this.speak(currentSentence.japanese);
+            }
         }
     }
 
