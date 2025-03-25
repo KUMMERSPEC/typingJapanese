@@ -261,7 +261,7 @@ class FlashcardManager {
     }
 
     // 播放日语语音
-    async speak(text, isUserTriggered = false) {
+    async speak(text) {
         try {
             // 确保使用平假名版本
             const currentCard = this.sentences[this.currentIndex];
@@ -269,39 +269,54 @@ class FlashcardManager {
             
             console.log('闪卡播放音频:', {
                 text: textToSpeak,
-                isUserTriggered,
-                mode: this.mode,
                 isMobile: this.isMobile()
             });
 
             // 创建音频元素
-            const audio = document.getElementById('audioPlayer') || document.createElement('audio');
-            audio.id = 'audioPlayer';
+            const audio = document.getElementById('flashcardAudioPlayer') || document.createElement('audio');
+            audio.id = 'flashcardAudioPlayer';
             
-            // 确保音频元素在DOM中
-            if (!document.getElementById('audioPlayer')) {
+            if (!document.getElementById('flashcardAudioPlayer')) {
                 document.body.appendChild(audio);
             }
 
             // 设置音频源
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
             
+            // 添加加载事件
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();
+            });
+
             // 尝试播放
             try {
                 await audio.play();
                 console.log('音频播放成功');
             } catch (error) {
-                console.warn('播放失败，尝试模拟用户交互:', error);
-                // 如果播放失败，模拟用户交互并重试
-                this.simulateUserInteraction();
-                try {
-                    await audio.play();
-                    console.log('模拟用户交互后播放成功');
-                } catch (retryError) {
-                    console.error('模拟用户交互后播放仍然失败:', retryError);
+                console.warn('播放失败，尝试用户交互方式:', error);
+                
+                // 创建一个临时的播放按钮（如果还没有）
+                if (!document.getElementById('tempPlayButton')) {
+                    const playButton = document.createElement('button');
+                    playButton.id = 'tempPlayButton';
+                    playButton.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:9999;padding:10px;background:#4CAF50;color:white;border:none;border-radius:5px;';
+                    playButton.textContent = '点击播放';
+                    document.body.appendChild(playButton);
+
+                    // 点击按钮播放
+                    playButton.onclick = async () => {
+                        try {
+                            await audio.play();
+                            console.log('通过按钮触发播放成功');
+                            document.body.removeChild(playButton);
+                        } catch (buttonError) {
+                            console.error('按钮触发播放失败:', buttonError);
+                        }
+                    };
                 }
             }
-
         } catch (error) {
             console.error('音频播放失败:', error);
         }

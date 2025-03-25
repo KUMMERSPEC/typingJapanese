@@ -1549,261 +1549,52 @@ export class PracticeManager {
     // 新增方法：与用户交互直接关联的音频播放
     async playAudioWithUserInteraction(text) {
         try {
-            console.log('通过用户交互播放音频:', text);
+            console.log('准备播放音频:', text);
             
-            // 停止任何正在播放的音频
-            if (this.currentAudio) {
-                this.currentAudio.pause();
-                this.currentAudio = null;
+            // 创建音频元素
+            const audio = document.getElementById('practiceAudioPlayer') || document.createElement('audio');
+            audio.id = 'practiceAudioPlayer';
+            
+            if (!document.getElementById('practiceAudioPlayer')) {
+                document.body.appendChild(audio);
             }
-            
-            // 创建一个可见的音频元素，这有助于在某些移动设备上触发播放
-            const audioElement = document.createElement('audio');
-            audioElement.controls = true; // 显示控件
-            audioElement.style.position = 'fixed';
-            audioElement.style.bottom = '10px';
-            audioElement.style.left = '10px';
-            audioElement.style.zIndex = '9999';
-            audioElement.style.width = '80px';
-            audioElement.style.height = '30px';
-            
-            // 添加到页面
-            document.body.appendChild(audioElement);
-            
-            // 关键修改：使用 base64 编码的音频数据，避免跨域问题
-            // 这需要先获取音频数据，然后转换为 base64
-            try {
-                // 尝试使用 fetch 获取音频数据
-                const response = await fetch(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`, {
-                    mode: 'no-cors' // 尝试绕过 CORS 限制
-                });
-                
-                // 如果成功获取数据，转换为 base64
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onloadend = function() {
-                        const base64data = reader.result;
-                        audioElement.src = base64data;
-                        audioElement.play().catch(error => {
-                            console.error('Base64 音频播放失败:', error);
-                        });
-                    };
-                } else {
-                    // 如果获取失败，直接设置 src
-                    audioElement.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
-                    audioElement.load();
-                    audioElement.play().catch(error => {
-                        console.error('直接设置 src 播放失败:', error);
-                        this.tryGoogleTTSWithVisibleControls(text);
-                    });
-                }
-            } catch (fetchError) {
-                console.error('获取音频数据失败:', fetchError);
-                
-                // 直接设置 src
-                audioElement.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
-                
-                // 添加事件监听
-                audioElement.addEventListener('canplaythrough', () => {
-                    console.log('音频已加载完成，准备播放');
-                    // 尝试播放
-                    audioElement.play().catch(playError => {
-                        console.error('音频播放失败:', playError);
-                        this.tryGoogleTTSWithVisibleControls(text);
-                    });
-                });
-                
-                audioElement.addEventListener('error', (e) => {
-                    console.error('音频加载失败:', e);
-                    this.tryGoogleTTSWithVisibleControls(text);
-                    if (document.body.contains(audioElement)) {
-                        document.body.removeChild(audioElement);
-                    }
-                });
-                
-                // 预加载音频
-                audioElement.load();
-            }
-            
-            // 添加其他事件监听
-            audioElement.addEventListener('play', () => {
-                console.log('音频开始播放');
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                console.log('音频播放完成');
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            });
-            
-        } catch (error) {
-            console.error('音频播放失败:', error);
-            this.tryGoogleTTSWithVisibleControls(text);
-        }
-    }
 
-    // 使用可见控件的 Google TTS
-    async tryGoogleTTSWithVisibleControls(text) {
-        try {
-            console.log('尝试使用 Google TTS 播放:', text);
-            
-            // 创建一个可见的音频元素
-            const audioElement = document.createElement('audio');
-            audioElement.controls = true;
-            audioElement.style.position = 'fixed';
-            audioElement.style.bottom = '10px';
-            audioElement.style.left = '10px';
-            audioElement.style.zIndex = '9999';
-            audioElement.style.width = '80px';
-            audioElement.style.height = '30px';
-            
-            // 添加到页面
-            document.body.appendChild(audioElement);
-            
             // 设置音频源
-            audioElement.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
             
-            // 添加事件监听
-            audioElement.addEventListener('canplaythrough', () => {
-                console.log('Google TTS 音频已加载完成，准备播放');
+            // 添加加载事件
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();
             });
-            
-            audioElement.addEventListener('play', () => {
-                console.log('Google TTS 音频开始播放');
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                console.log('Google TTS 音频播放完成');
-                // 播放完成后移除元素
-                setTimeout(() => {
-                    if (document.body.contains(audioElement)) {
-                        document.body.removeChild(audioElement);
-                    }
-                }, 500);
-            });
-            
-            audioElement.addEventListener('error', (e) => {
-                console.error('Google TTS 音频播放出错:', e);
-                // 尝试使用 Web Speech API
-                this.tryWebSpeechWithFeedback(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            });
-            
+
             // 尝试播放
             try {
-                // 先加载
-                audioElement.load();
-                // 然后播放
-                const playPromise = audioElement.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Google TTS 音频播放成功');
-                        // 播放成功后3秒移除控件
-                        setTimeout(() => {
-                            if (document.body.contains(audioElement)) {
-                                document.body.removeChild(audioElement);
-                            }
-                        }, 3000);
-                    }).catch(error => {
-                        console.warn('Google TTS 播放失败，尝试 Web Speech API:', error);
-                        this.tryWebSpeechWithFeedback(text);
-                        // 移除出错的元素
-                        if (document.body.contains(audioElement)) {
-                            document.body.removeChild(audioElement);
-                        }
-                    });
-                }
+                await audio.play();
+                console.log('音频播放成功');
             } catch (error) {
-                console.error('Google TTS 播放尝试失败:', error);
-                this.tryWebSpeechWithFeedback(text);
-                // 移除出错的元素
-                if (document.body.contains(audioElement)) {
-                    document.body.removeChild(audioElement);
-                }
-            }
-        } catch (error) {
-            console.error('Google TTS 播放失败:', error);
-            this.tryWebSpeechWithFeedback(text);
-        }
-    }
+                console.warn('播放失败，尝试用户交互方式:', error);
+                
+                // 创建一个临时的播放按钮
+                const playButton = document.createElement('button');
+                playButton.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:9999;padding:10px;background:#4CAF50;color:white;border:none;border-radius:5px;';
+                playButton.textContent = '点击播放';
+                document.body.appendChild(playButton);
 
-    // 使用 Web Speech API 并提供视觉反馈
-    tryWebSpeechWithFeedback(text) {
-        try {
-            console.log('尝试使用 Web Speech API 播放:', text);
-            
-            // 创建一个视觉反馈元素
-            const feedbackElement = document.createElement('div');
-            feedbackElement.textContent = '正在使用浏览器语音合成...';
-            feedbackElement.style.position = 'fixed';
-            feedbackElement.style.bottom = '10px';
-            feedbackElement.style.left = '10px';
-            feedbackElement.style.backgroundColor = 'rgba(0,0,0,0.7)';
-            feedbackElement.style.color = 'white';
-            feedbackElement.style.padding = '5px 10px';
-            feedbackElement.style.borderRadius = '5px';
-            feedbackElement.style.zIndex = '9999';
-            
-            // 添加到页面
-            document.body.appendChild(feedbackElement);
-            
-            if ('speechSynthesis' in window) {
-                // 停止任何正在播放的语音
-                window.speechSynthesis.cancel();
-                
-                // 创建新的语音实例
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ja-JP';
-                utterance.rate = 0.9;
-                
-                // 添加事件监听
-                utterance.onstart = () => {
-                    console.log('Web Speech API 开始播放');
-                    feedbackElement.textContent = '正在播放...';
-                };
-                
-                utterance.onend = () => {
-                    console.log('Web Speech API 播放完成');
-                    // 播放完成后移除元素
-                    setTimeout(() => {
-                        if (document.body.contains(feedbackElement)) {
-                            document.body.removeChild(feedbackElement);
-                        }
-                    }, 500);
-                };
-                
-                utterance.onerror = (e) => {
-                    console.error('Web Speech API 播放出错:', e);
-                    feedbackElement.textContent = '语音合成失败';
-                    // 3秒后移除元素
-                    setTimeout(() => {
-                        if (document.body.contains(feedbackElement)) {
-                            document.body.removeChild(feedbackElement);
-                        }
-                    }, 3000);
-                };
-                
-                // 播放语音
-                window.speechSynthesis.speak(utterance);
-                console.log('Web Speech API 播放请求已发送');
-            } else {
-                console.warn('浏览器不支持 Web Speech API');
-                feedbackElement.textContent = '您的浏览器不支持语音合成';
-                // 3秒后移除元素
-                setTimeout(() => {
-                    if (document.body.contains(feedbackElement)) {
-                        document.body.removeChild(feedbackElement);
+                // 点击按钮播放
+                playButton.onclick = async () => {
+                    try {
+                        await audio.play();
+                        console.log('通过按钮触发播放成功');
+                        document.body.removeChild(playButton);
+                    } catch (buttonError) {
+                        console.error('按钮触发播放失败:', buttonError);
                     }
-                }, 3000);
+                };
             }
         } catch (error) {
-            console.error('Web Speech API 播放失败:', error);
+            console.error('音频播放失败:', error);
         }
     }
 }

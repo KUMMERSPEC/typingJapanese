@@ -443,9 +443,60 @@ class ReviewManager {
     }
 
     async speak(text) {
-        // 这个方法现在只作为备用，不再直接调用
-        console.log('备用音频播放方法被调用:', text);
-        this.playAudioWithUserInteraction(text);
+        try {
+            // 获取当前问题
+            const currentQuestion = this.sentences[this.currentIndex];
+            
+            // 始终使用平假名版本，移除分隔符
+            let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
+            
+            console.log('准备播放音频:', {
+                original: text,
+                hiragana: textToSpeak,
+                isMobile: this.isMobile()
+            });
+
+            // 创建音频元素
+            const audio = document.getElementById('audioPlayer') || document.createElement('audio');
+            audio.id = 'audioPlayer';
+            
+            if (!document.getElementById('audioPlayer')) {
+                document.body.appendChild(audio);
+            }
+
+            // 设置音频源
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
+            
+            // 在移动设备上，需要用户交互触发
+            if (this.isMobile()) {
+                // 创建一个临时的播放按钮
+                const playButton = document.createElement('button');
+                playButton.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:9999;';
+                playButton.textContent = '播放';
+                document.body.appendChild(playButton);
+
+                // 点击按钮播放
+                playButton.onclick = async () => {
+                    try {
+                        await audio.play();
+                        console.log('音频播放成功');
+                        document.body.removeChild(playButton);
+                    } catch (error) {
+                        console.error('播放失败:', error);
+                    }
+                };
+            } else {
+                // 桌面设备直接播放
+                try {
+                    await audio.play();
+                    console.log('音频播放成功');
+                } catch (error) {
+                    console.error('播放失败:', error);
+                }
+            }
+        } catch (error) {
+            console.error('音频播放失败:', error);
+        }
     }
 
     showComplete() {
