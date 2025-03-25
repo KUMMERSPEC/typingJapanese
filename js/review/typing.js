@@ -5,6 +5,7 @@ class ReviewManager {
         this.currentIndex = 0;
         this.sentences = [];
         this.questionStartTime = null;
+        this.logs = [];
         this.init();
         this.initKeyboardMaintain();
     }
@@ -14,20 +15,15 @@ class ReviewManager {
             // 从 sessionStorage 获取复习句子
             const savedSentences = sessionStorage.getItem('reviewSentences');
             if (!savedSentences) {
-                alert('没有找到需要复习的句子，返回首页');
                 window.location.href = '../';
                 return;
             }
 
             this.sentences = JSON.parse(savedSentences);
-            console.log('Loaded review sentences:', this.sentences);
-
+            
             // 更新总数显示
-            const totalElement = document.querySelector('.progress .total');
-            if (totalElement) {
-                totalElement.textContent = this.sentences.length;
-            }
-
+            document.querySelector('.progress .total').textContent = this.sentences.length;
+            
             // 显示第一个句子
             this.showQuestion();
 
@@ -204,61 +200,34 @@ class ReviewManager {
         const current = this.sentences[this.currentIndex];
         const isCorrect = answer === current.hiragana;
         
-        // 计算响应时间
-        const responseTime = Date.now() - this.questionStartTime;
-        
-        // 更新复习记录，包含响应时间和提示使用情况
-        statsData.updateReviewProgress(
-            current.id, 
-            isCorrect
-        );
+        // 更新复习记录
+        statsData.updateReviewProgress(current.id, isCorrect);
 
         if (!isCorrect) {
-            // 显示错误提示，只标记错误的输入框
+            // 显示错误提示
             const inputs = document.querySelectorAll('.split-input');
-            const correctUnits = current.hiragana.split(':');
-            const answerUnits = answer.split(':');
-
-            inputs.forEach((input, index) => {
-                if (answerUnits[index] !== correctUnits[index]) {
-                    input.classList.add('error');
-                }
-            });
+            inputs.forEach(input => input.classList.add('error'));
             
             // 1秒后移除错误样式
             setTimeout(() => {
-                inputs.forEach(input => {
-                    input.classList.remove('error');
-                });
+                inputs.forEach(input => input.classList.remove('error'));
             }, 1000);
             
             return;
         }
 
-        // 答案正确时朗读句子
+        // 答案正确，直接显示下一题
         this.speak(current.japanese);
-
-        // 显示答案
-        this.showAnswer(current, isCorrect);
-
-        // 触发答案检查事件
-        document.dispatchEvent(new Event('answer-checked'));
         
-        // 确保在移动设备上也能正确显示答案和跳转
-        if (this.isMobile()) {
-            // 强制显示答案区域
-            const answerDisplay = document.querySelector('.answer-display');
-            if (answerDisplay) {
-                answerDisplay.classList.add('show');
-                answerDisplay.style.display = 'block';
+        // 简化答案显示逻辑
+        setTimeout(() => {
+            if (this.currentIndex < this.sentences.length - 1) {
+                this.currentIndex++;
+                this.showQuestion();
+            } else {
+                this.showComplete();
             }
-            
-            // 确保下一题按钮可见
-            const nextButton = document.querySelector('.next-btn');
-            if (nextButton) {
-                nextButton.style.display = 'block';
-            }
-        }
+        }, 1500);
     }
 
     showAnswer(question, isCorrect) {
@@ -364,58 +333,26 @@ class ReviewManager {
             // 始终使用平假名版本，移除分隔符
             let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
             
+            console.log('准备播放音频:', textToSpeak);
+            
             // 创建音频元素前先停止之前的音频
             if (this.currentAudio) {
                 this.currentAudio.pause();
                 this.currentAudio = null;
             }
 
-            // 使用有道词典 API
+            // 使用 Google Translate TTS API
             const audio = new Audio();
             this.currentAudio = audio;
             
-            // 设置音频源之前添加事件监听
-            audio.addEventListener('error', () => {
-                console.warn('有道发音失败，使用备选方案');
+            // 设置音频源
+            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(textToSpeak)}&tl=ja&client=tw-ob`;
+            
+            // 简化播放逻辑
+            audio.play().catch(error => {
+                console.warn('Google TTS 播放失败，使用备选方案:', error);
                 this.fallbackSpeak(textToSpeak);
             });
-
-            // 设置音频源 - 使用不同的参数
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=2`;
-            
-            // 添加加载事件
-            audio.addEventListener('canplaythrough', () => {
-                console.log('音频已加载完成，准备播放');
-            });
-            
-            // 添加播放事件
-            audio.addEventListener('play', () => {
-                console.log('音频开始播放');
-            });
-            
-            // 添加结束事件
-            audio.addEventListener('ended', () => {
-                console.log('音频播放结束');
-            });
-            
-            // 尝试播放
-            try {
-                // 在移动设备上，需要用户交互才能自动播放
-                // 确保音频已加载
-                audio.load();
-                
-                // 尝试播放
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.warn('音频播放失败，使用备选方案:', error);
-                        this.fallbackSpeak(textToSpeak);
-                    });
-                }
-            } catch (error) {
-                console.warn('音频播放失败，使用备选方案:', error);
-                this.fallbackSpeak(textToSpeak);
-            }
 
         } catch (error) {
             console.error('播放语音失败:', error);
@@ -628,6 +565,48 @@ class ReviewManager {
         return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                ('ontouchstart' in window) ||
                (navigator.maxTouchPoints > 0);
+    }
+
+    // 添加日志方法
+    log(message, data) {
+        const logEntry = {
+            time: new Date().toISOString(),
+            message,
+            data
+        };
+        this.logs.push(logEntry);
+        console.log(`[LOG] ${message}`, data);
+        
+        // 更新日志显示
+        this.updateLogDisplay();
+    }
+
+    // 显示日志
+    updateLogDisplay() {
+        // 检查是否存在日志显示区域
+        let logDisplay = document.getElementById('debug-log');
+        if (!logDisplay) {
+            // 创建日志显示区域
+            logDisplay = document.createElement('div');
+            logDisplay.id = 'debug-log';
+            logDisplay.style.position = 'fixed';
+            logDisplay.style.bottom = '10px';
+            logDisplay.style.right = '10px';
+            logDisplay.style.width = '300px';
+            logDisplay.style.maxHeight = '200px';
+            logDisplay.style.overflow = 'auto';
+            logDisplay.style.background = 'rgba(0,0,0,0.7)';
+            logDisplay.style.color = 'white';
+            logDisplay.style.padding = '10px';
+            logDisplay.style.fontSize = '12px';
+            logDisplay.style.zIndex = '9999';
+            document.body.appendChild(logDisplay);
+        }
+        
+        // 更新日志内容
+        logDisplay.innerHTML = this.logs.slice(-10).map(entry => 
+            `<div>${entry.time.split('T')[1].split('.')[0]} - ${entry.message}</div>`
+        ).join('');
     }
 }
 
