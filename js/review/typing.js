@@ -444,32 +444,20 @@ class ReviewManager {
 
     async speak(text) {
         try {
-            // 获取当前问题
             const currentQuestion = this.sentences[this.currentIndex];
-            
-            // 优先使用平假名版本
             let textToSpeak = currentQuestion.hiragana || text;
-            
-            // 移除分隔符
             textToSpeak = textToSpeak.replace(/:/g, '');
 
             console.log('Speaking text:', textToSpeak);
 
-            // 使用有道词典 API
             const audio = new Audio();
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
-            
-            // 添加错误处理
-            audio.onerror = (error) => {
-                console.error('Audio playback error:', error);
-                this.fallbackSpeak(textToSpeak);
-            };
 
-            // 播放音频
             try {
                 await audio.play();
+                console.log('音频播放成功');
             } catch (error) {
-                console.error('Failed to play audio:', error);
+                console.error('播放失败，尝试后备方案:', error);
                 this.fallbackSpeak(textToSpeak);
             }
 

@@ -263,29 +263,19 @@ class FlashcardManager {
     // 播放日语语音
     async speak(text) {
         try {
-            // 获取当前卡片
             const currentCard = this.sentences[this.currentIndex];
-            
-            // 使用日语原文
             const textToSpeak = currentCard.japanese || text;
 
             console.log('Speaking text:', textToSpeak);
 
-            // 使用有道词典 API
             const audio = new Audio();
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
-            
-            // 添加错误处理
-            audio.onerror = (error) => {
-                console.error('Audio playback error:', error);
-                this.fallbackSpeak(textToSpeak);
-            };
 
-            // 播放音频
             try {
                 await audio.play();
+                console.log('音频播放成功');
             } catch (error) {
-                console.error('Failed to play audio:', error);
+                console.error('播放失败，尝试后备方案:', error);
                 this.fallbackSpeak(textToSpeak);
             }
 
