@@ -263,11 +263,13 @@ class FlashcardManager {
     // 播放日语语音
     async speak(text) {
         try {
-            // 确保使用正确的文本
+            // 获取当前卡片
             const currentCard = this.sentences[this.currentIndex];
-            const textToSpeak = currentCard.japanese || text;
             
-            console.log('闪卡播放音频:', textToSpeak);
+            // 使用日语原文
+            const textToSpeak = currentCard.japanese || text;
+
+            console.log('Speaking text:', textToSpeak);
 
             // 使用有道词典 API
             const audio = new Audio();
