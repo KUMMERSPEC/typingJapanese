@@ -253,8 +253,9 @@ class ReviewManager {
             answerDisplay.style.display = 'block';
         }
         
-        // 尝试播放声音
-        this.speak(current.japanese);
+        // 关键修改：将音频播放与用户交互（Enter键）直接关联
+        // 这样可以满足移动设备的自动播放政策
+        this.playAudioWithUserInteraction(current.hiragana.replace(/:/g, ''));
         
         // 触发答案检查事件
         document.dispatchEvent(new Event('answer-checked'));
@@ -270,6 +271,58 @@ class ReviewManager {
                 console.log('已完成所有题目');
             }
         }, 2000); // 2秒后自动跳转，给用户足够时间看答案
+    }
+
+    // 新增方法：与用户交互直接关联的音频播放
+    async playAudioWithUserInteraction(text) {
+        try {
+            console.log('通过用户交互播放音频:', text);
+            
+            // 停止任何正在播放的音频
+            if (this.currentAudio) {
+                this.currentAudio.pause();
+                this.currentAudio = null;
+            }
+            
+            // 创建一个新的音频元素
+            const audio = new Audio();
+            this.currentAudio = audio;
+            
+            // 使用有道 API
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
+            
+            // 预加载音频
+            audio.load();
+            
+            // 尝试播放 - 这里应该会成功，因为它是由用户交互直接触发的
+            try {
+                await audio.play();
+                console.log('有道 API 音频播放成功（用户交互触发）');
+            } catch (youdaoError) {
+                console.warn('有道 API 播放失败，尝试 Google TTS:', youdaoError);
+                
+                // 尝试使用 Google TTS
+                try {
+                    const googleAudio = new Audio();
+                    googleAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
+                    await googleAudio.play();
+                    console.log('Google TTS 音频播放成功（用户交互触发）');
+                } catch (googleError) {
+                    console.warn('Google TTS 播放失败，尝试 Web Speech API:', googleError);
+                    
+                    // 尝试使用 Web Speech API
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = 'ja-JP';
+                        window.speechSynthesis.speak(utterance);
+                        console.log('Web Speech API 播放成功（用户交互触发）');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('音频播放失败:', error);
+        }
     }
 
     showAnswer(question, isCorrect) {
@@ -368,125 +421,9 @@ class ReviewManager {
     }
 
     async speak(text) {
-        try {
-            // 获取当前问题
-            const currentQuestion = this.sentences[this.currentIndex];
-            
-            // 始终使用平假名版本，移除分隔符
-            let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
-            
-            console.log('准备播放音频:', textToSpeak);
-            
-            // 停止任何正在播放的音频
-            if (this.currentAudio) {
-                this.currentAudio.pause();
-                this.currentAudio = null;
-            }
-            
-            // 使用 Google Translate TTS API
-            try {
-                // 创建一个新的音频元素
-                const audio = new Audio();
-                this.currentAudio = audio;
-                
-                // 使用 Google Translate TTS
-                // 注意：这个 API 没有官方支持，可能随时变化
-                audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(textToSpeak)}&tl=ja&client=tw-ob`;
-                
-                // 添加音频加载事件
-                audio.addEventListener('canplaythrough', () => {
-                    console.log('Google TTS 音频已加载完成，准备播放');
-                });
-                
-                // 添加音频错误事件
-                audio.addEventListener('error', (e) => {
-                    console.error('Google TTS 音频加载失败:', e);
-                    this.fallbackToYoudao(textToSpeak);
-                });
-                
-                // 预加载音频
-                audio.load();
-                
-                // 尝试播放
-                await audio.play();
-                console.log('Google TTS 音频播放成功');
-                
-            } catch (googleError) {
-                console.warn('Google TTS 播放失败，尝试备选方案:', googleError);
-                this.fallbackToYoudao(textToSpeak);
-            }
-        } catch (error) {
-            console.error('播放语音失败:', error);
-        }
-    }
-
-    // 回退到有道 API
-    async fallbackToYoudao(text) {
-        try {
-            console.log('使用有道 API 作为备选');
-            
-            // 对于长句子，尝试分割成单词
-            if (text.length > 10) {
-                // 这可能是一个句子，尝试分割成单词播放
-                console.log('检测到长句子，尝试分割成单词播放');
-                
-                // 简单分割，以空格或常见助词为界
-                const parts = text.split(/(\s+|が|は|を|に|で|と|も|へ)/);
-                const validParts = parts.filter(part => part.trim().length > 0);
-                
-                console.log('分割后的单词:', validParts);
-                
-                // 依次播放每个单词
-                for (const part of validParts) {
-                    if (part.trim().length === 0) continue;
-                    
-                    try {
-                        // 使用有道 API 播放单词
-                        const wordAudio = new Audio();
-                        wordAudio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(part)}&le=jap`;
-                        
-                        // 等待播放完成
-                        await new Promise((resolve, reject) => {
-                            wordAudio.onended = resolve;
-                            wordAudio.onerror = reject;
-                            wordAudio.play().catch(reject);
-                        });
-                        
-                        // 短暂停顿
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                        
-                    } catch (wordError) {
-                        console.warn(`单词 "${part}" 播放失败:`, wordError);
-                    }
-                }
-                
-                return;
-            }
-            
-            // 对于短词，直接使用有道 API
-            const audio = new Audio();
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
-            
-            // 尝试播放
-            await audio.play();
-            console.log('有道 API 播放成功');
-            
-        } catch (youdaoError) {
-            console.warn('有道 API 播放失败:', youdaoError);
-            
-            // 尝试使用 Web Speech API 作为最后的备选
-            try {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'ja-JP';
-                    window.speechSynthesis.speak(utterance);
-                    console.log('使用 Web Speech API 播放');
-                }
-            } catch (speechError) {
-                console.error('所有播放方法都失败了:', speechError);
-            }
-        }
+        // 这个方法现在只作为备用，不再直接调用
+        console.log('备用音频播放方法被调用:', text);
+        this.playAudioWithUserInteraction(text);
     }
 
     showComplete() {
