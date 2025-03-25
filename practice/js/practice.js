@@ -198,38 +198,33 @@ export class PracticeManager {
             // 获取当前问题
             const currentQuestion = this.questions[this.currentQuestionIndex];
             
-            // 优先使用平假名版本
-            let textToSpeak = currentQuestion.hiragana || currentQuestion.character;
+            // 始终使用平假名版本，移除分隔符
+            let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
             
-            // 如果是分词类型的问题，移除分隔符
-            if (currentQuestion.type === 'split') {
-                textToSpeak = textToSpeak.replace(/:/g, '');
+            // 创建音频元素前先停止之前的音频
+            if (this.currentAudio) {
+                this.currentAudio.pause();
+                this.currentAudio = null;
             }
-
-            console.log('Speaking text:', textToSpeak);
-
-            // 预加载下一个音频
-            this.preloadNextAudio();
 
             // 使用有道词典 API
             const audio = new Audio();
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+            this.currentAudio = audio;
             
-            // 设置音频预加载
-            audio.preload = 'auto';
-            
-            // 添加错误处理
-            audio.onerror = (error) => {
-                console.error('Audio playback error:', error);
-                // 如果有道 API 失败，尝试使用 Web Speech API 作为备选
+            // 设置音频源之前添加事件监听
+            audio.addEventListener('error', () => {
+                console.warn('有道发音失败，使用备选方案');
                 this.fallbackSpeak(textToSpeak);
-            };
+            });
 
-            // 播放音频
+            // 设置音频源
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
+            
+            // 尝试播放
             try {
                 await audio.play();
             } catch (error) {
-                console.error('Failed to play audio:', error);
+                console.warn('音频播放失败，使用备选方案:', error);
                 this.fallbackSpeak(textToSpeak);
             }
 
@@ -239,48 +234,19 @@ export class PracticeManager {
         }
     }
 
-    // 添加预加载下一个音频的方法
-    preloadNextAudio() {
-        try {
-            // 检查是否有下一题
-            if (this.currentQuestionIndex + 1 < this.questions.length) {
-                const nextQuestion = this.questions[this.currentQuestionIndex + 1];
-                if (nextQuestion) {
-                    // 获取下一题的文本
-                    let nextText = nextQuestion.hiragana || nextQuestion.character;
-                    if (nextQuestion.type === 'split') {
-                        nextText = nextText.replace(/:/g, '');
-                    }
-                    
-                    // 创建并预加载下一个音频
-                    const nextAudio = new Audio();
-                    nextAudio.preload = 'auto';
-                    nextAudio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(nextText)}&le=jap&type=3`;
-                }
-            }
-        } catch (error) {
-            console.error('预加载下一个音频失败:', error);
-        }
-    }
-
-    // 使用 Web Speech API 作为后备方案
+    // 添加备选发音方案
     fallbackSpeak(text) {
         try {
-            if (!('speechSynthesis' in window)) {
-                console.warn('浏览器不支持语音合成');
-                return;
-            }
-
-            // 取消所有正在进行的语音
+            // 停止任何正在播放的语音
             window.speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 1;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            utterance.lang = 'ja-JP';
 
-            // 获取日语语音
+            // 创建新的语音实例
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9; // 稍微放慢语速
+            utterance.pitch = 1;
+            
+            // 获取日语声音
             const voices = window.speechSynthesis.getVoices();
             const japaneseVoice = voices.find(voice => 
                 voice.lang.includes('ja') || voice.lang.includes('JP')
@@ -290,9 +256,10 @@ export class PracticeManager {
                 utterance.voice = japaneseVoice;
             }
 
+            // 播放语音
             window.speechSynthesis.speak(utterance);
         } catch (error) {
-            console.error('后备语音播放失败:', error);
+            console.error('备选发音方案也失败了:', error);
         }
     }
 

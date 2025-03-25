@@ -147,24 +147,35 @@ class ReviewManager {
             // 处理键盘事件
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || (e.code === 'Space' && !isComposing)) {
-                    e.preventDefault();
-                    if (unitIndex < units.length - 1) {
-                        const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
-                        if (nextInput) {
-                            input.value = input.value.trim();
-                            nextInput.focus();
-                        }
-                    } else {
-                        // 检查所有输入是否已完成
-                        const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
-                        const allFilled = allInputs.every(input => input.value.trim() !== '');
-                        if (allFilled) {
-                            const answer = allInputs.map(input => input.value.trim()).join(':');
-                            this.checkAnswer(answer);
-                        }
-                    }
+                    handleInputComplete();
                 }
             });
+
+            // 添加移动设备的回车键处理
+            input.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    handleInputComplete();
+                }
+            });
+
+            // 处理输入完成的函数
+            const handleInputComplete = () => {
+                if (unitIndex < units.length - 1) {
+                    const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
+                    if (nextInput) {
+                        input.value = input.value.trim();
+                        nextInput.focus();
+                    }
+                } else {
+                    // 检查所有输入是否已完成
+                    const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                    const allFilled = allInputs.every(input => input.value.trim() !== '');
+                    if (allFilled) {
+                        const answer = allInputs.map(input => input.value.trim()).join(':');
+                        this.checkAnswer(answer);
+                    }
+                }
+            };
 
             inputWrapper.appendChild(input);
             inputsContainer.appendChild(inputWrapper);
@@ -321,10 +332,74 @@ class ReviewManager {
         }
     }
 
-    speak(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ja-JP';
-        window.speechSynthesis.speak(utterance);
+    async speak(text) {
+        try {
+            // 获取当前问题
+            const currentQuestion = this.sentences[this.currentIndex];
+            
+            // 始终使用平假名版本，移除分隔符
+            let textToSpeak = currentQuestion.hiragana.replace(/:/g, '');
+            
+            // 创建音频元素前先停止之前的音频
+            if (this.currentAudio) {
+                this.currentAudio.pause();
+                this.currentAudio = null;
+            }
+
+            // 使用有道词典 API
+            const audio = new Audio();
+            this.currentAudio = audio;
+            
+            // 设置音频源之前添加事件监听
+            audio.addEventListener('error', () => {
+                console.warn('有道发音失败，使用备选方案');
+                this.fallbackSpeak(textToSpeak);
+            });
+
+            // 设置音频源
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
+            
+            // 尝试播放
+            try {
+                await audio.play();
+            } catch (error) {
+                console.warn('音频播放失败，使用备选方案:', error);
+                this.fallbackSpeak(textToSpeak);
+            }
+
+        } catch (error) {
+            console.error('播放语音失败:', error);
+            this.fallbackSpeak(text);
+        }
+    }
+
+    // 添加备选发音方案
+    fallbackSpeak(text) {
+        try {
+            // 停止任何正在播放的语音
+            window.speechSynthesis.cancel();
+
+            // 创建新的语音实例
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9; // 稍微放慢语速
+            utterance.pitch = 1;
+            
+            // 获取日语声音
+            const voices = window.speechSynthesis.getVoices();
+            const japaneseVoice = voices.find(voice => 
+                voice.lang.includes('ja') || voice.lang.includes('JP')
+            );
+            
+            if (japaneseVoice) {
+                utterance.voice = japaneseVoice;
+            }
+
+            // 播放语音
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('备选发音方案也失败了:', error);
+        }
     }
 
     showComplete() {
