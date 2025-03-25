@@ -206,15 +206,27 @@ class ReviewManager {
         statsData.updateReviewProgress(current.id, isCorrect);
 
         if (!isCorrect) {
-            // 显示错误提示
+            // 只标记错误的输入框
             const inputs = document.querySelectorAll('.split-input');
-            inputs.forEach(input => input.classList.add('error'));
+            const correctUnits = current.hiragana.split(':');
+            const answerUnits = answer.split(':');
             
-            console.log('答案错误，显示错误提示');
+            inputs.forEach((input, index) => {
+                if (index < correctUnits.length && index < answerUnits.length) {
+                    if (answerUnits[index] !== correctUnits[index]) {
+                        // 只标记错误的输入框
+                        input.classList.add('error');
+                    }
+                }
+            });
+            
+            console.log('答案错误，只标记错误的输入框');
             
             // 1秒后移除错误样式
             setTimeout(() => {
-                inputs.forEach(input => input.classList.remove('error'));
+                inputs.forEach(input => {
+                    input.classList.remove('error');
+                });
             }, 1000);
             
             return;
@@ -365,84 +377,103 @@ class ReviewManager {
             
             console.log('准备播放音频:', textToSpeak);
             
-            // 创建音频元素前先停止之前的音频
+            // 停止任何正在播放的音频
             if (this.currentAudio) {
                 this.currentAudio.pause();
                 this.currentAudio = null;
             }
-
-            // 使用有道词典 API
+            
+            // 创建一个新的音频元素
             const audio = new Audio();
             this.currentAudio = audio;
             
-            // 设置音频源
+            // 使用有道词典 API
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=1`;
             
-            // 添加事件监听
+            // 添加音频加载事件
+            audio.addEventListener('canplaythrough', () => {
+                console.log('音频已加载完成，准备播放');
+            });
+            
+            // 添加音频错误事件
             audio.addEventListener('error', (e) => {
-                console.warn('有道 API 播放失败，尝试备选方案', e);
-                this.tryAlternativeAPI(textToSpeak);
+                console.error('音频加载失败:', e);
+                // 显示播放按钮，让用户手动触发
+                this.showPlayButton(textToSpeak);
             });
             
             // 预加载音频
             audio.load();
             
-            // 等待用户交互后播放
+            // 尝试播放
             try {
-                // 播放音频
                 await audio.play();
-                console.log('有道 API 播放成功');
+                console.log('音频播放成功');
             } catch (error) {
-                console.warn('有道 API 播放失败:', error);
-                this.tryAlternativeAPI(textToSpeak);
+                console.warn('自动播放失败，可能需要用户交互:', error);
+                // 显示播放按钮，让用户手动触发
+                this.showPlayButton(textToSpeak);
             }
         } catch (error) {
             console.error('播放语音失败:', error);
         }
     }
 
-    // 尝试备选 API
-    async tryAlternativeAPI(text) {
-        try {
-            console.log('尝试备选 API 播放:', text);
-            
-            // 尝试使用百度翻译 API
+    // 显示播放按钮
+    showPlayButton(text) {
+        // 移除旧的播放按钮
+        const oldButton = document.getElementById('manual-play-button');
+        if (oldButton) {
+            oldButton.remove();
+        }
+        
+        // 创建播放按钮
+        const playButton = document.createElement('button');
+        playButton.id = 'manual-play-button';
+        playButton.innerHTML = '<i class="fas fa-volume-up"></i> 播放发音';
+        playButton.style.position = 'fixed';
+        playButton.style.bottom = '20px';
+        playButton.style.left = '50%';
+        playButton.style.transform = 'translateX(-50%)';
+        playButton.style.padding = '10px 20px';
+        playButton.style.backgroundColor = '#4f46e5';
+        playButton.style.color = 'white';
+        playButton.style.border = 'none';
+        playButton.style.borderRadius = '5px';
+        playButton.style.cursor = 'pointer';
+        playButton.style.zIndex = '9999';
+        
+        // 点击按钮播放音频
+        playButton.addEventListener('click', () => {
+            // 使用有道 API
             const audio = new Audio();
-            audio.src = `https://fanyi.baidu.com/gettts?lan=jp&text=${encodeURIComponent(text)}&spd=3&source=web`;
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap&type=1`;
             
-            try {
-                await audio.play();
-                console.log('百度 API 播放成功');
-            } catch (error) {
-                console.warn('百度 API 播放失败，使用 Web Speech API:', error);
-                this.fallbackSpeak(text);
+            // 播放音频
+            audio.play().catch(error => {
+                console.error('手动播放也失败了:', error);
+                
+                // 尝试使用 Web Speech API
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+            
+            // 移除按钮
+            playButton.remove();
+        });
+        
+        // 添加到页面
+        document.body.appendChild(playButton);
+        
+        // 5秒后自动移除按钮
+        setTimeout(() => {
+            if (document.body.contains(playButton)) {
+                playButton.remove();
             }
-        } catch (error) {
-            console.error('备选 API 播放失败:', error);
-            this.fallbackSpeak(text);
-        }
-    }
-
-    // 使用 Web Speech API 作为最后的备选
-    fallbackSpeak(text) {
-        try {
-            console.log('使用 Web Speech API 播放:', text);
-            
-            // 停止任何正在播放的语音
-            if (window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
-
-            // 创建新的语音实例
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ja-JP';
-            utterance.rate = 0.9;
-            
-            // 播放语音
-            window.speechSynthesis.speak(utterance);
-        } catch (error) {
-            console.error('Web Speech API 播放失败:', error);
-        }
+        }, 5000);
     }
 
     showComplete() {
