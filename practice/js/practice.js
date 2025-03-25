@@ -213,62 +213,50 @@ export class PracticeManager {
             const audio = new Audio();
             this.currentAudio = audio;
             
-            // 设置音频源之前添加事件监听
+            // 设置音频源
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=1`;
+            
+            // 添加事件监听
             audio.addEventListener('error', (e) => {
-                console.warn('有道发音失败，使用备选方案', e);
-                this.fallbackSpeak(textToSpeak);
+                console.warn('有道 API 播放失败，尝试备选方案', e);
+                this.tryAlternativeAPI(textToSpeak);
             });
-
-            // 设置音频源 - 尝试不同的参数组合
-            // 移除 type 参数，使用默认设置
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
             
-            // 添加调试事件
-            audio.addEventListener('loadstart', () => console.log('音频开始加载'));
-            audio.addEventListener('canplaythrough', () => console.log('音频加载完成'));
-            audio.addEventListener('play', () => console.log('音频开始播放'));
-            audio.addEventListener('playing', () => console.log('音频正在播放'));
-            audio.addEventListener('ended', () => console.log('音频播放结束'));
-            
-            // 确保音频已加载
+            // 预加载音频
             audio.load();
             
-            // 使用用户交互触发播放
+            // 等待用户交互后播放
             try {
-                // 使用 Promise 包装播放操作
-                await new Promise((resolve, reject) => {
-                    // 设置超时
-                    const timeout = setTimeout(() => {
-                        reject(new Error('音频播放超时'));
-                    }, 3000);
-                    
-                    // 播放成功时
-                    audio.onplaying = () => {
-                        clearTimeout(timeout);
-                        resolve();
-                    };
-                    
-                    // 播放失败时
-                    audio.onerror = (e) => {
-                        clearTimeout(timeout);
-                        reject(new Error(`音频播放失败: ${e.message}`));
-                    };
-                    
-                    // 尝试播放
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            clearTimeout(timeout);
-                            reject(error);
-                        });
-                    }
-                });
+                // 播放音频
+                await audio.play();
+                console.log('有道 API 播放成功');
             } catch (error) {
-                console.warn('音频播放失败，使用备选方案:', error);
-                this.fallbackSpeak(textToSpeak);
+                console.warn('有道 API 播放失败:', error);
+                this.tryAlternativeAPI(textToSpeak);
             }
         } catch (error) {
             console.error('播放语音失败:', error);
+        }
+    }
+
+    // 尝试备选 API
+    async tryAlternativeAPI(text) {
+        try {
+            console.log('尝试备选 API 播放:', text);
+            
+            // 尝试使用百度翻译 API
+            const audio = new Audio();
+            audio.src = `https://fanyi.baidu.com/gettts?lan=jp&text=${encodeURIComponent(text)}&spd=3&source=web`;
+            
+            try {
+                await audio.play();
+                console.log('百度 API 播放成功');
+            } catch (error) {
+                console.warn('百度 API 播放失败，使用 Web Speech API:', error);
+                this.fallbackSpeak(text);
+            }
+        } catch (error) {
+            console.error('备选 API 播放失败:', error);
             this.fallbackSpeak(text);
         }
     }
