@@ -160,6 +160,14 @@ class ReviewManager {
 
             // 处理输入完成的函数
             const handleInputComplete = () => {
+                // 防止事件重复触发
+                if (this.isHandlingInput) return;
+                this.isHandlingInput = true;
+                
+                setTimeout(() => {
+                    this.isHandlingInput = false;
+                }, 300);
+                
                 if (unitIndex < units.length - 1) {
                     const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
                     if (nextInput) {
@@ -235,6 +243,22 @@ class ReviewManager {
 
         // 触发答案检查事件
         document.dispatchEvent(new Event('answer-checked'));
+        
+        // 确保在移动设备上也能正确显示答案和跳转
+        if (this.isMobile()) {
+            // 强制显示答案区域
+            const answerDisplay = document.querySelector('.answer-display');
+            if (answerDisplay) {
+                answerDisplay.classList.add('show');
+                answerDisplay.style.display = 'block';
+            }
+            
+            // 确保下一题按钮可见
+            const nextButton = document.querySelector('.next-btn');
+            if (nextButton) {
+                nextButton.style.display = 'block';
+            }
+        }
     }
 
     showAnswer(question, isCorrect) {
@@ -356,12 +380,38 @@ class ReviewManager {
                 this.fallbackSpeak(textToSpeak);
             });
 
-            // 设置音频源
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
+            // 设置音频源 - 使用不同的参数
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=2`;
+            
+            // 添加加载事件
+            audio.addEventListener('canplaythrough', () => {
+                console.log('音频已加载完成，准备播放');
+            });
+            
+            // 添加播放事件
+            audio.addEventListener('play', () => {
+                console.log('音频开始播放');
+            });
+            
+            // 添加结束事件
+            audio.addEventListener('ended', () => {
+                console.log('音频播放结束');
+            });
             
             // 尝试播放
             try {
-                await audio.play();
+                // 在移动设备上，需要用户交互才能自动播放
+                // 确保音频已加载
+                audio.load();
+                
+                // 尝试播放
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.warn('音频播放失败，使用备选方案:', error);
+                        this.fallbackSpeak(textToSpeak);
+                    });
+                }
             } catch (error) {
                 console.warn('音频播放失败，使用备选方案:', error);
                 this.fallbackSpeak(textToSpeak);
@@ -571,6 +621,13 @@ class ReviewManager {
 
         // 初始聚焦
         keyboardInput.focus();
+    }
+
+    // 添加移动设备检测
+    isMobile() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+               ('ontouchstart' in window) ||
+               (navigator.maxTouchPoints > 0);
     }
 }
 
