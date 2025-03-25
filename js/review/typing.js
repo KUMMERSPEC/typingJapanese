@@ -387,8 +387,46 @@ class ReviewManager {
             const audio = new Audio();
             this.currentAudio = audio;
             
-            // 使用有道词典 API
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=1`;
+            // 关键修改：对于句子，尝试按单词分割播放
+            if (textToSpeak.length > 10 && textToSpeak.includes('が')) {
+                // 这可能是一个句子，尝试分割成单词
+                console.log('检测到句子，尝试分割成单词播放');
+                
+                // 简单分割，以空格或常见助词为界
+                const parts = textToSpeak.split(/(\s+|が|は|を|に|で|と|も|へ)/);
+                const validParts = parts.filter(part => part.trim().length > 0);
+                
+                console.log('分割后的单词:', validParts);
+                
+                // 依次播放每个单词
+                for (const part of validParts) {
+                    if (part.trim().length === 0) continue;
+                    
+                    try {
+                        // 使用有道 API 播放单词
+                        const wordAudio = new Audio();
+                        wordAudio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(part)}&le=jap`;
+                        
+                        // 等待播放完成
+                        await new Promise((resolve, reject) => {
+                            wordAudio.onended = resolve;
+                            wordAudio.onerror = reject;
+                            wordAudio.play().catch(reject);
+                        });
+                        
+                        // 短暂停顿
+                        await new Promise(resolve => setTimeout(resolve, 300));
+                        
+                    } catch (wordError) {
+                        console.warn(`单词 "${part}" 播放失败:`, wordError);
+                    }
+                }
+                
+                return;
+            }
+            
+            // 对于短词，直接使用有道 API
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap`;
             
             // 添加音频加载事件
             audio.addEventListener('canplaythrough', () => {
@@ -398,8 +436,14 @@ class ReviewManager {
             // 添加音频错误事件
             audio.addEventListener('error', (e) => {
                 console.error('音频加载失败:', e);
-                // 显示播放按钮，让用户手动触发
-                this.showPlayButton(textToSpeak);
+                
+                // 尝试使用备选 API
+                const backupAudio = new Audio();
+                backupAudio.src = `https://fanyi.baidu.com/gettts?lan=jp&text=${encodeURIComponent(textToSpeak)}&spd=3&source=web`;
+                
+                backupAudio.play().catch(backupError => {
+                    console.warn('备选 API 也失败了:', backupError);
+                });
             });
             
             // 预加载音频
@@ -410,70 +454,45 @@ class ReviewManager {
                 await audio.play();
                 console.log('音频播放成功');
             } catch (error) {
-                console.warn('自动播放失败，可能需要用户交互:', error);
-                // 显示播放按钮，让用户手动触发
-                this.showPlayButton(textToSpeak);
+                console.warn('自动播放失败:', error);
+                
+                // 在页面上显示一个小的播放按钮
+                const soundButton = document.querySelector('.toggle-sound-btn');
+                if (soundButton) {
+                    // 添加闪烁效果提示用户点击
+                    soundButton.classList.add('blink');
+                    setTimeout(() => {
+                        soundButton.classList.remove('blink');
+                    }, 2000);
+                }
             }
         } catch (error) {
             console.error('播放语音失败:', error);
         }
     }
 
-    // 显示播放按钮
-    showPlayButton(text) {
-        // 移除旧的播放按钮
-        const oldButton = document.getElementById('manual-play-button');
-        if (oldButton) {
-            oldButton.remove();
-        }
-        
-        // 创建播放按钮
-        const playButton = document.createElement('button');
-        playButton.id = 'manual-play-button';
-        playButton.innerHTML = '<i class="fas fa-volume-up"></i> 播放发音';
-        playButton.style.position = 'fixed';
-        playButton.style.bottom = '20px';
-        playButton.style.left = '50%';
-        playButton.style.transform = 'translateX(-50%)';
-        playButton.style.padding = '10px 20px';
-        playButton.style.backgroundColor = '#4f46e5';
-        playButton.style.color = 'white';
-        playButton.style.border = 'none';
-        playButton.style.borderRadius = '5px';
-        playButton.style.cursor = 'pointer';
-        playButton.style.zIndex = '9999';
-        
-        // 点击按钮播放音频
-        playButton.addEventListener('click', () => {
-            // 使用有道 API
-            const audio = new Audio();
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap&type=1`;
+    // 使用 Web Speech API 作为备选
+    useFallbackTTS(text) {
+        try {
+            console.log('使用 Web Speech API 播放:', text);
             
-            // 播放音频
-            audio.play().catch(error => {
-                console.error('手动播放也失败了:', error);
+            if ('speechSynthesis' in window) {
+                // 停止任何正在播放的语音
+                window.speechSynthesis.cancel();
                 
-                // 尝试使用 Web Speech API
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'ja-JP';
-                    window.speechSynthesis.speak(utterance);
-                }
-            });
-            
-            // 移除按钮
-            playButton.remove();
-        });
-        
-        // 添加到页面
-        document.body.appendChild(playButton);
-        
-        // 5秒后自动移除按钮
-        setTimeout(() => {
-            if (document.body.contains(playButton)) {
-                playButton.remove();
+                // 创建新的语音实例
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                
+                // 播放语音
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn('浏览器不支持语音合成');
             }
-        }, 5000);
+        } catch (error) {
+            console.error('Web Speech API 播放失败:', error);
+        }
     }
 
     showComplete() {
