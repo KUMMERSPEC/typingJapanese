@@ -253,8 +253,7 @@ class ReviewManager {
             answerDisplay.style.display = 'block';
         }
         
-        // 关键修改：将音频播放与用户交互（Enter键）直接关联
-        // 这样可以满足移动设备的自动播放政策
+        // 关键修改：使用日语平假名版本，而不是汉字
         this.playAudioWithUserInteraction(current.hiragana.replace(/:/g, ''));
         
         // 触发答案检查事件
@@ -273,10 +272,27 @@ class ReviewManager {
         }, 2000); // 2秒后自动跳转，给用户足够时间看答案
     }
 
-    // 新增方法：与用户交互直接关联的音频播放
+    // 修改 playAudioWithUserInteraction 方法，确保使用正确的文本
     async playAudioWithUserInteraction(text) {
         try {
-            console.log('通过用户交互播放音频:', text);
+            // 添加详细的调试信息
+            console.log('准备播放音频:', {
+                text: text,
+                isJapanese: /[\u3040-\u309F\u30A0-\u30FF]/.test(text), // 检测是否包含日语字符
+                isChinese: /[\u4e00-\u9fa5]/.test(text), // 检测是否包含汉字
+                length: text.length,
+                currentSentence: this.sentences[this.currentIndex]
+            });
+            
+            // 确保使用的是日语文本
+            if (!text || text.match(/[\u4e00-\u9fa5]/)) {
+                console.warn('检测到汉字，尝试使用平假名版本');
+                // 如果传入的是汉字，尝试获取当前句子的平假名版本
+                const current = this.sentences[this.currentIndex];
+                if (current && current.hiragana) {
+                    text = current.hiragana.replace(/:/g, '');
+                }
+            }
             
             // 停止任何正在播放的音频
             if (this.currentAudio) {
