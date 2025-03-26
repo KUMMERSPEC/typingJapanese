@@ -520,20 +520,22 @@ class FlashcardManager {
             }
         });
         
-        // 在翻转前确保内容已经设置
+        // 在翻转前确保内容已经设置 - 修复 Edge 浏览器问题
         if (!card.classList.contains('flipped')) {
             // 如果要翻到背面，确保背面内容已设置
             if (this.mode === 'cn-jp') {
                 // 中文到日文模式
-                if (!cardBack.textContent || cardBack.textContent === '加载中...') {
-                    cardBack.textContent = currentSentence.japanese || '内容不可用';
-                    console.log('翻转前设置日文内容:', cardBack.textContent);
+                if (!cardBack.textContent || cardBack.textContent === '加载中...' || cardBack.textContent === '内容不可用') {
+                    // 使用 innerHTML 而不是 textContent，可能更兼容 Edge
+                    cardBack.innerHTML = currentSentence.japanese || '内容不可用';
+                    console.log('翻转前设置日文内容:', currentSentence.japanese);
                 }
             } else {
                 // 日文到中文模式
-                if (!cardBack.textContent || cardBack.textContent === '加载中...') {
-                    cardBack.textContent = currentSentence.meaning || '内容不可用';
-                    console.log('翻转前设置中文内容:', cardBack.textContent);
+                if (!cardBack.textContent || cardBack.textContent === '加载中...' || cardBack.textContent === '内容不可用') {
+                    // 使用 innerHTML 而不是 textContent，可能更兼容 Edge
+                    cardBack.innerHTML = currentSentence.meaning || '内容不可用';
+                    console.log('翻转前设置中文内容:', currentSentence.meaning);
                 }
             }
         }
