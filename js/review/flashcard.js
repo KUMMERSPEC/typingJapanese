@@ -234,30 +234,21 @@ class FlashcardManager {
             return;
         }
 
-        // 1. 先添加过渡类，使卡片暂时不可见
-        flashcard.classList.add('transitioning');
+        // 确保卡片回到正面状态
+        flashcard.classList.remove('flipped');
         
-        // 2. 等待短暂延迟后更新内容并显示
-        setTimeout(() => {
-            // 确保卡片回到正面状态
-            flashcard.classList.remove('flipped');
-            
-            // 根据模式设置内容
-            if (this.mode === 'cn-jp') {
-                cardFront.textContent = currentSentence.meaning;    // 中文
-                cardBack.textContent = currentSentence.japanese;   // 日文
-            } else {
-                cardFront.textContent = currentSentence.japanese;  // 日文
-                cardBack.textContent = currentSentence.meaning;    // 中文
-            }
-
-            // 3. 移除过渡类，使卡片可见
-            flashcard.classList.remove('transitioning');
-            
-            // 更新进度和状态
-            this.updateProgress();
-            this.updateStatus(currentSentence);
-        }, 150); // 150ms 的延迟，可以根据需要调整
+        // 立即设置两面的内容
+        if (this.mode === 'cn-jp') {
+            cardFront.textContent = currentSentence.meaning;    // 中文
+            cardBack.textContent = currentSentence.japanese;   // 日文
+        } else {
+            cardFront.textContent = currentSentence.japanese;  // 日文
+            cardBack.textContent = currentSentence.meaning;    // 中文
+        }
+        
+        // 更新进度和状态
+        this.updateProgress();
+        this.updateStatus(currentSentence);
     }
 
     // 播放日语语音
@@ -475,24 +466,41 @@ class FlashcardManager {
         const card = document.querySelector('.flashcard');
         if (!card) return;
         
-        card.classList.toggle('flipped');
-
         // 获取当前句子
         const currentSentence = this.sentences[this.currentIndex];
+        const cardFront = document.querySelector('.card-front');
+        const cardBack = document.querySelector('.card-back');
         
-        // 根据模式播放音频
-        if (card.classList.contains('flipped')) {
-            if (this.mode === 'cn-jp') {
-                // 在中文到日文模式下，播放背面的日文
-                setTimeout(() => {
-                    this.speak(currentSentence.japanese);
-                }, 300); // 增加延迟，确保翻转动画完成
-            } else {
-                // 在日文到中文模式下，播放正面的日文
-                setTimeout(() => {
-                    this.speak(currentSentence.japanese);
-                }, 300);
+        // 在翻转前确保内容已经设置
+        if (this.mode === 'cn-jp') {
+            // 中文到日文模式
+            if (!card.classList.contains('flipped')) {
+                // 翻到背面前，确保日文内容已设置
+                cardBack.textContent = currentSentence.japanese;
             }
+        } else {
+            // 日文到中文模式
+            if (!card.classList.contains('flipped')) {
+                // 翻到背面前，确保中文内容已设置
+                cardBack.textContent = currentSentence.meaning;
+            }
+        }
+        
+        // 执行翻转
+        card.classList.toggle('flipped');
+
+        // 在翻转后播放音频
+        if (card.classList.contains('flipped')) {
+            // 给翻转动画一些时间完成
+            setTimeout(() => {
+                if (this.mode === 'cn-jp') {
+                    // 在中文到日文模式下，播放背面的日文
+                    this.speak(currentSentence.japanese);
+                } else {
+                    // 在日文到中文模式下，播放正面的日文
+                    this.speak(currentSentence.japanese);
+                }
+            }, 300); // 等待翻转动画完成
         }
     }
 
