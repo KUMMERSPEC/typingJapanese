@@ -516,8 +516,8 @@ class FlashcardManager {
         
         console.log('翻转前状态:', {
             isFlipped: card.classList.contains('flipped'),
-            frontContent: cardFront.textContent,
-            backContent: cardBack.textContent,
+            frontContent: cardFront.innerHTML,  // 使用 innerHTML 而不是 textContent
+            backContent: cardBack.innerHTML,    // 使用 innerHTML 而不是 textContent
             mode: this.mode,
             sentence: {
                 japanese: currentSentence.japanese,
@@ -530,15 +530,15 @@ class FlashcardManager {
             // 如果要翻到背面，确保背面内容已设置
             if (this.mode === 'cn-jp') {
                 // 中文到日文模式
-                if (!cardBack.textContent || cardBack.textContent === '加载中...' || cardBack.textContent === '内容不可用') {
-                    // 使用 innerHTML 而不是 textContent，可能更兼容 Edge
+                // 使用 innerHTML 检查内容是否为空
+                if (!cardBack.innerHTML || cardBack.innerHTML === '加载中...' || cardBack.innerHTML === '内容不可用') {
                     cardBack.innerHTML = currentSentence.japanese || '内容不可用';
                     console.log('翻转前设置日文内容:', currentSentence.japanese);
                 }
             } else {
                 // 日文到中文模式
-                if (!cardBack.textContent || cardBack.textContent === '加载中...' || cardBack.textContent === '内容不可用') {
-                    // 使用 innerHTML 而不是 textContent，可能更兼容 Edge
+                // 使用 innerHTML 检查内容是否为空
+                if (!cardBack.innerHTML || cardBack.innerHTML === '加载中...' || cardBack.innerHTML === '内容不可用') {
                     cardBack.innerHTML = currentSentence.meaning || '内容不可用';
                     console.log('翻转前设置中文内容:', currentSentence.meaning);
                 }
