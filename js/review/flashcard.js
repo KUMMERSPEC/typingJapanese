@@ -225,6 +225,8 @@ class FlashcardManager {
         }
 
         const currentSentence = this.sentences[this.currentIndex];
+        console.log('当前句子完整数据:', JSON.stringify(currentSentence));
+        
         const cardFront = document.querySelector('.card-front');
         const cardBack = document.querySelector('.card-back');
         const flashcard = document.querySelector('.flashcard');
@@ -241,14 +243,14 @@ class FlashcardManager {
         flashcard.classList.remove('flipped');
         
         // 清空两面的内容
-        cardFront.textContent = '';
-        cardBack.textContent = '';
+        cardFront.innerHTML = '';
+        cardBack.innerHTML = '';
         
-        // 设置正面内容
+        // 设置正面内容 - 使用 innerHTML 而不是 textContent
         if (this.mode === 'cn-jp') {
-            cardFront.textContent = currentSentence.meaning || '加载中...';    // 中文
+            cardFront.innerHTML = currentSentence.meaning || '加载中...';    // 中文
         } else {
-            cardFront.textContent = currentSentence.japanese || '加载中...';  // 日文
+            cardFront.innerHTML = currentSentence.japanese || '加载中...';  // 日文
         }
         
         // 强制重绘
@@ -271,11 +273,14 @@ class FlashcardManager {
         // 延迟设置背面内容，确保用户看不到
         setTimeout(() => {
             if (this.mode === 'cn-jp') {
-                cardBack.textContent = currentSentence.japanese || '加载中...';   // 日文
+                cardBack.innerHTML = currentSentence.japanese || '加载中...';   // 日文
             } else {
-                cardBack.textContent = currentSentence.meaning || '加载中...';    // 中文
+                cardBack.innerHTML = currentSentence.meaning || '加载中...';    // 中文
             }
-            console.log('背面内容设置完成');
+            console.log('背面内容设置完成:', {
+                frontContent: cardFront.innerHTML,
+                backContent: cardBack.innerHTML
+            });
         }, 500);
     }
 
