@@ -232,12 +232,25 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 修改 updateReviewProgress 方法，确保更新掌握情况统计
+    // 修改 updateReviewProgress 方法，确保正确处理 master 级别的句子
     updateReviewProgress(questionId, isCorrect) {
         try {
             let stats = this.getStatistics();
-            if (!stats.reviewHistory || !stats.reviewHistory[questionId]) {
-                return;
+            
+            // 如果句子不存在于复习历史中，初始化它
+            if (!stats.reviewHistory) {
+                stats.reviewHistory = {};
+            }
+            
+            if (!stats.reviewHistory[questionId]) {
+                // 初始化新句子的复习记录
+                stats.reviewHistory[questionId] = {
+                    proficiency: 'low',
+                    reviewCount: 0,
+                    lastReview: null,
+                    nextReviewDate: null
+                };
+                console.log('初始化新句子记录:', questionId);
             }
 
             const item = stats.reviewHistory[questionId];
@@ -258,6 +271,9 @@ class Statistics {
                     case 'high':
                         item.proficiency = 'master';
                         break;
+                    case 'master':
+                        // 已经是 master 级别，保持不变
+                        break;
                 }
             } else {
                 // 答错时降低熟练度
@@ -269,6 +285,7 @@ class Statistics {
                         item.proficiency = 'medium';
                         break;
                     case 'medium':
+                    case 'low':
                         item.proficiency = 'low';
                         break;
                 }
@@ -277,13 +294,27 @@ class Statistics {
             // 计算下次复习时间
             const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
             item.lastReview = now.toISOString();
-            item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+            // 如果是 master 级别且答对了，延长复习间隔
+            if (item.proficiency === 'master' && isCorrect) {
+                // master 级别且答对，使用更长的间隔（比如14天）
+                item.nextReviewDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString();
+            } else {
+                item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+            }
 
             // 重新计算掌握情况统计
             stats.masteryStats = this.calculateMasteryStats(stats);
 
             // 保存更新后的统计数据
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            
+            console.log('更新复习记录完成:', {
+                questionId,
+                proficiency: item.proficiency,
+                reviewCount: item.reviewCount,
+                lastReview: item.lastReview,
+                nextReviewDate: item.nextReviewDate
+            });
             
             return item;
         } catch (error) {
@@ -454,20 +485,30 @@ class Statistics {
 
     // 修改：获取待复习项目
     getReviewItems() {
-        const stats = this.getStatistics();
-        if (!stats.reviewHistory) return [];
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory) return [];
 
-        const now = new Date();
-        return Object.entries(stats.reviewHistory)
-            .filter(([_, item]) => new Date(item.nextReviewDate) <= now)
-            .map(([id, item]) => ({
-                id,
-                sentence: item.sentence,
-                hiragana: item.hiragana,
-                romaji: item.romaji,
-                meaning: item.meaning,
-                proficiency: item.proficiency
-            }));
+            const now = new Date();
+            return Object.entries(stats.reviewHistory)
+                .filter(([_, item]) => {
+                    // 检查是否需要复习
+                    const nextReview = new Date(item.nextReviewDate);
+                    return nextReview <= now;
+                })
+                .map(([id, item]) => ({
+                    id,
+                    sentence: item.sentence,
+                    hiragana: item.hiragana,
+                    romaji: item.romaji,
+                    meaning: item.meaning,
+                    proficiency: item.proficiency,
+                    nextReviewDate: item.nextReviewDate
+                }));
+        } catch (error) {
+            console.error('Error getting review items:', error);
+            return [];
+        }
     }
 
     // 获取学习趋势数据
