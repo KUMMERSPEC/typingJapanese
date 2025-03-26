@@ -287,8 +287,27 @@ class FlashcardManager {
     // 播放日语语音
     async speak(text) {
         try {
+            if (!text) {
+                console.error('尝试朗读空文本');
+                return;
+            }
+            
             const currentCard = this.sentences[this.currentIndex];
-            const textToSpeak = currentCard.japanese || text;
+            if (!currentCard) {
+                console.error('当前卡片不存在');
+                return;
+            }
+            
+            // 尝试从多个可能的属性获取日语内容
+            const textToSpeak = text || 
+                               currentCard.japanese || 
+                               currentCard.sentence || 
+                               (currentCard.id && currentCard.id.split('_').pop());
+            
+            if (!textToSpeak) {
+                console.error('没有可朗读的文本');
+                return;
+            }
 
             console.log('Speaking text:', textToSpeak);
 
@@ -585,7 +604,23 @@ class FlashcardManager {
         
         // 更新复习记录
         try {
-            statsData.updateReviewProgress(current.id, isCorrect);
+            // 更新复习进度并获取更新后的记录
+            const updatedRecord = statsData.updateReviewProgress(current.id, isCorrect);
+            
+            // 更新当前句子的掌握度
+            if (updatedRecord) {
+                current.proficiency = updatedRecord.proficiency;
+                
+                // 更新 sessionStorage 中的数据
+                const sentences = JSON.parse(sessionStorage.getItem('reviewSentences'));
+                if (sentences) {
+                    const index = sentences.findIndex(s => s.id === current.id);
+                    if (index !== -1) {
+                        sentences[index].proficiency = updatedRecord.proficiency;
+                        sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
+                    }
+                }
+            }
         } catch (error) {
             console.error('更新复习记录失败:', error);
         }

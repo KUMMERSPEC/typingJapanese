@@ -232,7 +232,7 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 添加更新复习进度的方法
+    // 修改 updateReviewProgress 方法，确保更新掌握情况统计
     updateReviewProgress(questionId, isCorrect) {
         try {
             let stats = this.getStatistics();
@@ -278,6 +278,9 @@ class Statistics {
             const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
             item.lastReview = now.toISOString();
             item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+
+            // 重新计算掌握情况统计
+            stats.masteryStats = this.calculateMasteryStats(stats);
 
             // 保存更新后的统计数据
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
