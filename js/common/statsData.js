@@ -262,42 +262,46 @@ class Statistics {
             }
             
             if (!stats.reviewHistory[questionId]) {
-                // 初始化新句子的复习记录
                 stats.reviewHistory[questionId] = {
                     proficiency: 'low',
                     reviewCount: 0,
                     lastReview: null,
                     nextReviewDate: null
                 };
-                console.log('初始化新句子记录:', questionId);
             }
 
             const item = stats.reviewHistory[questionId];
             const now = new Date();
 
-            // 更新复习次数和连续正确次数
+            // 更新复习次数
             item.reviewCount = (item.reviewCount || 0) + 1;
+            
+            // 根据答题结果更新熟练度和下次复习时间
             if (isCorrect) {
-                item.consecutiveCorrect = (item.consecutiveCorrect || 0) + 1;
-            } else {
-                item.consecutiveCorrect = 0;
-            }
+                // 如果已经是 master 级别，保持 master 并延长复习间隔
+                if (item.proficiency === 'master') {
+                    // master 级别保持不变，只更新复习时间
+                    const masterInterval = 14; // 14天后复习
+                    item.lastReview = now.toISOString();
+                    item.nextReviewDate = new Date(now.getTime() + masterInterval * 24 * 60 * 60 * 1000).toISOString();
+                } else {
+                    // 正常的熟练度提升
+                    switch (item.proficiency) {
+                        case 'low':
+                            item.proficiency = 'medium';
+                            break;
+                        case 'medium':
+                            item.proficiency = 'high';
+                            break;
+                        case 'high':
+                            item.proficiency = 'master';
+                            break;
+                    }
 
-            // 根据答题结果更新熟练度
-            if (isCorrect) {
-                switch (item.proficiency) {
-                    case 'low':
-                        item.proficiency = 'medium';
-                        break;
-                    case 'medium':
-                        item.proficiency = 'high';
-                        break;
-                    case 'high':
-                        item.proficiency = 'master';
-                        break;
-                    case 'master':
-                        // 已经是 master 级别，保持不变
-                        break;
+                    // 根据新的熟练度设置下次复习时间
+                    const interval = REVIEW_INTERVALS[item.proficiency].success;
+                    item.lastReview = now.toISOString();
+                    item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
                 }
             } else {
                 // 答错时降低熟练度
@@ -313,59 +317,12 @@ class Statistics {
                         item.proficiency = 'low';
                         break;
                 }
+
+                // 设置更短的复习间隔
+                const interval = REVIEW_INTERVALS[item.proficiency].failure;
+                item.lastReview = now.toISOString();
+                item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
             }
-
-            // 计算基础间隔
-            const baseInterval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
-            
-            // 计算间隔调整系数
-            let intervalMultiplier = 1.0;
-
-            // 1. 连续正确次数调整
-            if (isCorrect && item.consecutiveCorrect) {
-                for (const [threshold, multiplier] of Object.entries(INTERVAL_ADJUSTMENTS.consecutiveCorrect)) {
-                    if (item.consecutiveCorrect >= parseInt(threshold)) {
-                        intervalMultiplier *= multiplier;
-                        break;
-                    }
-                }
-            }
-
-            // 2. 响应时间调整
-            if (options.responseTime) {
-                const responseMultiplier = INTERVAL_ADJUSTMENTS.responseTime[options.responseTime];
-                if (responseMultiplier) {
-                    intervalMultiplier *= responseMultiplier;
-                }
-            }
-
-            // 3. 提示使用调整
-            if (options.hintUsage) {
-                const hintMultiplier = INTERVAL_ADJUSTMENTS.hintUsage[options.hintUsage];
-                if (hintMultiplier) {
-                    intervalMultiplier *= hintMultiplier;
-                }
-            }
-
-            // 计算最终间隔
-            const finalInterval = baseInterval * intervalMultiplier;
-            
-            // 更新复习时间
-            item.lastReview = now.toISOString();
-            if (item.proficiency === 'master' && isCorrect) {
-                // master 级别且答对，使用更长的基础间隔
-                const masterInterval = 14 * intervalMultiplier; // 14天基础间隔
-                item.nextReviewDate = new Date(now.getTime() + masterInterval * 24 * 60 * 60 * 1000).toISOString();
-            } else {
-                item.nextReviewDate = new Date(now.getTime() + finalInterval * 24 * 60 * 60 * 1000).toISOString();
-            }
-
-            // 保存学习表现数据
-            item.lastPerformance = {
-                responseTime: options.responseTime || 'normal',
-                hintUsage: options.hintUsage || 'none',
-                intervalMultiplier: intervalMultiplier
-            };
 
             // 重新计算掌握情况统计
             stats.masteryStats = this.calculateMasteryStats(stats);
@@ -377,10 +334,8 @@ class Statistics {
                 questionId,
                 proficiency: item.proficiency,
                 reviewCount: item.reviewCount,
-                consecutiveCorrect: item.consecutiveCorrect,
-                intervalMultiplier,
-                nextReviewDate: item.nextReviewDate,
-                performance: item.lastPerformance
+                lastReview: item.lastReview,
+                nextReviewDate: item.nextReviewDate
             });
             
             return item;
