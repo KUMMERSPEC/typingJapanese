@@ -25,6 +25,25 @@ const REVIEW_INTERVALS = {
     }
 };
 
+// 添加间隔调整配置
+const INTERVAL_ADJUSTMENTS = {
+    consecutiveCorrect: {
+        3: 1.2,  // 连续正确3次，间隔延长20%
+        5: 1.5,  // 连续正确5次，间隔延长50%
+        7: 2.0   // 连续正确7次，间隔延长100%
+    },
+    responseTime: {
+        fast: 1.2,    // 快速回答，间隔延长20%
+        normal: 1.0,  // 正常速度
+        slow: 0.8     // 慢速回答，间隔缩短20%
+    },
+    hintUsage: {
+        none: 1.2,    // 不使用提示，间隔延长20%
+        some: 1.0,    // 偶尔使用提示
+        frequent: 0.8  // 频繁使用提示，间隔缩短20%
+    }
+};
+
 /* 后续优化可能会用到的配置
 const INTERVAL_ADJUSTMENTS = {
     consecutiveCorrect: {
@@ -232,8 +251,8 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 修改 updateReviewProgress 方法，确保正确处理 master 级别的句子
-    updateReviewProgress(questionId, isCorrect) {
+    // 修改 updateReviewProgress 方法，添加间隔调整功能
+    updateReviewProgress(questionId, isCorrect, options = {}) {
         try {
             let stats = this.getStatistics();
             
@@ -256,8 +275,13 @@ class Statistics {
             const item = stats.reviewHistory[questionId];
             const now = new Date();
 
-            // 更新复习次数
+            // 更新复习次数和连续正确次数
             item.reviewCount = (item.reviewCount || 0) + 1;
+            if (isCorrect) {
+                item.consecutiveCorrect = (item.consecutiveCorrect || 0) + 1;
+            } else {
+                item.consecutiveCorrect = 0;
+            }
 
             // 根据答题结果更新熟练度
             if (isCorrect) {
@@ -291,16 +315,57 @@ class Statistics {
                 }
             }
 
-            // 计算下次复习时间
-            const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
-            item.lastReview = now.toISOString();
-            // 如果是 master 级别且答对了，延长复习间隔
-            if (item.proficiency === 'master' && isCorrect) {
-                // master 级别且答对，使用更长的间隔（比如14天）
-                item.nextReviewDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString();
-            } else {
-                item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+            // 计算基础间隔
+            const baseInterval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
+            
+            // 计算间隔调整系数
+            let intervalMultiplier = 1.0;
+
+            // 1. 连续正确次数调整
+            if (isCorrect && item.consecutiveCorrect) {
+                for (const [threshold, multiplier] of Object.entries(INTERVAL_ADJUSTMENTS.consecutiveCorrect)) {
+                    if (item.consecutiveCorrect >= parseInt(threshold)) {
+                        intervalMultiplier *= multiplier;
+                        break;
+                    }
+                }
             }
+
+            // 2. 响应时间调整
+            if (options.responseTime) {
+                const responseMultiplier = INTERVAL_ADJUSTMENTS.responseTime[options.responseTime];
+                if (responseMultiplier) {
+                    intervalMultiplier *= responseMultiplier;
+                }
+            }
+
+            // 3. 提示使用调整
+            if (options.hintUsage) {
+                const hintMultiplier = INTERVAL_ADJUSTMENTS.hintUsage[options.hintUsage];
+                if (hintMultiplier) {
+                    intervalMultiplier *= hintMultiplier;
+                }
+            }
+
+            // 计算最终间隔
+            const finalInterval = baseInterval * intervalMultiplier;
+            
+            // 更新复习时间
+            item.lastReview = now.toISOString();
+            if (item.proficiency === 'master' && isCorrect) {
+                // master 级别且答对，使用更长的基础间隔
+                const masterInterval = 14 * intervalMultiplier; // 14天基础间隔
+                item.nextReviewDate = new Date(now.getTime() + masterInterval * 24 * 60 * 60 * 1000).toISOString();
+            } else {
+                item.nextReviewDate = new Date(now.getTime() + finalInterval * 24 * 60 * 60 * 1000).toISOString();
+            }
+
+            // 保存学习表现数据
+            item.lastPerformance = {
+                responseTime: options.responseTime || 'normal',
+                hintUsage: options.hintUsage || 'none',
+                intervalMultiplier: intervalMultiplier
+            };
 
             // 重新计算掌握情况统计
             stats.masteryStats = this.calculateMasteryStats(stats);
@@ -312,8 +377,10 @@ class Statistics {
                 questionId,
                 proficiency: item.proficiency,
                 reviewCount: item.reviewCount,
-                lastReview: item.lastReview,
-                nextReviewDate: item.nextReviewDate
+                consecutiveCorrect: item.consecutiveCorrect,
+                intervalMultiplier,
+                nextReviewDate: item.nextReviewDate,
+                performance: item.lastPerformance
             });
             
             return item;
