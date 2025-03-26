@@ -273,7 +273,93 @@ class ReviewManager {
         }, 2000); // 2秒后自动跳转，给用户足够时间看答案
     }
 
-    // 修改 playAudioWithUserInteraction 方法
+    // 修改 speak 方法，使用与 flashcard 一致的实现
+    async speak(text) {
+        try {
+            if (!text) {
+                console.error('尝试朗读空文本');
+                return;
+            }
+            
+            const currentSentence = this.sentences[this.currentIndex];
+            if (!currentSentence) {
+                console.error('当前句子不存在');
+                return;
+            }
+            
+            // 尝试从多个可能的属性获取日语内容
+            const textToSpeak = text || 
+                               currentSentence.japanese || 
+                               currentSentence.sentence || 
+                               (currentSentence.id && currentSentence.id.split('_').pop());
+            
+            if (!textToSpeak) {
+                console.error('没有可朗读的文本');
+                return;
+            }
+
+            console.log('Speaking text:', textToSpeak);
+
+            // 预加载音频
+            const audio = new Audio();
+            audio.preload = 'auto';  // 设置预加载
+            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+
+            // 等待音频加载完成
+            await new Promise((resolve, reject) => {
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                audio.load();  // 开始加载
+            });
+
+            try {
+                await audio.play();
+                console.log('音频播放成功');
+            } catch (error) {
+                console.error('播放失败，尝试后备方案:', error);
+                this.fallbackSpeak(textToSpeak);
+            }
+
+        } catch (error) {
+            console.error('播放语音失败:', error);
+            this.fallbackSpeak(text);
+        }
+    }
+
+    // 修改 fallbackSpeak 方法，使用与 flashcard 一致的实现
+    fallbackSpeak(text) {
+        try {
+            if (!('speechSynthesis' in window)) {
+                console.warn('浏览器不支持语音合成');
+                return;
+            }
+
+            // 取消所有正在进行的语音
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            utterance.lang = 'ja-JP';
+
+            // 获取日语语音
+            const voices = window.speechSynthesis.getVoices();
+            const japaneseVoice = voices.find(voice => 
+                voice.lang.includes('ja') || voice.lang.includes('JP')
+            );
+            
+            if (japaneseVoice) {
+                utterance.voice = japaneseVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('后备语音播放失败:', error);
+        }
+    }
+
+    // 修改 playAudioWithUserInteraction 方法，使用新的 speak 方法
     async playAudioWithUserInteraction(text) {
         try {
             // 添加详细的调试信息
@@ -286,64 +372,11 @@ class ReviewManager {
                 userAgent: navigator.userAgent
             });
 
-            // 在移动设备上，使用 Web Speech API 作为首选
-            if (this.isMobile()) {
-                try {
-                    if ('speechSynthesis' in window) {
-                        // 停止任何正在播放的语音
-                        window.speechSynthesis.cancel();
-                        
-                        // 创建新的语音实例
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = 'ja-JP';
-                        utterance.rate = 0.9;
-                        
-                        // 获取日语声音
-                        const voices = window.speechSynthesis.getVoices();
-                        const japaneseVoice = voices.find(voice => 
-                            voice.lang.includes('ja') || voice.lang.includes('JP')
-                        );
-                        
-                        if (japaneseVoice) {
-                            utterance.voice = japaneseVoice;
-                        }
-                        
-                        // 播放语音
-                        window.speechSynthesis.speak(utterance);
-                        console.log('Web Speech API 播放成功');
-                        return;
-                    }
-                } catch (speechError) {
-                    console.warn('Web Speech API 播放失败:', speechError);
-                }
-            }
-
-            // 如果 Web Speech API 失败或不是移动设备，尝试使用有道 API
-            const audio = new Audio();
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&le=jap`;
-            
-            // 添加事件监听
-            await new Promise((resolve, reject) => {
-                audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();
-            });
-
-            // 尝试播放
-            await audio.play();
-            console.log('有道 API 音频播放成功');
+            await this.speak(text);
 
         } catch (error) {
             console.error('音频播放失败:', error);
-            // 最后尝试 Google TTS
-            try {
-                const googleAudio = new Audio();
-                googleAudio.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ja&client=tw-ob`;
-                await googleAudio.play();
-                console.log('Google TTS 播放成功');
-            } catch (googleError) {
-                console.error('所有播放方法都失败了:', googleError);
-            }
+            this.fallbackSpeak(text);
         }
     }
 
@@ -439,73 +472,6 @@ class ReviewManager {
         const current = this.sentences[this.currentIndex];
         if (current) {
             this.speak(current.japanese);
-        }
-    }
-
-    async speak(text) {
-        try {
-            const currentQuestion = this.sentences[this.currentIndex];
-            let textToSpeak = currentQuestion.hiragana || text;
-            textToSpeak = textToSpeak.replace(/:/g, '');
-
-            console.log('Speaking text:', textToSpeak);
-
-            // 预加载音频
-            const audio = new Audio();
-            audio.preload = 'auto';  // 设置预加载
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
-
-            // 等待音频加载完成
-            await new Promise((resolve, reject) => {
-                audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();  // 开始加载
-            });
-
-            try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.error('播放失败，尝试后备方案:', error);
-                this.fallbackSpeak(textToSpeak);
-            }
-
-        } catch (error) {
-            console.error('播放语音失败:', error);
-            this.fallbackSpeak(text);
-        }
-    }
-
-    // 添加后备播放方法
-    fallbackSpeak(text) {
-        try {
-            if (!('speechSynthesis' in window)) {
-                console.warn('浏览器不支持语音合成');
-                return;
-            }
-
-            // 取消所有正在进行的语音
-            window.speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 1;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            utterance.lang = 'ja-JP';
-
-            // 获取日语语音
-            const voices = window.speechSynthesis.getVoices();
-            const japaneseVoice = voices.find(voice => 
-                voice.lang.includes('ja') || voice.lang.includes('JP')
-            );
-            
-            if (japaneseVoice) {
-                utterance.voice = japaneseVoice;
-            }
-
-            window.speechSynthesis.speak(utterance);
-        } catch (error) {
-            console.error('后备语音播放失败:', error);
         }
     }
 
