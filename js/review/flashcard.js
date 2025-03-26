@@ -506,6 +506,16 @@ class FlashcardManager {
             return;
         }
         
+        // 详细记录当前句子数据，帮助调试
+        console.log('当前句子详细数据:', {
+            id: currentSentence.id,
+            japanese: currentSentence.japanese,
+            meaning: currentSentence.meaning,
+            sentence: currentSentence.sentence,  // 有些数据模型可能使用 sentence 而不是 japanese
+            hiragana: currentSentence.hiragana,
+            fullObject: JSON.stringify(currentSentence)
+        });
+        
         const cardFront = document.querySelector('.card-front');
         const cardBack = document.querySelector('.card-back');
         
@@ -514,30 +524,32 @@ class FlashcardManager {
             return;
         }
         
-        console.log('翻转前状态:', {
-            isFlipped: card.classList.contains('flipped'),
-            frontContent: cardFront.innerHTML,  // 使用 innerHTML 而不是 textContent
-            backContent: cardBack.innerHTML,    // 使用 innerHTML 而不是 textContent
-            mode: this.mode,
-            sentence: {
-                japanese: currentSentence.japanese,
-                meaning: currentSentence.meaning
-            }
-        });
-        
         // 在翻转前确保内容已经设置 - 修复 Edge 浏览器问题
         if (!card.classList.contains('flipped')) {
             // 如果要翻到背面，确保背面内容已设置
             if (this.mode === 'cn-jp') {
-                // 中文到日文模式
-                // 使用 innerHTML 检查内容是否为空
+                // 中文到日文模式 - 尝试从多个可能的属性获取日语内容
+                let japaneseText = currentSentence.japanese || 
+                                   currentSentence.sentence ||  // 有些数据模型使用 sentence 字段
+                                   (typeof currentSentence === 'string' ? currentSentence : null);
+                                   
+                if (!japaneseText && currentSentence.id) {
+                    // 尝试从 ID 中提取课程和句子信息
+                    console.log('尝试从 ID 提取信息:', currentSentence.id);
+                    // 例如 ID 可能是 "byouki_lesson1_風邪をひく"
+                    const parts = currentSentence.id.split('_');
+                    if (parts.length > 2) {
+                        japaneseText = parts[parts.length - 1];
+                        console.log('从 ID 提取的日语内容:', japaneseText);
+                    }
+                }
+                
                 if (!cardBack.innerHTML || cardBack.innerHTML === '加载中...' || cardBack.innerHTML === '内容不可用') {
-                    cardBack.innerHTML = currentSentence.japanese || '内容不可用';
-                    console.log('翻转前设置日文内容:', currentSentence.japanese);
+                    cardBack.innerHTML = japaneseText || '内容不可用';
+                    console.log('翻转前设置日文内容:', japaneseText);
                 }
             } else {
                 // 日文到中文模式
-                // 使用 innerHTML 检查内容是否为空
                 if (!cardBack.innerHTML || cardBack.innerHTML === '加载中...' || cardBack.innerHTML === '内容不可用') {
                     cardBack.innerHTML = currentSentence.meaning || '内容不可用';
                     console.log('翻转前设置中文内容:', currentSentence.meaning);
@@ -553,9 +565,15 @@ class FlashcardManager {
         if (card.classList.contains('flipped')) {
             // 给翻转动画一些时间完成
             setTimeout(() => {
-                if (this.mode === 'cn-jp' && currentSentence.japanese) {
-                    // 在中文到日文模式下，播放背面的日文
-                    this.speak(currentSentence.japanese);
+                if (this.mode === 'cn-jp') {
+                    // 尝试从多个可能的属性获取日语内容
+                    const textToSpeak = currentSentence.japanese || 
+                                       currentSentence.sentence || 
+                                       (currentSentence.id && currentSentence.id.split('_').pop());
+                                       
+                    if (textToSpeak) {
+                        this.speak(textToSpeak);
+                    }
                 }
             }, 300); // 等待翻转动画完成
         }
