@@ -246,11 +246,13 @@ class FlashcardManager {
         cardFront.innerHTML = '';
         cardBack.innerHTML = '';
         
-        // 设置正面内容 - 使用 innerHTML 而不是 textContent
+        // 设置正面内容
         if (this.mode === 'cn-jp') {
-            cardFront.innerHTML = currentSentence.meaning || '加载中...';    // 中文
+            // 中文到日文模式
+            cardFront.innerHTML = currentSentence.meaning || '加载中...';
         } else {
-            cardFront.innerHTML = currentSentence.japanese || '加载中...';  // 日文
+            // 日文到中文模式
+            cardFront.innerHTML = currentSentence.japanese || currentSentence.sentence || '加载中...';
         }
         
         // 强制重绘
@@ -266,20 +268,23 @@ class FlashcardManager {
         // 如果是日语在正面，播放音频
         if (this.mode !== 'cn-jp') {
             setTimeout(() => {
-                this.speak(currentSentence.japanese);
+                this.speak(currentSentence.japanese || currentSentence.sentence);
             }, 300);
         }
         
         // 延迟设置背面内容，确保用户看不到
         setTimeout(() => {
             if (this.mode === 'cn-jp') {
-                cardBack.innerHTML = currentSentence.japanese || '加载中...';   // 日文
+                // 中文到日文模式
+                cardBack.innerHTML = currentSentence.japanese || currentSentence.sentence || '加载中...';
             } else {
-                cardBack.innerHTML = currentSentence.meaning || '加载中...';    // 中文
+                // 日文到中文模式
+                cardBack.innerHTML = currentSentence.meaning || '加载中...';
             }
             console.log('背面内容设置完成:', {
                 frontContent: cardFront.innerHTML,
-                backContent: cardBack.innerHTML
+                backContent: cardBack.innerHTML,
+                mode: this.mode
             });
         }, 500);
     }
