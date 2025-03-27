@@ -126,20 +126,23 @@ export class CourseDisplay {
                 completedLessons
             });
 
-            // 遍历所有课程，找出第一个正在学习但未完成的课程
+            // 存储所有进行中的课程
+            const inProgressCourses = [];
+
+            // 遍历所有课程，找出所有正在学习但未完成的课程
             for (const [courseId, course] of Object.entries(this.courses)) {
                 const progress = this.getCourseProgress(courseId, course, completedLessons);
                 if (progress) {
-                    console.log('找到继续学习的课程:', progress);
-                    return progress;
+                    console.log(`找到继续学习的课程: ${courseId}`, progress);
+                    inProgressCourses.push(progress);
                 }
             }
             
-            console.log('没有找到需要继续学习的课程');
-            return null;
+            console.log('所有继续学习的课程:', inProgressCourses);
+            return inProgressCourses;
         } catch (error) {
             console.error('获取继续学习课程时出错:', error);
-            return null;
+            return [];
         }
     }
 
@@ -233,12 +236,12 @@ export class CourseDisplay {
             const completedLessons = stats.completedLessons || {};
             console.log('已完成的课程:', completedLessons);
 
-            // 获取继续学习的课程
-            const continueLearningCourse = this.getContinueLearningCourse();
-            console.log('继续学习的课程:', continueLearningCourse);
+            // 获取继续学习的课程列表
+            const continueLearningCourses = this.getContinueLearningCourse();
+            console.log('继续学习的课程列表:', continueLearningCourses);
 
-            // 如果找到了继续学习的课程，创建卡片
-            if (continueLearningCourse) {
+            // 为每个继续学习的课程创建卡片
+            for (const continueLearningCourse of continueLearningCourses) {
                 const course = this.courses[continueLearningCourse.id];
                 if (course) {
                     const courseCard = document.createElement('div');
