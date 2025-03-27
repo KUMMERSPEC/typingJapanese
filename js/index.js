@@ -246,17 +246,26 @@ function updateReviewList() {
     const reviewHistory = stats.reviewHistory || {};
     let items = [];
 
+    // 添加调试信息
+    console.log('复习历史数据:', reviewHistory);
+    
     // 遍历复习历史
     for (const key in reviewHistory) {
         const item = reviewHistory[key];
         
-        // 修改判断条件，使用 japanese 属性
-        if (item && (item.sentence || item.japanese)) {  // 检查两个属性
+        // 添加调试信息
+        console.log(`检查句子 ${key}:`, item);
+        
+        // 确保句子有内容 - 检查多个可能的属性
+        if (item && (item.sentence || item.japanese || item.text)) {
+            // 确保句子有显示内容
+            const displayText = item.sentence || item.japanese || item.text || key;
+            
             // 根据筛选条件处理
             switch (selectedFilter) {
                 case 'all':
-                    // 显示所有未掌握的句子
-                    items.push(item);
+                    // 显示所有句子
+                    items.push({...item, displayText});
                     break;
                     
                 case 'today':
@@ -268,7 +277,7 @@ function updateReviewList() {
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     
                     if (reviewDate <= tomorrow) {
-                        items.push(item);
+                        items.push({...item, displayText});
                     }
                     break;
                     
@@ -276,10 +285,12 @@ function updateReviewList() {
                     // 显示需要加强的句子
                     if (item.proficiency === 'low' || 
                         (item.reviewCount > 0 && item.correctCount / item.reviewCount < 0.6)) {
-                        items.push(item);
+                        items.push({...item, displayText});
                     }
                     break;
             }
+        } else {
+            console.warn(`句子 ${key} 没有内容:`, item);
         }
     }
 
@@ -300,10 +311,10 @@ function updateReviewList() {
                 return `
                     <div class="review-item">
                         <div class="sentence-content">
-                            <div class="japanese">${item.sentence || item.japanese}</div>
+                            <div class="japanese">${item.displayText}</div>
                             <div class="hiragana">${item.hiragana || ''}</div>
                             <div class="meaning">${item.meaning || ''}</div>
-                            <div class="course-info">${item.course} - ${item.lesson}</div>
+                            <div class="course-info">${item.course || ''} ${item.lesson ? '- ' + item.lesson : ''}</div>
                         </div>
                         <div class="review-status">
                             <span class="status-badge ${statusClass}">${status}</span>
