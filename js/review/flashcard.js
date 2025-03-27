@@ -698,10 +698,8 @@ class FlashcardManager {
         // 显示完成效果
         new CompletionEffect().show();
 
-        // 获取正确的基础路径
-        const basePath = window.location.pathname.includes('/review/') 
-            ? '../'  // 如果在 review 目录下
-            : './';  // 如果在根目录
+        // 获取正确的基础路径 - 修复为完整路径
+        const basePath = '/typingJapanese/';
 
         container.innerHTML = `
             <div class="completion-screen">
@@ -709,7 +707,7 @@ class FlashcardManager {
                 <p>复习完成！</p>
                 <div class="button-group">
                     <button onclick="window.location.href='${basePath}?update=true'">返回首页</button>
-                    <button onclick="window.location.reload()">再次复习</button>
+                    <button onclick="location.reload()">再次复习</button>
                 </div>
             </div>
         `;
@@ -766,17 +764,11 @@ class FlashcardManager {
             // 保存最终统计
             this.saveReviewStats();
             
-            // 不使用 history.pushState，改用相对路径重定向
-            const baseUrl = window.location.pathname.includes('/review/') 
-                ? '../'  // 如果在 review 目录下
-                : './';  // 如果在根目录
-                
-            // 添加时间戳参数，确保页面刷新
-            window.location.href = `${baseUrl}?t=${Date.now()}`;
+            // 使用完整路径
+            window.location.href = '/typingJapanese/?t=' + Date.now();
             
         } catch (error) {
             console.error('处理复习完成时出错:', error);
-            // 如果出错，使用完整的路径返回首页
             window.location.href = '/typingJapanese/';
         }
     }

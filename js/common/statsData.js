@@ -697,11 +697,19 @@ class Statistics {
         }
     }
 
-    // 修改 getMasteryStatus 方法，确保状态显示的一致性
+    // 修改 getMasteryStatus 方法，强制显示 master 级别句子的状态
     getMasteryStatus(item) {
+        console.log('获取状态:', item);
+        
         // 如果是新句子（没有复习记录）
         if (!item || !item.reviewCount) {
             return { text: '生疏', class: 'status-new' };
+        }
+        
+        // 特殊处理 master 级别的句子 - 无论何种情况都显示为"熟练"
+        if (item.proficiency === 'master') {
+            console.log('发现 master 级别句子，强制显示为熟练');
+            return { text: '熟练', class: 'status-high' };
         }
 
         // 检查是否需要复习
@@ -711,11 +719,6 @@ class Statistics {
         
         // 如果是今天刚复习过的，优先显示掌握状态
         if (lastReview && lastReview.toDateString() === now.toDateString()) {
-            // master 级别的句子显示为"熟练"
-            if (item.proficiency === 'master') {
-                return { text: '熟练', class: 'status-high' };
-            }
-            
             switch (item.proficiency) {
                 case 'high':
                     return { text: '熟练', class: 'status-high' };
@@ -734,11 +737,6 @@ class Statistics {
         }
 
         // 其他情况显示当前掌握状态
-        // master 级别的句子也显示为"熟练"
-        if (item.proficiency === 'master') {
-            return { text: '熟练', class: 'status-high' };
-        }
-        
         switch (item.proficiency) {
             case 'high':
                 return { text: '熟练', class: 'status-high' };
