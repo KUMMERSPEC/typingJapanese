@@ -223,22 +223,34 @@ class Statistics {
 
     // 新增：计算掌握情况的方法
     calculateMasteryStats(stats) {
-        const masteryStats = {
-            low: 0,
-            medium: 0,
-            high: 0,
-            master: 0
-        };
+        try {
+            const masteryStats = {
+                low: 0,
+                medium: 0,
+                high: 0,
+                master: 0
+            };
 
-        if (stats.reviewHistory) {
-            Object.values(stats.reviewHistory).forEach(item => {
-                if (item && item.proficiency) {
-                    masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
-                }
-            });
+            // 从复习历史中统计掌握情况
+            if (stats.reviewHistory) {
+                Object.values(stats.reviewHistory).forEach(item => {
+                    if (item && item.proficiency) {
+                        // 只有当下次复习时间未到时，才计入统计
+                        const nextReview = new Date(item.nextReviewDate);
+                        const now = new Date();
+                        if (nextReview > now) {
+                            masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
+                        }
+                    }
+                });
+            }
+
+            console.log('计算掌握情况统计:', masteryStats);
+            return masteryStats;
+        } catch (error) {
+            console.error('计算掌握情况统计出错:', error);
+            return { low: 0, medium: 0, high: 0, master: 0 };
         }
-
-        return masteryStats;
     }
 
     // 检查是否是连续天数
