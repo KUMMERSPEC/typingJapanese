@@ -292,23 +292,10 @@ function updateReviewList() {
             reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
         } else {
             reviewList.innerHTML = items.map(item => {
-                // 获取掌握状态和对应的样式
-                let status = '未复习';
-                let statusClass = 'status-new';
-
-                // 根据复习次数和掌握度设置状态
-                if (item.reviewCount > 0) {
-                    if (item.proficiency === 'high') {
-                        status = '熟练';
-                        statusClass = 'status-high';
-                    } else if (item.proficiency === 'medium') {
-                        status = '一般';
-                        statusClass = 'status-medium';
-                    } else if (item.proficiency === 'low') {
-                        status = '生疏';
-                        statusClass = 'status-low';
-                    }
-                }
+                // 使用我们统一的 getMasteryStatus 函数获取状态
+                const statusInfo = statsData.getMasteryStatus(item);
+                const status = statusInfo.text;
+                const statusClass = statusInfo.class;
 
                 return `
                     <div class="review-item">
@@ -693,28 +680,50 @@ function showLearnedSentencesPanel() {
     }
 }
 
-// 修改 getMasteryStatus 函数
+// 修改 getMasteryStatus 函数，与 statsData.js 保持一致
 function getMasteryStatus(item) {
-    if (!item.reviewCount) {
-        return '未复习';  // 对应 status-new
-    }
-    const correctRate = item.correctCount / item.reviewCount;
-    
-    if (item.proficiency === 'low') {
-        if (correctRate < 0.3) return '需要加强';  // 对应 status-weak
-        if (correctRate < 0.6) return '初学';      // 对应 status-learning
-        return '基础';                            // 对应 status-basic
+    // 如果是新句子（没有复习记录）
+    if (!item || !item.reviewCount) {
+        return '生疏';
     }
     
-    if (item.proficiency === 'medium') {
-        if (correctRate < 0.7) return '熟悉';      // 对应 status-familiar
-        if (correctRate < 0.9) return '掌握';      // 对应 status-good
-        return '熟练';                            // 对应 status-skilled
+    // 特殊处理 master 级别的句子
+    if (item.proficiency === 'master') {
+        return '熟练';
     }
+
+    // 检查是否需要复习
+    const nextReview = new Date(item.nextReviewDate);
+    const now = new Date();
+    const lastReview = item.lastReview ? new Date(item.lastReview) : null;
     
-    if (item.proficiency === 'high') {
-        return '精通';                            // 对应 status-mastered
+    // 如果是今天刚复习过的，优先显示掌握状态
+    if (lastReview && lastReview.toDateString() === now.toDateString()) {
+        switch (item.proficiency) {
+            case 'high': return '熟练';
+            case 'medium': return '基本掌握';
+            case 'low': return '需要加强';
+            default: return '未知';
+        }
     }
-    
-    return '未知';  // 默认状态
+
+    // 如果已经到了复习时间，显示"待复习"
+    if (nextReview <= now) {
+        return '待复习';
+    }
+
+    // 其他情况显示当前掌握状态
+    switch (item.proficiency) {
+        case 'high': return '熟练';
+        case 'medium': return '基本掌握';
+        case 'low': return '需要加强';
+        default: return '未知';
+    }
+}
+
+// 在需要获取掌握状态的地方使用
+function updateSentenceStatus(item) {
+    const status = statsData.getMasteryStatus(item);
+    // 使用 status.text 和 status.class
+    return status.text;
 } 
