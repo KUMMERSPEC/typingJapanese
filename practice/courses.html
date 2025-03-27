@@ -256,8 +256,9 @@
             modalTitle.textContent = `${course.name} - 课时选择`;
             lessonList.innerHTML = '';
 
-            // 获取已完成课程数据
-            const completedLessons = getCompletedLessons();
+            // 从 typing_statistics 获取完成状态
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const completedLessons = stats.completedLessons || {};
 
             // 生成课时列表
             Object.entries(course.lessons).forEach(([lessonId, lesson]) => {
@@ -266,9 +267,9 @@
                 lessonElement.setAttribute('data-course', courseId);
                 lessonElement.setAttribute('data-lesson', lessonId);
                 
-                // 检查课时是否已完成
-                const isCompleted = completedLessons[courseId] && 
-                                  completedLessons[courseId].includes(lessonId);
+                // 修改完成状态检查逻辑
+                const lessonKey = `${courseId}_${lessonId}`;
+                const isCompleted = completedLessons[lessonKey];
                 
                 if (isCompleted) {
                     lessonElement.classList.add('completed');
@@ -320,44 +321,45 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('页面加载完成，检查课程状态');
             checkAndMarkCompletedCourses();
+            updateCompletionStatus();
             
             // 监听统计更新事件
             window.addEventListener('statisticsUpdated', () => {
                 console.log('统计数据更新，重新检查课程状态');
                 checkAndMarkCompletedCourses();
+                updateCompletionStatus();
             });
         });
 
-        // 更新课程完成状态的函数
+        // 修改更新课程完成状态的函数
         function updateCompletionStatus() {
-            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            // 从 typing_statistics 获取完成状态
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const completedLessons = stats.completedLessons || {};
             
-            // 遍历所有课程
-            Object.keys(completedLessons).forEach(course => {
-                completedLessons[course].forEach(lesson => {
-                    // 找到对应的课时元素并添加勾选标记
-                    const lessonElements = document.querySelectorAll(`.lesson-item[data-course="${course}"][data-lesson="${lesson}"]`);
-                    lessonElements.forEach(element => {
-                        element.classList.add('completed');
-                        // 检查是否已有勾选标记
-                        if (!element.querySelector('.completion-mark')) {
-                            const title = element.querySelector('h3');
-                            if (title) {
-                                const checkmark = document.createElement('span');
-                                checkmark.className = 'completion-mark';
-                                checkmark.textContent = '✓';
-                                checkmark.style.color = '#4CAF50';
-                                checkmark.style.marginLeft = '10px';
-                                title.appendChild(checkmark);
-                            }
-                        }
-                    });
-                });
+            // 遍历所有课时元素
+            document.querySelectorAll('.lesson-item').forEach(element => {
+                const courseId = element.dataset.course;
+                const lessonId = element.dataset.lesson;
+                const lessonKey = `${courseId}_${lessonId}`;
+                
+                if (completedLessons[lessonKey]) {
+                    element.classList.add('completed');
+                    // 添加勾选标记
+                    const title = element.querySelector('h3');
+                    if (title && !title.querySelector('.completion-mark')) {
+                        const checkmark = document.createElement('span');
+                        checkmark.className = 'completion-mark';
+                        checkmark.textContent = '✓';
+                        checkmark.style.cssText = `
+                            color: #4CAF50;
+                            margin-left: 10px;
+                        `;
+                        title.appendChild(checkmark);
+                    }
+                }
             });
         }
-
-        // 页面加载时更新完成状态
-        document.addEventListener('DOMContentLoaded', updateCompletionStatus);
 
         // 监听课程完成事件
         window.addEventListener('lessonCompleted', (event) => {
