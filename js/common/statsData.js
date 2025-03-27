@@ -134,11 +134,6 @@ class Statistics {
 
             const now = new Date();
             let items = Object.entries(stats.reviewHistory)
-                .filter(([_, item]) => {
-                    // 检查是否需要复习
-                    const nextReview = new Date(item.nextReviewDate);
-                    return nextReview <= now;
-                })
                 .map(([id, item]) => {
                     // 获取正确的状态显示
                     const status = this.getMasteryStatus(item);
@@ -146,17 +141,19 @@ class Statistics {
                         id,
                         ...item,
                         displayStatus: status.text,
-                        statusClass: status.class
+                        statusClass: status.class,
+                        needsReview: new Date(item.nextReviewDate) <= now
                     };
                 });
 
-            // 如果设置了专注薄弱项
-            if (options.focusWeak) {
-                items.sort((a, b) => {
-                    const proficiencyOrder = { low: 0, medium: 1, high: 2, master: 3 };
-                    return proficiencyOrder[a.proficiency] - proficiencyOrder[b.proficiency];
-                });
-            }
+            // 排序：需要复习的在前面，然后按掌握度排序
+            items.sort((a, b) => {
+                if (a.needsReview !== b.needsReview) {
+                    return a.needsReview ? -1 : 1;
+                }
+                const proficiencyOrder = { low: 0, medium: 1, high: 2, master: 3 };
+                return proficiencyOrder[a.proficiency] - proficiencyOrder[b.proficiency];
+            });
 
             return items;
         } catch (error) {
@@ -179,9 +176,15 @@ class Statistics {
             // 从复习历史中统计掌握情况
             if (stats.reviewHistory) {
                 Object.values(stats.reviewHistory).forEach(item => {
-                    if (item && item.proficiency) {
-                        // 不再考虑复习时间，只看掌握度
-                        masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
+                    if (item) {
+                        // 新句子计入 low 级别
+                        if (!item.reviewCount) {
+                            masteryStats.low++;
+                        } 
+                        // 已有复习记录的句子按照当前掌握度统计
+                        else if (item.proficiency) {
+                            masteryStats[item.proficiency]++;
+                        }
                     }
                 });
             }
@@ -295,14 +298,16 @@ class Statistics {
             item.reviewCount = (item.reviewCount || 0) + 1;
             if (isCorrect) {
                 item.correctCount = (item.correctCount || 0) + 1;
+                item.consecutiveCorrect = (item.consecutiveCorrect || 0) + 1;
+            } else {
+                item.consecutiveCorrect = 0;
             }
             
             // 保存当前掌握度，用于判断是否需要更新
             const previousProficiency = item.proficiency;
             
-            // 根据答题结果更新熟练度和下次复习时间
+            // 根据答题结果更新熟练度
             if (isCorrect) {
-                // 根据当前掌握度决定是否提升
                 switch (item.proficiency) {
                     case 'low':
                         item.proficiency = 'medium';
@@ -311,8 +316,7 @@ class Statistics {
                         item.proficiency = 'high';
                         break;
                     case 'high':
-                        // 连续正确次数达到阈值时升级到 master
-                        if ((item.consecutiveCorrect || 0) >= 3) {
+                        if (item.consecutiveCorrect >= 3) {
                             item.proficiency = 'master';
                         }
                         break;
@@ -332,35 +336,19 @@ class Statistics {
                     case 'medium':
                         item.proficiency = 'low';
                         break;
-                    // low 保持不变
                 }
-                // 重置连续正确次数
-                item.consecutiveCorrect = 0;
             }
 
-            // 根据新的熟练度设置下次复习时间
-            const interval = REVIEW_INTERVALS[item.proficiency].success;
+            // 更新复习时间
             item.lastReview = now.toISOString();
+            const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
             item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
 
-            // 只有当掌握度发生变化时才更新统计
-            if (previousProficiency !== item.proficiency) {
-                stats.masteryStats = this.getMasteryStats();
-            }
-
-            // 保存更新后的统计数据
-            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            // 更新统计
+            stats.masteryStats = this.getMasteryStats();
             
-            console.log('更新复习记录完成:', {
-                questionId,
-                proficiency: item.proficiency,
-                previousProficiency,
-                reviewCount: item.reviewCount,
-                correctCount: item.correctCount,
-                lastReview: item.lastReview,
-                nextReviewDate: item.nextReviewDate,
-                masteryStats: stats.masteryStats
-            });
+            // 保存更新
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
             
             return item;
         } catch (error) {
@@ -697,10 +685,11 @@ class Statistics {
         }
     }
 
-    // 修改 getMasteryStatus 函数，调整掌握度显示逻辑
+    // 修改 getMasteryStatus 方法，调整状态显示逻辑
     getMasteryStatus(item) {
+        // 如果是新句子（没有复习记录）
         if (!item || !item.reviewCount) {
-            return { text: '未复习', class: 'status-new' };
+            return { text: '生疏', class: 'status-new' };
         }
 
         // 检查是否需要复习
