@@ -4,19 +4,13 @@ import { courseData } from './courseData.js';
 export class CourseDisplay {
     constructor() {
         try {
-            this.loadCoursesFromHTML(); // 从 HTML 加载课程信息
-            console.log('Courses:', this.courses); // 添加调试信息
-            this.completedLessons = {};
-            this.courseOrder = []; // 这里可以根据需要初始化课程顺序
-            this.courseLessons = {};
-            
-            // 从加载的课程信息初始化课程课时数
-            Object.entries(this.courses).forEach(([courseId, course]) => {
-                this.courseLessons[courseId] = course.lessonCount || 0; // 确保有课时数
-            });
+            // 直接从 courseData 加载课程信息
+            this.courses = courseData['word-group'].courses;
+            console.log('Loaded courses:', this.courses);
             
             this.loadData();
             this.initializeEventListeners();
+            this.stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
         } catch (error) {
             console.error('Error in CourseDisplay constructor:', error);
             throw error;
@@ -50,31 +44,31 @@ export class CourseDisplay {
     getCourseProgress(courseId, course, completedLessons) {
         console.log(`检查课程 ${courseId} 的进度:`, {
             course,
-            completedLessons: completedLessons[courseId]
+            completedLessons
         });
         
         // 获取课程的总课时数
         const totalLessons = 5; // 假设每个课程有5课时
-        const completedCourseLessons = Object.keys(completedLessons || {})
+        const completedCount = Object.keys(completedLessons || {})
             .filter(key => key.startsWith(`${courseId}_`))
             .length;
 
         console.log(`课程 ${courseId} 进度:`, {
             totalLessons,
-            completedLessons: completedCourseLessons,
-            hasProgress: completedCourseLessons > 0 && completedCourseLessons < totalLessons
+            completedCount,
+            hasProgress: completedCount > 0 && completedCount < totalLessons
         });
 
         // 如果有完成的课时且未完成全部课时，返回进度信息
-        if (completedCourseLessons > 0 && completedCourseLessons < totalLessons) {
-            const nextLessonNumber = completedCourseLessons + 1;
+        if (completedCount > 0 && completedCount < totalLessons) {
+            const nextLessonNumber = completedCount + 1;
             const progress = {
                 id: courseId,
                 name: course.name,
-                description: course.description,
+                description: course.description || '',
                 nextLesson: nextLessonNumber,
                 progress: {
-                    completed: completedCourseLessons,
+                    completed: completedCount,
                     total: totalLessons
                 }
             };
@@ -231,8 +225,54 @@ export class CourseDisplay {
                 return;
             }
 
-            // Clear existing content
+            // 清空现有内容
             courseListContainer.innerHTML = '';
+
+            // 获取完成状态
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const completedLessons = stats.completedLessons || {};
+            console.log('已完成的课程:', completedLessons);
+
+            // 获取继续学习的课程
+            const continueLearningCourse = this.getContinueLearningCourse();
+            console.log('继续学习的课程:', continueLearningCourse);
+
+            // 如果找到了继续学习的课程，创建卡片
+            if (continueLearningCourse) {
+                const course = this.courses[continueLearningCourse.id];
+                if (course) {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card continue-learning';
+                    
+                    const progress = continueLearningCourse.progress;
+                    const progressPercentage = (progress.completed / progress.total) * 100;
+                    
+                    courseCard.innerHTML = `
+                        <div class="card-header">
+                            <h2>${course.name.charAt(0)}</h2>
+                            <span class="continue-badge">继续学习</span>
+                        </div>
+                        <div class="card-content">
+                            <h3>${course.name}</h3>
+                            <p>${course.description || ''}</p>
+                            <div class="course-stats">
+                                <span><i class="fas fa-book"></i> ${progress.total} 课时</span>
+                                <span><i class="fas fa-check"></i> ${progress.completed} 已完成</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
+                            <div class="course-actions">
+                                <a href="practice/?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
+                                    <i class="fas fa-play"></i> 继续学习
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    courseListContainer.appendChild(courseCard);
+                }
+            }
 
             // 获取今天的推荐课程
             const recommendation = this.getRecommendedCourse();
@@ -241,72 +281,6 @@ export class CourseDisplay {
             // 从 courseData 中加载所有课程
             const allCourses = courseData['word-group'].courses;
             
-            // 获取正在学习的课程
-            const continueLearningCourse = this.getContinueLearningCourse();
-            console.log('Continue learning course:', continueLearningCourse);
-
-            // 创建继续学习的课程卡片
-            if (continueLearningCourse) {
-                const course = allCourses[continueLearningCourse.id];
-                const courseCard = document.createElement('div');
-                courseCard.className = 'course-card continue-learning';
-                
-                const progress = continueLearningCourse.progress;
-                const progressPercentage = (progress.completed / progress.total) * 100;
-                
-                courseCard.innerHTML = `
-                    <div class="card-header">
-                        <h2>${course.name.charAt(0)}</h2>
-                    <span class="continue-badge">继续学习</span>
-                    </div>
-                    <div class="card-content">
-                    <h3>${course.name}</h3>
-                    <p>${course.description}</p>
-                    <div class="course-stats">
-                        <span><i class="fas fa-book"></i> ${progress.total} 课时</span>
-                        <span><i class="fas fa-check"></i> ${progress.completed} 已完成</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: ${progressPercentage}%"></div>
-                    </div>
-                    <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
-                    <div class="course-actions">
-                        <a href="practice/practice.html?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
-                            <i class="fas fa-play"></i> 继续学习
-                        </a>
-                        </div>
-                    </div>
-                `;
-                courseListContainer.appendChild(courseCard);
-            }
-
-            // 创建推荐课程卡片
-            if (recommendation && (!continueLearningCourse || recommendation.id !== continueLearningCourse.id)) {
-                const recommendedCourse = allCourses[recommendation.id];
-                const courseCard = document.createElement('div');
-                courseCard.className = 'course-card recommended';
-                
-                courseCard.innerHTML = `
-                    <div class="card-header">
-                        <h2>${recommendedCourse.name.charAt(0)}</h2>
-                    <span class="recommended-badge">今日推荐</span>
-                    </div>
-                    <div class="card-content">
-                    <h3>${recommendedCourse.name}</h3>
-                    <p>${recommendedCourse.description}</p>
-                    <div class="course-stats">
-                        <span><i class="fas fa-book"></i> ${Object.keys(recommendedCourse.lessons).length} 课时</span>
-                    </div>
-                    <div class="course-actions">
-                        <a href="practice/practice.html?course=${recommendation.id}&lesson=${recommendation.lessonId}" class="start-button">
-                            <i class="fas fa-play"></i> 开始学习
-                        </a>
-                        </div>
-                    </div>
-                `;
-                courseListContainer.appendChild(courseCard);
-            }
-
             // 获取自定义收藏夹
             const customCollectionsManager = window.customCollectionsManager;
             if (customCollectionsManager) {
@@ -491,36 +465,8 @@ export class CourseDisplay {
 
             console.log('Courses loaded:', this.courses);
         } catch (error) {
-            console.error('Error in loadCourses:', error);
+            console.error('Error loading courses:', error);
         }
-    }
-
-    loadCoursesFromHTML() {
-        const courseCards = document.querySelectorAll('.course-card');
-        console.log('Found course cards:', courseCards); // 确认找到的课程卡片
-        this.courses = {};
-
-        courseCards.forEach(card => {
-            const courseId = card.getAttribute('data-course'); // 确保读取 data-course 属性
-            if (!courseId) {
-                console.error('Course ID is null or undefined for card:', card);
-                return; // 如果 courseId 为 null，跳过该卡片
-            }
-
-            const courseNameElement = card.querySelector('h2');
-            const courseDescriptionElement = card.querySelector('p');
-
-            const courseName = courseNameElement ? courseNameElement.textContent : '未知课程';
-            const courseDescription = courseDescriptionElement ? courseDescriptionElement.textContent : '无描述';
-
-            this.courses[courseId] = {
-                name: courseName,
-                description: courseDescription,
-                lessons: [] // 这里可以添加具体的课时信息
-            };
-        });
-
-        console.log('Loaded courses:', this.courses); // 确认加载的课程
     }
 
     // 修改渲染方法以显示继续学习信息
