@@ -168,15 +168,19 @@
             return completedLessons ? JSON.parse(completedLessons) : {};
         }
 
-        // 检查课程完成状态并添加标记
+        // 修改检查课程完成状态的函数
         function checkAndMarkCompletedCourses() {
-            const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            console.log('检查课程完成状态');
+            // 从 typing_statistics 中获取完成状态
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const completedLessons = stats.completedLessons || {};
+            console.log('已完成的课程:', completedLessons);
+            
             const courseCards = document.querySelectorAll('.course-card');
 
             courseCards.forEach(card => {
                 const courseId = card.dataset.course;
                 
-                // 如果是课程卡片（没有lessonId），检查该课程的所有课时是否都完成
                 if (courseId && !card.dataset.lesson) {
                     // 找到该课程的数据
                     let course;
@@ -189,12 +193,19 @@
 
                     if (course && course.lessons) {
                         // 检查该课程的所有课时是否都完成
-                        const allLessonsCompleted = Object.keys(course.lessons).every(lessonId => 
-                            completedLessons[courseId] && completedLessons[courseId].includes(lessonId)
-                        );
+                        const lessonKeys = Object.keys(completedLessons || {})
+                            .filter(key => key.startsWith(`${courseId}_`));
+                        const completedCount = lessonKeys.length;
+                        const totalLessons = 5; // 假设每个课程有5课时
+
+                        console.log(`课程 ${courseId} 完成情况:`, {
+                            completedCount,
+                            totalLessons,
+                            isCompleted: completedCount === totalLessons
+                        });
 
                         // 只有当所有课时都完成时，才添加完成标记
-                        if (allLessonsCompleted) {
+                        if (completedCount === totalLessons) {
                             if (!card.querySelector('.completion-mark')) {
                                 const mark = document.createElement('span');
                                 mark.className = 'completion-mark';
@@ -307,7 +318,14 @@
 
         // 页面加载时检查课程完成状态
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，检查课程状态');
             checkAndMarkCompletedCourses();
+            
+            // 监听统计更新事件
+            window.addEventListener('statisticsUpdated', () => {
+                console.log('统计数据更新，重新检查课程状态');
+                checkAndMarkCompletedCourses();
+            });
         });
 
         // 更新课程完成状态的函数
