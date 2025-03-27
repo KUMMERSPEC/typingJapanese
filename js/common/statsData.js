@@ -175,6 +175,7 @@ class Statistics {
             if (stats.reviewHistory) {
                 Object.values(stats.reviewHistory).forEach(item => {
                     if (item && item.proficiency) {
+                        // 不再考虑复习时间，只看掌握度
                         masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
                     }
                 });
@@ -263,7 +264,7 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 修改 updateReviewProgress 方法，确保正确更新掌握度
+    // 修改 updateReviewProgress 方法
     updateReviewProgress(questionId, isCorrect, options = {}) {
         try {
             let stats = this.getStatistics();
@@ -276,7 +277,7 @@ class Statistics {
                 stats.reviewHistory[questionId] = {
                     proficiency: 'low',
                     reviewCount: 0,
-                    correctCount: 0,  // 添加正确次数统计
+                    correctCount: 0,
                     lastReview: null,
                     nextReviewDate: null
                 };
@@ -291,13 +292,16 @@ class Statistics {
                 item.correctCount = (item.correctCount || 0) + 1;
             }
             
+            // 保存当前掌握度，用于判断是否需要更新
+            const previousProficiency = item.proficiency;
+            
             // 根据答题结果更新熟练度和下次复习时间
             if (isCorrect) {
-                // 如果已经是 master 级别，保持 master 并延长复习间隔
-                if (item.proficiency === 'master') {
-                    const masterInterval = 14; // 14天后复习
+                // 如果已经是 master 或 high 级别，只更新复习时间，不改变掌握度
+                if (item.proficiency === 'master' || item.proficiency === 'high') {
+                    const interval = REVIEW_INTERVALS[item.proficiency].success;
                     item.lastReview = now.toISOString();
-                    item.nextReviewDate = new Date(now.getTime() + masterInterval * 24 * 60 * 60 * 1000).toISOString();
+                    item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
                 } else {
                     // 正常的熟练度提升
                     switch (item.proficiency) {
@@ -306,9 +310,6 @@ class Statistics {
                             break;
                         case 'medium':
                             item.proficiency = 'high';
-                            break;
-                        case 'high':
-                            item.proficiency = 'master';
                             break;
                     }
 
@@ -327,9 +328,9 @@ class Statistics {
                         item.proficiency = 'medium';
                         break;
                     case 'medium':
-                    case 'low':
                         item.proficiency = 'low';
                         break;
+                    // 如果已经是 low，保持不变
                 }
 
                 // 设置更短的复习间隔
@@ -338,8 +339,10 @@ class Statistics {
                 item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
             }
 
-            // 更新统计数据
-            stats.masteryStats = this.getMasteryStats();
+            // 只有当掌握度发生变化时才更新统计
+            if (previousProficiency !== item.proficiency) {
+                stats.masteryStats = this.getMasteryStats();
+            }
 
             // 保存更新后的统计数据
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
@@ -347,6 +350,7 @@ class Statistics {
             console.log('更新复习记录完成:', {
                 questionId,
                 proficiency: item.proficiency,
+                previousProficiency,
                 reviewCount: item.reviewCount,
                 correctCount: item.correctCount,
                 lastReview: item.lastReview,
