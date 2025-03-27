@@ -302,6 +302,10 @@ export class CourseDisplay {
                         ? '/typingJapanese/' 
                         : '';
 
+                    // 修改打字练习的链接路径
+                    const practiceUrl = `${basePath}practice/practice.html?collection=${collection.id}`;
+                    const flashcardUrl = `${basePath}review/flashcard.html?collection=${collection.id}`;
+
                     collectionCard.innerHTML = `
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
@@ -323,10 +327,10 @@ export class CourseDisplay {
                             <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                         </div>
                         <div class="course-actions">
-                            <a href="${basePath}practice/?collection=${collection.id}" class="start-button">
+                            <a href="${practiceUrl}" class="start-button">
                                 <i class="fas fa-keyboard"></i> 打字练习
                             </a>
-                            <a href="${basePath}review/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
+                            <a href="${flashcardUrl}" class="start-button flashcard-button">
                                 <i class="fas fa-graduation-cap"></i> 闪卡练习
                             </a>
                         </div>
