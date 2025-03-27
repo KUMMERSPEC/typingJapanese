@@ -306,6 +306,11 @@ export class CourseDisplay {
                     const collectionCard = document.createElement('div');
                     collectionCard.className = 'collection-item';
                     
+                    // 修改复习链接的路径
+                    const basePath = window.location.hostname === 'kummerspec.github.io' 
+                        ? '/typingJapanese/review/' 
+                        : 'review/';
+
                     collectionCard.innerHTML = `
                         <div class="collection-header">
                             <h3>${collection.name}</h3>
@@ -327,10 +332,10 @@ export class CourseDisplay {
                             <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                         </div>
                         <div class="course-actions">
-                            <a href="practice/practice.html?collection=${collection.id}" class="start-button">
+                            <a href="${basePath}typing.html?collection=${collection.id}" class="start-button">
                                 <i class="fas fa-keyboard"></i> 打字练习
                             </a>
-                            <a href="review/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
+                            <a href="${basePath}flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
                                 <i class="fas fa-graduation-cap"></i> 闪卡练习
                             </a>
                         </div>

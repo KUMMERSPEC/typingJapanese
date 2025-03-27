@@ -486,7 +486,7 @@ class ReviewManager {
             // 获取正确的基础路径
             const basePath = window.location.hostname === 'kummerspec.github.io' 
                 ? '/typingJapanese/' 
-                : '../';
+                : '../';  // 返回到主目录
                 
             practiceContainer.innerHTML = `
                 <div class="completion-screen">
@@ -503,7 +503,7 @@ class ReviewManager {
                         </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="window.location.href='${basePath}?update=true'">返回首页</button>
+                        <button onclick="window.location.href='${basePath}'">返回首页</button>
                         <button onclick="location.reload()">再次复习</button>
                     </div>
                 </div>

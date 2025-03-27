@@ -701,14 +701,14 @@ class FlashcardManager {
         // 获取正确的基础路径
         const basePath = window.location.hostname === 'kummerspec.github.io' 
             ? '/typingJapanese/' 
-            : '../';
+            : '../';  // 返回到主目录
 
         container.innerHTML = `
             <div class="completion-screen">
                 <h1>おめでとう！</h1>
                 <p>复习完成！</p>
                 <div class="button-group">
-                    <button onclick="window.location.href='${basePath}?update=true'">返回首页</button>
+                    <button onclick="window.location.href='${basePath}'">返回首页</button>
                     <button onclick="location.reload()">再次复习</button>
                 </div>
             </div>
@@ -769,10 +769,10 @@ class FlashcardManager {
             // 使用正确的路径
             const basePath = window.location.hostname === 'kummerspec.github.io' 
                 ? '/typingJapanese/' 
-                : '../';
+                : '../';  // 返回到主目录
             
             // 添加时间戳参数，确保页面刷新
-            window.location.href = `${basePath}?t=${Date.now()}`;
+            window.location.href = `${basePath}`;
             
         } catch (error) {
             console.error('处理复习完成时出错:', error);
