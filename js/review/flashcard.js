@@ -753,6 +753,29 @@ class FlashcardManager {
         });
     }
 
+    // 修改复习完成的处理
+    handleReviewComplete() {
+        try {
+            // 保存最终统计
+            this.saveReviewStats();
+            
+            // 使用 history.pushState 而不是直接修改 location
+            history.pushState({}, '', '../');
+            
+            // 触发一个自定义事件，通知其他组件更新
+            window.dispatchEvent(new CustomEvent('reviewComplete'));
+            
+            // 刷新统计显示
+            if (window.statistics) {
+                window.statistics.updateDisplay();
+            }
+        } catch (error) {
+            console.error('处理复习完成时出错:', error);
+            // 如果出错，安全地返回首页
+            window.location.href = '../';
+        }
+    }
+
     // ... 其他辅助方法 ...
 }
 

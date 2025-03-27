@@ -135,7 +135,6 @@ class Statistics {
             const now = new Date();
             let items = Object.entries(stats.reviewHistory)
                 .map(([id, item]) => {
-                    // 获取正确的状态显示
                     const status = this.getMasteryStatus(item);
                     return {
                         id,
@@ -146,18 +145,17 @@ class Statistics {
                     };
                 });
 
-            // 排序：需要复习的在前面，然后按掌握度排序
+            // 排序：需要复习的在前面
             items.sort((a, b) => {
                 if (a.needsReview !== b.needsReview) {
                     return a.needsReview ? -1 : 1;
                 }
-                const proficiencyOrder = { low: 0, medium: 1, high: 2, master: 3 };
-                return proficiencyOrder[a.proficiency] - proficiencyOrder[b.proficiency];
+                return new Date(a.nextReviewDate) - new Date(b.nextReviewDate);
             });
 
             return items;
         } catch (error) {
-            console.error('Error getting review items:', error);
+            console.error('获取复习项目出错:', error);
             return [];
         }
     }
@@ -167,7 +165,6 @@ class Statistics {
         try {
             const stats = this.getStatistics();
             console.log('=== getMasteryStats 开始 ===');
-            console.log('原始统计数据:', stats);
             
             const masteryStats = {
                 low: 0,
@@ -178,28 +175,23 @@ class Statistics {
 
             // 从复习历史中统计掌握情况
             if (stats.reviewHistory) {
-                console.log('复习历史条目数:', Object.keys(stats.reviewHistory).length);
-                
                 Object.entries(stats.reviewHistory).forEach(([id, item]) => {
-                    console.log(`处理句子 ${id}:`, item);
-                    
                     if (item) {
+                        // 新句子计入 low 级别
                         if (!item.reviewCount) {
-                            console.log(`${id} 是新句子，计入 low`);
+                            console.log(`${id}: 新句子，计入 low`);
                             masteryStats.low++;
                         } 
+                        // 已有复习记录的句子按照当前掌握度统计
                         else if (item.proficiency) {
-                            console.log(`${id} 掌握度为 ${item.proficiency}`);
+                            console.log(`${id}: 掌握度 ${item.proficiency}`);
                             masteryStats[item.proficiency]++;
                         }
                     }
                 });
-            } else {
-                console.log('没有复习历史数据');
             }
 
-            console.log('最终统计结果:', masteryStats);
-            console.log('=== getMasteryStats 结束 ===');
+            console.log('掌握情况统计结果:', masteryStats);
             return masteryStats;
         } catch (error) {
             console.error('统计掌握情况出错:', error);
@@ -259,38 +251,6 @@ class Statistics {
         }, 0);
     }
 
-    // 新增：计算掌握情况的方法
-    calculateMasteryStats(stats) {
-        try {
-            const masteryStats = {
-                low: 0,
-                medium: 0,
-                high: 0,
-                master: 0
-            };
-
-            // 从复习历史中统计掌握情况
-            if (stats.reviewHistory) {
-                Object.values(stats.reviewHistory).forEach(item => {
-                    if (item && item.proficiency) {
-                        // 只有当下次复习时间未到时，才计入统计
-                        const nextReview = new Date(item.nextReviewDate);
-                        const now = new Date();
-                        if (nextReview > now) {
-                            masteryStats[item.proficiency] = (masteryStats[item.proficiency] || 0) + 1;
-                        }
-                    }
-                });
-            }
-
-            console.log('计算掌握情况统计:', masteryStats);
-            return masteryStats;
-        } catch (error) {
-            console.error('计算掌握情况统计出错:', error);
-            return { low: 0, medium: 0, high: 0, master: 0 };
-        }
-    }
-
     // 检查是否是连续天数
     isConsecutiveDay(lastDate) {
         if (!lastDate) return false;
@@ -301,32 +261,36 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 修改 updateReviewProgress 方法
+    // 修改 updateReviewProgress 方法，确保数据正确保存和更新
     updateReviewProgress(questionId, isCorrect, options = {}) {
         try {
             console.log('=== updateReviewProgress 开始 ===');
             console.log('更新句子:', questionId);
             console.log('是否正确:', isCorrect);
-            console.log('选项:', options);
             
             let stats = this.getStatistics();
-            console.log('当前统计数据:', stats);
             
+            // 确保 reviewHistory 存在
+            if (!stats.reviewHistory) {
+                stats.reviewHistory = {};
+            }
+            
+            // 如果句子不存在，初始化它
             if (!stats.reviewHistory[questionId]) {
-                console.log('初始化新句子记录');
                 stats.reviewHistory[questionId] = {
                     proficiency: 'low',
                     reviewCount: 0,
                     correctCount: 0,
+                    consecutiveCorrect: 0,
                     lastReview: null,
                     nextReviewDate: null
                 };
             }
 
             const item = stats.reviewHistory[questionId];
-            console.log('更新前的句子数据:', item);
+            const now = new Date();
 
-            // 更新复习次数和正确次数
+            // 更新基础统计
             item.reviewCount = (item.reviewCount || 0) + 1;
             if (isCorrect) {
                 item.correctCount = (item.correctCount || 0) + 1;
@@ -334,30 +298,30 @@ class Statistics {
             } else {
                 item.consecutiveCorrect = 0;
             }
-            
-            // 保存当前掌握度，用于判断是否需要更新
+
+            // 更新掌握度
             const previousProficiency = item.proficiency;
-            
-            // 根据答题结果更新熟练度
             if (isCorrect) {
                 switch (item.proficiency) {
                     case 'low':
-                        item.proficiency = 'medium';
+                        if (item.consecutiveCorrect >= 2) {
+                            item.proficiency = 'medium';
+                        }
                         break;
                     case 'medium':
-                        item.proficiency = 'high';
+                        if (item.consecutiveCorrect >= 2) {
+                            item.proficiency = 'high';
+                        }
                         break;
                     case 'high':
                         if (item.consecutiveCorrect >= 3) {
                             item.proficiency = 'master';
                         }
                         break;
-                    case 'master':
-                        // 保持 master 状态
-                        break;
+                    // master 状态保持不变
                 }
             } else {
-                // 答错时的降级逻辑
+                // 答错时降级
                 switch (item.proficiency) {
                     case 'master':
                         item.proficiency = 'high';
@@ -368,22 +332,33 @@ class Statistics {
                     case 'medium':
                         item.proficiency = 'low';
                         break;
+                    // low 状态保持不变
                 }
             }
 
             // 更新复习时间
-            item.lastReview = new Date().toISOString();
+            item.lastReview = now.toISOString();
             const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
-            item.nextReviewDate = new Date(new Date().getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+            item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
 
-            // 更新统计
+            // 更新统计 - 直接使用 getMasteryStats
             stats.masteryStats = this.getMasteryStats();
-            
-            // 保存更新
-            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            console.log('更新后的统计数据:', stats);
-            console.log('=== updateReviewProgress 结束 ===');
-            
+
+            // 保存到 localStorage
+            try {
+                localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+                console.log('更新后的句子状态:', {
+                    questionId,
+                    proficiency: item.proficiency,
+                    reviewCount: item.reviewCount,
+                    correctCount: item.correctCount,
+                    consecutiveCorrect: item.consecutiveCorrect,
+                    nextReviewDate: item.nextReviewDate
+                });
+            } catch (e) {
+                console.error('保存到 localStorage 失败:', e);
+            }
+
             return item;
         } catch (error) {
             console.error('更新复习进度出错:', error);
@@ -537,7 +512,7 @@ class Statistics {
             }
 
             // 计算掌握情况
-            stats.masteryStats = this.calculateMasteryStats(stats);
+            stats.masteryStats = this.getMasteryStats();
 
             // 保存更新后的统计数据
             this.saveStatistics(stats);
@@ -640,13 +615,13 @@ class Statistics {
     updateDisplay() {
         try {
             const stats = this.getStatistics();
-            console.log('=== Stats Display Update ===');
-            console.log('Current stats:', stats);
+            console.log('=== 更新显示 ===');
 
-            // 更新掌握情况统计
-            const masteryStats = stats.masteryStats || this.getMasteryStats();
-            
-            // 更新统计面板 - 调整显示逻辑
+            // 获取最新的掌握情况统计
+            const masteryStats = this.getMasteryStats();
+            console.log('当前掌握情况:', masteryStats);
+
+            // 更新统计面板显示
             const displayElements = {
                 'master': { id: 'masteryMaster', label: '完全掌握' },
                 'high': { id: 'masteryHigh', label: '熟练' },
@@ -657,12 +632,9 @@ class Statistics {
             Object.entries(displayElements).forEach(([level, config]) => {
                 const element = document.getElementById(config.id);
                 if (element) {
-                    element.textContent = masteryStats[level] || 0;
-                    // 更新标签文本
-                    const labelElement = element.closest('.mastery-item')?.querySelector('.mastery-label');
-                    if (labelElement) {
-                        labelElement.textContent = config.label;
-                    }
+                    const count = masteryStats[level] || 0;
+                    element.textContent = count;
+                    console.log(`更新 ${config.label} 数量: ${count}`);
                 }
             });
 
@@ -715,7 +687,7 @@ class Statistics {
             // 更新学习趋势图表
             this.updateTrendChart();
         } catch (error) {
-            console.error('Error in updateDisplay:', error);
+            console.error('更新显示出错:', error);
         }
     }
 
