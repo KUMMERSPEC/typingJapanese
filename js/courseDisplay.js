@@ -48,38 +48,37 @@ export class CourseDisplay {
 
     // 获取课程进度信息的核心方法
     getCourseProgress(courseId, course, completedLessons) {
-        console.log(`Checking progress for course ${courseId}:`, {
+        console.log(`检查课程 ${courseId} 的进度:`, {
             course,
             completedLessons: completedLessons[courseId]
         });
         
-        const totalLessons = Object.keys(course.lessons).length;
-        const completedCourseLessons = completedLessons[courseId] || [];
-        const completed = completedCourseLessons.length;
+        // 获取课程的总课时数
+        const totalLessons = 5; // 假设每个课程有5课时
+        const completedCourseLessons = Object.keys(completedLessons || {})
+            .filter(key => key.startsWith(`${courseId}_`))
+            .length;
 
-        console.log(`Course ${courseId} progress:`, {
+        console.log(`课程 ${courseId} 进度:`, {
             totalLessons,
-            completed,
-            hasProgress: completed > 0 && completed < totalLessons
+            completedLessons: completedCourseLessons,
+            hasProgress: completedCourseLessons > 0 && completedCourseLessons < totalLessons
         });
 
-        // 只要有完成的课时，就返回进度信息
-        if (completed > 0) {
-            const nextLessonNumber = completed + 1;
+        // 如果有完成的课时且未完成全部课时，返回进度信息
+        if (completedCourseLessons > 0 && completedCourseLessons < totalLessons) {
+            const nextLessonNumber = completedCourseLessons + 1;
             const progress = {
                 id: courseId,
                 name: course.name,
                 description: course.description,
-                lessons: course.lessons,
-                nextLesson: `lesson${nextLessonNumber}`,
-                currentLesson: `lesson${completed}`,
+                nextLesson: nextLessonNumber,
                 progress: {
-                    completed: completed,
+                    completed: completedCourseLessons,
                     total: totalLessons
-                },
-                isNewCourse: false
+                }
             };
-            console.log(`Returning progress for ${courseId}:`, progress);
+            console.log(`返回课程 ${courseId} 的进度:`, progress);
             return progress;
         }
         return null;
@@ -123,16 +122,31 @@ export class CourseDisplay {
 
     // 获取单个正在学习的课程
     getContinueLearningCourse() {
-        const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
-        
-        // 遍历所有课程，找出第一个正在学习但未完成的课程
-        for (const [courseId, course] of Object.entries(courseData['word-group'].courses)) {
-            const progress = this.getCourseProgress(courseId, course, completedLessons);
-            if (progress) {
-                return progress;
+        try {
+            // 获取完成状态
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const completedLessons = stats.completedLessons || {};
+            
+            console.log('检查继续学习课程:', {
+                stats,
+                completedLessons
+            });
+
+            // 遍历所有课程，找出第一个正在学习但未完成的课程
+            for (const [courseId, course] of Object.entries(this.courses)) {
+                const progress = this.getCourseProgress(courseId, course, completedLessons);
+                if (progress) {
+                    console.log('找到继续学习的课程:', progress);
+                    return progress;
+                }
             }
+            
+            console.log('没有找到需要继续学习的课程');
+            return null;
+        } catch (error) {
+            console.error('获取继续学习课程时出错:', error);
+            return null;
         }
-        return null;
     }
 
     // 获取今天的推荐课程
