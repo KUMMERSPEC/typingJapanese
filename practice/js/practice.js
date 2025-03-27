@@ -1515,3 +1515,15 @@ function completePractice() {
     
     // 其他完成逻辑...
 }
+
+// 在课程完成时调用
+function handleLessonComplete() {
+    // ... 其他代码 ...
+    
+    // 记录每个句子的学习进度
+    currentLesson.sentences.forEach(sentence => {
+        statsData.recordSentenceLearned(sentence.id);
+    });
+    
+    // ... 其他代码 ...
+}
