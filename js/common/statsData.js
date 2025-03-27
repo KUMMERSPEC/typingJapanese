@@ -134,11 +134,21 @@ class Statistics {
 
             const now = new Date();
             let items = Object.entries(stats.reviewHistory)
-                .filter(([_, item]) => new Date(item.nextReviewDate) <= now)
-                .map(([id, item]) => ({
-                    id,
-                    ...item
-                }));
+                .filter(([_, item]) => {
+                    // 检查是否需要复习
+                    const nextReview = new Date(item.nextReviewDate);
+                    return nextReview <= now;
+                })
+                .map(([id, item]) => {
+                    // 获取正确的状态显示
+                    const status = this.getMasteryStatus(item);
+                    return {
+                        id,
+                        ...item,
+                        displayStatus: status.text,
+                        statusClass: status.class
+                    };
+                });
 
             // 如果设置了专注薄弱项
             if (options.focusWeak) {
@@ -146,11 +156,6 @@ class Statistics {
                     const proficiencyOrder = { low: 0, medium: 1, high: 2, master: 3 };
                     return proficiencyOrder[a.proficiency] - proficiencyOrder[b.proficiency];
                 });
-            }
-
-            // 如果设置了随机顺序
-            if (options.random) {
-                items.sort(() => Math.random() - 0.5);
             }
 
             return items;
@@ -297,29 +302,26 @@ class Statistics {
             
             // 根据答题结果更新熟练度和下次复习时间
             if (isCorrect) {
-                // 如果已经是 master 或 high 级别，只更新复习时间，不改变掌握度
-                if (item.proficiency === 'master' || item.proficiency === 'high') {
-                    const interval = REVIEW_INTERVALS[item.proficiency].success;
-                    item.lastReview = now.toISOString();
-                    item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
-                } else {
-                    // 正常的熟练度提升
-                    switch (item.proficiency) {
-                        case 'low':
-                            item.proficiency = 'medium';
-                            break;
-                        case 'medium':
-                            item.proficiency = 'high';
-                            break;
-                    }
-
-                    // 根据新的熟练度设置下次复习时间
-                    const interval = REVIEW_INTERVALS[item.proficiency].success;
-                    item.lastReview = now.toISOString();
-                    item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+                // 根据当前掌握度决定是否提升
+                switch (item.proficiency) {
+                    case 'low':
+                        item.proficiency = 'medium';
+                        break;
+                    case 'medium':
+                        item.proficiency = 'high';
+                        break;
+                    case 'high':
+                        // 连续正确次数达到阈值时升级到 master
+                        if ((item.consecutiveCorrect || 0) >= 3) {
+                            item.proficiency = 'master';
+                        }
+                        break;
+                    case 'master':
+                        // 保持 master 状态
+                        break;
                 }
             } else {
-                // 答错时降低熟练度
+                // 答错时的降级逻辑
                 switch (item.proficiency) {
                     case 'master':
                         item.proficiency = 'high';
@@ -330,14 +332,16 @@ class Statistics {
                     case 'medium':
                         item.proficiency = 'low';
                         break;
-                    // 如果已经是 low，保持不变
+                    // low 保持不变
                 }
-
-                // 设置更短的复习间隔
-                const interval = REVIEW_INTERVALS[item.proficiency].failure;
-                item.lastReview = now.toISOString();
-                item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+                // 重置连续正确次数
+                item.consecutiveCorrect = 0;
             }
+
+            // 根据新的熟练度设置下次复习时间
+            const interval = REVIEW_INTERVALS[item.proficiency].success;
+            item.lastReview = now.toISOString();
+            item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
 
             // 只有当掌握度发生变化时才更新统计
             if (previousProficiency !== item.proficiency) {
@@ -525,34 +529,6 @@ class Statistics {
         }
     }
 
-    // 修改：获取待复习项目
-    getReviewItems() {
-        try {
-            const stats = this.getStatistics();
-            if (!stats.reviewHistory) return [];
-
-            const now = new Date();
-            return Object.entries(stats.reviewHistory)
-                .filter(([_, item]) => {
-                    // 检查是否需要复习
-                    const nextReview = new Date(item.nextReviewDate);
-                    return nextReview <= now;
-                })
-                .map(([id, item]) => ({
-                    id,
-                    sentence: item.sentence,
-                    hiragana: item.hiragana,
-                    romaji: item.romaji,
-                    meaning: item.meaning,
-                    proficiency: item.proficiency,
-                    nextReviewDate: item.nextReviewDate
-                }));
-        } catch (error) {
-            console.error('Error getting review items:', error);
-            return [];
-        }
-    }
-
     // 获取学习趋势数据
     getTrendData() {
         const stats = this.getStatistics();
@@ -638,15 +614,35 @@ class Statistics {
         }
     }
 
-    // 修改现有的 updateDisplay 方法，添加图表更新
+    // 修改 updateDisplay 方法，调整统计区域显示
     updateDisplay() {
         try {
             const stats = this.getStatistics();
             console.log('=== Stats Display Update ===');
             console.log('Current stats:', stats);
-            console.log('Review history:', stats.reviewHistory);
-            console.log('Daily stats:', stats.dailyStats);
-            console.log('Total sentences:', stats.totalSentences);
+
+            // 更新掌握情况统计
+            const masteryStats = stats.masteryStats || this.getMasteryStats();
+            
+            // 更新统计面板 - 调整显示逻辑
+            const displayElements = {
+                'master': { id: 'masteryMaster', label: '完全掌握' },
+                'high': { id: 'masteryHigh', label: '熟练' },
+                'medium': { id: 'masteryMedium', label: '基本掌握' },
+                'low': { id: 'masteryLow', label: '需要加强' }
+            };
+
+            Object.entries(displayElements).forEach(([level, config]) => {
+                const element = document.getElementById(config.id);
+                if (element) {
+                    element.textContent = masteryStats[level] || 0;
+                    // 更新标签文本
+                    const labelElement = element.closest('.mastery-item')?.querySelector('.mastery-label');
+                    if (labelElement) {
+                        labelElement.textContent = config.label;
+                    }
+                }
+            });
 
             // 更新总句子数显示
             const totalSentencesElement = document.getElementById('totalSentences');
@@ -694,15 +690,6 @@ class Statistics {
                 reviewItemsElement.textContent = reviewItems.length;
             }
 
-            // 更新统计面板
-            const masteryStats = this.getMasteryStats();
-            ['low', 'medium', 'high', 'master'].forEach(level => {
-                const element = document.getElementById(`mastery${level.charAt(0).toUpperCase() + level.slice(1)}`);
-                if (element) {
-                    element.textContent = masteryStats[level] || 0;
-                }
-            });
-
             // 更新学习趋势图表
             this.updateTrendChart();
         } catch (error) {
@@ -710,29 +697,31 @@ class Statistics {
         }
     }
 
-    // 修改 getMasteryStatus 函数
+    // 修改 getMasteryStatus 函数，调整掌握度显示逻辑
     getMasteryStatus(item) {
         if (!item || !item.reviewCount) {
             return { text: '未复习', class: 'status-new' };
         }
 
-        const correctRate = (item.correctCount || 0) / item.reviewCount;
+        // 检查是否需要复习
+        const nextReview = new Date(item.nextReviewDate);
+        const now = new Date();
         
+        // 如果已经到了复习时间，显示"待复习"
+        if (nextReview <= now) {
+            return { text: '待复习', class: 'status-review' };
+        }
+
+        // 如果还没到复习时间，显示当前掌握状态
         switch (item.proficiency) {
             case 'master':
                 return { text: '完全掌握', class: 'status-master' };
             case 'high':
                 return { text: '熟练', class: 'status-high' };
             case 'medium':
-                if (correctRate >= 0.8) {
-                    return { text: '掌握', class: 'status-good' };
-                }
-                return { text: '熟悉', class: 'status-medium' };
+                return { text: '基本掌握', class: 'status-medium' };
             case 'low':
-                if (correctRate < 0.4) {
-                    return { text: '需要加强', class: 'status-weak' };
-                }
-                return { text: '生疏', class: 'status-low' };
+                return { text: '需要加强', class: 'status-low' };
             default:
                 return { text: '未知', class: 'status-unknown' };
         }
@@ -749,13 +738,15 @@ class Statistics {
         }
 
         reviewList.innerHTML = items.map(item => {
-            const status = this.getMasteryStatus(item);
+            // 使用预先计算的状态
             return `
-                <div class="review-item ${status.class}">
-                    <div class="sentence">${item.sentence || item.japanese}</div>
-                    <div class="meaning">${item.meaning}</div>
-                    <div class="status">${status.text}</div>
-                    <div class="next-review">下次：${this.formatDate(item.nextReviewDate)}</div>
+                <div class="review-item ${item.statusClass}">
+                    <div class="sentence-content">
+                        <div class="sentence">${item.sentence || item.japanese}</div>
+                        <div class="meaning">${item.meaning}</div>
+                        <div class="status">${item.displayStatus}</div>
+                        <div class="next-review">下次：${this.formatDate(item.nextReviewDate)}</div>
+                    </div>
                 </div>
             `;
         }).join('');
