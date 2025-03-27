@@ -759,20 +759,18 @@ class FlashcardManager {
             // 保存最终统计
             this.saveReviewStats();
             
-            // 使用 history.pushState 而不是直接修改 location
-            history.pushState({}, '', '../');
+            // 不使用 history.pushState，改用相对路径重定向
+            const baseUrl = window.location.pathname.includes('/review/') 
+                ? '../'  // 如果在 review 目录下
+                : './';  // 如果在根目录
+                
+            // 添加时间戳参数，确保页面刷新
+            window.location.href = `${baseUrl}?t=${Date.now()}`;
             
-            // 触发一个自定义事件，通知其他组件更新
-            window.dispatchEvent(new CustomEvent('reviewComplete'));
-            
-            // 刷新统计显示
-            if (window.statistics) {
-                window.statistics.updateDisplay();
-            }
         } catch (error) {
             console.error('处理复习完成时出错:', error);
-            // 如果出错，安全地返回首页
-            window.location.href = '../';
+            // 如果出错，使用完整的路径返回首页
+            window.location.href = '/typingJapanese/';
         }
     }
 

@@ -697,7 +697,7 @@ class Statistics {
         }
     }
 
-    // 修改 getMasteryStatus 方法，调整状态显示逻辑
+    // 修改 getMasteryStatus 方法，确保状态显示的一致性
     getMasteryStatus(item) {
         // 如果是新句子（没有复习记录）
         if (!item || !item.reviewCount) {
@@ -711,15 +711,20 @@ class Statistics {
         
         // 如果是今天刚复习过的，优先显示掌握状态
         if (lastReview && lastReview.toDateString() === now.toDateString()) {
+            // master 级别的句子显示为"熟练"
+            if (item.proficiency === 'master') {
+                return { text: '熟练', class: 'status-high' };
+            }
+            
             switch (item.proficiency) {
-                case 'master':
-                    return { text: '完全掌握', class: 'status-master' };
                 case 'high':
                     return { text: '熟练', class: 'status-high' };
                 case 'medium':
                     return { text: '基本掌握', class: 'status-medium' };
                 case 'low':
                     return { text: '需要加强', class: 'status-low' };
+                default:
+                    return { text: '未知', class: 'status-unknown' };
             }
         }
 
@@ -729,9 +734,12 @@ class Statistics {
         }
 
         // 其他情况显示当前掌握状态
+        // master 级别的句子也显示为"熟练"
+        if (item.proficiency === 'master') {
+            return { text: '熟练', class: 'status-high' };
+        }
+        
         switch (item.proficiency) {
-            case 'master':
-                return { text: '完全掌握', class: 'status-master' };
             case 'high':
                 return { text: '熟练', class: 'status-high' };
             case 'medium':
