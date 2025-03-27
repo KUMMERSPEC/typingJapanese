@@ -180,7 +180,7 @@ class Statistics {
                 });
             }
 
-            console.log('Calculated mastery stats:', masteryStats);
+            console.log('获取掌握情况统计:', masteryStats);
             return masteryStats;
         } catch (error) {
             console.error('Error calculating mastery stats:', error);
@@ -263,12 +263,11 @@ class Statistics {
         return diffDays === 1;
     }
 
-    // 修改 updateReviewProgress 方法，添加间隔调整功能
+    // 修改 updateReviewProgress 方法，确保正确更新掌握度
     updateReviewProgress(questionId, isCorrect, options = {}) {
         try {
             let stats = this.getStatistics();
             
-            // 如果句子不存在于复习历史中，初始化它
             if (!stats.reviewHistory) {
                 stats.reviewHistory = {};
             }
@@ -277,6 +276,7 @@ class Statistics {
                 stats.reviewHistory[questionId] = {
                     proficiency: 'low',
                     reviewCount: 0,
+                    correctCount: 0,  // 添加正确次数统计
                     lastReview: null,
                     nextReviewDate: null
                 };
@@ -285,14 +285,16 @@ class Statistics {
             const item = stats.reviewHistory[questionId];
             const now = new Date();
 
-            // 更新复习次数
+            // 更新复习次数和正确次数
             item.reviewCount = (item.reviewCount || 0) + 1;
+            if (isCorrect) {
+                item.correctCount = (item.correctCount || 0) + 1;
+            }
             
             // 根据答题结果更新熟练度和下次复习时间
             if (isCorrect) {
                 // 如果已经是 master 级别，保持 master 并延长复习间隔
                 if (item.proficiency === 'master') {
-                    // master 级别保持不变，只更新复习时间
                     const masterInterval = 14; // 14天后复习
                     item.lastReview = now.toISOString();
                     item.nextReviewDate = new Date(now.getTime() + masterInterval * 24 * 60 * 60 * 1000).toISOString();
@@ -336,8 +338,8 @@ class Statistics {
                 item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
             }
 
-            // 重新计算掌握情况统计
-            stats.masteryStats = this.calculateMasteryStats(stats);
+            // 更新统计数据
+            stats.masteryStats = this.getMasteryStats();
 
             // 保存更新后的统计数据
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
@@ -346,8 +348,10 @@ class Statistics {
                 questionId,
                 proficiency: item.proficiency,
                 reviewCount: item.reviewCount,
+                correctCount: item.correctCount,
                 lastReview: item.lastReview,
-                nextReviewDate: item.nextReviewDate
+                nextReviewDate: item.nextReviewDate,
+                masteryStats: stats.masteryStats
             });
             
             return item;
@@ -700,6 +704,57 @@ class Statistics {
         } catch (error) {
             console.error('Error in updateDisplay:', error);
         }
+    }
+
+    // 修改 getMasteryStatus 函数
+    getMasteryStatus(item) {
+        if (!item || !item.reviewCount) {
+            return { text: '未复习', class: 'status-new' };
+        }
+
+        const correctRate = (item.correctCount || 0) / item.reviewCount;
+        
+        switch (item.proficiency) {
+            case 'master':
+                return { text: '完全掌握', class: 'status-master' };
+            case 'high':
+                return { text: '熟练', class: 'status-high' };
+            case 'medium':
+                if (correctRate >= 0.8) {
+                    return { text: '掌握', class: 'status-good' };
+                }
+                return { text: '熟悉', class: 'status-medium' };
+            case 'low':
+                if (correctRate < 0.4) {
+                    return { text: '需要加强', class: 'status-weak' };
+                }
+                return { text: '生疏', class: 'status-low' };
+            default:
+                return { text: '未知', class: 'status-unknown' };
+        }
+    }
+
+    // 更新复习列表显示的代码
+    updateReviewList(items) {
+        const reviewList = document.querySelector('.review-list');
+        if (!reviewList) return;
+
+        if (items.length === 0) {
+            reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
+            return;
+        }
+
+        reviewList.innerHTML = items.map(item => {
+            const status = this.getMasteryStatus(item);
+            return `
+                <div class="review-item ${status.class}">
+                    <div class="sentence">${item.sentence || item.japanese}</div>
+                    <div class="meaning">${item.meaning}</div>
+                    <div class="status">${status.text}</div>
+                    <div class="next-review">下次：${this.formatDate(item.nextReviewDate)}</div>
+                </div>
+            `;
+        }).join('');
     }
 }
 
