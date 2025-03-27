@@ -698,7 +698,7 @@ class FlashcardManager {
         // 显示完成效果
         new CompletionEffect().show();
 
-        // 获取正确的基础路径 - 使用相对路径
+        // 获取正确的基础路径
         const basePath = window.location.hostname === 'kummerspec.github.io' 
             ? '/typingJapanese/' 
             : '../';
@@ -766,7 +766,7 @@ class FlashcardManager {
             // 保存最终统计
             this.saveReviewStats();
             
-            // 根据当前环境选择正确的路径
+            // 使用正确的路径
             const basePath = window.location.hostname === 'kummerspec.github.io' 
                 ? '/typingJapanese/' 
                 : '../';
