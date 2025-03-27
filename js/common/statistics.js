@@ -15,7 +15,8 @@ class Statistics {
             lastStudyDate: new Date().toLocaleDateString(),
             consecutiveDays: 1,
             dailyStats: {},
-            completedQuestions: {}
+            completedLessons: {},
+            totalSentences: 0
         };
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialStats));
         return initialStats;
@@ -42,6 +43,7 @@ class Statistics {
 
             // 更新今天学习的句子数量
             stats.dailyStats[today].sentencesLearned += splitQuestionCount;
+            stats.totalSentences = (stats.totalSentences || 0) + splitQuestionCount;
 
             // 记录课程完成情况
             if (!stats.dailyStats[today].completedLessons) {
@@ -50,6 +52,12 @@ class Statistics {
             stats.dailyStats[today].completedLessons[`${courseKey}`] = splitQuestionCount;
             
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+
+            // 触发统计更新事件
+            window.dispatchEvent(new CustomEvent('statisticsUpdated', {
+                detail: { stats }
+            }));
+
             return stats;
         } catch (error) {
             console.error('Error updating statistics:', error);
@@ -58,6 +66,7 @@ class Statistics {
     }
 
     static isConsecutiveDay(lastDate) {
+        if (!lastDate) return false;
         const last = new Date(lastDate);
         const today = new Date();
         const diffTime = Math.abs(today - last);
@@ -73,7 +82,7 @@ class Statistics {
 
     static getLearningDays() {
         const stats = this.getStatistics();
-        return stats.consecutiveDays || 1;
+        return stats.consecutiveDays || 0;
     }
 }
 
