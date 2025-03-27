@@ -166,6 +166,9 @@ class Statistics {
     getMasteryStats() {
         try {
             const stats = this.getStatistics();
+            console.log('=== getMasteryStats 开始 ===');
+            console.log('原始统计数据:', stats);
+            
             const masteryStats = {
                 low: 0,
                 medium: 0,
@@ -175,48 +178,74 @@ class Statistics {
 
             // 从复习历史中统计掌握情况
             if (stats.reviewHistory) {
-                Object.values(stats.reviewHistory).forEach(item => {
+                console.log('复习历史条目数:', Object.keys(stats.reviewHistory).length);
+                
+                Object.entries(stats.reviewHistory).forEach(([id, item]) => {
+                    console.log(`处理句子 ${id}:`, item);
+                    
                     if (item) {
-                        // 新句子计入 low 级别
                         if (!item.reviewCount) {
+                            console.log(`${id} 是新句子，计入 low`);
                             masteryStats.low++;
                         } 
-                        // 已有复习记录的句子按照当前掌握度统计
                         else if (item.proficiency) {
+                            console.log(`${id} 掌握度为 ${item.proficiency}`);
                             masteryStats[item.proficiency]++;
                         }
                     }
                 });
+            } else {
+                console.log('没有复习历史数据');
             }
 
-            console.log('获取掌握情况统计:', masteryStats);
+            console.log('最终统计结果:', masteryStats);
+            console.log('=== getMasteryStats 结束 ===');
             return masteryStats;
         } catch (error) {
-            console.error('Error calculating mastery stats:', error);
+            console.error('统计掌握情况出错:', error);
             return { low: 0, medium: 0, high: 0, master: 0 };
         }
     }
 
     // 获取统计数据
     getStatistics() {
-        if (this._stats) return this._stats;
+        console.log('=== getStatistics 开始 ===');
+        
+        if (this._stats) {
+            console.log('使用缓存的统计数据');
+            return this._stats;
+        }
 
         try {
-            const stats = JSON.parse(localStorage.getItem(STATS_STORAGE_KEY) || '{}');
-            console.log('Loading statistics from storage:', stats);
+            const rawData = localStorage.getItem(STATS_STORAGE_KEY);
+            console.log('从 localStorage 读取的原始数据:', rawData);
+            
+            const stats = JSON.parse(rawData || '{}');
+            console.log('解析后的统计数据:', stats);
             
             // 确保必要的属性存在
-            if (!stats.reviewHistory) stats.reviewHistory = {};
-            if (!stats.completedLessons) stats.completedLessons = {};
-            if (!stats.dailyStats) stats.dailyStats = {};
+            if (!stats.reviewHistory) {
+                console.log('初始化 reviewHistory');
+                stats.reviewHistory = {};
+            }
+            if (!stats.completedLessons) {
+                console.log('初始化 completedLessons');
+                stats.completedLessons = {};
+            }
+            if (!stats.dailyStats) {
+                console.log('初始化 dailyStats');
+                stats.dailyStats = {};
+            }
             
             // 重新计算总句子数
             stats.totalSentences = Object.keys(stats.reviewHistory).length;
+            console.log('计算得到的总句子数:', stats.totalSentences);
             
             this._stats = stats;
+            console.log('=== getStatistics 结束 ===');
             return stats;
         } catch (error) {
-            console.error('Error loading statistics:', error);
+            console.error('加载统计数据出错:', error);
             return this.initializeStats();
         }
     }
@@ -275,13 +304,16 @@ class Statistics {
     // 修改 updateReviewProgress 方法
     updateReviewProgress(questionId, isCorrect, options = {}) {
         try {
-            let stats = this.getStatistics();
+            console.log('=== updateReviewProgress 开始 ===');
+            console.log('更新句子:', questionId);
+            console.log('是否正确:', isCorrect);
+            console.log('选项:', options);
             
-            if (!stats.reviewHistory) {
-                stats.reviewHistory = {};
-            }
+            let stats = this.getStatistics();
+            console.log('当前统计数据:', stats);
             
             if (!stats.reviewHistory[questionId]) {
+                console.log('初始化新句子记录');
                 stats.reviewHistory[questionId] = {
                     proficiency: 'low',
                     reviewCount: 0,
@@ -292,7 +324,7 @@ class Statistics {
             }
 
             const item = stats.reviewHistory[questionId];
-            const now = new Date();
+            console.log('更新前的句子数据:', item);
 
             // 更新复习次数和正确次数
             item.reviewCount = (item.reviewCount || 0) + 1;
@@ -340,19 +372,21 @@ class Statistics {
             }
 
             // 更新复习时间
-            item.lastReview = now.toISOString();
+            item.lastReview = new Date().toISOString();
             const interval = REVIEW_INTERVALS[item.proficiency][isCorrect ? 'success' : 'failure'];
-            item.nextReviewDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
+            item.nextReviewDate = new Date(new Date().getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
 
             // 更新统计
             stats.masteryStats = this.getMasteryStats();
             
             // 保存更新
             localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+            console.log('更新后的统计数据:', stats);
+            console.log('=== updateReviewProgress 结束 ===');
             
             return item;
         } catch (error) {
-            console.error('Error updating review progress:', error);
+            console.error('更新复习进度出错:', error);
             return null;
         }
     }
