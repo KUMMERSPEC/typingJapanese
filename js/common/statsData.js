@@ -184,8 +184,14 @@ class Statistics {
                         } 
                         // 已有复习记录的句子按照当前掌握度统计
                         else if (item.proficiency) {
-                            console.log(`${id}: 掌握度 ${item.proficiency}`);
-                            masteryStats[item.proficiency]++;
+                            // master 级别的句子计入 high
+                            if (item.proficiency === 'master') {
+                                console.log(`${id}: master级别，计入high`);
+                                masteryStats.high++;
+                            } else {
+                                console.log(`${id}: 掌握度 ${item.proficiency}`);
+                                masteryStats[item.proficiency]++;
+                            }
                         }
                     }
                 });
@@ -701,13 +707,28 @@ class Statistics {
         // 检查是否需要复习
         const nextReview = new Date(item.nextReviewDate);
         const now = new Date();
+        const lastReview = item.lastReview ? new Date(item.lastReview) : null;
         
+        // 如果是今天刚复习过的，优先显示掌握状态
+        if (lastReview && lastReview.toDateString() === now.toDateString()) {
+            switch (item.proficiency) {
+                case 'master':
+                    return { text: '完全掌握', class: 'status-master' };
+                case 'high':
+                    return { text: '熟练', class: 'status-high' };
+                case 'medium':
+                    return { text: '基本掌握', class: 'status-medium' };
+                case 'low':
+                    return { text: '需要加强', class: 'status-low' };
+            }
+        }
+
         // 如果已经到了复习时间，显示"待复习"
         if (nextReview <= now) {
             return { text: '待复习', class: 'status-review' };
         }
 
-        // 如果还没到复习时间，显示当前掌握状态
+        // 其他情况显示当前掌握状态
         switch (item.proficiency) {
             case 'master':
                 return { text: '完全掌握', class: 'status-master' };
@@ -733,13 +754,14 @@ class Statistics {
         }
 
         reviewList.innerHTML = items.map(item => {
-            // 使用预先计算的状态
+            // 获取最新状态
+            const status = this.getMasteryStatus(item);
             return `
-                <div class="review-item ${item.statusClass}">
+                <div class="review-item ${status.class}">
                     <div class="sentence-content">
                         <div class="sentence">${item.sentence || item.japanese}</div>
                         <div class="meaning">${item.meaning}</div>
-                        <div class="status">${item.displayStatus}</div>
+                        <div class="status">${status.text}</div>
                         <div class="next-review">下次：${this.formatDate(item.nextReviewDate)}</div>
                     </div>
                 </div>
