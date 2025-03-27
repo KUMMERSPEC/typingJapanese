@@ -42,27 +42,16 @@ export class CourseDisplay {
 
     // 获取课程进度信息的核心方法
     getCourseProgress(courseId, course, completedLessons) {
-        console.log(`检查课程 ${courseId} 的进度:`, {
-            course,
-            completedLessons
-        });
-        
         // 获取课程的总课时数
         const totalLessons = 5; // 假设每个课程有5课时
         const completedCount = Object.keys(completedLessons || {})
             .filter(key => key.startsWith(`${courseId}_`))
             .length;
 
-        console.log(`课程 ${courseId} 进度:`, {
-            totalLessons,
-            completedCount,
-            hasProgress: completedCount > 0 && completedCount < totalLessons
-        });
-
         // 如果有完成的课时且未完成全部课时，返回进度信息
         if (completedCount > 0 && completedCount < totalLessons) {
             const nextLessonNumber = completedCount + 1;
-            const progress = {
+            return {
                 id: courseId,
                 name: course.name,
                 description: course.description || '',
@@ -72,8 +61,6 @@ export class CourseDisplay {
                     total: totalLessons
                 }
             };
-            console.log(`返回课程 ${courseId} 的进度:`, progress);
-            return progress;
         }
         return null;
     }
@@ -117,28 +104,17 @@ export class CourseDisplay {
     // 获取单个正在学习的课程
     getContinueLearningCourse() {
         try {
-            // 获取完成状态
             const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
             const completedLessons = stats.completedLessons || {};
-            
-            console.log('检查继续学习课程:', {
-                stats,
-                completedLessons
-            });
-
-            // 存储所有进行中的课程
             const inProgressCourses = [];
 
-            // 遍历所有课程，找出所有正在学习但未完成的课程
             for (const [courseId, course] of Object.entries(this.courses)) {
                 const progress = this.getCourseProgress(courseId, course, completedLessons);
                 if (progress) {
-                    console.log(`找到继续学习的课程: ${courseId}`, progress);
                     inProgressCourses.push(progress);
                 }
             }
             
-            console.log('所有继续学习的课程:', inProgressCourses);
             return inProgressCourses;
         } catch (error) {
             console.error('获取继续学习课程时出错:', error);
@@ -250,6 +226,11 @@ export class CourseDisplay {
                     const progress = continueLearningCourse.progress;
                     const progressPercentage = (progress.completed / progress.total) * 100;
                     
+                    // 修改这里：添加正确的基础路径
+                    const basePath = window.location.hostname === 'kummerspec.github.io' 
+                        ? '/typingJapanese/' 
+                        : '';
+                    
                     courseCard.innerHTML = `
                         <div class="card-header">
                             <h2>${course.name.charAt(0)}</h2>
@@ -267,7 +248,7 @@ export class CourseDisplay {
                             </div>
                             <div class="progress-text">${progress.completed}/${progress.total} 课时</div>
                             <div class="course-actions">
-                                <a href="practice/?course=${continueLearningCourse.id}&lesson=${continueLearningCourse.nextLesson}" class="start-button">
+                                <a href="${basePath}practice/practice.html?course=${continueLearningCourse.id}&lesson=lesson${continueLearningCourse.nextLesson}" class="start-button">
                                     <i class="fas fa-play"></i> 继续学习
                                 </a>
                             </div>
