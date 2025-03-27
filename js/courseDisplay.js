@@ -296,8 +296,8 @@ export class CourseDisplay {
                     
                     // 修改复习链接的路径
                     const basePath = window.location.hostname === 'kummerspec.github.io' 
-                        ? '/typingJapanese/review/' 
-                        : 'review/';
+                        ? '/typingJapanese/' 
+                        : '';
 
                     collectionCard.innerHTML = `
                         <div class="collection-header">
@@ -320,10 +320,10 @@ export class CourseDisplay {
                             <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
                         </div>
                         <div class="course-actions">
-                            <a href="${basePath}typing.html?collection=${collection.id}" class="start-button">
+                            <a href="${basePath}practice/?collection=${collection.id}" class="start-button">
                                 <i class="fas fa-keyboard"></i> 打字练习
                             </a>
-                            <a href="${basePath}flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
+                            <a href="${basePath}review/flashcard.html?collection=${collection.id}" class="start-button flashcard-button">
                                 <i class="fas fa-graduation-cap"></i> 闪卡练习
                             </a>
                         </div>
