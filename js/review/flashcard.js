@@ -641,6 +641,8 @@ class FlashcardManager {
             }, 50);
         } else {
             console.log('已到达最后一个句子');
+            // 清除 sessionStorage 中的复习数据，防止再次点击复习时使用旧数据
+            sessionStorage.removeItem('reviewSentences');
             this.showComplete();
         }
     }
@@ -696,13 +698,18 @@ class FlashcardManager {
         // 显示完成效果
         new CompletionEffect().show();
 
+        // 获取正确的基础路径
+        const basePath = window.location.pathname.includes('/review/') 
+            ? '../'  // 如果在 review 目录下
+            : './';  // 如果在根目录
+
         container.innerHTML = `
             <div class="completion-screen">
                 <h1>おめでとう！</h1>
                 <p>复习完成！</p>
                 <div class="button-group">
-                    <button onclick="window.location.href='../?update=true'">返回首页</button>
-                    <button onclick="location.reload()">再次复习</button>
+                    <button onclick="window.location.href='${basePath}?update=true'">返回首页</button>
+                    <button onclick="window.location.reload()">再次复习</button>
                 </div>
             </div>
         `;
