@@ -698,8 +698,10 @@ class FlashcardManager {
         // 显示完成效果
         new CompletionEffect().show();
 
-        // 获取正确的基础路径 - 修复为完整路径
-        const basePath = '/typingJapanese/';
+        // 获取正确的基础路径 - 使用相对路径
+        const basePath = window.location.hostname === 'kummerspec.github.io' 
+            ? '/typingJapanese/' 
+            : '../';
 
         container.innerHTML = `
             <div class="completion-screen">
@@ -764,12 +766,18 @@ class FlashcardManager {
             // 保存最终统计
             this.saveReviewStats();
             
-            // 使用完整路径
-            window.location.href = '/typingJapanese/?t=' + Date.now();
+            // 根据当前环境选择正确的路径
+            const basePath = window.location.hostname === 'kummerspec.github.io' 
+                ? '/typingJapanese/' 
+                : '../';
+            
+            // 添加时间戳参数，确保页面刷新
+            window.location.href = `${basePath}?t=${Date.now()}`;
             
         } catch (error) {
             console.error('处理复习完成时出错:', error);
-            window.location.href = '/typingJapanese/';
+            // 使用相对路径作为后备方案
+            window.location.href = '../';
         }
     }
 

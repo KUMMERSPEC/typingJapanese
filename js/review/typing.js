@@ -483,38 +483,37 @@ class ReviewManager {
             if (practiceContainer) practiceContainer.style.display = 'none';
             if (historyPanel) historyPanel.style.display = 'none';
             
-            // 创建完成界面
-            const completeScreen = document.createElement('div');
-            completeScreen.className = 'completion-screen';
-            completeScreen.innerHTML = `
-                <h1>おめでとう！</h1>
-                <p>复习完成！</p>
-                <p>本次复习: ${this.sentences.length} 个句子</p>
-                <p>连续学习: ${statsData.getLearningDays()} 天</p>
-                <div class="button-group">
-                    <button onclick="window.location.href='../?update=true'">返回首页</button>
-                    <button onclick="location.reload()">再次复习</button>
+            // 获取正确的基础路径
+            const basePath = window.location.hostname === 'kummerspec.github.io' 
+                ? '/typingJapanese/' 
+                : '../';
+                
+            practiceContainer.innerHTML = `
+                <div class="completion-screen">
+                    <h1>おめでとう！</h1>
+                    <p>复习完成！</p>
+                    <div class="stats-summary">
+                        <div class="stat-item">
+                            <span class="stat-label">正确率</span>
+                            <span class="stat-value">${Math.round(correctCount / totalAttempts * 100)}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">复习句子</span>
+                            <span class="stat-value">${sentences.length}</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="window.location.href='${basePath}?update=true'">返回首页</button>
+                        <button onclick="location.reload()">再次复习</button>
+                    </div>
                 </div>
             `;
-
-            document.body.appendChild(completeScreen);
-
-            // 创建彩花和星星效果
-            this.createConfetti(completeScreen);
-            this.createStars(completeScreen);
-
-            // 播放掌声和祝贺音效
-            const applause = new Audio('../assets/audio/applause.mp3');
-            applause.play().catch(error => {
-                console.warn('Failed to play applause:', error);
-            });
-
-            // 朗读祝贺语
-            setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance('おめでとうございます');
-                utterance.lang = 'ja-JP';
-                window.speechSynthesis.speak(utterance);
-            }, 1000);
+            
+            // 清除 sessionStorage 中的复习数据，防止再次点击复习时使用旧数据
+            sessionStorage.removeItem('reviewSentences');
+            
+            // 显示完成效果
+            new CompletionEffect().show();
 
         } catch (error) {
             console.error('Error in showComplete:', error);
