@@ -171,57 +171,128 @@ export default Statistics;
 
 // 统计面板交互
 document.addEventListener('DOMContentLoaded', () => {
-    // 获取DOM元素
     const statsButton = document.querySelector('[data-action="stats"]');
-    const statsOverlay = document.querySelector('.stats-overlay');
     const statsPanel = document.querySelector('.stats-panel');
-    const closeButton = document.querySelector('.stats-close');
+    const statsOverlay = document.querySelector('.stats-overlay');
+    const closeButton = document.querySelector('.stats-panel .close-btn');
 
     // 打开统计面板
     function openStatsPanel() {
-        statsOverlay.classList.add('show');
-        statsPanel.classList.add('show');
-        document.body.classList.add('stats-open');
-        loadStatistics(); // 加载统计数据
+        if (statsPanel) {
+            statsPanel.classList.add('show');
+            statsOverlay.classList.add('show');
+            loadStatistics(); // 加载统计数据
+        }
     }
 
     // 关闭统计面板
     function closeStatsPanel() {
-        statsOverlay.classList.remove('show');
-        statsPanel.classList.remove('show');
-        document.body.classList.remove('stats-open');
+        if (statsPanel) {
+            statsPanel.classList.remove('show');
+            statsOverlay.classList.remove('show');
+            // 触发统计更新事件，确保主页面的数据保持最新
+            window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+        }
     }
 
     // 加载统计数据
     function loadStatistics() {
-        // 这里添加加载数据的逻辑
-        updateLearningTrend();
-        updateMasteryStatus();
+        const stats = Statistics.getStatistics();
+        // 更新掌握情况
+        Statistics.updateMasteryStats();
+        // 更新学习趋势
+        updateLearningTrend(stats);
     }
 
     // 更新学习趋势
-    function updateLearningTrend() {
+    function updateLearningTrend(stats) {
         const trendChart = document.getElementById('learningTrendChart');
-        // 这里添加图表绘制逻辑
-    }
+        if (!trendChart) return;
 
-    // 更新掌握情况
-    function updateMasteryStatus() {
-        // 这里添加更新掌握状态的逻辑
+        // 获取最近7天的数据
+        const last7Days = [];
+        const today = new Date();
+        
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toLocaleDateString();
+            const count = stats.dailyStats[dateStr]?.sentencesLearned || 0;
+            
+            // 格式化日期显示
+            const displayDate = `${date.getMonth() + 1}/${date.getDate()}`;
+            last7Days.push({
+                date: displayDate,
+                count: count
+            });
+        }
+
+        // 准备图表数据
+        const chartData = {
+            labels: last7Days.map(day => day.date),
+            datasets: [{
+                label: '学习句子数',
+                data: last7Days.map(day => day.count),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // 如果已经有图表实例，先销毁它
+        if (window.learningTrendChart) {
+            window.learningTrendChart.destroy();
+        }
+
+        // 创建新的图表
+        window.learningTrendChart = new Chart(trendChart, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '句子数量'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '日期'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '最近7天学习趋势'
+                    }
+                }
+            }
+        });
     }
 
     // 事件监听
-    statsButton.addEventListener('click', openStatsPanel);
-    closeButton.addEventListener('click', closeStatsPanel);
-    statsOverlay.addEventListener('click', (e) => {
-        if (e.target === statsOverlay) {
-            closeStatsPanel();
-        }
-    });
+    if (statsButton) {
+        statsButton.addEventListener('click', openStatsPanel);
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', closeStatsPanel);
+    }
+    if (statsOverlay) {
+        statsOverlay.addEventListener('click', (e) => {
+            if (e.target === statsOverlay) {
+                closeStatsPanel();
+            }
+        });
+    }
 
     // ESC键关闭面板
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && statsPanel.classList.contains('show')) {
+        if (e.key === 'Escape' && statsPanel && statsPanel.classList.contains('show')) {
             closeStatsPanel();
         }
     });
