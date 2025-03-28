@@ -57,7 +57,12 @@ class Statistics {
 
             // 更新今天学习的句子数量
             stats.dailyStats[today].sentencesLearned += splitQuestionCount;
-            stats.totalSentences = (stats.totalSentences || 0) + splitQuestionCount;
+            
+            // 更新总句子数
+            if (!stats.totalSentences) {
+                stats.totalSentences = this.getLearnedSentences();
+            }
+            stats.totalSentences += splitQuestionCount;
 
             // 记录课程完成情况
             if (!stats.dailyStats[today].completedLessons) {
@@ -90,8 +95,23 @@ class Statistics {
 
     static getLearnedSentences() {
         const stats = this.getStatistics();
-        const today = new Date().toLocaleDateString();
-        return stats.dailyStats[today]?.sentencesLearned || 0;
+        
+        // 返回总的已学句子数
+        if (stats.totalSentences !== undefined) {
+            return stats.totalSentences;
+        }
+        
+        // 如果没有 totalSentences，计算所有天数的总和
+        let total = 0;
+        Object.values(stats.dailyStats || {}).forEach(dayStats => {
+            total += dayStats.sentencesLearned || 0;
+        });
+        
+        // 更新 totalSentences
+        stats.totalSentences = total;
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        
+        return total;
     }
 
     static getLearningDays() {
