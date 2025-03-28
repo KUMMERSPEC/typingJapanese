@@ -122,25 +122,35 @@ class Statistics {
 
     static updateMasteryStats() {
         const stats = this.getStatistics();
+        console.log('开始更新掌握情况统计');
+        console.log('原始统计数据:', stats);
         
         // 初始化掌握统计
         const masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
         
         // 遍历 reviewHistory 中的所有句子
         if (stats.reviewHistory) {
-            Object.values(stats.reviewHistory).forEach(item => {
+            console.log('处理 reviewHistory 中的句子');
+            Object.entries(stats.reviewHistory).forEach(([key, item]) => {
+                console.log('处理句子:', key);
+                console.log('句子数据:', item);
+                
                 // 根据 proficiency 计数
                 if (item.proficiency === 'low' || !item.proficiency) {
                     masteryStats.low++;
+                    console.log('添加到 low，当前 low 数量:', masteryStats.low);
                 } else if (item.proficiency === 'medium') {
                     masteryStats.medium++;
+                    console.log('添加到 medium，当前 medium 数量:', masteryStats.medium);
                 } else if (item.proficiency === 'high') {
                     masteryStats.high++;
+                    console.log('添加到 high，当前 high 数量:', masteryStats.high);
                 } else if (item.proficiency === 'master') {
                     masteryStats.master++;
+                    console.log('添加到 master，当前 master 数量:', masteryStats.master);
                 } else {
-                    // 如果没有 proficiency 或是新句子，默认为 low
                     masteryStats.low++;
+                    console.log('未知 proficiency，添加到 low，当前 low 数量:', masteryStats.low);
                 }
             });
         }
@@ -149,19 +159,34 @@ class Statistics {
         const totalMastery = masteryStats.low + masteryStats.medium + 
                             masteryStats.high + masteryStats.master;
         
-        console.log('掌握情况统计:', masteryStats);
+        console.log('当前掌握情况统计:', masteryStats);
         console.log('总句子数:', stats.totalSentences);
         console.log('掌握统计总数:', totalMastery);
 
         // 如果总数不一致，可能有新句子未计入
         if (totalMastery < stats.totalSentences) {
+            const diff = stats.totalSentences - totalMastery;
+            console.log('发现未计入的句子数量:', diff);
             // 将差值添加到 low 类别
-            masteryStats.low += (stats.totalSentences - totalMastery);
+            masteryStats.low += diff;
+            console.log('更新后的 low 数量:', masteryStats.low);
         }
 
         // 更新统计数据
         stats.masteryStats = masteryStats;
+        console.log('最终掌握情况统计:', masteryStats);
+        
+        // 保存更新后的统计数据
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        
+        // 更新 DOM 中的显示
+        const masteryLowElement = document.getElementById('masteryLow');
+        const masteryMediumElement = document.getElementById('masteryMedium');
+        const masteryHighElement = document.getElementById('masteryHigh');
+        
+        if (masteryLowElement) masteryLowElement.textContent = masteryStats.low;
+        if (masteryMediumElement) masteryMediumElement.textContent = masteryStats.medium;
+        if (masteryHighElement) masteryHighElement.textContent = masteryStats.high;
         
         return masteryStats;
     }
@@ -201,9 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 加载统计数据
     function loadStatistics() {
+        console.log('开始加载统计数据');
         const stats = Statistics.getStatistics();
+        console.log('获取到的统计数据:', stats);
+        
         // 更新掌握情况
-        Statistics.updateMasteryStats();
+        const masteryStats = Statistics.updateMasteryStats();
+        console.log('更新后的掌握情况:', masteryStats);
+        
         // 更新学习趋势
         updateLearningTrend(stats);
     }
