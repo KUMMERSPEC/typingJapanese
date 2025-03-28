@@ -421,6 +421,7 @@
             const reviewItemsElement = document.querySelector('.review-items');
             if (reviewItemsElement) {
                 const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 获取今天0点
                 let reviewCount = 0;
 
                 // 从 typing_statistics 获取待复习数据
@@ -433,9 +434,14 @@
                     Object.values(reviewData.sentences).forEach(item => {
                         if (item.nextReviewDate) {
                             const nextReview = new Date(item.nextReviewDate);
-                            console.log('句子复习日期:', item.nextReviewDate, '是否需要复习:', nextReview <= now);
-                            if (nextReview <= now) {
+                            const reviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
+                            console.log('句子复习日期:', item.nextReviewDate);
+                            console.log('比较日期 - 复习日期:', reviewDay.toISOString(), '今天:', today.toISOString());
+                            
+                            // 如果复习日期小于等于今天，就需要复习
+                            if (reviewDay <= today) {
                                 reviewCount++;
+                                console.log('需要复习，当前计数:', reviewCount);
                             }
                         }
                     });
