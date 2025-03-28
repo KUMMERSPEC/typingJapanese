@@ -204,29 +204,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsButton = document.querySelector('[data-action="stats"]');
     const statsPanel = document.querySelector('.stats-panel');
     const statsOverlay = document.querySelector('.stats-overlay');
-    const closeButtons = document.querySelectorAll('.stats-panel .close-btn');
+    const closeButton = document.querySelector('.stats-panel-header .close-btn');
 
-    // 打开统计面板
+    // 关闭统计面板
+    function closeStatsPanel() {
+        console.log('关闭统计面板');
+        const statsPanel = document.getElementById('statsPanel');
+        const statsOverlay = document.querySelector('.stats-overlay');
+        
+        if (statsPanel) {
+            statsPanel.classList.remove('show');
+            if (statsOverlay) {
+                statsOverlay.classList.remove('show');
+            }
+            // 触发统计更新事件
+            window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+        }
+    }
+
+    // 显示统计面板
     function openStatsPanel() {
         console.log('打开统计面板');
+        const statsPanel = document.getElementById('statsPanel');
+        const statsOverlay = document.querySelector('.stats-overlay');
+        
         if (statsPanel) {
             statsPanel.classList.add('show');
             if (statsOverlay) {
                 statsOverlay.classList.add('show');
             }
             loadStatistics();
-        }
-    }
-
-    // 关闭统计面板
-    function closeStatsPanel() {
-        console.log('关闭统计面板');
-        if (statsPanel) {
-            statsPanel.classList.remove('show');
-            if (statsOverlay) {
-                statsOverlay.classList.remove('show');
-            }
-            window.dispatchEvent(new CustomEvent('statisticsUpdated'));
         }
     }
 
@@ -320,14 +327,16 @@ document.addEventListener('DOMContentLoaded', () => {
         statsButton.addEventListener('click', openStatsPanel);
     }
 
-    // 为每个关闭按钮添加事件监听
-    closeButtons.forEach(btn => {
-        console.log('找到关闭按钮:', btn);
-        btn.addEventListener('click', () => {
+    // 为关闭按钮添加事件监听
+    if (closeButton) {
+        console.log('找到关闭按钮');
+        closeButton.addEventListener('click', () => {
             console.log('点击关闭按钮');
             closeStatsPanel();
         });
-    });
+    } else {
+        console.error('未找到关闭按钮');
+    }
 
     // 点击遮罩层关闭面板
     if (statsOverlay) {
