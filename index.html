@@ -420,34 +420,56 @@
             // 更新待复习数量
             const reviewItemsElement = document.querySelector('.review-items');
             if (reviewItemsElement) {
-                // 直接从 review_data 获取待复习数据
-                const reviewData = JSON.parse(localStorage.getItem('review_data') || '{}');
-                console.log('复习数据:', reviewData);
+                // 检查所有相关的存储数据
+                console.log('检查所有相关存储数据:');
+                console.log('review_data:', localStorage.getItem('review_data'));
+                console.log('typing_statistics:', localStorage.getItem('typing_statistics'));
+                console.log('reviewHistory:', localStorage.getItem('reviewHistory'));
                 
-                // 获取今天的日期（去掉时分秒）
+                // 尝试解析 review_data
+                const reviewData = JSON.parse(localStorage.getItem('review_data') || '{}');
+                console.log('解析后的复习数据:', reviewData);
+                console.log('复习数据类型:', typeof reviewData);
+                console.log('复习数据键:', Object.keys(reviewData));
+                
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
                 let reviewCount = 0;
 
-                // 遍历所有需要复习的句子
-                Object.values(reviewData).forEach(item => {
+                // 检查每个句子的复习状态
+                for (const key in reviewData) {
+                    const item = reviewData[key];
+                    console.log('检查句子:', key);
+                    console.log('句子数据:', item);
+                    
                     if (item.nextReviewDate) {
                         const nextReview = new Date(item.nextReviewDate);
                         const reviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
-                        console.log('句子:', item.sentence);
-                        console.log('复习日期:', reviewDay.toISOString());
-                        console.log('今天:', today.toISOString());
+                        console.log('下次复习日期:', reviewDay.toISOString());
+                        console.log('今天日期:', today.toISOString());
+                        console.log('是否需要复习:', reviewDay <= today);
                         
                         if (reviewDay <= today) {
                             reviewCount++;
                             console.log('需要复习，当前计数:', reviewCount);
                         }
                     } else {
-                        // 如果没有 nextReviewDate，说明是新添加的待复习句子
-                        reviewCount++;
-                        console.log('新句子需要复习，当前计数:', reviewCount);
+                        // 如果没有 nextReviewDate，检查其他可能的字段
+                        console.log('没有 nextReviewDate，检查其他字段:', item);
+                        if (item.reviewDate) {
+                            const reviewDate = new Date(item.reviewDate);
+                            const reviewDay = new Date(reviewDate.getFullYear(), reviewDate.getMonth(), reviewDate.getDate());
+                            if (reviewDay <= today) {
+                                reviewCount++;
+                                console.log('基于 reviewDate 需要复习，当前计数:', reviewCount);
+                            }
+                        } else {
+                            // 新添加的待复习句子
+                            reviewCount++;
+                            console.log('新句子需要复习，当前计数:', reviewCount);
+                        }
                     }
-                });
+                }
 
                 console.log('最终待复习数量:', reviewCount);
                 reviewItemsElement.textContent = reviewCount;
