@@ -210,6 +210,14 @@ window.closeStatsPanel = function() {
         statsPanel.classList.remove('show');
         if (overlay) {
             overlay.classList.remove('show');
+            // 添加过渡结束事件监听
+            overlay.addEventListener('transitionend', function handler() {
+                overlay.style.display = 'none';
+                statsPanel.style.display = 'none';
+                overlay.removeEventListener('transitionend', handler);
+            });
+        } else {
+            statsPanel.style.display = 'none';
         }
         // 触发统计更新事件
         window.dispatchEvent(new CustomEvent('statisticsUpdated'));
@@ -228,7 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 显示统计面板
     function openStatsPanel() {
         console.log('打开统计面板');
+        const statsPanel = document.getElementById('statsPanel');
+        const overlay = document.querySelector('.overlay');
+        
         if (statsPanel) {
+            // 先设置 display
+            statsPanel.style.display = 'flex';
+            if (overlay) {
+                overlay.style.display = 'block';
+            }
+            // 强制重排
+            statsPanel.offsetHeight;
+            // 然后添加 show 类触发动画
             statsPanel.classList.add('show');
             if (overlay) {
                 overlay.classList.add('show');
