@@ -406,7 +406,6 @@
         function updateStatisticsDisplay() {
             // 获取最新统计数据
             const stats = Statistics.getStatistics();
-            console.log('当前统计数据:', stats);
             
             // 更新学习天数
             const learningDaysElement = document.querySelector('.learning-days');
@@ -429,37 +428,29 @@
 
                 // 从 reviewHistory 中获取待复习数据
                 if (stats.reviewHistory) {
-                    console.log('检查 reviewHistory 中的复习数据');
                     Object.values(stats.reviewHistory).forEach(item => {
                         if (item.nextReviewDate) {
                             const nextReview = new Date(item.nextReviewDate);
                             const reviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
-                            console.log('句子:', item.sentence);
-                            console.log('下次复习日期:', reviewDay.toISOString());
-                            console.log('今天:', today.toISOString());
                             
                             if (reviewDay <= today) {
                                 reviewCount++;
-                                console.log('需要复习，当前计数:', reviewCount);
                             }
                         }
                     });
                 }
 
-                console.log('最终待复习数量:', reviewCount);
                 reviewItemsElement.textContent = reviewCount;
             }
         }
 
         // 页面加载时更新显示
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('页面加载完成，开始更新统计显示');
             updateStatisticsDisplay();
         });
 
         // 监听统计更新事件
         window.addEventListener('statisticsUpdated', () => {
-            console.log('收到统计更新事件');
             updateStatisticsDisplay();
         });
     </script>
