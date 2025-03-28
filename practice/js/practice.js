@@ -1,5 +1,6 @@
 import DataLoader from './dataLoader.js';
 import statsData from '../../js/common/statsData.js';
+import Statistics from '../../js/common/statistics.js';
 
 // 修改初始化方式
 export class PracticeManager {
@@ -1514,4 +1515,14 @@ function completePractice() {
     stats.addLearningRecord(sentences);
     
     // 其他完成逻辑...
+}
+
+// 在完成课程时更新统计
+function handleLessonComplete() {
+    const courseKey = getCurrentCourseKey();
+    const lesson = getCurrentLesson();
+    const questionCount = lesson.sentences.length;
+    
+    // 更新统计
+    Statistics.updateStatistics(courseKey, lesson.id, questionCount);
 }

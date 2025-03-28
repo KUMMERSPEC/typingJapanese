@@ -33,12 +33,16 @@ class Statistics {
                     sentencesLearned: 0,
                     completedLessons: {}
                 };
-            }
-
-            // 更新学习天数
-            if (stats.lastStudyDate !== today) {
-                stats.consecutiveDays = this.isConsecutiveDay(stats.lastStudyDate) ? stats.consecutiveDays + 1 : 1;
-                stats.lastStudyDate = today;
+                
+                // 如果是新的一天，更新连续学习天数
+                if (stats.lastStudyDate !== today) {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const yesterdayStr = yesterday.toLocaleDateString();
+                    
+                    stats.consecutiveDays = stats.dailyStats[yesterdayStr] ? stats.consecutiveDays + 1 : 1;
+                    stats.lastStudyDate = today;
+                }
             }
 
             // 更新今天学习的句子数量
@@ -82,7 +86,35 @@ class Statistics {
 
     static getLearningDays() {
         const stats = this.getStatistics();
-        return stats.consecutiveDays || 0;
+        return stats.consecutiveDays || 1;
+    }
+
+    static updateMasteryStats() {
+        const stats = this.getStatistics();
+        const reviewData = JSON.parse(localStorage.getItem('review_data') || '{}');
+        
+        // 初始化掌握统计
+        if (!stats.masteryStats) {
+            stats.masteryStats = { low: 0, medium: 0, high: 0 };
+        }
+        
+        // 重新计算掌握情况
+        const masteryStats = { low: 0, medium: 0, high: 0 };
+        
+        Object.values(reviewData).forEach(item => {
+            // 包括所有 low 级别的句子，无论标签是什么
+            if (item.proficiency === 'low') {
+                masteryStats.low++;
+            } else if (item.proficiency === 'medium') {
+                masteryStats.medium++;
+            } else if (item.proficiency === 'high') {
+                masteryStats.high++;
+            }
+        });
+        
+        stats.masteryStats = masteryStats;
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        return masteryStats;
     }
 }
 
