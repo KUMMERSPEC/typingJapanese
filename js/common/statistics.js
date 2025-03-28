@@ -199,39 +199,39 @@ class Statistics {
 
 export default Statistics; 
 
+// 将关闭函数设置为全局函数
+window.closeStatsPanel = function() {
+    console.log('执行全局 closeStatsPanel');
+    const statsPanel = document.getElementById('statsPanel');
+    const overlay = document.querySelector('.overlay');
+    
+    if (statsPanel) {
+        console.log('找到统计面板，准备关闭');
+        statsPanel.classList.remove('show');
+        if (overlay) {
+            overlay.classList.remove('show');
+        }
+        // 触发统计更新事件
+        window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+    } else {
+        console.error('未找到统计面板元素');
+    }
+};
+
 // 统计面板交互
 document.addEventListener('DOMContentLoaded', () => {
     const statsButton = document.querySelector('[data-action="stats"]');
     const statsPanel = document.querySelector('.stats-panel');
-    const statsOverlay = document.querySelector('.stats-overlay');
+    const overlay = document.querySelector('.overlay');
     const closeButton = document.querySelector('.stats-panel-header .close-btn');
-
-    // 关闭统计面板
-    function closeStatsPanel() {
-        console.log('关闭统计面板');
-        const statsPanel = document.getElementById('statsPanel');
-        const statsOverlay = document.querySelector('.stats-overlay');
-        
-        if (statsPanel) {
-            statsPanel.classList.remove('show');
-            if (statsOverlay) {
-                statsOverlay.classList.remove('show');
-            }
-            // 触发统计更新事件
-            window.dispatchEvent(new CustomEvent('statisticsUpdated'));
-        }
-    }
 
     // 显示统计面板
     function openStatsPanel() {
         console.log('打开统计面板');
-        const statsPanel = document.getElementById('statsPanel');
-        const statsOverlay = document.querySelector('.stats-overlay');
-        
         if (statsPanel) {
             statsPanel.classList.add('show');
-            if (statsOverlay) {
-                statsOverlay.classList.add('show');
+            if (overlay) {
+                overlay.classList.add('show');
             }
             loadStatistics();
         }
@@ -329,20 +329,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 为关闭按钮添加事件监听
     if (closeButton) {
-        console.log('找到关闭按钮');
-        closeButton.addEventListener('click', () => {
+        console.log('找到关闭按钮，添加点击事件');
+        closeButton.addEventListener('click', (e) => {
             console.log('点击关闭按钮');
-            closeStatsPanel();
+            e.preventDefault();
+            window.closeStatsPanel();
         });
     } else {
         console.error('未找到关闭按钮');
     }
 
     // 点击遮罩层关闭面板
-    if (statsOverlay) {
-        statsOverlay.addEventListener('click', (e) => {
-            if (e.target === statsOverlay) {
-                closeStatsPanel();
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                window.closeStatsPanel();
             }
         });
     }
@@ -350,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ESC键关闭面板
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && statsPanel && statsPanel.classList.contains('show')) {
-            closeStatsPanel();
+            window.closeStatsPanel();
         }
     });
 }); 

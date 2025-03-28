@@ -230,7 +230,7 @@ window.closeReviewPanel = function() {
         setTimeout(() => {
             reviewPanel.style.display = 'none';
             overlay.style.display = 'none';
-        }, 300);
+        }, 150); // 从 300ms 改为 150ms，使动画更快
     }
 }
 

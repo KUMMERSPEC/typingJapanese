@@ -10,6 +10,8 @@
     background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.15s ease-in-out;
+    opacity: 0;
     display: none;
     flex-direction: column;
     z-index: 1001;
@@ -18,6 +20,7 @@
 
 .stats-panel.show {
     display: flex;
+    opacity: 1;
 }
 
 .stats-header {
@@ -301,7 +304,6 @@ canvas#learningTrendChart {
 }
 
 .stats-overlay {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -309,8 +311,24 @@ canvas#learningTrendChart {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    transition: opacity 0.15s ease-in-out;
+    opacity: 0;
+    display: none;
 }
 
 .stats-overlay.show {
     display: block;
+    opacity: 1;
+}
+
+.overlay {
+    /* ... 其他样式保持不变 ... */
+    transition: opacity 0.15s ease-in-out;
+    opacity: 0;
+    display: none;
+}
+
+.overlay.show {
+    display: block;
+    opacity: 1;
 }
