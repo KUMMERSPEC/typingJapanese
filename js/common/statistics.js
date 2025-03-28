@@ -122,30 +122,47 @@ class Statistics {
 
     static updateMasteryStats() {
         const stats = this.getStatistics();
-        const reviewData = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
         
         // 初始化掌握统计
-        if (!stats.masteryStats) {
-            stats.masteryStats = { low: 0, medium: 0, high: 0 };
+        const masteryStats = { low: 0, medium: 0, high: 0, master: 0 };
+        
+        // 遍历 reviewHistory 中的所有句子
+        if (stats.reviewHistory) {
+            Object.values(stats.reviewHistory).forEach(item => {
+                // 根据 proficiency 计数
+                if (item.proficiency === 'low' || !item.proficiency) {
+                    masteryStats.low++;
+                } else if (item.proficiency === 'medium') {
+                    masteryStats.medium++;
+                } else if (item.proficiency === 'high') {
+                    masteryStats.high++;
+                } else if (item.proficiency === 'master') {
+                    masteryStats.master++;
+                } else {
+                    // 如果没有 proficiency 或是新句子，默认为 low
+                    masteryStats.low++;
+                }
+            });
         }
+
+        // 检查总数是否与 totalSentences 一致
+        const totalMastery = masteryStats.low + masteryStats.medium + 
+                            masteryStats.high + masteryStats.master;
         
-        // 重新计算掌握情况
-        const masteryStats = { low: 0, medium: 0, high: 0 };
-        
-        // 遍历所有句子
-        Object.values(reviewData.sentences || {}).forEach(item => {
-            // 根据 proficiency 计数
-            if (item.proficiency === 'low' || !item.proficiency) {
-                masteryStats.low++;
-            } else if (item.proficiency === 'medium') {
-                masteryStats.medium++;
-            } else if (item.proficiency === 'high') {
-                masteryStats.high++;
-            }
-        });
-        
+        console.log('掌握情况统计:', masteryStats);
+        console.log('总句子数:', stats.totalSentences);
+        console.log('掌握统计总数:', totalMastery);
+
+        // 如果总数不一致，可能有新句子未计入
+        if (totalMastery < stats.totalSentences) {
+            // 将差值添加到 low 类别
+            masteryStats.low += (stats.totalSentences - totalMastery);
+        }
+
+        // 更新统计数据
         stats.masteryStats = masteryStats;
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        
         return masteryStats;
     }
 }
