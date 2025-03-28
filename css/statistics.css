@@ -10,10 +10,14 @@
     background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    display: flex;
+    display: none;
     flex-direction: column;
     z-index: 1001;
     overflow: hidden;
+}
+
+.stats-panel.show {
+    display: flex;
 }
 
 .stats-header {
@@ -285,4 +289,12 @@
 canvas#learningTrendChart {
     width: 100% !important;
     height: 100% !important;
+}
+
+.stats-overlay {
+    display: none;
+}
+
+.stats-overlay.show {
+    display: block;
 }

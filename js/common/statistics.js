@@ -204,12 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsButton = document.querySelector('[data-action="stats"]');
     const statsPanel = document.querySelector('.stats-panel');
     const statsOverlay = document.querySelector('.stats-overlay');
-    
-    // 修改关闭按钮的选择器，使用两个独立的选择器
-    const closeButtons = document.querySelectorAll('.stats-panel .close-btn, .stats-panel .close-btn[aria-label="关闭"]');
+    const closeButtons = document.querySelectorAll('.stats-panel .close-btn');
 
     // 打开统计面板
     function openStatsPanel() {
+        console.log('打开统计面板');
         if (statsPanel) {
             statsPanel.classList.add('show');
             if (statsOverlay) {
@@ -330,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // 点击遮罩层关闭面板
     if (statsOverlay) {
         statsOverlay.addEventListener('click', (e) => {
             if (e.target === statsOverlay) {
