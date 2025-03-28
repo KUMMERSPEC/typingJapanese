@@ -182,15 +182,15 @@ class Statistics {
         // 更新 DOM 中的显示
         const masteryLowElement = document.getElementById('masteryLow');
         const masteryMediumElement = document.getElementById('masteryMedium');
-        const masteryHighElement = document.getElementById('masteryHigh');
-        const masteryMasterElement = document.getElementById('masteryHigh'); // 使用 high 元素来显示 high + master
+        const masteryHighTotalElement = document.getElementById('masteryHighTotal');
         
         if (masteryLowElement) masteryLowElement.textContent = masteryStats.low;
         if (masteryMediumElement) masteryMediumElement.textContent = masteryStats.medium;
-        if (masteryHighElement) {
+        if (masteryHighTotalElement) {
             // 将 high 和 master 的数量加在一起显示在"完全掌握"区域
             const totalHighMastery = masteryStats.high + masteryStats.master;
-            masteryHighElement.textContent = totalHighMastery;
+            console.log('完全掌握总数:', totalHighMastery, '(high:', masteryStats.high, 'master:', masteryStats.master, ')');
+            masteryHighTotalElement.textContent = totalHighMastery;
         }
         
         return masteryStats;
