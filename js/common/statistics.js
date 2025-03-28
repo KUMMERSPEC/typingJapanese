@@ -174,13 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsButton = document.querySelector('[data-action="stats"]');
     const statsPanel = document.querySelector('.stats-panel');
     const statsOverlay = document.querySelector('.stats-overlay');
-    const closeButton = document.querySelector('.stats-panel .close-btn');
+    const closeButton = document.querySelector('.stats-panel .close-btn, .stats-panel [aria-label="关闭"]');
 
     // 打开统计面板
     function openStatsPanel() {
         if (statsPanel) {
             statsPanel.classList.add('show');
-            statsOverlay.classList.add('show');
+            if (statsOverlay) {
+                statsOverlay.classList.add('show');
+            }
             loadStatistics(); // 加载统计数据
         }
     }
@@ -189,7 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeStatsPanel() {
         if (statsPanel) {
             statsPanel.classList.remove('show');
-            statsOverlay.classList.remove('show');
+            if (statsOverlay) {
+                statsOverlay.classList.remove('show');
+            }
             // 触发统计更新事件，确保主页面的数据保持最新
             window.dispatchEvent(new CustomEvent('statisticsUpdated'));
         }
@@ -279,9 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statsButton) {
         statsButton.addEventListener('click', openStatsPanel);
     }
-    if (closeButton) {
-        closeButton.addEventListener('click', closeStatsPanel);
-    }
+
+    // 为所有可能的关闭按钮添加事件监听
+    document.querySelectorAll('.stats-panel .close-btn, .stats-panel [aria-label="关闭"]').forEach(btn => {
+        btn.addEventListener('click', closeStatsPanel);
+    });
+
     if (statsOverlay) {
         statsOverlay.addEventListener('click', (e) => {
             if (e.target === statsOverlay) {
