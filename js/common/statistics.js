@@ -183,10 +183,15 @@ class Statistics {
         const masteryLowElement = document.getElementById('masteryLow');
         const masteryMediumElement = document.getElementById('masteryMedium');
         const masteryHighElement = document.getElementById('masteryHigh');
+        const masteryMasterElement = document.getElementById('masteryHigh'); // 使用 high 元素来显示 high + master
         
         if (masteryLowElement) masteryLowElement.textContent = masteryStats.low;
         if (masteryMediumElement) masteryMediumElement.textContent = masteryStats.medium;
-        if (masteryHighElement) masteryHighElement.textContent = masteryStats.high;
+        if (masteryHighElement) {
+            // 将 high 和 master 的数量加在一起显示在"完全掌握"区域
+            const totalHighMastery = masteryStats.high + masteryStats.master;
+            masteryHighElement.textContent = totalHighMastery;
+        }
         
         return masteryStats;
     }
@@ -199,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const statsButton = document.querySelector('[data-action="stats"]');
     const statsPanel = document.querySelector('.stats-panel');
     const statsOverlay = document.querySelector('.stats-overlay');
-    const closeButton = document.querySelector('.stats-panel .close-btn, .stats-panel [aria-label="关闭"]');
+    
+    // 修改关闭按钮的选择器，使用两个独立的选择器
+    const closeButtons = document.querySelectorAll('.stats-panel .close-btn, .stats-panel .close-btn[aria-label="关闭"]');
 
     // 打开统计面板
     function openStatsPanel() {
@@ -208,18 +215,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (statsOverlay) {
                 statsOverlay.classList.add('show');
             }
-            loadStatistics(); // 加载统计数据
+            loadStatistics();
         }
     }
 
     // 关闭统计面板
     function closeStatsPanel() {
+        console.log('关闭统计面板');
         if (statsPanel) {
             statsPanel.classList.remove('show');
             if (statsOverlay) {
                 statsOverlay.classList.remove('show');
             }
-            // 触发统计更新事件，确保主页面的数据保持最新
             window.dispatchEvent(new CustomEvent('statisticsUpdated'));
         }
     }
@@ -314,9 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
         statsButton.addEventListener('click', openStatsPanel);
     }
 
-    // 为所有可能的关闭按钮添加事件监听
-    document.querySelectorAll('.stats-panel .close-btn, .stats-panel [aria-label="关闭"]').forEach(btn => {
-        btn.addEventListener('click', closeStatsPanel);
+    // 为每个关闭按钮添加事件监听
+    closeButtons.forEach(btn => {
+        console.log('找到关闭按钮:', btn);
+        btn.addEventListener('click', () => {
+            console.log('点击关闭按钮');
+            closeStatsPanel();
+        });
     });
 
     if (statsOverlay) {
