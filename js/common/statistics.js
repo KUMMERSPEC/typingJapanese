@@ -6,7 +6,15 @@ class Statistics {
         if (!stats) {
             return this.initializeStats();
         }
-        return JSON.parse(stats);
+        const parsedStats = JSON.parse(stats);
+        
+        // 确保 consecutiveDays 不会被重置为 0
+        if (!parsedStats.consecutiveDays) {
+            parsedStats.consecutiveDays = 1;
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsedStats));
+        }
+        
+        return parsedStats;
     }
 
     static initializeStats() {
@@ -40,8 +48,10 @@ class Statistics {
                     yesterday.setDate(yesterday.getDate() - 1);
                     const yesterdayStr = yesterday.toLocaleDateString();
                     
-                    stats.consecutiveDays = stats.dailyStats[yesterdayStr] ? stats.consecutiveDays + 1 : 1;
-                    stats.lastStudyDate = today;
+                    // 保持现有的连续天数，除非确实中断了
+                    if (!stats.dailyStats[yesterdayStr]) {
+                        stats.consecutiveDays = 1;
+                    }
                 }
             }
 
@@ -86,12 +96,13 @@ class Statistics {
 
     static getLearningDays() {
         const stats = this.getStatistics();
-        return stats.consecutiveDays || 1;
+        // 确保返回值永远不会是 0
+        return Math.max(stats.consecutiveDays || 1, 1);
     }
 
     static updateMasteryStats() {
         const stats = this.getStatistics();
-        const reviewData = JSON.parse(localStorage.getItem('review_data') || '{}');
+        const reviewData = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
         
         // 初始化掌握统计
         if (!stats.masteryStats) {
@@ -101,9 +112,10 @@ class Statistics {
         // 重新计算掌握情况
         const masteryStats = { low: 0, medium: 0, high: 0 };
         
-        Object.values(reviewData).forEach(item => {
-            // 包括所有 low 级别的句子，无论标签是什么
-            if (item.proficiency === 'low') {
+        // 遍历所有句子
+        Object.values(reviewData.sentences || {}).forEach(item => {
+            // 根据 proficiency 计数
+            if (item.proficiency === 'low' || !item.proficiency) {
                 masteryStats.low++;
             } else if (item.proficiency === 'medium') {
                 masteryStats.medium++;
