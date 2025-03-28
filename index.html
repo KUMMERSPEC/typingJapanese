@@ -53,6 +53,9 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+
+    <!-- 在 head 部分添加 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- 添加加载指示器 -->
@@ -148,7 +151,7 @@
                         <div class="stats-card-header">
                             <span class="stats-card-title">学习趋势</span>
                         </div>
-                        <div class="trend-chart-container">
+                        <div class="learning-trend">
                             <canvas id="learningTrendChart"></canvas>
                         </div>
                     </div>
