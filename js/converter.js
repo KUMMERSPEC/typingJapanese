@@ -46,28 +46,22 @@ class JapaneseConverter {
             this.initializationPromise = null;
             this.isLoading = false;
             
-            // 修改路径处理，使用更可靠的方式
+            // 修改字典路径处理
             const pathSegments = window.location.pathname.split('/');
             const repoName = pathSegments[1]; // 获取仓库名
             
             // 根据不同环境设置不同的路径
             if (window.location.hostname === 'kummerspec.github.io') {
                 this.dictPath = `/${repoName}/dict`;  // GitHub Pages
-            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                this.dictPath = './dict';  // 本地开发
             } else {
-                this.dictPath = '/dict';   // 其他环境
+                // 本地开发环境使用相对路径
+                this.dictPath = './dict';
             }
             
-            console.log('Current hostname:', window.location.hostname);
-            console.log('Current pathname:', window.location.pathname);
             console.log('Dictionary path:', this.dictPath);
         } catch (error) {
             console.error('Converter initialization error:', error);
-            // 确保基本属性被设置
-            this.initialized = false;
-            this.tokenizer = null;
-            this.dictPath = './dict';
+            throw error; // 抛出错误以便更好地处理初始化失败
         }
     }
 
@@ -82,61 +76,57 @@ class JapaneseConverter {
             }
 
             this.isLoading = true;
+            console.log('Initializing tokenizer...');
 
             if (typeof kuromoji === 'undefined') {
                 throw new Error('kuromoji not loaded');
             }
 
-            return await new Promise((resolve) => {
-                try {
-                    kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
-                        if (err) {
-                            console.warn('Tokenizer initialization failed:', err);
-                            this.isLoading = false;
-                            resolve(null);
-                            return;
-                        }
-                        
-                        this.tokenizer = tokenizer;
-                        this.initialized = true;
+            this.initializationPromise = new Promise((resolve, reject) => {
+                kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
+                    if (err) {
+                        console.error('Tokenizer initialization failed:', err);
                         this.isLoading = false;
-                        resolve(tokenizer);
-                    });
-                } catch (error) {
-                    console.warn('Tokenizer build error:', error);
+                        reject(err);
+                        return;
+                    }
+                    
+                    console.log('Tokenizer initialized successfully');
+                    this.tokenizer = tokenizer;
+                    this.initialized = true;
                     this.isLoading = false;
-                    resolve(null);
-                }
+                    resolve(tokenizer);
+                });
             });
+
+            return await this.initializationPromise;
         } catch (error) {
-            console.warn('Tokenizer initialization error:', error);
+            console.error('Tokenizer initialization error:', error);
             this.isLoading = false;
-            return null;
+            throw error;
         }
     }
 
-    // 修改转换方法
     async convert(text) {
         try {
+            console.log('Converting text:', text);
+
             // 如果未初始化，先初始化
             if (!this.initialized) {
+                console.log('Tokenizer not initialized, initializing...');
                 await this.initTokenizer();
             }
 
-            // 如果没有分词器，返回原文
+            // 如果没有分词器，返回错误
             if (!this.tokenizer) {
-                return {
-                    success: true,
-                    data: {
-                        original: text,
-                        hiragana: text,
-                        romaji: text
-                    }
-                };
+                console.error('Tokenizer not available');
+                throw new Error('Tokenizer not available');
             }
 
             // 执行转换
+            console.log('Tokenizing text...');
             const tokens = this.tokenizer.tokenize(text);
+            console.log('Tokens:', tokens);
             
             // 获取平假名和罗马字，按词分割
             const readings = tokens.map((token, index) => {
@@ -199,15 +189,8 @@ class JapaneseConverter {
                 }
             };
         } catch (error) {
-            console.log('转换失败，返回原文');
-            return {
-                success: true,
-                data: {
-                    original: text,
-                    hiragana: text,
-                    romaji: text
-                }
-            };
+            console.error('Conversion error:', error);
+            throw error;
         }
     }
 
@@ -277,19 +260,20 @@ window.onerror = function(msg, url, line, col, error) {
     return false;
 };
 
-// 创建单例实例
+// 修改单例实例创建和错误处理
 let converter;
 try {
     converter = new JapaneseConverter();
+    // 立即初始化分词器
+    converter.initTokenizer().catch(error => {
+        console.error('Failed to initialize tokenizer:', error);
+    });
 } catch (error) {
     console.error('Failed to create converter:', error);
-    // 创建一个降级版本的转换器
     converter = {
         async convert(text) {
-            return {
-                success: true,
-                data: { original: text, hiragana: text, romaji: text }
-            };
+            console.error('Using fallback converter');
+            throw new Error('Converter initialization failed');
         }
     };
 }
@@ -299,21 +283,24 @@ export default converter;
 // 修改处理转换结果的函数
 function handleConversionResult(result, hiraganaInput, romajiInput) {
     if (result.success) {
-        // 转换成功，自动填充
+        console.log('Conversion successful:', result.data);
         hiraganaInput.value = result.data.hiragana;
         romajiInput.value = result.data.romaji;
     } else {
-        // 转换失败
-        console.error(result.error);
+        console.error('Conversion failed:', result.error);
+        alert('转换失败，请检查控制台获取详细信息');
     }
 }
 
 // 改进页面加载初始化逻辑
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        console.log('Initializing converter on page load...');
         await converter.initTokenizer();
+        console.log('Converter initialized successfully');
     } catch (error) {
-        console.log('初始化过程出错，使用降级模式');
+        console.error('Initialization error:', error);
+        alert('初始化失败，请检查控制台获取详细信息');
     }
 });
 
