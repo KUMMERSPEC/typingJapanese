@@ -308,16 +308,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 function isOnomatopoeia(prevToken, currentToken) {
     // 检查是否为拟声拟态词的一部分
     const isOnomatopoeiaPattern = (token) => {
-        return token.surface_form.match(/[ぁ-んァ-ン]+[っッ][とト]/) ||
-               token.pos === '副詞' ||
-               token.surface_form.match(/^[ぁ-んァ-ン]+$/);
+        // 检查是否为拟声拟态词的常见模式
+        const patterns = [
+            /^[ぁ-んァ-ン]+[っッ][とト]$/, // ポロッと型
+            /^[ぁ-んァ-ン]+$/, // ポロ、ガタ等
+            /^[っッ][とト]$/ // っと、ッと
+        ];
+        
+        return token.pos === '副詞' || // 词性为副词
+               patterns.some(pattern => token.surface_form.match(pattern)) || // 匹配拟声拟态词模式
+               (token.pos_detail_1 === '助動詞語幹' && token.surface_form.match(/^[ぁ-んァ-ン]+$/)); // 特殊情况处理
     };
+
+    // 检查是否为完整的拟声拟态词组合
+    const isFullOnomatopoeia = (token1, token2) => {
+        const combined = token1.surface_form + token2.surface_form;
+        return combined.match(/^[ぁ-んァ-ン]+[っッ][とト]$/);
+    };
+
+    // 如果前一个token和当前token组成完整的拟声拟态词
+    if (isFullOnomatopoeia(prevToken, currentToken)) {
+        return true;
+    }
 
     // 如果前一个token是拟声拟态词的一部分，且当前token也是其一部分
     if (isOnomatopoeiaPattern(prevToken) && 
         (currentToken.surface_form === 'っと' || 
          currentToken.surface_form === 'ッと' ||
          isOnomatopoeiaPattern(currentToken))) {
+        return true;
+    }
+
+    // 如果是单独的拟声拟态词
+    if (prevToken.pos === '副詞' && 
+        prevToken.surface_form.match(/^[ぁ-んァ-ン]+[っッ]?[とト]?$/)) {
         return true;
     }
 
