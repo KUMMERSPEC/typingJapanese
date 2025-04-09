@@ -185,6 +185,12 @@ class JapaneseConverter {
                     else if (token.pos === '動詞' && prevToken.pos === '形容詞') {
                         needSeparator = true;
                     }
+                    // 如果当前token是动词的一部分，不添加分隔符
+                    else if (token.pos_detail_1 === '動詞語幹' || 
+                            (token.pos === '動詞' && token.pos_detail_1 === '自立' && 
+                             nextToken?.pos_detail_1 === '動詞語尾')) {
+                        needSeparator = false;
+                    }
                 }
 
                 // 添加当前词
