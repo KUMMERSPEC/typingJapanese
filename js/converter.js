@@ -129,18 +129,37 @@ class JapaneseConverter {
             console.log('Tokens:', tokens);
             
             // 获取平假名和罗马字，按词分割
-            const readings = tokens.map((token, index) => {
-                // 获取读音（假名）
+            const readings = [];
+            let skipNext = false;
+
+            for (let i = 0; i < tokens.length; i++) {
+                if (skipNext) {
+                    skipNext = false;
+                    continue;
+                }
+
+                const token = tokens[i];
+                const nextToken = i + 1 < tokens.length ? tokens[i + 1] : null;
                 const reading = token.reading || token.surface_form;
-                
+
                 // 判断是否需要添加分隔符
                 let needSeparator = true;
 
+                // 处理拟声拟态词
+                if (nextToken && isOnomatopoeiaStart(token, nextToken)) {
+                    // 合并拟声拟态词
+                    const combinedReading = (token.reading || token.surface_form) + 
+                                         (nextToken.reading || nextToken.surface_form);
+                    readings.push(combinedReading);
+                    skipNext = true;
+                    continue;
+                }
+
                 // 特殊处理形容词和名词的连接
-                if (index > 0) {
-                    const prevToken = tokens[index - 1];
+                if (readings.length > 0) {
+                    const prevToken = tokens[i - 1];
                     
-                    // 如果当前是名词，前一个是形容词（い形容词或な形容词），添加分隔符
+                    // 如果当前是名词，前一个是形容词，添加分隔符
                     if (token.pos === '名詞' && 
                         (prevToken.pos === '形容詞' || 
                          (prevToken.pos === '形容動詞' && prevToken.surface_form.endsWith('な')))) {
@@ -149,16 +168,6 @@ class JapaneseConverter {
                     // 如果当前token和前一个token都是名词的一部分，不添加分隔符
                     else if (token.pos === '名詞' && prevToken.pos === '名詞') {
                         needSeparator = false;
-                    }
-                    // 特殊处理拟声拟态词
-                    else if (isOnomatopoeia(prevToken, token)) {
-                        needSeparator = false;
-                    }
-                    // 如果当前是动词，前一个是拟声拟态词，添加分隔符
-                    else if (token.pos === '動詞' && 
-                            (prevToken.surface_form.endsWith('っと') || 
-                             prevToken.surface_form.endsWith('ッと'))) {
-                        needSeparator = true;
                     }
                     // 如果是助词，在前面添加分隔符
                     else if (token.pos === '助詞') {
@@ -170,9 +179,13 @@ class JapaneseConverter {
                     }
                 }
 
-                // 添加分隔符
-                return needSeparator && index > 0 ? `:${reading}` : reading;
-            });
+                // 添加当前词
+                if (needSeparator && readings.length > 0) {
+                    readings.push(':' + reading);
+                } else {
+                    readings.push(reading);
+                }
+            }
 
             // 将读音连接成字符串
             const hiragana = readings.join('');
@@ -304,44 +317,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// 添加辅助函数来判断拟声拟态词
-function isOnomatopoeia(prevToken, currentToken) {
-    // 检查是否为拟声拟态词的一部分
-    const isOnomatopoeiaPattern = (token) => {
-        // 检查是否为拟声拟态词的常见模式
-        const patterns = [
-            /^[ぁ-んァ-ン]+[っッ][とト]$/, // ポロッと型
-            /^[ぁ-んァ-ン]+$/, // ポロ、ガタ等
-            /^[っッ][とト]$/ // っと、ッと
-        ];
-        
+// 新的辅助函数，用于判断拟声拟态词的开始部分
+function isOnomatopoeiaStart(token, nextToken) {
+    // 检查是否为拟声拟态词的开始部分
+    const isStartPattern = (token) => {
         return token.pos === '副詞' || // 词性为副词
-               patterns.some(pattern => token.surface_form.match(pattern)) || // 匹配拟声拟态词模式
-               (token.pos_detail_1 === '助動詞語幹' && token.surface_form.match(/^[ぁ-んァ-ン]+$/)); // 特殊情况处理
+               token.surface_form.match(/^[ぁ-んァ-ン]+$/); // 假名序列
     };
 
-    // 检查是否为完整的拟声拟态词组合
-    const isFullOnomatopoeia = (token1, token2) => {
-        const combined = token1.surface_form + token2.surface_form;
-        return combined.match(/^[ぁ-んァ-ン]+[っッ][とト]$/);
+    // 检查是否为拟声拟态词的结束部分
+    const isEndPattern = (token) => {
+        return token.surface_form === 'っと' || 
+               token.surface_form === 'ッと' ||
+               token.surface_form.match(/^[っッ][とト]$/);
     };
 
-    // 如果前一个token和当前token组成完整的拟声拟态词
-    if (isFullOnomatopoeia(prevToken, currentToken)) {
-        return true;
-    }
-
-    // 如果前一个token是拟声拟态词的一部分，且当前token也是其一部分
-    if (isOnomatopoeiaPattern(prevToken) && 
-        (currentToken.surface_form === 'っと' || 
-         currentToken.surface_form === 'ッと' ||
-         isOnomatopoeiaPattern(currentToken))) {
-        return true;
-    }
-
-    // 如果是单独的拟声拟态词
-    if (prevToken.pos === '副詞' && 
-        prevToken.surface_form.match(/^[ぁ-んァ-ン]+[っッ]?[とト]?$/)) {
+    // 检查组合是否构成完整的拟声拟态词
+    if (isStartPattern(token) && isEndPattern(nextToken)) {
         return true;
     }
 
