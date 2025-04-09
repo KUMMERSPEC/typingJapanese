@@ -160,20 +160,23 @@ class JapaneseConverter {
                     else if (token.pos === '名詞' && prevToken.pos === '名詞') {
                         needSeparator = false;
                     }
-                    // 特殊处理拟声拟态词（副词）
-                    else if ((token.pos === '助動詞' || token.pos === '助詞') && 
-                            prevToken.pos === '副詞' && 
+                    // 特殊处理拟声拟态词
+                    else if (isOnomatopoeia(prevToken, token)) {
+                        needSeparator = false;
+                    }
+                    // 如果当前是动词，前一个是拟声拟态词，添加分隔符
+                    else if (token.pos === '動詞' && 
                             (prevToken.surface_form.endsWith('っと') || 
                              prevToken.surface_form.endsWith('ッと'))) {
-                        needSeparator = false;
-                    }
-                    // 如果是助词，在前面添加分隔符
-                    else if (token.pos === '助詞' && !token.surface_form.endsWith('っと') && !token.surface_form.endsWith('ッと')) {
                         needSeparator = true;
                     }
-                    // 如果前一个是助词，不添加分隔符
-                    else if (prevToken.pos === '助詞' && !prevToken.surface_form.endsWith('っと') && !prevToken.surface_form.endsWith('ッと')) {
-                        needSeparator = false;
+                    // 如果是助词，在前面添加分隔符
+                    else if (token.pos === '助詞') {
+                        needSeparator = true;
+                    }
+                    // 如果当前是动词，前一个是助词，添加分隔符
+                    else if (token.pos === '動詞' && prevToken.pos === '助詞') {
+                        needSeparator = true;
                     }
                 }
 
@@ -312,4 +315,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.log('初始化过程出错，使用降级模式');
     }
-}); 
+});
+
+// 添加辅助函数来判断拟声拟态词
+function isOnomatopoeia(prevToken, currentToken) {
+    // 检查是否为拟声拟态词的一部分
+    const isOnomatopoeiaPattern = (token) => {
+        return token.surface_form.match(/[ぁ-んァ-ン]+[っッ][とト]/) ||
+               token.pos === '副詞' ||
+               token.surface_form.match(/^[ぁ-んァ-ン]+$/);
+    };
+
+    // 如果前一个token是拟声拟态词的一部分，且当前token也是其一部分
+    if (isOnomatopoeiaPattern(prevToken) && 
+        (currentToken.surface_form === 'っと' || 
+         currentToken.surface_form === 'ッと' ||
+         isOnomatopoeiaPattern(currentToken))) {
+        return true;
+    }
+
+    return false;
+} 
