@@ -655,4 +655,30 @@
 /* 熟练状态 - 蓝色 */
 .status-badge.status-high {
     background-color: #2196F3;
+}
+
+/* 添加到现有的 CSS 文件中 */
+.input-group input[readonly] {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.input-group input:not([readonly]) {
+    background-color: #fff;
+}
+
+/* 添加提示文本的样式 */
+.auto-convert-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.auto-convert-toggle .hint {
+    font-size: 0.85em;
+    color: #888;
+    margin-left: 8px;
 } 

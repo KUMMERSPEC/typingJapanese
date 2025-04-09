@@ -429,6 +429,37 @@ export class CustomCollectionsManager {
                 convertBtn.disabled = false;
             }
 
+            // 设置平假名输入框的初始状态
+            if (hiraganaInput && autoConvertCheckbox) {
+                hiraganaInput.readOnly = autoConvertCheckbox.checked;
+            }
+
+            // 自动转换复选框事件
+            if (autoConvertCheckbox) {
+                autoConvertCheckbox.addEventListener('change', (e) => {
+                    if (hiraganaInput) {
+                        hiraganaInput.readOnly = e.target.checked;
+                        if (!e.target.checked) {
+                            // 取消自动转换时，允许编辑平假名
+                            hiraganaInput.focus();
+                            hiraganaInput.style.backgroundColor = '#fff'; // 改变背景色提示可编辑
+                        } else {
+                            hiraganaInput.style.backgroundColor = '#f5f5f5'; // 自动转换时的背景色
+                        }
+                    }
+                });
+            }
+
+            // 平假名输入框的手动输入事件
+            if (hiraganaInput) {
+                hiraganaInput.addEventListener('input', () => {
+                    if (romajiInput && !autoConvertCheckbox.checked) {
+                        // 当手动输入平假名时，自动更新罗马字
+                        romajiInput.value = converter.hiraganaToRomaji(hiraganaInput.value);
+                    }
+                });
+            }
+
             // 手动转换按钮点击事件
             convertBtn?.addEventListener('click', async () => {
                 const japanese = japaneseInput.value.trim();
@@ -460,7 +491,10 @@ export class CustomCollectionsManager {
             // 自动转换功能
             let conversionTimeout;
             japaneseInput?.addEventListener('input', () => {
-                if (!autoConvertCheckbox?.checked) return;
+                if (!autoConvertCheckbox?.checked) {
+                    // 如果未勾选自动转换，不执行自动转换
+                    return;
+                }
                 
                 // 清除之前的定时器
                 clearTimeout(conversionTimeout);
@@ -472,27 +506,25 @@ export class CustomCollectionsManager {
 
                     try {
                         // 显示加载动画
-                        hiraganaSpinner.style.display = 'block';
-                        romajiSpinner.style.display = 'block';
+                        if (hiraganaSpinner) hiraganaSpinner.style.display = 'block';
+                        if (romajiSpinner) romajiSpinner.style.display = 'block';
 
                         // 执行转换
                         const result = await converter.convert(japanese);
                         
                         // 更新输入框
-                        hiraganaInput.value = result.data.hiragana || japanese;
-                        romajiInput.value = result.data.romaji || japanese;
+                        if (hiraganaInput && autoConvertCheckbox.checked) {
+                            hiraganaInput.value = result.data.hiragana;
+                        }
+                        if (romajiInput) {
+                            romajiInput.value = result.data.romaji;
+                        }
                     } catch (error) {
                         console.error('自动转换失败:', error);
-                        // 不显示错误提示以避免打断用户输入
-                        
-                        // 尝试分解日语句子为单个字符，用冒号分隔
-                        if (japanese) {
-                            hiraganaInput.value = japanese.split('').join(':');
-                        }
                     } finally {
                         // 隐藏加载动画
-                        hiraganaSpinner.style.display = 'none';
-                        romajiSpinner.style.display = 'none';
+                        if (hiraganaSpinner) hiraganaSpinner.style.display = 'none';
+                        if (romajiSpinner) romajiSpinner.style.display = 'none';
                     }
                 }, 500);
             });
