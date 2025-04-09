@@ -177,6 +177,14 @@ class JapaneseConverter {
                     else if (token.pos === '動詞' && prevToken.pos === '助詞') {
                         needSeparator = true;
                     }
+                    // 如果当前是动词，前一个是名词，添加分隔符
+                    else if (token.pos === '動詞' && prevToken.pos === '名詞') {
+                        needSeparator = true;
+                    }
+                    // 如果当前是动词，前一个是形容词，添加分隔符
+                    else if (token.pos === '動詞' && prevToken.pos === '形容詞') {
+                        needSeparator = true;
+                    }
                 }
 
                 // 添加当前词
