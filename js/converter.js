@@ -139,11 +139,46 @@ class JapaneseConverter {
             const tokens = this.tokenizer.tokenize(text);
             
             // 获取平假名和罗马字，按词分割
-            const readings = tokens.map(token => {
+            const readings = tokens.map((token, index) => {
                 // 获取读音（假名）
                 const reading = token.reading || token.surface_form;
-                // 如果是助词，添加冒号
-                return token.pos === '助詞' ? `:${reading}:` : reading;
+                
+                // 判断是否需要添加分隔符
+                let needSeparator = true;
+
+                // 特殊处理形容词和名词的连接
+                if (index > 0) {
+                    const prevToken = tokens[index - 1];
+                    
+                    // 如果当前是名词，前一个是形容词（い形容词或な形容词），添加分隔符
+                    if (token.pos === '名詞' && 
+                        (prevToken.pos === '形容詞' || 
+                         (prevToken.pos === '形容動詞' && prevToken.surface_form.endsWith('な')))) {
+                        needSeparator = true;
+                    }
+                    // 如果当前token和前一个token都是名词的一部分，不添加分隔符
+                    else if (token.pos === '名詞' && prevToken.pos === '名詞') {
+                        needSeparator = false;
+                    }
+                    // 特殊处理拟声拟态词（副词）
+                    else if ((token.pos === '助動詞' || token.pos === '助詞') && 
+                            prevToken.pos === '副詞' && 
+                            (prevToken.surface_form.endsWith('っと') || 
+                             prevToken.surface_form.endsWith('ッと'))) {
+                        needSeparator = false;
+                    }
+                    // 如果是助词，在前面添加分隔符
+                    else if (token.pos === '助詞' && !token.surface_form.endsWith('っと') && !token.surface_form.endsWith('ッと')) {
+                        needSeparator = true;
+                    }
+                    // 如果前一个是助词，不添加分隔符
+                    else if (prevToken.pos === '助詞' && !prevToken.surface_form.endsWith('っと') && !prevToken.surface_form.endsWith('ッと')) {
+                        needSeparator = false;
+                    }
+                }
+
+                // 添加分隔符
+                return needSeparator && index > 0 ? `:${reading}` : reading;
             });
 
             // 将读音连接成字符串
