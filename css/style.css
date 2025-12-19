@@ -241,6 +241,11 @@
 }
 
 /* 批量导入预览表格样式 */
+.preview-table .preview-input[data-field="hiragana"],
+.preview-table .preview-input[data-field="romaji"] {
+    min-width: 200px;
+}
+
 .preview-table {
     width: 100%;
     border-collapse: collapse;
