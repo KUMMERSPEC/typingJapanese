@@ -418,8 +418,8 @@ export class CustomCollectionsManager {
                 const japanese = (japaneseInput).value.trim();
                 if (!japanese) return;
                 try {
-                    if (hiraganaSpinner) (hiraganaSpinner as HTMLElement).style.display = 'block';
-                    if (romajiSpinner) (romajiSpinner as HTMLElement).style.display = 'block';
+                    if (hiraganaSpinner) (hiraganaSpinner).style.display = 'block';
+                    if (romajiSpinner) (romajiSpinner).style.display = 'block';
                     (convertBtn).disabled = true;
                     const result = await converter.convert(japanese);
                     if (hiraganaInput) (hiraganaInput).value = result.data.hiragana || japanese;
@@ -427,15 +427,15 @@ export class CustomCollectionsManager {
                 } catch (err) {
                     alert('转换失败，请手动输入');
                 } finally {
-                    if (hiraganaSpinner) (hiraganaSpinner as HTMLElement).style.display = 'none';
-                    if (romajiSpinner) (romajiSpinner as HTMLElement).style.display = 'none';
+                    if (hiraganaSpinner) (hiraganaSpinner).style.display = 'none';
+                    if (romajiSpinner) (romajiSpinner).style.display = 'none';
                     (convertBtn).disabled = false;
                 }
             });
 
             addSentenceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const collectionId = (e.target).dataset.collectionId as string;
+                const collectionId = (e.target).dataset.collectionId;
                 const sentenceData = {
                     japanese: (document.getElementById('japanese')).value,
                     hiragana: (document.getElementById('hiragana')).value,
@@ -469,7 +469,7 @@ export class CustomCollectionsManager {
         if (batchImportForm) {
             batchImportForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const collectionId = (batchImportForm).dataset.collectionId as string;
+                const collectionId = (batchImportForm).dataset.collectionId;
                 if (!collectionId) {
                     alert('未指定收藏夹');
                     return;
@@ -480,8 +480,8 @@ export class CustomCollectionsManager {
                     alert('没有可导入的句子');
                     return;
                 }
-                const sentencesToImport: any[] = [];
-                rows.forEach((row: any) => {
+                const sentencesToImport = [];
+                rows.forEach((row) => {
                     // japanese 兼容：优先读 input，否则读第二个单元格文本
                     const jpInput = row.querySelector('input[data-field="japanese"]');
                     let japanese = jpInput ? jpInput.value : '';
@@ -530,7 +530,7 @@ export class CustomCollectionsManager {
     async parseBatchImport(text, separator) {
         if (!text) return [];
         const lines = text.trim().split('\n');
-        const result: any[] = [];
+        const result = [];
         for (const line of lines) {
             if (!line.trim()) continue;
             try {
@@ -619,7 +619,7 @@ export class CustomCollectionsManager {
             throw new Error('收藏夹不存在');
         }
         let successCount = 0;
-        const errors: string[] = [];
+        const errors = [];
         for (const sentence of parsedData) {
             try {
                 if (!sentence.japanese || !sentence.hiragana || !sentence.romaji || !sentence.meaning) {
@@ -703,7 +703,7 @@ export class CustomCollectionsManager {
         const collectionsContainer = document.querySelector('.collections-list');
         if (!collectionsContainer) return;
         collectionsContainer.innerHTML = '';
-        Object.entries(this.collections).forEach(([id, collection]: any) => {
+        Object.entries(this.collections).forEach(([id, collection]) => {
             const collectionElement = document.createElement('div');
             collectionElement.className = 'collection-item';
             const reviewStatus = '';
@@ -824,7 +824,7 @@ export class CustomCollectionsManager {
     checkReviewStatus() {
         const now = new Date();
         const needReview: any[] = [];
-        Object.entries(this.collections).forEach(([id, collection]: any) => {
+        Object.entries(this.collections).forEach(([id, collection]) => {
             if (collection.review && collection.review.next_review) {
                 const nextReview = new Date(collection.review.next_review);
                 if (nextReview <= now) {
