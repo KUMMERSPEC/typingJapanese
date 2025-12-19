@@ -772,7 +772,7 @@ export class CustomCollectionsManager {
         if (!collection.sentences || Object.keys(collection.sentences).length === 0) {
             container.innerHTML = '<div class="no-sentences">暂无句子</div>';
         } else {
-            Object.entries(collection.sentences).forEach(([sentenceId, sentence]: any) => {
+            Object.entries(collection.sentences).forEach(([sentenceId, sentence]) => {
                 const sentenceElement = document.createElement('div');
                 sentenceElement.className = 'sentence-item';
                 sentenceElement.innerHTML = `
@@ -796,7 +796,7 @@ export class CustomCollectionsManager {
 
     // 初始化复习属性
     initializeReviewProperties() {
-        Object.values(this.collections).forEach((collection: any) => {
+        Object.values(this.collections).forEach((collection) => {
             if (!collection.review) {
                 collection.review = { last_review: null, next_review: null, interval_days: 7, review_count: 0 };
             }
@@ -823,7 +823,7 @@ export class CustomCollectionsManager {
 
     checkReviewStatus() {
         const now = new Date();
-        const needReview: any[] = [];
+        const needReview = [];
         Object.entries(this.collections).forEach(([id, collection]) => {
             if (collection.review && collection.review.next_review) {
                 const nextReview = new Date(collection.review.next_review);
