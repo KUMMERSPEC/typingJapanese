@@ -301,9 +301,13 @@ class JapaneseConverter {
 
     // 修改片假名转平假名方法
     katakanaToHiragana(str) {
-        return str.replace(/[\u30A0-\u30FF]/g, char => 
-            String.fromCharCode(char.charCodeAt(0) - 0x60)
-        );
+        return str.replace(/[\u30A0-\u30FF]/g, char => {
+            // 长音符号 ー (U+30FC) 不应被转换，直接保留
+            if (char === 'ー') {
+                return 'ー';
+            }
+            return String.fromCharCode(char.charCodeAt(0) - 0x60);
+        });
     }
 
     // 修改平假名转罗马字方法
