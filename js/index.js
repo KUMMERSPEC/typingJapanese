@@ -215,13 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 添加已学句子点击事件
-    const learnedSentencesContainer = document.querySelector('.statistics-item[data-action="learned"]');
+    const learnedSentencesContainer = document.querySelector('[data-action="learned"]');
     console.log('Found learned sentences container:', learnedSentencesContainer);
     
     if (learnedSentencesContainer) {
         learnedSentencesContainer.style.cursor = 'pointer';
-        learnedSentencesContainer.addEventListener('click', () => {
-            // 跳转到“已学句子”新页面（不破坏现有结构）
+        learnedSentencesContainer.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : './';
             window.location.href = `${basePath}review/learned.html`;
         });

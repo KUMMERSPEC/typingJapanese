@@ -8,6 +8,7 @@ export class CourseDisplay {
             this.courses = courseData['word-group'].courses;
             console.log('Loaded courses:', this.courses);
             
+            this.showAllCourses = false; // 首页折叠/展开状态
             this.loadData();
             this.initializeEventListeners();
             this.stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
@@ -57,7 +58,8 @@ export class CourseDisplay {
             }
         }
 
-        if (nextLessonNumber !== null) {
+        // 仅在已开始但未学完时显示为“继续学习”
+        if (nextLessonNumber !== null && completedCount > 0 && completedCount < totalLessons) {
             return {
                 id: courseId,
                 name: course.name,
@@ -212,6 +214,24 @@ export class CourseDisplay {
                 return;
             }
 
+            // 顶部折叠/展开按钮（只注入一次）
+            const headerButtons = document.querySelector('.header-buttons');
+            if (headerButtons && !headerButtons.querySelector('.toggle-all-courses')) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.type = 'button';
+                toggleBtn.className = 'action-button toggle-all-courses';
+                toggleBtn.textContent = this.showAllCourses ? '收起全部课程' : '展开全部课程';
+                toggleBtn.addEventListener('click', () => {
+                    this.showAllCourses = !this.showAllCourses;
+                    toggleBtn.textContent = this.showAllCourses ? '收起全部课程' : '展开全部课程';
+                    this.loadCourses();
+                });
+                headerButtons.appendChild(toggleBtn);
+            } else if (headerButtons) {
+                const btn = headerButtons.querySelector('.toggle-all-courses');
+                if (btn) btn.textContent = this.showAllCourses ? '收起全部课程' : '展开全部课程';
+            }
+
             // 清空现有内容
             courseListContainer.innerHTML = '';
 
@@ -224,8 +244,9 @@ export class CourseDisplay {
             const continueLearningCourses = this.getContinueLearningCourse();
             console.log('继续学习的课程列表:', continueLearningCourses);
 
-            // 为每个继续学习的课程创建卡片
-            for (const continueLearningCourse of continueLearningCourses) {
+            // 为每个继续学习的课程创建卡片（最多显示 4 个，避免首页过长）
+            const limitedCourses = continueLearningCourses.slice(0, 4);
+            for (const continueLearningCourse of limitedCourses) {
                 const course = this.courses[continueLearningCourse.id];
                 if (course) {
                     const courseCard = document.createElement('div');
