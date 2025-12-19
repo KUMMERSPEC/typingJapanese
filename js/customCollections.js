@@ -551,18 +551,34 @@ export class CustomCollectionsManager {
             if (batchImportForm) {
                 batchImportForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    const importText = document.getElementById('batchImportText').value.trim();
-                    const separator = document.querySelector('input[name="separator"]:checked').value;
                     const collectionId = batchImportForm.dataset.collectionId;
-                    
-                    if (!importText || !collectionId) {
-                        alert('请输入要导入的内容');
+                    if (!collectionId) {
+                        alert('未指定收藏夹');
                         return;
                     }
-                    
+
+                    const previewContainer = document.getElementById('importPreview');
+                    const rows = previewContainer.querySelectorAll('tbody tr');
+
+                    if (rows.length === 0) {
+                        alert('没有可导入的句子');
+                        return;
+                    }
+
+                    const sentencesToImport = [];
+                    rows.forEach(row => {
+                        const japanese = row.dataset.japanese;
+                        const hiragana = row.querySelector('input[data-field="hiragana"]').value;
+                        const romaji = row.querySelector('input[data-field="romaji"]').value;
+                        const meaning = row.querySelector('input[data-field="meaning"]').value;
+                        
+                        if (japanese && hiragana && romaji && meaning) {
+                            sentencesToImport.push({ japanese, hiragana, romaji, meaning });
+                        }
+                    });
+
                     try {
-                        const parsedData = await this.parseBatchImport(importText, separator);
-                        await this.processBatchImport(parsedData, collectionId);
+                        await this.processBatchImport(sentencesToImport, collectionId);
                         
                         // 关闭模态框
                         const modal = document.getElementById('batchImportModal');
@@ -572,10 +588,10 @@ export class CustomCollectionsManager {
                         
                         // 刷新列表
                         this.refreshCollectionsList();
-                        alert(`成功导入 ${parsedData.length} 条句子`);
+                        alert(`成功导入 ${sentencesToImport.length} 条句子`);
                     } catch (error) {
                         console.error('批量导入失败:', error);
-                        alert('导入失败，请检查输入格式');
+                        alert('导入失败，请重试');
                     }
                 });
             }
@@ -663,17 +679,27 @@ export class CustomCollectionsManager {
         return result;
     }
     
+    // 更新预览表格行号
+    _updatePreviewRowNumbers(table) {
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            const cell = row.querySelector('td:first-child');
+            if (cell) {
+                cell.textContent = index + 1;
+            }
+        });
+    }
+
     // 预览批量导入数据
     previewBatchImport(parsedData) {
         const previewContainer = document.getElementById('importPreview');
         if (!previewContainer) return;
-        
+
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
             previewContainer.innerHTML = '<div class="preview-empty">没有可导入的句子</div>';
             return;
         }
-        
-        // 创建预览表格
+
         const table = document.createElement('table');
         table.className = 'preview-table';
         table.innerHTML = `
@@ -684,6 +710,7 @@ export class CustomCollectionsManager {
                     <th>假名</th>
                     <th>罗马字</th>
                     <th>中文</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody>
@@ -698,7 +725,7 @@ export class CustomCollectionsManager {
                 `).join('')}
             </tbody>
         `;
-        
+
         previewContainer.innerHTML = '';
         previewContainer.appendChild(table);
         previewContainer.style.display = 'block'; // 确保预览区域可见
