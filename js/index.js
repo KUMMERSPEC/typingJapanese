@@ -2,6 +2,11 @@ import statsData from './common/statsData.js';
 import { CourseDisplay } from './courseDisplay.js'; // 导入 CourseDisplay 类
 import { CustomCollectionsManager } from './customCollections.js';
 
+// 分页状态（待复习面板）
+let reviewPage = 1;
+const REVIEW_PAGE_SIZE = 20;
+let reviewTotalPages = 1;
+
 // 初始化复习面板
 function initReviewPanel() {
     const reviewTrigger = document.querySelector('[data-action="review"]');
@@ -22,13 +27,34 @@ function initReviewPanel() {
     
     // 添加下拉框变化事件监听
     if (filterSelect) {
-        filterSelect.addEventListener('change', updateReviewList);
+        filterSelect.addEventListener('change', () => { reviewPage = 1; updateReviewList(); });
+    }
+    
+    // 添加分页按钮事件监听
+    const btnPrev = document.getElementById('reviewPrev');
+    const btnNext = document.getElementById('reviewNext');
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            if (reviewPage > 1) {
+                reviewPage--;
+                updateReviewList();
+            }
+        });
+    }
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            if (reviewPage < reviewTotalPages) {
+                reviewPage++;
+                updateReviewList();
+            }
+        });
     }
     
     // 点击待复习按钮时显示面板
     if (reviewTrigger) {
         reviewTrigger.addEventListener('click', () => {
             if (reviewPanel && overlay) {
+                reviewPage = 1; // 打开时回到第一页
                 reviewPanel.style.display = 'flex';
                 overlay.style.display = 'block';
                 setTimeout(() => {
@@ -194,9 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (learnedSentencesContainer) {
         learnedSentencesContainer.style.cursor = 'pointer';
-        learnedSentencesContainer.addEventListener('click', (e) => {
-            console.log('Learned sentences clicked');
-            showLearnedSentencesPanel();
+        learnedSentencesContainer.addEventListener('click', () => {
+            // 跳转到“已学句子”新页面（不破坏现有结构）
+            const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : './';
+            window.location.href = `${basePath}review/learned.html`;
         });
     } else {
         console.warn('Learned sentences container not found');
@@ -209,6 +236,7 @@ function showReviewPanel() {
     const overlay = document.querySelector('.overlay');
     
     if (reviewPanel && overlay) {
+        reviewPage = 1; // 打开时重置到第一页
         reviewPanel.style.display = 'flex';
         overlay.style.display = 'block';
         setTimeout(() => {
@@ -236,6 +264,10 @@ window.closeReviewPanel = function() {
 
 // 更新复习列表
 function updateReviewList() {
+    const pageInfoEl = document.getElementById('reviewPageInfo');
+    const btnPrev = document.getElementById('reviewPrev');
+    const btnNext = document.getElementById('reviewNext');
+    const paginationEl = document.querySelector('.review-pagination');
     const filterSelect = document.getElementById('reviewFilter');
     const selectedFilter = filterSelect ? filterSelect.value : 'all';
     const reviewList = document.querySelector('.review-list');
@@ -297,12 +329,25 @@ function updateReviewList() {
     // 按复习日期排序
     items.sort((a, b) => new Date(a.nextReviewDate) - new Date(b.nextReviewDate));
 
+    // 计算分页信息
+    reviewTotalPages = Math.max(1, Math.ceil(items.length / REVIEW_PAGE_SIZE));
+    
+    // 确保当前页不超过总页数
+    if (reviewPage > reviewTotalPages) {
+        reviewPage = reviewTotalPages;
+    }
+    
+    // 计算当前页的数据范围
+    const startIndex = (reviewPage - 1) * REVIEW_PAGE_SIZE;
+    const endIndex = startIndex + REVIEW_PAGE_SIZE;
+    const currentPageItems = items.slice(startIndex, endIndex);
+
     // 更新复习列表显示
     if (reviewList) {
         if (items.length === 0) {
             reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
         } else {
-            reviewList.innerHTML = items.map(item => {
+            reviewList.innerHTML = currentPageItems.map(item => {
                 // 使用我们统一的 getMasteryStatus 函数获取状态
                 const statusInfo = statsData.getMasteryStatus(item);
                 const status = statusInfo.text;
@@ -331,6 +376,28 @@ function updateReviewList() {
     // 更新复习数量显示
     if (reviewCountDiv) {
         reviewCountDiv.textContent = `待复习：${items.length}`;
+    }
+
+    // 更新分页信息
+    if (pageInfoEl) {
+        pageInfoEl.textContent = `${reviewPage} / ${reviewTotalPages}`;
+    }
+
+    // 更新分页按钮状态
+    if (btnPrev) {
+        btnPrev.disabled = reviewPage <= 1;
+    }
+    if (btnNext) {
+        btnNext.disabled = reviewPage >= reviewTotalPages;
+    }
+
+    // 显示/隐藏分页控件（当只有一页或没有数据时隐藏）
+    if (paginationEl) {
+        if (items.length === 0 || reviewTotalPages <= 1) {
+            paginationEl.style.display = 'none';
+        } else {
+            paginationEl.style.display = 'flex';
+        }
     }
 }
 

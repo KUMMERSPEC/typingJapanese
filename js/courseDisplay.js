@@ -42,15 +42,22 @@ export class CourseDisplay {
 
     // 获取课程进度信息的核心方法
     getCourseProgress(courseId, course, completedLessons) {
-        // 获取课程的总课时数
-        const totalLessons = 5; // 假设每个课程有5课时
-        const completedCount = Object.keys(completedLessons || {})
-            .filter(key => key.startsWith(`${courseId}_`))
-            .length;
+        // 真实的课时总数（不再写死为 5）
+        const totalLessons = course && course.lessons ? Object.keys(course.lessons).length : 0;
+        const completedArr = Array.isArray(completedLessons?.[courseId]) ? completedLessons[courseId] : [];
+        const completedCount = completedArr.length;
 
-        // 如果有完成的课时且未完成全部课时，返回进度信息
-        if (completedCount > 0 && completedCount < totalLessons) {
-            const nextLessonNumber = completedCount + 1;
+        // 查找第一个未完成的课时作为“下一课”
+        let nextLessonNumber = null;
+        for (let i = 1; i <= totalLessons; i++) {
+            const id = `lesson${i}`;
+            if (!completedArr.includes(id)) {
+                nextLessonNumber = i;
+                break;
+            }
+        }
+
+        if (nextLessonNumber !== null) {
             return {
                 id: courseId,
                 name: course.name,
@@ -62,6 +69,7 @@ export class CourseDisplay {
                 }
             };
         }
+        // 全部完成则不作为“继续学习”返回
         return null;
     }
 
