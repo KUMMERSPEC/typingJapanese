@@ -216,6 +216,7 @@ export class CourseDisplay {
 
             // 顶部折叠/展开按钮（只注入一次）
             const headerButtons = document.querySelector('.header-buttons');
+            const viewAllBtn = document.querySelector('.view-all-btn');
             if (headerButtons && !headerButtons.querySelector('.toggle-all-courses')) {
                 const toggleBtn = document.createElement('button');
                 toggleBtn.type = 'button';
@@ -224,6 +225,7 @@ export class CourseDisplay {
                 toggleBtn.addEventListener('click', () => {
                     this.showAllCourses = !this.showAllCourses;
                     toggleBtn.textContent = this.showAllCourses ? '收起全部课程' : '展开全部课程';
+                    if (viewAllBtn) viewAllBtn.style.display = this.showAllCourses ? 'none' : 'inline-flex';
                     this.loadCourses();
                 });
                 headerButtons.appendChild(toggleBtn);
@@ -231,6 +233,7 @@ export class CourseDisplay {
                 const btn = headerButtons.querySelector('.toggle-all-courses');
                 if (btn) btn.textContent = this.showAllCourses ? '收起全部课程' : '展开全部课程';
             }
+            if (viewAllBtn) viewAllBtn.style.display = this.showAllCourses ? 'none' : 'inline-flex';
 
             // 清空现有内容
             courseListContainer.innerHTML = '';
@@ -246,6 +249,9 @@ export class CourseDisplay {
 
             // 为每个继续学习的课程创建卡片（最多显示 4 个，避免首页过长）
             const limitedCourses = continueLearningCourses.slice(0, 4);
+            const displayedIds = new Set(limitedCourses.map(c => c.id));
+
+            // 始终显示“继续学习”卡片
             for (const continueLearningCourse of limitedCourses) {
                 const course = this.courses[continueLearningCourse.id];
                 if (course) {
@@ -285,6 +291,44 @@ export class CourseDisplay {
                     `;
                     courseListContainer.appendChild(courseCard);
                 }
+            }
+
+            // 展开全部课程视图
+            if (this.showAllCourses) {
+                const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'all-courses-grid';
+                Object.entries(this.courses).forEach(([courseId, course]) => {
+                    // 简洁卡片，避免与继续学习重复
+                    if (displayedIds.has(courseId)) return;
+                    const total = Object.keys(course.lessons || {}).length;
+                    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+                    const completedArr = Array.isArray(stats.completedLessons?.[courseId]) ? stats.completedLessons[courseId] : [];
+                    const completed = completedArr.length;
+                    // 找下一个未完成课时
+                    let nextLesson = 'lesson1';
+                    for (let i=1;i<=total;i++){ const id=`lesson${i}`; if (!completedArr.includes(id)) { nextLesson=id; break; } }
+
+                    const card = document.createElement('div');
+                    card.className = 'course-card compact';
+                    card.innerHTML = `
+                        <div class="card-header"><h2>${course.name.charAt(0)}</h2></div>
+                        <div class="card-content">
+                            <h3>${course.name}</h3>
+                            <p>${course.description || ''}</p>
+                            <div class="course-stats">
+                                <span><i class="fas fa-book"></i> ${total} 课时</span>
+                                <span><i class="fas fa-check"></i> ${completed} 已完成</span>
+                            </div>
+                            <div class="course-actions">
+                                <a class="start-button" href="${basePath}practice/practice.html?course=${courseId}&lesson=${nextLesson}">
+                                    <i class="fas fa-play"></i> 开始/继续
+                                </a>
+                            </div>
+                        </div>`;
+                    wrapper.appendChild(card);
+                });
+                courseListContainer.appendChild(wrapper);
             }
 
             // 获取今天的推荐课程

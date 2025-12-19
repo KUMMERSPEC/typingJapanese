@@ -32,7 +32,8 @@ import statsData from '../common/statsData.js';
       const stats = statsData.getStatistics();
       const reviewHistory = stats.reviewHistory || {};
 
-      allRows = Object.entries(reviewHistory)
+      // 1) 从 reviewHistory 读取
+      const rows = Object.entries(reviewHistory)
         .filter(([id, item]) => item && (item.japanese || item.sentence))
         .map(([id, item]) => ({
           id,
@@ -47,8 +48,50 @@ import statsData from '../common/statsData.js';
           lastReview: item.lastReview || ''
         }));
 
-      // 默认按 nextReviewDate 近到远排序
-      allRows.sort((a,b) => new Date(a.nextReviewDate) - new Date(b.nextReviewDate));
+      // 2) 合并自定义收藏夹内容
+      try {
+        const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+        Object.entries(collections).forEach(([cid, col]) => {
+          Object.entries(col.sentences || {}).forEach(([sid, s]) => {
+            rows.push({
+              id: `custom:${cid}:${sid}`,
+              japanese: s.japanese || '',
+              hiragana: (s.hiragana || '').replace(/:/g, ''),
+              romaji: s.romaji || '',
+              meaning: s.meaning || '',
+              course: col.name || '自定义',
+              lesson: '自定义',
+              proficiency: 'low',
+              nextReviewDate: '',
+              lastReview: ''
+            });
+          });
+        });
+      } catch (e) {
+        console.warn('读取自定义收藏夹失败，将仅显示复习历史。', e);
+      }
+
+      // 3) 去重（按 日文+假名+中文）
+      const seen = new Map();
+      rows.forEach(r => {
+        const key = [r.japanese, r.hiragana, r.meaning].join('||');
+        if (!seen.has(key)) seen.set(key, r); else {
+          // 保留掌握度较高或有 nextReviewDate 的一条
+          const existed = seen.get(key);
+          const profRank = p => ({low:0, medium:1, high:2, master:3}[p] ?? 0);
+          const pick = (existed.nextReviewDate ? 1:0) + profRank(existed.proficiency) >= (r.nextReviewDate ? 1:0) + profRank(r.proficiency) ? existed : r;
+          seen.set(key, pick);
+        }
+      });
+
+      allRows = Array.from(seen.values());
+
+      // 默认按 nextReviewDate 近到远排序（没有日期的排在后面）
+      allRows.sort((a,b) => {
+        const da = a.nextReviewDate ? new Date(a.nextReviewDate) : new Date(8640000000000000);
+        const db = b.nextReviewDate ? new Date(b.nextReviewDate) : new Date(8640000000000000);
+        return da - db;
+      });
 
       applyFilter();
     } catch (e) {
