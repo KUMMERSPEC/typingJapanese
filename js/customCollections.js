@@ -253,6 +253,61 @@ export class CustomCollectionsManager {
             document.body.appendChild(addSentenceModal);
         }
 
+        // 编辑句子模态框
+        if (!document.getElementById('editSentenceModal')) {
+            const editSentenceModal = document.createElement('div');
+            editSentenceModal.id = 'editSentenceModal';
+            editSentenceModal.className = 'modal';
+            editSentenceModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>编辑句子</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <form id="editSentenceForm">
+                        <div class="form-group">
+                            <label for="editJapanese">日语</label>
+                            <div class="input-group">
+                                <input type="text" id="editJapanese" required placeholder="输入日语句子">
+                                <button type="button" class="convert-btn" id="editConvertBtn">
+                                    <i class="fas fa-sync"></i> 转换
+                                </button>
+                            </div>
+                            <div class="auto-convert-toggle">
+                                <label>
+                                    <input type="checkbox" id="editAutoConvert" checked>
+                                    自动转换
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editHiragana">平假名</label>
+                            <div class="input-group">
+                                <input type="text" id="editHiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRomaji">罗马音</label>
+                            <div class="input-group">
+                                <input type="text" id="editRomaji" required placeholder="watashi wa gakusei desu">
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMeaning">中文含义</label>
+                            <input type="text" id="editMeaning" required placeholder="输入中文翻译">
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="secondary-btn cancel-btn">取消</button>
+                            <button type="submit" class="primary-btn">保存</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(editSentenceModal);
+        }
+
         // 批量导入模态框
         if (!document.getElementById('batchImportModal')) {
             const batchImportModal = document.createElement('div');
@@ -447,6 +502,95 @@ export class CustomCollectionsManager {
                 if (modal) modal.classList.remove('show');
                 this.refreshCollectionsList();
                 window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+            });
+        }
+
+        // 编辑句子表单与转换
+        const editSentenceForm = document.getElementById('editSentenceForm');
+        if (editSentenceForm) {
+            const editJapanese = document.getElementById('editJapanese');
+            const editHiragana = document.getElementById('editHiragana');
+            const editRomaji = document.getElementById('editRomaji');
+            const editMeaning = document.getElementById('editMeaning');
+            const editConvertBtn = document.getElementById('editConvertBtn');
+            const editAutoConvert = document.getElementById('editAutoConvert');
+            const editHiraSpinner = editHiragana?.parentElement?.querySelector('.loading-spinner');
+            const editRomaSpinner = editRomaji?.parentElement?.querySelector('.loading-spinner');
+
+            if (editConvertBtn) editConvertBtn.disabled = false;
+            if (editHiragana && editAutoConvert) editHiragana.readOnly = editAutoConvert.checked;
+
+            editAutoConvert?.addEventListener('change', (e) => {
+                if (editHiragana) {
+                    editHiragana.readOnly = e.target.checked;
+                }
+            });
+
+            editHiragana?.addEventListener('input', () => {
+                if (editRomaji && !(editAutoConvert?.checked)) {
+                    editRomaji.value = converter.hiraganaToRomaji(editHiragana.value);
+                }
+            });
+
+            editConvertBtn?.addEventListener('click', async () => {
+                const japanese = editJapanese.value.trim();
+                if (!japanese) return;
+                try {
+                    if (editHiraSpinner) editHiraSpinner.style.display = 'block';
+                    if (editRomaSpinner) editRomaSpinner.style.display = 'block';
+                    editConvertBtn.disabled = true;
+                    const result = await converter.convert(japanese);
+                    if (editHiragana) editHiragana.value = result.data.hiragana || japanese;
+                    if (editRomaji) editRomaji.value = result.data.romaji || japanese;
+                } catch (err) {
+                    console.error('转换失败:', err);
+                    alert('转换失败，请手动输入');
+                } finally {
+                    if (editHiraSpinner) editHiraSpinner.style.display = 'none';
+                    if (editRomaSpinner) editRomaSpinner.style.display = 'none';
+                    editConvertBtn.disabled = false;
+                }
+            });
+
+            let editConversionTimeout;
+            editJapanese?.addEventListener('input', () => {
+                if (!editAutoConvert?.checked) return;
+                clearTimeout(editConversionTimeout);
+                editConversionTimeout = setTimeout(async () => {
+                    const japanese = editJapanese.value.trim();
+                    if (!japanese) return;
+                    try {
+                        if (editHiraSpinner) editHiraSpinner.style.display = 'block';
+                        if (editRomaSpinner) editRomaSpinner.style.display = 'block';
+                        const result = await converter.convert(japanese);
+                        if (editHiragana && editAutoConvert.checked) editHiragana.value = result.data.hiragana;
+                        if (editRomaji) editRomaji.value = result.data.romaji;
+                    } catch (error) {
+                        console.error('自动转换失败:', error);
+                    } finally {
+                        if (editHiraSpinner) editHiraSpinner.style.display = 'none';
+                        if (editRomaSpinner) editRomaSpinner.style.display = 'none';
+                    }
+                }, 500);
+            });
+
+            editSentenceForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const collectionId = editSentenceForm.dataset.collectionId;
+                const sentenceId = editSentenceForm.dataset.sentenceId;
+                const data = {
+                    japanese: editJapanese.value,
+                    hiragana: editHiragana.value,
+                    romaji: editRomaji.value,
+                    meaning: editMeaning.value
+                };
+                this.editSentence(collectionId, sentenceId, data);
+                const modal = document.getElementById('editSentenceModal');
+                if (modal) modal.classList.remove('show');
+                // 刷新列表视图
+                this.refreshCollectionsList();
+                // 若管理句子模态仍在显示，刷新它
+                this.showManageSentencesModal(collectionId);
             });
         }
 
@@ -693,6 +837,34 @@ export class CustomCollectionsManager {
         }
     }
 
+    // 显示编辑句子模态框
+    showEditSentenceModal(collectionId, sentenceId) {
+        const modal = document.getElementById('editSentenceModal');
+        if (!modal) return;
+        const form = modal.querySelector('#editSentenceForm');
+        if (!form) return;
+        form.dataset.collectionId = collectionId;
+        form.dataset.sentenceId = sentenceId;
+        const data = this.collections?.[collectionId]?.sentences?.[sentenceId];
+        if (data) {
+            modal.querySelector('#editJapanese').value = data.japanese || '';
+            modal.querySelector('#editHiragana').value = data.hiragana || '';
+            modal.querySelector('#editRomaji').value = data.romaji || '';
+            modal.querySelector('#editMeaning').value = data.meaning || '';
+        } else {
+            modal.querySelector('#editJapanese').value = '';
+            modal.querySelector('#editHiragana').value = '';
+            modal.querySelector('#editRomaji').value = '';
+            modal.querySelector('#editMeaning').value = '';
+        }
+        modal.classList.add('show');
+    }
+
+    hideEditSentenceModal() {
+        const modal = document.getElementById('editSentenceModal');
+        if (modal) modal.classList.remove('show');
+    }
+
     hideEditCollectionModal() {
         const modal = document.getElementById('editCollectionModal');
         if (modal) modal.classList.remove('show');
@@ -781,9 +953,16 @@ export class CustomCollectionsManager {
                         <div class="chinese">${sentence.meaning}</div>
                     </div>
                     <div class="sentence-actions">
+                        <button class="edit-sentence-btn" title="编辑句子"><i class="fas fa-edit"></i></button>
                         <button class="delete-sentence-btn" title="删除句子"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
+                // 编辑句子
+                sentenceElement.querySelector('.edit-sentence-btn')?.addEventListener('click', (e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    this.showEditSentenceModal(collectionId, sentenceId);
+                });
+                // 删除句子
                 sentenceElement.querySelector('.delete-sentence-btn')?.addEventListener('click', (e) => {
                     e.preventDefault(); e.stopPropagation();
                     if (confirm('确定要删除这个句子吗？')) { this.deleteSentence(collectionId, sentenceId); this.showManageSentencesModal(collectionId); }
