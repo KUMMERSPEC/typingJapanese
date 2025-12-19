@@ -258,6 +258,7 @@
     padding: 8px;
     border: 1px solid #ddd;
     text-align: left;
+    word-break: break-all;
 }
 
 .preview-table th {
@@ -451,7 +452,7 @@
 /* 句子列表模态框样式 */
 .modal-content {
     width: 90%;
-    max-width: 600px;
+    max-width: 900px;
     margin: 20px auto;
     padding: 20px;
     border-radius: 8px;

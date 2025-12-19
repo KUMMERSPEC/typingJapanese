@@ -34,11 +34,11 @@ class JapaneseConverter {
                 'じょ': 'jo', 'じゅ': 'ju', 'じゃ': 'ja',
                 'びょ': 'byo', 'びゅ': 'byu', 'びゃ': 'bya',
                 'ぴょ': 'pyo', 'ぴゅ': 'pyu', 'ぴゃ': 'pya',
-                // 促音
+                // 促音 (handled in logic)
                 'っ': '',
-                // 长音
-                'ー': '',
-                // 片假名
+                // 长音 (handled in logic)
+                'ー': 'ー',
+            // 片假名
             'ア': 'a', 'イ': 'i', 'ウ': 'u', 'エ': 'e', 'オ': 'o',
             'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
             'サ': 'sa', 'シ': 'shi', 'ス': 'su', 'セ': 'se', 'ソ': 'so',
@@ -308,45 +308,77 @@ class JapaneseConverter {
 
     // 修改平假名转罗马字方法
     hiraganaToRomaji(hiragana) {
+        const longVowelMap = {
+            'aa': 'ā',
+            'ii': 'ī',
+            'uu': 'ū',
+            'ee': 'ē',
+            'oo': 'ō',
+            'ou': 'ō'
+        };
+
         const parts = hiragana.split(':');
         return parts.map(part => {
             if (!part) return '';
-            
-            let result = '';
+
+            let romaji = '';
             let i = 0;
-            
             while (i < part.length) {
-                // 检查双字符组合（拗音）
-                if (i + 1 < part.length) {
-                    const pair = part.slice(i, i + 2);
-                    if (this.hiraganaToRomajiMap[pair]) {
-                        result += this.hiraganaToRomajiMap[pair];
-                        i += 2;
-                        continue;
-                    }
+                // 检查拗音 (e.g., きゃ)
+                if (i + 1 < part.length && this.hiraganaToRomajiMap[part.substring(i, i + 2)]) {
+                    romaji += this.hiraganaToRomajiMap[part.substring(i, i + 2)];
+                    i += 2;
+                    continue;
                 }
 
-                // 处理促音（っ）
-                if (part[i] === 'っ' && i + 1 < part.length) {
-                    const nextChar = part[i + 1];
-                    const nextRomaji = this.hiraganaToRomajiMap[nextChar];
-                    if (nextRomaji) {
-                        const firstConsonant = nextRomaji.match(/^[^aeiou]/);
-                        if (firstConsonant) {
-                            result += firstConsonant[0];
+                // 处理促音 (っ)
+                if (part[i] === 'っ' || part[i] === 'ッ') {
+                    if (i + 1 < part.length) {
+                        const nextKana = part.substring(i + 1, i + 3);
+                        const nextChar = part[i + 1];
+                        let nextRomaji = this.hiraganaToRomajiMap[nextKana] || this.hiraganaToRomajiMap[nextChar];
+                        if (nextRomaji) {
+                            // 特殊处理 'ch'
+                            if (nextRomaji.startsWith('ch')) {
+                                romaji += 't';
+                            } else {
+                                romaji += nextRomaji.charAt(0);
+                            }
                         }
                     }
                     i++;
                     continue;
                 }
 
-                // 单字符转换
-                const romaji = this.hiraganaToRomajiMap[part[i]] || part[i];
-                result += romaji;
+                // 基本假名转换
+                const kana = this.hiraganaToRomajiMap[part[i]] || part[i];
+                romaji += kana;
                 i++;
             }
+
+            // 处理长音
+            // 1. 先处理长音符号 ー
+            let processedRomaji = '';
+            for (let j = 0; j < romaji.length; j++) {
+                if (romaji[j] === 'ー' && j > 0) {
+                    const prevChar = processedRomaji[processedRomaji.length - 1];
+                    if ('aiueo'.includes(prevChar)) {
+                        processedRomaji = processedRomaji.slice(0, -1) + longVowelMap[prevChar + prevChar];
+                    }
+                } else {
+                    processedRomaji += romaji[j];
+                }
+            }
             
-            return result;
+            // 2. 处理元音组合的长音 (e.g., ou -> ō)
+            processedRomaji = processedRomaji.replace(/ou/g, 'ō');
+            processedRomaji = processedRomaji.replace(/oo/g, 'ō');
+            processedRomaji = processedRomaji.replace(/aa/g, 'ā');
+            processedRomaji = processedRomaji.replace(/ii/g, 'ī');
+            processedRomaji = processedRomaji.replace(/uu/g, 'ū');
+            processedRomaji = processedRomaji.replace(/ee/g, 'ē');
+
+            return processedRomaji;
         }).join(':');
     }
 }
