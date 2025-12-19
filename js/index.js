@@ -103,13 +103,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseDisplay = new CourseDisplay();
     courseDisplay.loadCourses(); // 使用 CourseDisplay 加载课程
 
-    // 主页选择书籍（课程集）：仅在首页显示所选书籍下的课程
-    const bookSelector = document.getElementById('bookSelector');
-    if (bookSelector) {
+    // 主页课程选择器（课程集 + 收藏夹）
+    const courseSelector = document.getElementById('courseSelector');
+    // 兼容：暴露两个引用，供 CourseDisplay 使用
+    window.customCollectionsManager = window.customCollectionsManager || window.customCollections;
+    if (courseSelector) {
+        // 构建选项
+        const buildOptions = () => {
+            courseSelector.innerHTML = '';
+            // 课程集
+            const og1 = document.createElement('optgroup');
+            og1.label = '课程集';
+            og1.appendChild(new Option('词组记单词', 'book:word-group'));
+            og1.appendChild(new Option('写给无法说出一句完整日语的人', 'book:standard-basic-1'));
+            courseSelector.appendChild(og1);
+            // 收藏夹
+            const mgr = window.customCollectionsManager;
+            const collections = mgr ? mgr.getCollections() : [];
+            if (collections && collections.length) {
+                const og2 = document.createElement('optgroup');
+                og2.label = '收藏夹';
+                collections.forEach(c => og2.appendChild(new Option(c.name, `collection:${c.id}`)));
+                courseSelector.appendChild(og2);
+            }
+        };
+        buildOptions();
+
+        // 初始值：优先选中已保存的收藏夹；否则选中保存的书籍
+        const savedCollection = localStorage.getItem('selectedCollection');
         const savedBook = localStorage.getItem('selectedBook') || 'word-group';
-        bookSelector.value = savedBook;
-        bookSelector.addEventListener('change', () => {
-            courseDisplay.setBook(bookSelector.value);
+        if (savedCollection) {
+            courseSelector.value = `collection:${savedCollection}`;
+            if (window.customCollectionsManager) {
+                courseDisplay.setCollection?.(savedCollection);
+            }
+        } else {
+            courseSelector.value = `book:${savedBook}`;
+        }
+
+        // 监听变更
+        courseSelector.addEventListener('change', () => {
+            const val = courseSelector.value;
+            if (val.startsWith('book:')) {
+                const bookId = val.split(':')[1];
+                localStorage.removeItem('selectedCollection');
+                courseDisplay.setBook(bookId);
+            } else if (val.startsWith('collection:')) {
+                const cid = val.split(':')[1];
+                localStorage.setItem('selectedCollection', cid);
+                courseDisplay.setCollection?.(cid);
+            }
+        });
+
+        // 监听收藏夹变更，自动刷新选项
+        window.addEventListener('collectionsUpdated', () => {
+            buildOptions();
+            // 保持当前选择
+            const savedCollection2 = localStorage.getItem('selectedCollection');
+            const savedBook2 = localStorage.getItem('selectedBook') || 'word-group';
+            courseSelector.value = savedCollection2 ? `collection:${savedCollection2}` : `book:${savedBook2}`;
         });
     }
     

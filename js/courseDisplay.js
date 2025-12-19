@@ -31,7 +31,15 @@ export class CourseDisplay {
         if (!courseData[bookId]) return;
         this.selectedBook = bookId;
         localStorage.setItem('selectedBook', bookId);
+        localStorage.removeItem('selectedCollection');
         this.courses = (courseData[bookId] || {}).courses || {};
+        this.loadCourses();
+    }
+
+    // 切换到某个收藏夹视图
+    setCollection(collectionId) {
+        localStorage.setItem('selectedCollection', collectionId);
+        this.selectedBook = this.selectedBook || 'word-group';
         this.loadCourses();
     }
 
@@ -227,10 +235,71 @@ export class CourseDisplay {
             // 清空现有内容
             courseListContainer.innerHTML = '';
 
+            const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
+
+            // 如果选择了收藏夹，则仅显示该收藏夹卡片
+            const selectedCollection = localStorage.getItem('selectedCollection');
+            const mgr = window.customCollectionsManager;
+            if (selectedCollection && mgr) {
+                const collection = (mgr.getCollections() || []).find(c => c.id === selectedCollection);
+                if (collection) {
+                    const collectionCard = document.createElement('div');
+                    collectionCard.className = 'collection-item';
+                    const practiceUrl = `${basePath}practice/practice.html?collection=${collection.id}`;
+                    const flashcardUrl = `${basePath}review/flashcard.html?collection=${collection.id}`;
+                    collectionCard.innerHTML = `
+                        <div class="collection-header">
+                            <h3>${collection.name}</h3>
+                            <div class="collection-actions">
+                                <button class="add-sentence-btn" type="button" title="添加句子"><i class="fas fa-plus"></i></button>
+                                <button class="edit-btn" type="button" title="编辑收藏夹"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn" type="button" title="删除收藏夹"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <p class="collection-description">${collection.description || '暂无描述'}</p>
+                        <div class="collection-stats">
+                            <span><i class="fas fa-book"></i> ${collection.sentences ? collection.sentences.length : 0} 个句子</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="course-actions">
+                            <a href="${practiceUrl}" class="start-button"><i class="fas fa-keyboard"></i> 打字练习</a>
+                            <a href="${flashcardUrl}" class="start-button flashcard-button"><i class="fas fa-graduation-cap"></i> 闪卡练习</a>
+                        </div>
+                        <button class="view-sentences-btn" type="button"><i class="fas fa-list"></i> 查看句子 (${collection.sentences ? collection.sentences.length : 0})</button>
+                    `;
+                    // 绑定按钮事件（与下方一致）
+                    collectionCard.querySelector('.add-sentence-btn')?.addEventListener('click', (e) => {
+                        e.preventDefault(); e.stopPropagation();
+                        const addSentenceModal = document.getElementById('addSentenceModal');
+                        if (addSentenceModal) {
+                            const form = addSentenceModal.querySelector('#addSentenceForm');
+                            if (form) { form.dataset.collectionId = collection.id; form.reset(); }
+                            addSentenceModal.classList.add('show');
+                        }
+                    });
+                    collectionCard.querySelector('.edit-btn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.customCollectionsManager.showEditCollectionModal(collection.id); });
+                    collectionCard.querySelector('.delete-btn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (confirm('确定要删除这个收藏夹吗？')) { window.customCollectionsManager.deleteCollection(collection.id); this.loadCourses(); }});
+                    const viewSentencesBtn = collectionCard.querySelector('.view-sentences-btn');
+                    if (viewSentencesBtn) {
+                        viewSentencesBtn.addEventListener('click', (e) => {
+                            e.preventDefault(); e.stopPropagation();
+                            const modal = document.getElementById('viewSentencesModal');
+                            const modalTitle = modal.querySelector('.modal-header h3');
+                            const sentencesContainer = modal.querySelector('.sentences-container');
+                            modalTitle.textContent = `${collection.name} - 句子列表`;
+                            sentencesContainer.innerHTML = (collection.sentences || []).map(s => `
+                                <div class=\"sentence-item\"><div class=\"sentence-content\"><div class=\"japanese\">${s.japanese||''}</div><div class=\"chinese\">${s.meaning||''}</div></div></div>`).join('');
+                            modal.classList.add('show');
+                        });
+                    }
+                    courseListContainer.appendChild(collectionCard);
+                    return; // 仅显示该收藏夹
+                }
+            }
+
             // 获取完成状态
             const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
             const completedLessons = stats.completedLessons || {};
-            const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
 
             // 渲染当前所选书籍的所有课程（简洁一致的卡片）
             Object.entries(this.courses).forEach(([courseId, course]) => {

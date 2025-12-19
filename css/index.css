@@ -1127,6 +1127,7 @@ select option {
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .action-button {
@@ -1141,6 +1142,28 @@ select option {
     gap: 5px;
     font-size: 14px;
     transition: all 0.2s ease;
+}
+
+/* 下拉选择器（课程集/收藏夹）统一样式 */
+.select-control {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    font-family: inherit;
+    min-width: 220px;
+}
+.select-control option { font-size: 14px; font-family: inherit; }
+
+/* 移动端：堆叠布局，避免拥挤 */
+@media (max-width: 768px) {
+    .section-header { align-items: stretch; }
+    .header-buttons { width: 100%; gap: 8px; }
+    .select-control { order: 1; width: 100%; min-width: 0; }
+    [data-action="manage-collections"] { order: 2; flex: 1; padding: 8px 10px; }
+    .view-all-btn { order: 3; flex: 1; text-align: center; padding: 8px 10px; }
 }
 
 .action-button:hover {
