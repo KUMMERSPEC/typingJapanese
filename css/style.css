@@ -241,11 +241,6 @@
 }
 
 /* 批量导入预览表格样式 */
-.preview-table .preview-input[data-field="hiragana"],
-.preview-table .preview-input[data-field="romaji"] {
-    min-width: 200px;
-}
-
 .preview-table {
     width: 100%;
     border-collapse: collapse;
@@ -259,14 +254,6 @@
     border: 1px solid #ddd;
     text-align: left;
     word-break: break-all;
-}
-
-.preview-table .preview-input {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    padding: 4px;
-    border-radius: 3px;
 }
 
 .preview-table th {
@@ -460,7 +447,7 @@
 /* 句子列表模态框样式 */
 .modal-content {
     width: 90%;
-    max-width: 900px;
+    max-width: 600px;
     margin: 20px auto;
     padding: 20px;
     border-radius: 8px;
@@ -695,4 +682,8 @@
     font-size: 0.85em;
     color: #888;
     margin-left: 8px;
-} 
+}
+
+/* 让编辑句子弹窗位于管理句子弹窗之上 */
+#manageSentencesModal { z-index: 2000; }
+#editSentenceModal { z-index: 2100; }

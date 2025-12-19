@@ -843,6 +843,7 @@ export class CustomCollectionsManager {
         if (!modal) return;
         const form = modal.querySelector('#editSentenceForm');
         if (!form) return;
+        // 不关闭管理句子模态框，直接在其上方显示编辑弹窗（通过更高的 z-index 实现）
         form.dataset.collectionId = collectionId;
         form.dataset.sentenceId = sentenceId;
         const data = this.collections?.[collectionId]?.sentences?.[sentenceId];
