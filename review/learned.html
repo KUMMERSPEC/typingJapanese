@@ -30,6 +30,25 @@
     .pagination button:disabled { opacity:.5; cursor:not-allowed; }
     .nowrap { white-space: nowrap; }
     .muted { color:#888; }
+    
+    /* 移动端：仅显示“日文/中文”两列，并允许自动换行 */
+    @media (max-width: 768px) {
+      .table-wrap { overflow-x: hidden; }
+      table { table-layout: fixed; }
+      th, td { font-size: 14px; white-space: normal; word-break: break-word; overflow-wrap: anywhere; line-height: 1.5; }
+
+      /* 隐藏 假名/课程/课时/掌握度/下次复习 */
+      thead th:nth-child(2), thead th:nth-child(4), thead th:nth-child(5), thead th:nth-child(6), thead th:nth-child(7),
+      tbody td:nth-child(2), tbody td:nth-child(4), tbody td:nth-child(5), tbody td:nth-child(6), tbody td:nth-child(7) {
+        display: none;
+      }
+
+      /* 保留的两列：日文、中文 各 50% */
+      thead th:nth-child(1), thead th:nth-child(3),
+      tbody td:nth-child(1), tbody td:nth-child(3) {
+        width: 50% !important;
+      }
+    }
   </style>
 </head>
 <body>

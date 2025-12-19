@@ -102,6 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化课程显示
     const courseDisplay = new CourseDisplay();
     courseDisplay.loadCourses(); // 使用 CourseDisplay 加载课程
+
+    // 主页选择书籍（课程集）：仅在首页显示所选书籍下的课程
+    const bookSelector = document.getElementById('bookSelector');
+    if (bookSelector) {
+        const savedBook = localStorage.getItem('selectedBook') || 'word-group';
+        bookSelector.value = savedBook;
+        bookSelector.addEventListener('change', () => {
+            courseDisplay.setBook(bookSelector.value);
+        });
+    }
     
     // 初始化自定义收藏功能
     window.customCollections = new CustomCollectionsManager();
