@@ -567,7 +567,7 @@ export class CustomCollectionsManager {
 
                     const sentencesToImport = [];
                     rows.forEach(row => {
-                        const japanese = row.dataset.japanese;
+                        const japanese = row.querySelector('input[data-field="japanese"]').value;
                         const hiragana = row.querySelector('input[data-field="hiragana"]').value;
                         const romaji = row.querySelector('input[data-field="romaji"]').value;
                         const meaning = row.querySelector('input[data-field="meaning"]').value;
@@ -580,13 +580,11 @@ export class CustomCollectionsManager {
                     try {
                         await this.processBatchImport(sentencesToImport, collectionId);
                         
-                        // 关闭模态框
                         const modal = document.getElementById('batchImportModal');
                         if (modal) {
                             modal.classList.remove('show');
                         }
                         
-                        // 刷新列表
                         this.refreshCollectionsList();
                         alert(`成功导入 ${sentencesToImport.length} 条句子`);
                     } catch (error) {
@@ -718,9 +716,12 @@ export class CustomCollectionsManager {
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.japanese}</td>
-                        <td>${item.hiragana}</td>
-                        <td>${item.romaji}</td>
+                        <td><input type="text" class="preview-input" value="${item.hiragana}" data-field="hiragana"></td>
+                        <td><input type="text" class="preview-input" value="${item.romaji}" data-field="romaji"></td>
                         <td>${item.meaning}</td>
+                        <td>
+                            <button type="button" class="delete-preview-btn" title="删除此行">删除</button>
+                        </td>
                     </tr>
                 `).join('')}
             </tbody>
@@ -728,7 +729,19 @@ export class CustomCollectionsManager {
 
         previewContainer.innerHTML = '';
         previewContainer.appendChild(table);
-        previewContainer.style.display = 'block'; // 确保预览区域可见
+
+        // 使用事件委托处理删除按钮点击
+        table.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-preview-btn')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    row.remove();
+                    this._updatePreviewRowNumbers(table);
+                }
+            }
+        });
+
+        previewContainer.style.display = 'block';
     }
     
     // 处理批量导入数据
