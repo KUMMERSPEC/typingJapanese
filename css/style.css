@@ -261,6 +261,14 @@
     word-break: break-all;
 }
 
+.preview-table .preview-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 3px;
+}
+
 .preview-table th {
     background-color: #f5f5f5;
     font-weight: bold;
