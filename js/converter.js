@@ -116,16 +116,13 @@ class JapaneseConverter {
             this.initializationPromise = null;
             this.isLoading = false;
             
-            // 修改字典路径处理
-            const pathSegments = window.location.pathname.split('/');
-            const repoName = pathSegments[1]; // 获取仓库名
-            
-            // 根据不同环境设置不同的路径
-            if (window.location.hostname === 'kummerspec.github.io') {
-                this.dictPath = `/${repoName}/dict`;  // GitHub Pages
-            } else {
-                // 本地开发环境使用相对路径
-                this.dictPath = './dict';
+            // 字典路径：基于当前模块位置，兼容各页面
+            try {
+                const dictUrl = new URL('../dict/', import.meta.url);
+                this.dictPath = dictUrl.pathname.replace(/\/$/, '');
+            } catch(_) {
+                // 旧浏览器或特殊环境回退为页面所在目录下的 /dict
+                this.dictPath = (window.location.pathname.replace(/\/[^\/.]*$/, '')) + '/dict';
             }
             
             console.log('Dictionary path:', this.dictPath);

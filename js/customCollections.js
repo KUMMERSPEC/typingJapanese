@@ -3,6 +3,8 @@ import converter from './converter.js';
 export class CustomCollectionsManager {
     constructor() {
         this.collections = this.loadCollections();
+        // 管理句子面板的本地状态（分页/搜索）
+        this.manageState = { page: 1, pageSize: 10, query: '', collectionId: null };
         this.initializeModals();
         this.initializeEventListeners();
         this.initializeReviewProperties();
@@ -222,9 +224,12 @@ export class CustomCollectionsManager {
                         <button class="close-btn">&times;</button>
                     </div>
                     <form id="addSentenceForm">
-                        <div class="form-group">
-                            <label for="lang">语言</label>
-                            <select id="lang">
+                        <div class="form-group lang-select-group">
+                            <label for="lang">
+                                <i class="fas fa-language" style="margin-right: 6px; color: #4a90e2;"></i>
+                                语言
+                            </label>
+                            <select id="lang" class="lang-select">
                                 <option value="ja" selected>日语</option>
                                 <option value="en">英语</option>
                             </select>
@@ -339,9 +344,12 @@ export class CustomCollectionsManager {
                         <button class="close-btn">&times;</button>
                     </div>
                     <form id="batchImportForm">
-                        <div class="form-group">
-                            <label for="batchLang">语言</label>
-                            <select id="batchLang">
+                        <div class="form-group lang-select-group">
+                            <label for="batchLang">
+                                <i class="fas fa-language" style="margin-right: 6px; color: #4a90e2;"></i>
+                                语言
+                            </label>
+                            <select id="batchLang" class="lang-select">
                                 <option value="ja" selected>日语</option>
                                 <option value="en">英语</option>
                             </select>
@@ -437,15 +445,54 @@ export class CustomCollectionsManager {
             manageSentencesModal.id = 'manageSentencesModal';
             manageSentencesModal.className = 'modal';
             manageSentencesModal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>管理句子</h3>
-                        <button class="close-btn">&times;</button>
+                <div class="modal-content" style="max-width:900px;">
+                    <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;">
+                        <h3 style="margin:0;">管理句子</h3>
+                        <button class="close-btn" aria-label="关闭">&times;</button>
                     </div>
-                    <div class="sentences-container"></div>
+                    <div class="modal-body">
+                        <div class="ms-toolbar" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+                            <input id="msSearch" type="text" placeholder="搜索：原文/分词/中文" style="flex:1 1 280px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;">
+                            <label class="nowrap" style="color:#666;">每页
+                                <select id="msPageSize" style="margin-left:6px;padding:6px 8px;border:1px solid #e5e7eb;border-radius:8px;">
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </label>
+                            <span id="msCount" class="nowrap" style="color:#666;margin-left:auto;"></span>
+                        </div>
+                        <div class="sentences-container sentence-list" style="display:flex;flex-direction:column;gap:10px;min-height:180px;"></div>
+                        <div class="ms-pagination" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;">
+                            <button id="msPrev" type="button">上一页</button>
+                            <span id="msPageInfo">1 / 1</span>
+                            <button id="msNext" type="button">下一页</button>
+                        </div>
+                    </div>
                 </div>
             `;
             document.body.appendChild(manageSentencesModal);
+
+            // 注入一次性的样式，优化外观
+            if (!document.getElementById('manageSentencesStyles')) {
+                const style = document.createElement('style');
+                style.id = 'manageSentencesStyles';
+                style.textContent = `
+                .sentence-list .sentence-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #eee;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:box-shadow 0.2s ease}
+                .sentence-list .sentence-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+                .sentence-list .sentence-main{flex:1 1 auto;min-width:0}
+                .sentence-list .jp{font-weight:600;margin-bottom:6px;word-break:break-word;font-size:1rem;color:#333;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+                .sentence-list .meta{font-size:12px;color:#666;margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;line-height:1.6}
+                .sentence-list .cn{color:#333;font-size:0.95rem;line-height:1.5}
+                .sentence-list .lang-badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:12px;background:#eef2ff;color:#4f46e5;font-weight:500}
+                .sentence-list .actions{display:flex;gap:8px;flex:0 0 auto}
+                .sentence-list .actions button{padding:8px 12px;border:1px solid #e5e7eb;background:#fff;border-radius:8px;cursor:pointer;transition:all 0.2s ease;color:#666}
+                .sentence-list .actions button:hover{background:#f8fafc;border-color:#4a90e2;color:#4a90e2;transform:translateY(-1px)}
+                .sentence-list .actions button i{font-size:0.9rem}
+                .no-sentences{text-align:center;padding:60px 20px;color:#999;font-size:0.95rem}
+                `;
+                document.head.appendChild(style);
+            }
         }
     }
 
@@ -627,6 +674,11 @@ export class CustomCollectionsManager {
                 const modal = document.getElementById('addSentenceModal');
                 if (modal) modal.classList.remove('show');
                 this.refreshCollectionsList();
+                // 若管理句子模态仍在显示，刷新它
+                const manageModal = document.getElementById('manageSentencesModal');
+                if (manageModal && manageModal.classList.contains('show')) {
+                    this.renderManageSentences();
+                }
                 window.dispatchEvent(new CustomEvent('collectionsUpdated'));
             });
         }
@@ -716,7 +768,10 @@ export class CustomCollectionsManager {
                 // 刷新列表视图
                 this.refreshCollectionsList();
                 // 若管理句子模态仍在显示，刷新它
-                this.showManageSentencesModal(collectionId);
+                const manageModal = document.getElementById('manageSentencesModal');
+                if (manageModal && manageModal.classList.contains('show')) {
+                    this.renderManageSentences();
+                }
             });
         }
 
@@ -741,6 +796,7 @@ export class CustomCollectionsManager {
                 batchImportForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                 const collectionId = (batchImportForm).dataset.collectionId;
+                const lang = (document.getElementById('batchLang'))?.value || 'ja';
                 if (!collectionId) {
                     alert('未指定收藏夹');
                         return;
@@ -752,6 +808,7 @@ export class CustomCollectionsManager {
                     return;
                 }
                 const sentencesToImport = [];
+                const requireRomaji = lang === 'ja';
                 rows.forEach((row) => {
                     // japanese 兼容：优先读 input，否则读第二个单元格文本
                     const jpInput = row.querySelector('input[data-field="japanese"]');
@@ -766,8 +823,9 @@ export class CustomCollectionsManager {
                     const hiragana = hiraganaEl ? hiraganaEl.value : '';
                     const romaji = romajiEl ? romajiEl.value : '';
                     const meaning = meaningEl ? meaningEl.value : '';
-                    if (japanese && hiragana && romaji && meaning) {
-                        sentencesToImport.push({ japanese, hiragana, romaji, meaning });
+                    const isValid = japanese && hiragana && meaning && (!requireRomaji || romaji);
+                    if (isValid) {
+                        sentencesToImport.push({ japanese, hiragana, romaji: requireRomaji ? romaji : '', meaning, lang });
                     }
                 });
                 if (sentencesToImport.length === 0) {
@@ -777,7 +835,12 @@ export class CustomCollectionsManager {
                 await this.processBatchImport(sentencesToImport, collectionId);
                 const modal = document.getElementById('batchImportModal');
                 if (modal) modal.classList.remove('show');
-                    this.refreshCollectionsList();
+                this.refreshCollectionsList();
+                // 若管理句子模态仍在显示，刷新它
+                const manageModal = document.getElementById('manageSentencesModal');
+                if (manageModal && manageModal.classList.contains('show')) {
+                    this.renderManageSentences();
+                }
                 alert(`成功导入 ${sentencesToImport.length} 条句子`);
             });
         }
@@ -913,13 +976,16 @@ export class CustomCollectionsManager {
         const errors = [];
         for (const sentence of parsedData) {
             try {
-                if (!sentence.japanese || !sentence.hiragana || !sentence.romaji || !sentence.meaning) {
+                const isJa = (sentence.lang || 'ja') === 'ja';
+                const hasRequired = sentence.japanese && sentence.hiragana && sentence.meaning && (!isJa || sentence.romaji);
+                if (!hasRequired) {
                     errors.push(`句子格式不完整: ${sentence.japanese}`);
                     continue;
                 }
                 const id = `sentence_${Date.now()}_${successCount}`;
                 this.collections[collectionId].sentences[id] = {
                     ...sentence,
+                    romaji: isJa ? (sentence.romaji || '') : '',
                     created_at: new Date().toISOString()
                 };
                 successCount++;
@@ -1086,39 +1152,188 @@ export class CustomCollectionsManager {
         if (!collection) return;
         const modal = document.getElementById('manageSentencesModal');
         if (!modal) return;
-        const container = modal.querySelector('.sentences-container');
-        if (!container) return;
-        container.innerHTML = '';
-        if (!collection.sentences || Object.keys(collection.sentences).length === 0) {
-            container.innerHTML = '<div class="no-sentences">暂无句子</div>';
-        } else {
-            Object.entries(collection.sentences).forEach(([sentenceId, sentence]) => {
-                const sentenceElement = document.createElement('div');
-                sentenceElement.className = 'sentence-item';
-                sentenceElement.innerHTML = `
-                    <div class="sentence-content">
-                        <div class="japanese">${sentence.japanese}</div>
-                        <div class="chinese">${sentence.meaning}</div>
-                    </div>
-                    <div class="sentence-actions">
-                        <button class="edit-sentence-btn" title="编辑句子"><i class="fas fa-edit"></i></button>
-                        <button class="delete-sentence-btn" title="删除句子"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                // 编辑句子
-                sentenceElement.querySelector('.edit-sentence-btn')?.addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    this.showEditSentenceModal(collectionId, sentenceId);
-                });
-                // 删除句子
-                sentenceElement.querySelector('.delete-sentence-btn')?.addEventListener('click', (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    if (confirm('确定要删除这个句子吗？')) { this.deleteSentence(collectionId, sentenceId); this.showManageSentencesModal(collectionId); }
-                });
-                container.appendChild(sentenceElement);
+        
+        // 更新状态
+        this.manageState.collectionId = collectionId;
+        this.manageState.page = 1;
+        this.manageState.query = '';
+        
+        // 绑定事件监听器（只绑定一次）
+        this.setupManageSentencesListeners(collectionId);
+        
+        // 渲染句子列表
+        this.renderManageSentences();
+        
+        modal.classList.add('show');
+    }
+
+    // 设置管理句子模态框的事件监听器
+    setupManageSentencesListeners(collectionId) {
+        const modal = document.getElementById('manageSentencesModal');
+        if (!modal) return;
+        
+        // 搜索框
+        const searchInput = modal.querySelector('#msSearch');
+        if (searchInput && !searchInput.dataset.listenerAttached) {
+            searchInput.dataset.listenerAttached = 'true';
+            searchInput.addEventListener('input', (e) => {
+                this.manageState.query = e.target.value.trim();
+                this.manageState.page = 1;
+                this.renderManageSentences();
             });
         }
-        modal.classList.add('show');
+        
+        // 每页数量选择
+        const pageSizeSelect = modal.querySelector('#msPageSize');
+        if (pageSizeSelect && !pageSizeSelect.dataset.listenerAttached) {
+            pageSizeSelect.dataset.listenerAttached = 'true';
+            pageSizeSelect.addEventListener('change', (e) => {
+                this.manageState.pageSize = parseInt(e.target.value);
+                this.manageState.page = 1;
+                this.renderManageSentences();
+            });
+        }
+        
+        // 上一页按钮
+        const prevBtn = modal.querySelector('#msPrev');
+        if (prevBtn && !prevBtn.dataset.listenerAttached) {
+            prevBtn.dataset.listenerAttached = 'true';
+            prevBtn.addEventListener('click', () => {
+                if (this.manageState.page > 1) {
+                    this.manageState.page--;
+                    this.renderManageSentences();
+                }
+            });
+        }
+        
+        // 下一页按钮
+        const nextBtn = modal.querySelector('#msNext');
+        if (nextBtn && !nextBtn.dataset.listenerAttached) {
+            nextBtn.dataset.listenerAttached = 'true';
+            nextBtn.addEventListener('click', () => {
+                const totalPages = this.getManageSentencesTotalPages();
+                if (this.manageState.page < totalPages) {
+                    this.manageState.page++;
+                    this.renderManageSentences();
+                }
+            });
+        }
+    }
+
+    // 获取过滤后的句子列表
+    getFilteredSentences() {
+        const collectionId = this.manageState.collectionId;
+        const collection = this.collections[collectionId];
+        if (!collection || !collection.sentences) return [];
+        
+        const sentences = Object.entries(collection.sentences).map(([id, sentence]) => ({
+            id,
+            ...sentence
+        }));
+        
+        const query = this.manageState.query.toLowerCase();
+        if (!query) return sentences;
+        
+        return sentences.filter(sentence => {
+            const japanese = (sentence.japanese || '').toLowerCase();
+            const hiragana = (sentence.hiragana || '').toLowerCase();
+            const meaning = (sentence.meaning || '').toLowerCase();
+            return japanese.includes(query) || hiragana.includes(query) || meaning.includes(query);
+        });
+    }
+
+    // 获取总页数
+    getManageSentencesTotalPages() {
+        const filtered = this.getFilteredSentences();
+        return Math.max(1, Math.ceil(filtered.length / this.manageState.pageSize));
+    }
+
+    // 渲染管理句子列表
+    renderManageSentences() {
+        const modal = document.getElementById('manageSentencesModal');
+        if (!modal) return;
+        
+        const container = modal.querySelector('.sentences-container');
+        const countSpan = modal.querySelector('#msCount');
+        const pageInfo = modal.querySelector('#msPageInfo');
+        const prevBtn = modal.querySelector('#msPrev');
+        const nextBtn = modal.querySelector('#msNext');
+        
+        if (!container) return;
+        
+        const filtered = this.getFilteredSentences();
+        const totalPages = this.getManageSentencesTotalPages();
+        const startIndex = (this.manageState.page - 1) * this.manageState.pageSize;
+        const endIndex = startIndex + this.manageState.pageSize;
+        const paginated = filtered.slice(startIndex, endIndex);
+        
+        // 更新计数
+        if (countSpan) {
+            countSpan.textContent = `共 ${filtered.length} 条`;
+        }
+        
+        // 更新分页信息
+        if (pageInfo) {
+            pageInfo.textContent = `${this.manageState.page} / ${totalPages}`;
+        }
+        
+        // 更新按钮状态
+        if (prevBtn) {
+            prevBtn.disabled = this.manageState.page <= 1;
+            prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+            prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
+        }
+        if (nextBtn) {
+            nextBtn.disabled = this.manageState.page >= totalPages;
+            nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+            nextBtn.style.cursor = nextBtn.disabled ? 'not-allowed' : 'pointer';
+        }
+        
+        // 清空容器
+        container.innerHTML = '';
+        
+        if (paginated.length === 0) {
+            container.innerHTML = '<div class="no-sentences" style="text-align:center;padding:40px;color:#999;">暂无句子</div>';
+            return;
+        }
+        
+        const collectionId = this.manageState.collectionId;
+        paginated.forEach((sentence) => {
+            const sentenceElement = document.createElement('div');
+            sentenceElement.className = 'sentence-item';
+            const langBadge = sentence.lang === 'en' ? '<span class="lang-badge">英语</span>' : '<span class="lang-badge">日语</span>';
+            sentenceElement.innerHTML = `
+                <div class="sentence-main">
+                    <div class="jp">${sentence.japanese || ''}${langBadge}</div>
+                    <div class="meta">
+                        <span>分词：${sentence.hiragana || ''}</span>
+                        ${sentence.romaji ? `<span>罗马音：${sentence.romaji}</span>` : ''}
+                    </div>
+                    <div class="cn">${sentence.meaning || ''}</div>
+                </div>
+                <div class="actions">
+                    <button class="edit-sentence-btn" title="编辑句子"><i class="fas fa-edit"></i></button>
+                    <button class="delete-sentence-btn" title="删除句子"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            // 编辑句子
+            sentenceElement.querySelector('.edit-sentence-btn')?.addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                this.showEditSentenceModal(collectionId, sentence.id);
+            });
+            
+            // 删除句子
+            sentenceElement.querySelector('.delete-sentence-btn')?.addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation();
+                if (confirm('确定要删除这个句子吗？')) {
+                    this.deleteSentence(collectionId, sentence.id);
+                    this.renderManageSentences();
+                }
+            });
+            
+            container.appendChild(sentenceElement);
+        });
     }
 
     // 初始化复习属性

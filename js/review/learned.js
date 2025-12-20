@@ -21,11 +21,34 @@ import statsData from '../common/statsData.js';
   const pageSizeSel = document.getElementById('pageSize');
   const backHome = document.getElementById('backHome');
   const langFilter = document.getElementById('langFilter');
+  const tableHead = document.querySelector('.table-wrap thead');
+
+  function updateHeadersByLang(currentLang) {
+    if (!tableHead) return;
+    const ths = tableHead.querySelectorAll('th');
+    if (ths && ths.length >= 3) {
+      ths[0].textContent = currentLang === 'en' ? '英文' : '日文';
+      ths[1].textContent = currentLang === 'en' ? '分词' : '假名';
+      // 第三列“中文”保持不变
+    }
+    // 同步搜索框提示
+    const searchInputEl = document.getElementById('searchInput');
+    if (searchInputEl) {
+      searchInputEl.placeholder = currentLang === 'en'
+        ? '搜索：英文、分词或中文翻译'
+        : '搜索：日文、假名、罗马音或中文翻译';
+    }
+  }
 
   // Back link base
   if (backHome) {
     const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '../';
     backHome.href = basePath;
+  }
+
+  function formatHiraganaDisplay(text, lang) {
+    const s = text || '';
+    return (lang === 'en') ? s.replace(/:/g, ' ') : s.replace(/:/g, '');
   }
 
   // Load data
@@ -40,7 +63,7 @@ import statsData from '../common/statsData.js';
         .map(([id, item]) => ({
           id,
           japanese: item.japanese || item.sentence || '',
-          hiragana: (item.hiragana || '').replace(/:/g, ''),
+          hiragana: item.hiragana || '',
           romaji: item.romaji || '',
           meaning: item.meaning || '',
           course: item.course || '',
@@ -166,7 +189,7 @@ import statsData from '../common/statsData.js';
         tbody.innerHTML = sliced.map(r => `
           <tr>
             <td>${escapeHtml(r.japanese)}</td>
-            <td>${escapeHtml(r.hiragana)}</td>
+            <td>${escapeHtml(formatHiraganaDisplay(r.hiragana, r.lang))}</td>
             <td>${escapeHtml(r.meaning)}</td>
             <td class="nowrap">${escapeHtml(r.course)}</td>
             <td class="nowrap">${escapeHtml(r.lesson)}</td>
@@ -215,7 +238,11 @@ import statsData from '../common/statsData.js';
   });
   btnPrev?.addEventListener('click', () => { if (page > 1) { page--; render(); } });
   btnNext?.addEventListener('click', () => { page++; render(); });
-  langFilter?.addEventListener('change', (e) => { lang = e.target.value || 'all'; applyFilter(); });
+  langFilter?.addEventListener('change', (e) => { 
+    lang = e.target.value || 'all'; 
+    updateHeadersByLang(lang);
+    applyFilter(); 
+  });
 
   // init
   load();
