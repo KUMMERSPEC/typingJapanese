@@ -162,10 +162,28 @@
         const lessonList = modal.querySelector('.lesson-list');
         const closeBtn = modal.querySelector('.lesson-modal-close');
 
-        // 获取已完成课程的数据
+        // 获取已完成课程的数据（兼容旧数据）
         function getCompletedLessons() {
-            const completedLessons = localStorage.getItem('completedLessons');
-            return completedLessons ? JSON.parse(completedLessons) : {};
+            // 新版数据来源：typing_statistics.completedLessons
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            const statCompleted = stats.completedLessons || {};
+            // 兼容旧版 completedLessons 结构（{ courseId: [lessonId, ...] }）
+            const legacy = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            
+            // 如果新版存在则优先使用新版
+            if (Object.keys(statCompleted).length > 0) {
+                return statCompleted;
+            }
+            
+            // 否则将旧版结构转换为新版扁平键结构：course_lesson
+            const converted = {};
+            Object.entries(legacy).forEach(([courseId, arr]) => {
+                (arr || []).forEach(lessonId => {
+                    const key = `${courseId}_${lessonId}`;
+                    converted[key] = { course: courseId, lesson: lessonId, completedAt: '' };
+                });
+            });
+            return converted;
         }
 
         // 修改检查课程完成状态的函数

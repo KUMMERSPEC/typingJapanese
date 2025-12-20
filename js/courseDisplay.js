@@ -14,6 +14,7 @@ export class CourseDisplay {
 
     initializeEventListeners() {
         window.addEventListener('collectionsUpdated', () => this.loadCourses());
+        window.addEventListener('statisticsUpdated', () => this.loadCourses());
     }
 
     setBook(bookId) {
@@ -72,7 +73,11 @@ export class CourseDisplay {
 
         const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
         const total = Object.keys(course.lessons || {}).length;
-        const completedArr = Array.isArray(this.completedLessons?.[courseId]) ? this.completedLessons[courseId] : [];
+        // 从 typing_statistics.completedLessons 中按 courseId 统计完成的课时
+        const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
+        const completedArr = Object.keys(completedMap)
+            .filter(k => k.startsWith(`${courseId}_`))
+            .map(k => k.split('_')[1]);
         const completed = completedArr.length;
         let nextLesson = 'lesson1';
         for (let i = 1; i <= total; i++) {
@@ -155,10 +160,14 @@ export class CourseDisplay {
 
             Object.entries(this.courses).forEach(([courseId, course], index) => {
                 const total = Object.keys(course.lessons || {}).length;
-                const completedArr = Array.isArray(this.completedLessons?.[courseId]) ? this.completedLessons[courseId] : [];
+                // 依据 typing_statistics.completedLessons 统计完成情况
+                const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
+                const completedArr = Object.keys(completedMap)
+                    .filter(k => k.startsWith(`${courseId}_`))
+                    .map(k => k.split('_')[1]);
                 const completed = completedArr.length;
                 const inProgress = completed > 0 && completed < total;
-                const isCompleted = completed === total && total > 0;
+                const isCompleted = total > 0 && completed === total;
 
                 let status = 'locked';
                 if (isCompleted) {

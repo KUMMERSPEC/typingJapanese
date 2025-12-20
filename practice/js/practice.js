@@ -1008,6 +1008,7 @@ export class PracticeManager {
                 <p>本次练习: ${splitCount} 个句子</p>
                 <div class="button-group">
                     <button class="review-btn">复习本课程</button>
+                    <button class="next-lesson-btn">下一课</button>
                     <button class="next-btn">返回首页</button>
                 </div>
             `;
@@ -1036,12 +1037,50 @@ export class PracticeManager {
 
                 // 修改按钮事件
                 const reviewBtn = content.querySelector('.review-btn');
+                const nextLessonBtn = content.querySelector('.next-lesson-btn');
                 const nextBtn = content.querySelector('.next-btn');
                 
                 if (reviewBtn) {
                     reviewBtn.addEventListener('click', () => {
                         location.reload();
                     });
+                }
+                
+                if (nextLessonBtn) {
+                    if (this.course === 'collection') {
+                        // 收藏夹模式没有“下一课”
+                        nextLessonBtn.style.display = 'none';
+                    } else {
+                        // 预判是否为最后一课：如果下一课不存在则隐藏按钮
+                        (async () => {
+                            try {
+                                const currentNum = parseInt(String(this.lesson).replace(/[^0-9]/g, ''));
+                                const nextNum = isNaN(currentNum) ? null : currentNum + 1;
+                                if (!nextNum) {
+                                    nextLessonBtn.style.display = 'none';
+                                    return;
+                                }
+                                const nextLesson = `lesson${nextNum}`;
+                                await DataLoader.getCourseWithLessonData(this.course, nextLesson);
+                                // 如果能加载成功，保留按钮并绑定事件
+                                nextLessonBtn.addEventListener('click', async () => {
+                                    try {
+                                        const basePath = window.location.pathname;
+                                        const params = new URLSearchParams(window.location.search);
+                                        params.set('course', this.course);
+                                        params.set('lesson', nextLesson);
+                                        window.location.href = `${basePath}?${params.toString()}`;
+                                    } catch (error) {
+                                        console.error('跳转到下一课失败:', error);
+                                        alert('跳转失败，请稍后再试');
+                                    }
+                                });
+                            } catch (err) {
+                                // 无法加载下一课，隐藏按钮
+                                nextLessonBtn.style.display = 'none';
+                            }
+                        })();
+                    }
                 }
                 
                 if (nextBtn) {
@@ -1408,7 +1447,7 @@ export class PracticeManager {
                 justify-content: center;
             }
 
-            .review-btn, .next-btn {
+            .review-btn, .next-btn, .next-lesson-btn {
                 padding: 12px 24px;
                 border: none;
                 border-radius: 8px;

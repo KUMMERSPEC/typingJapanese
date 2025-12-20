@@ -571,7 +571,6 @@ export function initializePractice(courseId, lessonId) {
     // 初始化
     loadCourseData();
 }
-
 // 在完成练习时调用
 function showComplete(course, lesson, stats) {
     try {
