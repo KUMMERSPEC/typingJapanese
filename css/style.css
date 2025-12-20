@@ -682,7 +682,7 @@
     font-size: 0.85em;
     color: #888;
     margin-left: 8px;
-}
+} 
 
 /* 让编辑句子弹窗位于管理句子弹窗之上 */
 #manageSentencesModal { z-index: 2000; }

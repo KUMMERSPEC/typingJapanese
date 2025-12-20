@@ -38,7 +38,7 @@ class JapaneseConverter {
                 'っ': '',
                 // 长音 (handled in logic)
                 'ー': 'ー',
-            // 片假名
+                // 片假名
             'ア': 'a', 'イ': 'i', 'ウ': 'u', 'エ': 'e', 'オ': 'o',
             'カ': 'ka', 'キ': 'ki', 'ク': 'ku', 'ケ': 'ke', 'コ': 'ko',
             'サ': 'sa', 'シ': 'shi', 'ス': 'su', 'セ': 'se', 'ソ': 'so',
@@ -324,24 +324,24 @@ class JapaneseConverter {
         const parts = hiragana.split(':');
         return parts.map(part => {
             if (!part) return '';
-
+            
             let romaji = '';
             let i = 0;
             while (i < part.length) {
                 // 检查拗音 (e.g., きゃ)
                 if (i + 1 < part.length && this.hiraganaToRomajiMap[part.substring(i, i + 2)]) {
                     romaji += this.hiraganaToRomajiMap[part.substring(i, i + 2)];
-                    i += 2;
-                    continue;
-                }
+                        i += 2;
+                        continue;
+                    }
 
                 // 处理促音 (っ)
                 if (part[i] === 'っ' || part[i] === 'ッ') {
                     if (i + 1 < part.length) {
                         const nextKana = part.substring(i + 1, i + 3);
-                        const nextChar = part[i + 1];
+                    const nextChar = part[i + 1];
                         let nextRomaji = this.hiraganaToRomajiMap[nextKana] || this.hiraganaToRomajiMap[nextChar];
-                        if (nextRomaji) {
+                    if (nextRomaji) {
                             // 特殊处理 'ch'
                             if (nextRomaji.startsWith('ch')) {
                                 romaji += 't';
@@ -359,7 +359,7 @@ class JapaneseConverter {
                 romaji += kana;
                 i++;
             }
-
+            
             // 处理长音
             // 1. 先处理长音符号 ー
             let processedRomaji = '';

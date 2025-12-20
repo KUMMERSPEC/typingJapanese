@@ -424,7 +424,7 @@ export class CustomCollectionsManager {
             if (e.target.matches('.close-btn') || e.target.matches('.cancel-btn')) {
                 const modal = e.target.closest('.modal');
                 if (modal) modal.classList.remove('show');
-            }
+                }
             if (e.target.matches('.add-collection-btn') || e.target.closest('.add-collection-btn')) {
                 this.showAddCollectionModal();
             }
@@ -458,16 +458,16 @@ export class CustomCollectionsManager {
             if (hiraganaInput && autoConvertCheckbox) (hiraganaInput).readOnly = (autoConvertCheckbox).checked;
 
             autoConvertCheckbox?.addEventListener('change', (e) => {
-                if (hiraganaInput) {
+                    if (hiraganaInput) {
                     (hiraganaInput).readOnly = e.target.checked;
-                }
-            });
+                    }
+                });
 
             hiraganaInput?.addEventListener('input', () => {
                 if (romajiInput && !(autoConvertCheckbox).checked) {
                     (romajiInput).value = converter.hiraganaToRomaji((hiraganaInput).value);
-                }
-            });
+                    }
+                });
 
             convertBtn?.addEventListener('click', async () => {
                 const japanese = (japaneseInput).value.trim();
@@ -596,28 +596,28 @@ export class CustomCollectionsManager {
 
         // 批量导入 - 事件绑定
         const previewBtn = document.getElementById('previewImportBtn');
-        if (previewBtn) {
-            previewBtn.addEventListener('click', async () => {
+            if (previewBtn) {
+                previewBtn.addEventListener('click', async () => {
                 const importText = (document.getElementById('batchImportText')).value.trim();
                 const separator = (document.querySelector('input[name="separator"]:checked')).value;
-                if (!importText) {
-                    alert('请输入要导入的内容');
-                    return;
-                }
-                const parsedData = await this.parseBatchImport(importText, separator);
-                this.previewBatchImport(parsedData);
-            });
-        }
-
+                    if (!importText) {
+                        alert('请输入要导入的内容');
+                        return;
+                    }
+                    const parsedData = await this.parseBatchImport(importText, separator);
+                    this.previewBatchImport(parsedData);
+                });
+            }
+            
         const batchImportForm = document.getElementById('batchImportForm');
-        if (batchImportForm) {
-            batchImportForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+            if (batchImportForm) {
+                batchImportForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
                 const collectionId = (batchImportForm).dataset.collectionId;
                 if (!collectionId) {
                     alert('未指定收藏夹');
-                    return;
-                }
+                        return;
+                    }
                 const previewContainer = document.getElementById('importPreview');
                 const rows = previewContainer ? previewContainer.querySelectorAll('tbody tr') : [];
                 if (!rows || rows.length === 0) {
@@ -650,7 +650,7 @@ export class CustomCollectionsManager {
                 await this.processBatchImport(sentencesToImport, collectionId);
                 const modal = document.getElementById('batchImportModal');
                 if (modal) modal.classList.remove('show');
-                this.refreshCollectionsList();
+                    this.refreshCollectionsList();
                 alert(`成功导入 ${sentencesToImport.length} 条句子`);
             });
         }
@@ -697,7 +697,7 @@ export class CustomCollectionsManager {
         }
         return result;
     }
-
+    
     // 预览批量导入数据（可编辑，并保留删除）
     previewBatchImport(parsedData) {
         const previewContainer = document.getElementById('importPreview');
@@ -753,7 +753,7 @@ export class CustomCollectionsManager {
             if (cell) cell.textContent = String(index + 1);
         });
     }
-
+    
     // 处理批量导入数据
     async processBatchImport(parsedData, collectionId) {
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
@@ -864,7 +864,7 @@ export class CustomCollectionsManager {
     hideEditSentenceModal() {
         const modal = document.getElementById('editSentenceModal');
         if (modal) modal.classList.remove('show');
-    }
+        }
 
     hideEditCollectionModal() {
         const modal = document.getElementById('editCollectionModal');

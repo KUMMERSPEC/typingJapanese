@@ -313,27 +313,27 @@ export class CourseDisplay {
                 }
                 const inProgress = completed > 0 && completed < total;
                 const percent = total ? Math.round(completed / total * 100) : 0;
-
+                    
                 const card = document.createElement('div');
                 card.className = 'course-card' + (inProgress ? ' continue-learning' : '');
                 card.innerHTML = `
-                    <div class="card-header">
-                        <h2>${course.name.charAt(0)}</h2>
+                        <div class="card-header">
+                            <h2>${course.name.charAt(0)}</h2>
                         ${inProgress ? '<span class="continue-badge">继续学习</span>' : ''}
-                    </div>
-                    <div class="card-content">
-                        <h3>${course.name}</h3>
-                        <p>${course.description || ''}</p>
-                        <div class="course-stats">
+                        </div>
+                        <div class="card-content">
+                            <h3>${course.name}</h3>
+                            <p>${course.description || ''}</p>
+                            <div class="course-stats">
                             <span><i class="fas fa-book"></i> ${total} 课时</span>
                             <span><i class="fas fa-check"></i> ${completed} 已完成</span>
-                        </div>
+                            </div>
                         <div class="progress-bar"><div class="progress" style="width:${percent}%"></div></div>
                         <div class="progress-text">${completed}/${total} 课时</div>
-                        <div class="course-actions">
+                            <div class="course-actions">
                             <a class="start-button" href="${basePath}practice/practice.html?course=${courseId}&lesson=${nextLesson}">
                                 <i class="fas fa-play"></i> ${inProgress ? '继续学习' : '开始学习'}
-                            </a>
+                                </a>
                         </div>
                     </div>`;
                 courseListContainer.appendChild(card);
@@ -346,7 +346,7 @@ export class CourseDisplay {
                 collections.forEach(collection => {
                     const collectionCard = document.createElement('div');
                     collectionCard.className = 'collection-item';
-
+                    
                     const practiceUrl = `${basePath}practice/practice.html?collection=${collection.id}`;
                     const flashcardUrl = `${basePath}review/flashcard.html?collection=${collection.id}`;
 
@@ -394,13 +394,13 @@ export class CourseDisplay {
                             const sentencesContainer = modal.querySelector('.sentences-container');
                             modalTitle.textContent = `${collection.name} - 句子列表`;
                             sentencesContainer.innerHTML = (collection.sentences || []).map(sentence => `
-                                <div class="sentence-item">
-                                    <div class="sentence-content">
-                                        <div class="japanese">${sentence.japanese || ''}</div>
-                                        <div class="chinese">${sentence.meaning || ''}</div>
+                                    <div class="sentence-item">
+                                        <div class="sentence-content">
+                                            <div class="japanese">${sentence.japanese || ''}</div>
+                                            <div class="chinese">${sentence.meaning || ''}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('');
+                                `).join('');
                             modal.classList.add('show');
                         });
                     }
@@ -408,13 +408,13 @@ export class CourseDisplay {
                     // 其余按钮事件保持不变
                     collectionCard.querySelector('.add-sentence-btn')?.addEventListener('click', (e) => {
                         e.preventDefault(); e.stopPropagation();
-                        const addSentenceModal = document.getElementById('addSentenceModal');
-                        if (addSentenceModal) {
-                            const form = addSentenceModal.querySelector('#addSentenceForm');
+                            const addSentenceModal = document.getElementById('addSentenceModal');
+                            if (addSentenceModal) {
+                                const form = addSentenceModal.querySelector('#addSentenceForm');
                             if (form) { form.dataset.collectionId = collection.id; form.reset(); }
-                            addSentenceModal.classList.add('show');
-                        }
-                    });
+                                addSentenceModal.classList.add('show');
+                            }
+                        });
                     collectionCard.querySelector('.edit-btn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.customCollectionsManager.showEditCollectionModal(collection.id); });
                     collectionCard.querySelector('.delete-btn')?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); if (confirm('确定要删除这个收藏夹吗？')) { window.customCollectionsManager.deleteCollection(collection.id); this.loadCourses(); }});
                     courseListContainer.appendChild(collectionCard);
