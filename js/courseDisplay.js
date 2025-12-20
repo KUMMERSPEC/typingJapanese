@@ -35,6 +35,37 @@ export class CourseDisplay {
         this.completedLessons = this.stats.completedLessons || {};
     }
 
+    // 将时间线项目移动到顶部
+    moveTimelineItemToTop(timelineItem, timelineContainer) {
+        // 获取第一个项目作为参考位置
+        const firstItem = timelineContainer.querySelector('.timeline-item:first-child');
+        if (!firstItem || firstItem === timelineItem) return;
+
+        // 添加移动动画类
+        timelineItem.classList.add('moving');
+        
+        // 获取所有项目，用于重新排序
+        const allItems = Array.from(timelineContainer.querySelectorAll('.timeline-item'));
+        const currentIndex = allItems.indexOf(timelineItem);
+        
+        // 如果已经是第一个，不需要移动
+        if (currentIndex === 0) {
+            timelineItem.classList.remove('moving');
+            return;
+        }
+
+        // 使用 requestAnimationFrame 确保 DOM 更新后再移动
+        requestAnimationFrame(() => {
+            // 将当前项目移动到第一个位置
+            timelineContainer.insertBefore(timelineItem, firstItem);
+            
+            // 等待 DOM 更新后移除移动动画类
+            setTimeout(() => {
+                timelineItem.classList.remove('moving');
+            }, 100);
+        });
+    }
+
     _generateCourseCard(courseId) {
         const course = this.courses[courseId];
         if (!course) return '';
@@ -143,10 +174,10 @@ export class CourseDisplay {
                 timelineItem.innerHTML = `
                     <div class="timeline-node status-${status}" data-course-id="${courseId}">
                         <span class="node-label">${course.name.charAt(0)}</span>
-                    </div>
+                            </div>
                     <div class="timeline-card-container">
                         <div class="timeline-card-content" id="card-${courseId}"></div>
-                    </div>
+                        </div>
                 `;
                 timelineContainer.appendChild(timelineItem);
 
@@ -164,16 +195,39 @@ export class CourseDisplay {
                 const cardContainer = document.getElementById(`card-${courseId}`);
                 if (!cardContainer) return;
 
-                const isExpanded = cardContainer.classList.contains('expanded');
+                const timelineItem = node.closest('.timeline-item');
+                if (!timelineItem) return;
 
+                const isExpanded = cardContainer.classList.contains('expanded');
+                const isFirst = timelineItem === timelineContainer.querySelector('.timeline-item:first-child');
+
+                // 如果点击的不是第一个，且卡片未展开，则移动到顶部
+                if (!isFirst && !isExpanded) {
+                    this.moveTimelineItemToTop(timelineItem, timelineContainer);
+                }
+
+                // 关闭其他已展开的卡片
                 document.querySelectorAll('.timeline-card-content.expanded').forEach(el => {
-                    el.classList.remove('expanded');
-                    el.innerHTML = '';
+                    if (el !== cardContainer) {
+                        el.classList.remove('expanded');
+                        el.innerHTML = '';
+                    }
                 });
 
                 if (!isExpanded) {
                     cardContainer.innerHTML = this._generateCourseCard(courseId);
-                    setTimeout(() => cardContainer.classList.add('expanded'), 10);
+                    setTimeout(() => {
+                        cardContainer.classList.add('expanded');
+                        // 如果移动到顶部，平滑滚动到时间线容器顶部
+                        if (!isFirst) {
+                            const courseSection = timelineContainer.closest('.course-section');
+                            if (courseSection) {
+                                courseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            } else {
+                                timelineContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    }, 10);
                 }
             });
 
@@ -186,4 +240,4 @@ export class CourseDisplay {
             console.error('Error loading courses:', error);
         }
     }
-}
+} 

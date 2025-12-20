@@ -122,13 +122,23 @@
     background: white;
     border-radius: 16px; /* 增加圆角 */
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); /* 更柔和的阴影 */
-    max-width: 700px; /* 增加最大宽度 */
+    max-width: 600px; /* 优化宽度，更适合表单 */
     width: 90%;
     max-height: 85vh; /* 稍微减少高度 */
     overflow-y: auto;
     z-index: 1001;
     margin: 20px auto;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 模态框表单内容区域 */
+.modal-content form {
+    padding: 24px; /* 增加表单内边距 */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .modal-header {
@@ -271,17 +281,143 @@
     resize: vertical;
 }
 
+/* 表单样式 */
+form {
+    padding: 0;
+}
+
+.form-group {
+    margin-bottom: 24px; /* 增加间距 */
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px; /* 增加内边距 */
+    border: 2px solid #e0e0e0; /* 增加边框宽度 */
+    border-radius: 8px; /* 增加圆角 */
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4a90e2; /* 聚焦时边框变蓝 */
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* 添加聚焦阴影 */
+    background: #fafafa;
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="email"]::placeholder,
+.form-group input[type="password"]::placeholder,
+.form-group textarea::placeholder {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.form-group textarea {
+    min-height: 100px; /* 增加最小高度 */
+    resize: vertical;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
+/* 表单提示文字 */
+.form-hint {
+    display: block;
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 6px;
+    line-height: 1.4;
+    font-style: normal;
+}
+
+.form-group label i {
+    font-size: 0.9rem;
+}
+
 /* 按钮容器样式优化 */
 .form-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    padding: 15px 0;
-    background: white;
-    border-top: 1px solid #eee;
-    position: sticky;
-    bottom: 0;
-    z-index: 1;
+    gap: 12px; /* 增加按钮间距 */
+    margin-top: 24px; /* 增加顶部间距 */
+    padding: 20px 0 0 0; /* 调整内边距 */
+    border-top: 1px solid #f0f0f0;
+    justify-content: flex-end; /* 右对齐按钮 */
+}
+
+/* 按钮样式 */
+.primary-btn,
+.secondary-btn {
+    padding: 12px 24px; /* 增加内边距 */
+    border: none;
+    border-radius: 8px; /* 增加圆角 */
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 100px; /* 设置最小宽度 */
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.primary-btn:hover {
+    background: linear-gradient(135deg, #357abd 0%, #2a5f8f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
+}
+
+.secondary-btn {
+    background: #f8f9fa;
+    color: #495057;
+    border: 2px solid #e9ecef;
+}
+
+.secondary-btn:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    color: #333;
+}
+
+.secondary-btn:active {
+    background: #dee2e6;
 }
 
 /* 响应式调整 */
@@ -304,12 +440,27 @@
 
     .form-actions {
         flex-wrap: wrap;
-        justify-content: flex-end;
+        justify-content: stretch; /* 移动端按钮占满宽度 */
+        gap: 10px;
     }
 
     .form-actions button {
         flex: 1;
-        min-width: 120px;
+        min-width: 0; /* 移除最小宽度限制 */
+        padding: 14px 20px; /* 移动端增加内边距 */
+    }
+
+    .modal-content {
+        max-width: 95%;
+        width: 95%;
+    }
+
+    .modal-content form {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
     }
 }
 

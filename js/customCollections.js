@@ -181,16 +181,28 @@ export class CustomCollectionsManager {
                     </div>
                     <form id="addCollectionForm">
                         <div class="form-group">
-                            <label for="collectionName">名称</label>
-                            <input type="text" id="collectionName" required>
+                            <label for="collectionName">
+                                <i class="fas fa-folder" style="margin-right: 6px; color: #4a90e2;"></i>
+                                收藏夹名称
+                            </label>
+                            <input type="text" id="collectionName" required placeholder="例如：旅行常用句" maxlength="50">
+                            <small class="form-hint">为您的收藏夹起一个易于识别的名称（最多50个字符）</small>
                         </div>
                         <div class="form-group">
-                            <label for="collectionDescription">描述</label>
-                            <textarea id="collectionDescription"></textarea>
+                            <label for="collectionDescription">
+                                <i class="fas fa-align-left" style="margin-right: 6px; color: #4a90e2;"></i>
+                                描述
+                            </label>
+                            <textarea id="collectionDescription" placeholder="简单描述一下这个收藏夹的用途和内容..." maxlength="200"></textarea>
+                            <small class="form-hint">可选：添加一些描述信息，帮助您更好地管理收藏夹（最多200个字符）</small>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="secondary-btn cancel-btn">取消</button>
-                            <button type="submit" class="primary-btn">创建</button>
+                            <button type="button" class="secondary-btn cancel-btn">
+                                <i class="fas fa-times"></i> 取消
+                            </button>
+                            <button type="submit" class="primary-btn">
+                                <i class="fas fa-check"></i> 创建
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -376,16 +388,28 @@ export class CustomCollectionsManager {
                     <form id="editCollectionForm">
                         <input type="hidden" id="editCollectionId">
                         <div class="form-group">
-                            <label for="editCollectionName">名称</label>
-                            <input type="text" id="editCollectionName" required>
+                            <label for="editCollectionName">
+                                <i class="fas fa-folder" style="margin-right: 6px; color: #4a90e2;"></i>
+                                收藏夹名称
+                            </label>
+                            <input type="text" id="editCollectionName" required placeholder="例如：旅行常用句" maxlength="50">
+                            <small class="form-hint">为您的收藏夹起一个易于识别的名称（最多50个字符）</small>
                         </div>
                         <div class="form-group">
-                            <label for="editCollectionDescription">描述</label>
-                            <textarea id="editCollectionDescription"></textarea>
+                            <label for="editCollectionDescription">
+                                <i class="fas fa-align-left" style="margin-right: 6px; color: #4a90e2;"></i>
+                                描述
+                            </label>
+                            <textarea id="editCollectionDescription" placeholder="简单描述一下这个收藏夹的用途和内容..." maxlength="200"></textarea>
+                            <small class="form-hint">可选：添加一些描述信息，帮助您更好地管理收藏夹（最多200个字符）</small>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="secondary-btn cancel-btn">取消</button>
-                            <button type="submit" class="primary-btn">保存</button>
+                            <button type="button" class="secondary-btn cancel-btn">
+                                <i class="fas fa-times"></i> 取消
+                            </button>
+                            <button type="submit" class="primary-btn">
+                                <i class="fas fa-save"></i> 保存
+                            </button>
                         </div>
                     </form>
                 </div>
