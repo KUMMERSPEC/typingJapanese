@@ -240,7 +240,7 @@ export class CustomCollectionsManager {
                             <div class="auto-convert-toggle">
                                 <label>
                                     <input type="checkbox" id="autoConvert" checked>
-                                    自动转换（仅日语）
+                                    自动分词/转换
                                 </label>
                             </div>
                         </div>
@@ -340,6 +340,13 @@ export class CustomCollectionsManager {
                     </div>
                     <form id="batchImportForm">
                         <div class="form-group">
+                            <label for="batchLang">语言</label>
+                            <select id="batchLang">
+                                <option value="ja" selected>日语</option>
+                                <option value="en">英语</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="batchImportText">输入要导入的句子：</label>
                             <div class="separator-options">
                                 <div class="separator-option">
@@ -350,7 +357,7 @@ export class CustomCollectionsManager {
                                     <input type="radio" id="space" name="separator" value=" ">
                                     <label for="space">空格分隔</label>
                                 </div>
-                                <span class="import-tips">格式：日语原文 [分隔符] 中文翻译</span>
+                                <span class="import-tips">格式：句子原文 [分隔符] 中文翻译</span>
                             </div>
                             <textarea id="batchImportText" rows="10" required></textarea>
                         </div>
@@ -520,7 +527,8 @@ export class CustomCollectionsManager {
                     hiraganaInput.placeholder = isJa ? '日语：わたし:は:がくせい:です' : '英语：i:am:a:student';
                 }
                 if (hiraganaInput && autoConvertCheckbox) {
-                    hiraganaInput.readOnly = isJa && autoConvertCheckbox.checked;
+                    // 自动模式下，无论语言都只读；用户可取消勾选以手动微调
+                    hiraganaInput.readOnly = autoConvertCheckbox.checked;
                 }
             };
 
@@ -562,6 +570,46 @@ export class CustomCollectionsManager {
                     if (romajiSpinner) (romajiSpinner).style.display = 'none';
                     (convertBtn).disabled = false;
                 }
+            });
+
+            // 自动分词/转换（支持日语和英语）
+            let addConversionTimeout;
+            const autoSplitEnglish = (s) => {
+                if (!s) return '';
+                return s
+                    .toLowerCase()
+                    .replace(/[^a-z0-9']+/gi, ' ') // 保留字母数字和撇号
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean)
+                    .join(':');
+            };
+            japaneseInput?.addEventListener('input', () => {
+                if (!autoConvertCheckbox?.checked) return;
+                const lang = (document.getElementById('lang'))?.value || 'ja';
+                const text = (japaneseInput).value.trim();
+                clearTimeout(addConversionTimeout);
+                addConversionTimeout = setTimeout(async () => {
+                    if (lang === 'ja') {
+                        if (!text) { if (hiraganaInput) hiraganaInput.value=''; if (romajiInput) romajiInput.value=''; return; }
+                        try {
+                            if (hiraganaSpinner) hiraganaSpinner.style.display = 'block';
+                            if (romajiSpinner) romajiSpinner.style.display = 'block';
+                            const result = await converter.convert(text);
+                            if (hiraganaInput) hiraganaInput.value = result.data.hiragana || text;
+                            if (romajiInput) romajiInput.value = result.data.romaji || '';
+                        } catch (_) {
+                            if (hiraganaInput) hiraganaInput.value = text;
+                            if (romajiInput) romajiInput.value = '';
+                        } finally {
+                            if (hiraganaSpinner) hiraganaSpinner.style.display = 'none';
+                            if (romajiSpinner) romajiSpinner.style.display = 'none';
+                        }
+                    } else { // 英语
+                        if (hiraganaInput) hiraganaInput.value = autoSplitEnglish(text);
+                        if (romajiInput) romajiInput.value = '';
+                    }
+                }, 400);
             });
 
             addSentenceForm.addEventListener('submit', (e) => {
@@ -678,12 +726,13 @@ export class CustomCollectionsManager {
                 previewBtn.addEventListener('click', async () => {
                 const importText = (document.getElementById('batchImportText')).value.trim();
                 const separator = (document.querySelector('input[name="separator"]:checked')).value;
+                const lang = (document.getElementById('batchLang'))?.value || 'ja';
                     if (!importText) {
                         alert('请输入要导入的内容');
                         return;
                     }
-                    const parsedData = await this.parseBatchImport(importText, separator);
-                    this.previewBatchImport(parsedData);
+                    const parsedData = await this.parseBatchImport(importText, separator, lang);
+                    this.previewBatchImport(parsedData, lang);
                 });
             }
             
@@ -749,26 +798,46 @@ export class CustomCollectionsManager {
     }
 
     // 解析批量导入文本
-    async parseBatchImport(text, separator) {
+    async parseBatchImport(text, separator, lang = 'ja') {
         if (!text) return [];
         const lines = text.trim().split('\n');
         const result = [];
+        const autoSplitEnglish = (s) => {
+            return s
+                .toLowerCase()
+                .replace(/[^a-z0-9']+/gi, ' ')
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .join(':');
+        };
         for (const line of lines) {
             if (!line.trim()) continue;
             try {
                 const parts = line.split(separator);
                 if (parts.length < 2) continue;
-                const japanese = parts[0].trim();
+                const sentence = parts[0].trim();
                 const meaning = parts.slice(1).join(separator).trim();
-                if (!japanese || !meaning) continue;
-                const converted = await converter.convert(japanese);
-                if (!converted.success) continue;
-                result.push({
-                    japanese,
-                    hiragana: converted.data.hiragana,
-                    romaji: converted.data.romaji,
-                    meaning
-                });
+                if (!sentence || !meaning) continue;
+                if (lang === 'ja') {
+                    const converted = await converter.convert(sentence);
+                    if (!converted.success) continue;
+                    result.push({
+                        japanese: sentence,
+                        hiragana: converted.data.hiragana,
+                        romaji: converted.data.romaji,
+                        meaning,
+                        lang
+                    });
+                } else {
+                    result.push({
+                        japanese: sentence,
+                        hiragana: autoSplitEnglish(sentence),
+                        romaji: '',
+                        meaning,
+                        lang
+                    });
+                }
             } catch (err) {
                 console.error('处理行失败:', line, err);
             }

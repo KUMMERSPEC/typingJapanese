@@ -549,7 +549,7 @@ export class PracticeManager {
         if (audioButton) {
             const newAudioButton = audioButton.cloneNode(true);
             audioButton.parentNode.replaceChild(newAudioButton, audioButton);
-            newAudioButton.addEventListener('click', playAudio);
+            newAudioButton.addEventListener('click', () => this.speak(question.character));
         }
     }
 
