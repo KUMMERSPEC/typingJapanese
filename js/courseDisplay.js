@@ -84,15 +84,40 @@ export class CourseDisplay {
 
             this.loadData(); // Reload stats
 
-            // 如果选择了收藏夹，则仅显示该收藏夹卡片
+            // 如果选择了收藏夹，则仅显示该收藏夹的学习卡片
             const selectedCollection = localStorage.getItem('selectedCollection');
             const mgr = window.customCollectionsManager;
             if (selectedCollection && mgr) {
                 const collection = (mgr.getCollections() || []).find(c => c.id === selectedCollection);
                 if (collection) {
-                    // ... (收藏夹卡片渲染逻辑保持不变)
+                    const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
+                    const practiceUrl = `${basePath}practice/practice.html?collection=${collection.id}`;
+                    const flashcardUrl = `${basePath}review/flashcard.html?collection=${collection.id}`;
+                    const sentenceCount = collection.sentences ? collection.sentences.length : 0;
+                    
+                    // 创建一个类似课程卡片的学习卡片
+                    const collectionCard = document.createElement('div');
+                    collectionCard.className = 'course-card';
+                    collectionCard.innerHTML = `
+                        <div class="card-header">
+                            <h2>${collection.name.charAt(0)}</h2>
+                        </div>
+                        <div class="card-content">
+                            <h3>${collection.name}</h3>
+                            <p>${collection.description || '自定义收藏夹'}</p>
+                            <div class="course-stats">
+                                <span><i class="fas fa-book"></i> ${sentenceCount} 个句子</span>
+                                <span><i class="fas fa-calendar"></i> ${new Date(collection.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <div class="course-actions">
+                                <a href="${practiceUrl}" class="start-button"><i class="fas fa-keyboard"></i> 打字练习</a>
+                                <a href="${flashcardUrl}" class="start-button flashcard-button"><i class="fas fa-graduation-cap"></i> 闪卡练习</a>
+                            </div>
+                        </div>
+                    `;
+                    timelineContainer.appendChild(collectionCard);
+                    return; // 收藏夹模式下不显示时间线
                 }
-                return; // 收藏夹模式下不显示时间线
             }
 
             let firstInProgressNode = null;

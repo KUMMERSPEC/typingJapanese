@@ -416,17 +416,38 @@ export class CustomCollectionsManager {
         // 管理收藏夹按钮
         const manageBtn = document.querySelector('[data-action="manage-collections"]');
         if (manageBtn) {
-            manageBtn.addEventListener('click', () => this.showCollectionsModal());
+            manageBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showCollectionsModal();
+            });
         }
 
         // 关闭/取消按钮
         document.addEventListener('click', (e) => {
             if (e.target.matches('.close-btn') || e.target.matches('.cancel-btn')) {
                 const modal = e.target.closest('.modal');
-                if (modal) modal.classList.remove('show');
+                if (modal) {
+                    modal.classList.remove('show');
+                    // 如果关闭的是管理收藏夹模态，也关闭可能打开的其他模态
+                    if (modal.id === 'collectionsModal') {
+                        document.getElementById('addCollectionModal')?.classList.remove('show');
+                        document.getElementById('addSentenceModal')?.classList.remove('show');
+                        document.getElementById('editCollectionModal')?.classList.remove('show');
+                    }
                 }
+            }
             if (e.target.matches('.add-collection-btn') || e.target.closest('.add-collection-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
                 this.showAddCollectionModal();
+            }
+        });
+
+        // 点击遮罩层关闭模态框
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
             }
         });
 

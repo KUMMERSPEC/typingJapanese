@@ -297,20 +297,33 @@ header h1 {
 
 .timeline-node:hover { transform: scale(1.1); }
 
-.timeline-card-container { padding-top: 10px; }
+.timeline-card-container { 
+    padding-top: 10px;
+    padding-left: 0;
+    margin-left: 0;
+    overflow: visible;
+}
 
 .timeline-card-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out, opacity 0.3s ease-out;
     padding-top: 0;
     padding-bottom: 0;
+    opacity: 0;
 }
 
 .timeline-card-content.expanded {
-    max-height: 500px; /* Adjust as needed */
-    padding-top: 10px;
-    padding-bottom: 10px;
+    max-height: 800px; /* 增加高度以容纳完整卡片 */
+    padding-top: 15px;
+    padding-bottom: 15px;
+    opacity: 1;
+    overflow: visible;
 }
 
-.timeline-card-content .course-card { margin-left: -50px; /* Align with the parent */ }
+.timeline-card-content .course-card { 
+    margin-left: 0; /* 移除负边距，让卡片正常显示 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
