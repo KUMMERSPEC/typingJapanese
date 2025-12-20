@@ -377,6 +377,12 @@ class PracticeManager {
                     completedLessons[this.currentCourse].push(this.currentLesson);
                 }
                 localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+                
+                // 更新统计数据并触发全局事件
+                const stats = statsData.getStatistics();
+                stats.completedLessons = completedLessons;
+                statsData.saveStatistics(stats);
+                window.dispatchEvent(new CustomEvent('statisticsUpdated', { detail: { stats } }));
             }
 
             // 触发完成事件
@@ -406,11 +412,9 @@ class PracticeManager {
                 <p>今日已学习: ${splitCount} 个句子</p>
                 <p>连续学习: ${statsData.getLearningDays()} 天</p>
                 <div class="button-group">
-                    <button class="restart-btn" onclick="location.reload()">重新开始</button>
-                    ${this.type === 'standard' ? `
-                        <button class="next-lesson-btn">下一课</button>
-                    ` : ''}
-                    <button class="return-btn" onclick="window.location.href='/typingJapanese/'">返回首页</button>
+                    <button class="restart-btn">重新学习</button>
+                    <button class="next-lesson-btn" style="display: none;">下一课</button>
+                    <a href="../" class="return-btn">返回首页</a>
                 </div>
             `;
 
@@ -425,27 +429,25 @@ class PracticeManager {
             this.createConfetti(completeScreen);
             this.createStars(completeScreen);
 
-            // 绑定下一课按钮事件（仅标准课程）
-            if (this.type === 'standard') {
-                const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
-                if (nextLessonBtn) {
-                    nextLessonBtn.onclick = async () => {
-                        try {
-                            const currentLessonNumber = parseInt(this.currentLesson.replace('lesson', ''));
-                            const nextLesson = `lesson${currentLessonNumber + 1}`;
+            // 重新学习按钮
+            const restartBtn = completeScreen.querySelector('.restart-btn');
+            if (restartBtn) restartBtn.onclick = () => location.reload();
 
-                            try {
-                                await DataLoader.getCourseWithLessonData(this.currentCourse, nextLesson);
-                                window.location.href = `/typingJapanese/practice/practice.html?course=${this.currentCourse}&lesson=${nextLesson}`;
-                            } catch (loadError) {
-                                alert('恭喜！您已完成本课程的所有课时！');
-                                window.location.href = '/typingJapanese/';
-                            }
-                        } catch (error) {
-                            console.error('Error navigating to next lesson:', error);
-                            alert('无法加载下一课，请返回首页重试');
-                        }
+            // 动态显示“下一课”按钮
+            const nextLessonBtn = completeScreen.querySelector('.next-lesson-btn');
+            if (this.type === 'standard' && nextLessonBtn) {
+                const currentLessonNum = parseInt(this.currentLesson.replace('lesson', ''));
+                const nextLessonId = `lesson${currentLessonNum + 1}`;
+                
+                // 检查下一课是否存在
+                if (courseData[this.currentCourse]?.lessons[nextLessonId]) {
+                    nextLessonBtn.style.display = 'inline-block';
+                    nextLessonBtn.onclick = () => {
+                        window.location.href = `practice.html?course=${this.currentCourse}&lesson=${nextLessonId}`;
                     };
+                } else {
+                    // 如果是最后一课，可以考虑显示“返回课程列表”等
+                    console.log('This is the last lesson of the course.');
                 }
             }
         } catch (error) {
