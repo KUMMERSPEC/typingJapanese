@@ -255,9 +255,28 @@ header h1 {
 .review-actions { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 15px; justify-content: center; }
 
 /* -- Course Timeline View -- */
-.course-timeline { padding: 20px 0; }
+.course-timeline { 
+    padding: 10px 0 20px 0; /* 减少顶部padding */
+    position: relative;
+}
 
-.timeline-item { position: relative; padding-left: 50px; margin-bottom: 10px; }
+/* 添加时间线装饰性标题 */
+.course-timeline::before {
+    content: '学习进度';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.timeline-item { 
+    position: relative; 
+    padding-left: 50px; 
+    margin-bottom: 15px; /* 增加间距 */
+}
 
 .timeline-item::before {
     content: '';
@@ -266,11 +285,15 @@ header h1 {
     top: 0;
     height: 100%;
     width: 2px;
-    background: #e5e7eb;
+    background: linear-gradient(to bottom, #e5e7eb 0%, #d1d5db 50%, #e5e7eb 100%);
 }
 
-.timeline-item:first-child::before { top: 20px; }
-.timeline-item:last-child::before { height: 20px; }
+.timeline-item:first-child::before { 
+    top: 10px; /* 减少顶部空白 */
+}
+.timeline-item:last-child::before { 
+    height: 10px; /* 减少底部空白 */
+}
 
 .timeline-node {
     position: absolute;
