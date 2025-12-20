@@ -909,28 +909,43 @@ export class CustomCollectionsManager {
     }
     
     // 预览批量导入数据（可编辑，并保留删除）
-    previewBatchImport(parsedData) {
+    previewBatchImport(parsedData, lang = 'ja') {
         const previewContainer = document.getElementById('importPreview');
         if (!previewContainer) return;
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
             previewContainer.innerHTML = '<div class="preview-empty">没有可导入的句子</div>';
             return;
         }
+        const isJa = (lang || 'ja') === 'ja';
         const table = document.createElement('table');
         table.className = 'preview-table';
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>序号</th>
-                    <th>日语</th>
-                    <th>假名</th>
-                    <th>罗马字</th>
-                    <th>中文</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
+        const thead = isJa
+            ? `
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>日语</th>
+                        <th>假名</th>
+                        <th>罗马字</th>
+                        <th>中文</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+            `
+            : `
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>英文</th>
+                        <th>分词</th>
+                        <th>中文</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+            `;
+        const tbody = `
             <tbody>
-                ${parsedData.map((item, index) => `
+                ${parsedData.map((item, index) => isJa ? `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.japanese}</td>
@@ -939,9 +954,18 @@ export class CustomCollectionsManager {
                         <td><input type="text" class="preview-input" value="${item.meaning}" data-field="meaning"></td>
                         <td><button type="button" class="delete-preview-btn">删除</button></td>
                     </tr>
+                ` : `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.japanese}</td>
+                        <td><input type="text" class="preview-input" value="${item.hiragana}" data-field="hiragana"></td>
+                        <td><input type="text" class="preview-input" value="${item.meaning}" data-field="meaning"></td>
+                        <td><button type="button" class="delete-preview-btn">删除</button></td>
+                    </tr>
                 `).join('')}
             </tbody>
         `;
+        table.innerHTML = `${thead}${tbody}`;
         previewContainer.innerHTML = '';
         previewContainer.appendChild(table);
         table.addEventListener('click', (e) => {

@@ -27,16 +27,29 @@ import statsData from '../common/statsData.js';
     if (!tableHead) return;
     const ths = tableHead.querySelectorAll('th');
     if (ths && ths.length >= 3) {
-      ths[0].textContent = currentLang === 'en' ? '英文' : '日文';
-      ths[1].textContent = currentLang === 'en' ? '分词' : '假名';
+      // 语言为全部时，使用中性表头
+      if (currentLang === 'all') {
+        ths[0].textContent = '原文';
+        ths[1].textContent = '分词';
+      } else if (currentLang === 'en') {
+        ths[0].textContent = '英文';
+        ths[1].textContent = '分词';
+      } else { // ja
+        ths[0].textContent = '日文';
+        ths[1].textContent = '假名';
+      }
       // 第三列“中文”保持不变
     }
     // 同步搜索框提示
     const searchInputEl = document.getElementById('searchInput');
     if (searchInputEl) {
-      searchInputEl.placeholder = currentLang === 'en'
-        ? '搜索：英文、分词或中文翻译'
-        : '搜索：日文、假名、罗马音或中文翻译';
+      if (currentLang === 'all') {
+        searchInputEl.placeholder = '搜索：原文、分词或中文翻译';
+      } else if (currentLang === 'en') {
+        searchInputEl.placeholder = '搜索：英文、分词或中文翻译';
+      } else {
+        searchInputEl.placeholder = '搜索：日文、假名、罗马音或中文翻译';
+      }
     }
   }
 
@@ -245,6 +258,7 @@ import statsData from '../common/statsData.js';
   });
 
   // init
+  updateHeadersByLang(lang);
   load();
 })();
 
