@@ -8,6 +8,7 @@ import statsData from '../common/statsData.js';
   let pageSize = 50;
   let scope = 'all';
   let query = '';
+  let lang = 'all';
 
   // DOM
   const tbody = document.getElementById('learnedTableBody');
@@ -19,6 +20,7 @@ import statsData from '../common/statsData.js';
   const searchScope = document.getElementById('searchScope');
   const pageSizeSel = document.getElementById('pageSize');
   const backHome = document.getElementById('backHome');
+  const langFilter = document.getElementById('langFilter');
 
   // Back link base
   if (backHome) {
@@ -45,7 +47,8 @@ import statsData from '../common/statsData.js';
           lesson: item.lesson || '',
           proficiency: item.proficiency || 'low',
           nextReviewDate: item.nextReviewDate || '',
-          lastReview: item.lastReview || ''
+          lastReview: item.lastReview || '',
+          lang: item.lang || 'ja'
         }));
 
       // 2) 合并自定义收藏夹内容
@@ -63,7 +66,8 @@ import statsData from '../common/statsData.js';
               lesson: '自定义',
               proficiency: 'low',
               nextReviewDate: '',
-              lastReview: ''
+              lastReview: '',
+              lang: s.lang || 'ja'
             });
           });
         });
@@ -104,6 +108,10 @@ import statsData from '../common/statsData.js';
     const q = (query || '').trim().toLowerCase();
 
     filteredRows = allRows.filter(row => {
+      // 语言筛选
+      const rowLang = (row.lang || 'ja');
+      if (lang !== 'all' && rowLang !== lang) return false;
+
       if (!q) return true;
       if (scope === 'cn') {
         return (row.meaning || '').toLowerCase().includes(q);
@@ -207,6 +215,7 @@ import statsData from '../common/statsData.js';
   });
   btnPrev?.addEventListener('click', () => { if (page > 1) { page--; render(); } });
   btnNext?.addEventListener('click', () => { page++; render(); });
+  langFilter?.addEventListener('change', (e) => { lang = e.target.value || 'all'; applyFilter(); });
 
   // init
   load();
