@@ -338,7 +338,7 @@ export class CustomCollectionsManager {
             batchImportModal.id = 'batchImportModal';
             batchImportModal.className = 'modal';
             batchImportModal.innerHTML = `
-                <div class="modal-content">
+                <div class="modal-content" style="max-width:1100px;width:95%">
                     <div class="modal-header">
                         <h3>批量导入句子</h3>
                         <button class="close-btn">&times;</button>

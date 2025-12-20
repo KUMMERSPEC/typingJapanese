@@ -612,33 +612,56 @@ form {
 }
 
 /* 批量导入预览表格样式 */
+/* 容器允许横向滚动，并限制高度，避免撑满屏 */
+#batchImportModal .import-preview {
+    margin-top: 12px;
+    max-height: 46vh;
+    overflow: auto; /* 同时支持横向与纵向滚动 */
+    padding: 4px 2px;
+}
+
 .preview-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 4px;
     font-size: 14px;
+    table-layout: auto; /* 让列宽自然扩展 */
+    min-width: 1000px;  /* 关键：为日语模式提供更宽的基础宽度 */
 }
 
 .preview-table th,
 .preview-table td {
-    padding: 8px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     text-align: left;
-    word-break: break-all;
+    vertical-align: middle;
+}
+
+/* 让输入框占满单元格宽度，并设置合适的最小宽度，从而推动表格拉宽 */
+.preview-table .preview-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 1px solid #dcdfe6;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* 为不同字段设置最小宽度（仅在桌面端生效）*/
+@media (min-width: 769px) {
+    .preview-table .preview-input[data-field="hiragana"] { min-width: 320px; }
+    .preview-table .preview-input[data-field="romaji"]  { min-width: 280px; }
+    .preview-table .preview-input[data-field="meaning"] { min-width: 240px; }
 }
 
 .preview-table th {
     background-color: #f5f5f5;
-    font-weight: bold;
+    font-weight: 600;
+    white-space: nowrap; /* 表头不换行，更紧凑 */
 }
 
-.preview-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.preview-table tr:hover {
-    background-color: #f0f0f0;
-}
+.preview-table tr:nth-child(even) { background-color: #f9f9f9; }
+.preview-table tr:hover { background-color: #f0f0f0; }
 
 .preview-empty {
     text-align: center;
