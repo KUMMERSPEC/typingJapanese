@@ -99,14 +99,22 @@ function initReviewPanel() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Page loaded, initializing...');
     
+    // 初始化自定义收藏功能
+    window.customCollections = new CustomCollectionsManager();
+    window.customCollectionsManager = window.customCollections; // 确保别名可用
+
     // 初始化课程显示
     const courseDisplay = new CourseDisplay();
-    courseDisplay.loadCourses(); // 使用 CourseDisplay 加载课程
+
+    // 初始化自定义收藏功能
+    window.customCollections = new CustomCollectionsManager();
+    window.customCollectionsManager = window.customCollections; // 确保别名可用
+
+    // 现在加载课程，此时收藏夹已准备就绪
+    courseDisplay.loadCourses();
 
     // 主页课程选择器（课程集 + 收藏夹）
     const courseSelector = document.getElementById('courseSelector');
-    // 兼容：暴露两个引用，供 CourseDisplay 使用
-    window.customCollectionsManager = window.customCollectionsManager || window.customCollections;
     if (courseSelector) {
         // 构建选项
         const buildOptions = () => {
@@ -134,9 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedBook = localStorage.getItem('selectedBook') || 'word-group';
         if (savedCollection) {
             courseSelector.value = `collection:${savedCollection}`;
-            if (window.customCollectionsManager) {
-                courseDisplay.setCollection?.(savedCollection);
-            }
         } else {
             courseSelector.value = `book:${savedBook}`;
         }
@@ -146,11 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = courseSelector.value;
             if (val.startsWith('book:')) {
                 const bookId = val.split(':')[1];
-                localStorage.removeItem('selectedCollection');
                 courseDisplay.setBook(bookId);
             } else if (val.startsWith('collection:')) {
                 const cid = val.split(':')[1];
-                localStorage.setItem('selectedCollection', cid);
                 courseDisplay.setCollection?.(cid);
             }
         });
@@ -164,9 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
             courseSelector.value = savedCollection2 ? `collection:${savedCollection2}` : `book:${savedBook2}`;
         });
     }
-    
-    // 初始化自定义收藏功能
-    window.customCollections = new CustomCollectionsManager();
     
     // 更新今日日期
     updateDate();
@@ -861,7 +861,6 @@ function getMasteryStatus(item) {
         default: return '未知';
     }
 }
-
 // 在需要获取掌握状态的地方使用
 function updateSentenceStatus(item) {
     const status = statsData.getMasteryStatus(item);
