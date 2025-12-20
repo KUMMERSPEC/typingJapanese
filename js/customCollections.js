@@ -223,9 +223,16 @@ export class CustomCollectionsManager {
                     </div>
                     <form id="addSentenceForm">
                         <div class="form-group">
-                            <label for="japanese">日语</label>
+                            <label for="lang">语言</label>
+                            <select id="lang">
+                                <option value="ja" selected>日语</option>
+                                <option value="en">英语</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="japanese">句子</label>
                             <div class="input-group">
-                                <input type="text" id="japanese" required placeholder="输入日语句子">
+                                <input type="text" id="japanese" required placeholder="输入句子（根据语言）">
                                 <button type="button" class="convert-btn" id="convertBtn" disabled>
                                     <i class="fas fa-sync"></i> 转换
                                 </button>
@@ -233,21 +240,21 @@ export class CustomCollectionsManager {
                             <div class="auto-convert-toggle">
                                 <label>
                                     <input type="checkbox" id="autoConvert" checked>
-                                    自动转换
+                                    自动转换（仅日语）
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="hiragana">平假名</label>
+                        <div class="form-group" id="groupHiragana">
+                            <label for="hiragana">目标分词</label>
                             <div class="input-group">
-                                <input type="text" id="hiragana" required placeholder="用冒号分隔，如：わたし:は:がくせい:です">
+                                <input type="text" id="hiragana" required placeholder="日语：わたし:は:がくせい:です | 英语：i:am:a:student">
                                 <div class="loading-spinner" style="display: none;"></div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="romaji">罗马音</label>
+                        <div class="form-group" id="groupRomaji">
+                            <label for="romaji">罗马音（仅日语）</label>
                             <div class="input-group">
-                                <input type="text" id="romaji" required placeholder="watashi wa gakusei desu">
+                                <input type="text" id="romaji" required placeholder="watashi:wa:gakusei:desu">
                                 <div class="loading-spinner" style="display: none;"></div>
                             </div>
                         </div>
@@ -496,25 +503,49 @@ export class CustomCollectionsManager {
             const romajiInput = document.getElementById('romaji');
             const convertBtn = document.getElementById('convertBtn');
             const autoConvertCheckbox = document.getElementById('autoConvert');
+            const langSelect = document.getElementById('lang');
+            const groupRomaji = document.getElementById('groupRomaji');
+            const groupHiragana = document.getElementById('groupHiragana');
             const hiraganaSpinner = hiraganaInput?.parentElement?.querySelector('.loading-spinner');
             const romajiSpinner = romajiInput?.parentElement?.querySelector('.loading-spinner');
+
+            const updateLangUI = () => {
+                const isJa = (langSelect?.value || 'ja') === 'ja';
+                if (convertBtn) convertBtn.disabled = !isJa;
+                if (autoConvertCheckbox) autoConvertCheckbox.disabled = !isJa;
+                if (groupRomaji) groupRomaji.style.display = isJa ? '' : 'none';
+                if (romajiInput) romajiInput.required = isJa;
+                if (!isJa && romajiInput) romajiInput.value = '';
+                if (hiraganaInput) {
+                    hiraganaInput.placeholder = isJa ? '日语：わたし:は:がくせい:です' : '英语：i:am:a:student';
+                }
+                if (hiraganaInput && autoConvertCheckbox) {
+                    hiraganaInput.readOnly = isJa && autoConvertCheckbox.checked;
+                }
+            };
+
+            updateLangUI();
+            langSelect?.addEventListener('change', updateLangUI);
 
             if (convertBtn) (convertBtn).disabled = false;
             if (hiraganaInput && autoConvertCheckbox) (hiraganaInput).readOnly = (autoConvertCheckbox).checked;
 
             autoConvertCheckbox?.addEventListener('change', (e) => {
-                    if (hiraganaInput) {
-                    (hiraganaInput).readOnly = e.target.checked;
-                    }
-                });
+                if (hiraganaInput) {
+                    (hiraganaInput).readOnly = e.target.checked && ((langSelect?.value || 'ja') === 'ja');
+                }
+            });
 
             hiraganaInput?.addEventListener('input', () => {
-                if (romajiInput && !(autoConvertCheckbox).checked) {
+                const isJa = (langSelect?.value || 'ja') === 'ja';
+                if (romajiInput && !autoConvertCheckbox?.checked && isJa) {
                     (romajiInput).value = converter.hiraganaToRomaji((hiraganaInput).value);
-                    }
-                });
+                }
+            });
 
             convertBtn?.addEventListener('click', async () => {
+                const isJa = (langSelect?.value || 'ja') === 'ja';
+                if (!isJa) return; // 英语不转换
                 const japanese = (japaneseInput).value.trim();
                 if (!japanese) return;
                 try {
@@ -536,11 +567,13 @@ export class CustomCollectionsManager {
             addSentenceForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const collectionId = (e.target).dataset.collectionId;
+                const lang = (document.getElementById('lang'))?.value || 'ja';
                 const sentenceData = {
                     japanese: (document.getElementById('japanese')).value,
                     hiragana: (document.getElementById('hiragana')).value,
-                    romaji: (document.getElementById('romaji')).value,
+                    romaji: lang === 'ja' ? (document.getElementById('romaji')).value : '',
                     meaning: (document.getElementById('meaning')).value,
+                    lang
                 };
                 this.addSentence(collectionId, sentenceData);
                 const modal = document.getElementById('addSentenceModal');

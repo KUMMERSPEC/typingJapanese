@@ -64,6 +64,7 @@ export class PracticeManager {
                     hiragana: sentence.hiragana,
                     meaning: sentence.meaning,
                     romaji: sentence.romaji,
+                    lang: sentence.lang || 'ja',
                     answers: [sentence.japanese, sentence.hiragana]  // 允许日语和平假名两种答案
                 }));
 
@@ -196,72 +197,67 @@ export class PracticeManager {
     // 修改 speak 方法
     async speak(text) {
         try {
-            // 获取当前问题
-            const currentQuestion = this.questions[this.currentQuestionIndex];
-            
-            // 优先使用平假名版本
-            let textToSpeak = currentQuestion.hiragana || currentQuestion.character;
-            
-            // 如果是分词类型的问题，移除分隔符
-            if (currentQuestion.type === 'split') {
-                textToSpeak = textToSpeak.replace(/:/g, '');
+            const currentQuestion = this.questions[this.currentQuestionIndex] || {};
+            const lang = currentQuestion.lang || 'ja';
+
+            // 语音内容：日语优先平假名，其他语言直接用原文
+            let textToSpeak = lang === 'ja' ? (currentQuestion.hiragana || currentQuestion.character) : (currentQuestion.character || text);
+            if (currentQuestion.type === 'split' && typeof textToSpeak === 'string') {
+                textToSpeak = textToSpeak.replace(/:/g, ' ');
             }
 
-            console.log('Speaking text:', textToSpeak);
+            console.log('Speaking text:', { textToSpeak, lang });
 
-            // 预加载音频
-            const audio = new Audio();
-            audio.preload = 'auto';  // 设置预加载
-            audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
-
-            // 等待音频加载完成
-            await new Promise((resolve, reject) => {
-                audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();  // 开始加载
-            });
-
-            try {
-                // 尝试播放
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.error('播放失败，尝试后备方案:', error);
-                this.fallbackSpeak(textToSpeak);
+            if (lang === 'ja') {
+                // 使用有道音频（仅日语）
+                const audio = new Audio();
+                audio.preload = 'auto';
+                audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
+                await new Promise((resolve, reject) => {
+                    audio.oncanplaythrough = resolve;
+                    audio.onerror = reject;
+                    audio.load();
+                });
+                try {
+                    await audio.play();
+                    return;
+                } catch (e) {
+                    console.warn('Youdao 播放失败，使用合成语音后备:', e);
+                }
             }
 
+            // 其他语言或日语回退：使用语音合成
+            this.fallbackSpeak(textToSpeak, lang);
         } catch (error) {
             console.error('播放语音失败:', error);
-            this.fallbackSpeak(text);
+            this.fallbackSpeak(text, 'ja');
         }
     }
 
     // 添加后备播放方法
-    fallbackSpeak(text) {
+    fallbackSpeak(text, lang = 'ja') {
         try {
             if (!('speechSynthesis' in window)) {
                 console.warn('浏览器不支持语音合成');
                 return;
             }
 
-            // 取消所有正在进行的语音
             window.speechSynthesis.cancel();
-            
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 1;
             utterance.pitch = 1;
             utterance.volume = 1;
-            utterance.lang = 'ja-JP';
 
-            // 获取日语语音
+            // 语言代码映射
+            const langMap = {
+                ja: 'ja-JP',
+                en: 'en-US'
+            };
+            utterance.lang = langMap[lang] || 'en-US';
+
             const voices = window.speechSynthesis.getVoices();
-            const japaneseVoice = voices.find(voice => 
-                voice.lang.includes('ja') || voice.lang.includes('JP')
-            );
-            
-            if (japaneseVoice) {
-                utterance.voice = japaneseVoice;
-            }
+            const targetVoice = voices.find(v => v.lang.toLowerCase().startsWith((langMap[lang] || 'en-US').toLowerCase()));
+            if (targetVoice) utterance.voice = targetVoice;
 
             window.speechSynthesis.speak(utterance);
         } catch (error) {
@@ -1184,14 +1180,21 @@ export class PracticeManager {
 
         console.log('Checking answers:', {
             userAnswers: answers,
-            correctAnswers: correctAnswers
+            correctAnswers: correctAnswers,
+            lang: question.lang || 'ja'
         });
+
+        const normalize = (s) => {
+            if (typeof s !== 'string') return '';
+            const base = s.trim();
+            return (question.lang || 'ja') === 'en' ? base.toLowerCase() : base;
+        };
 
         // 检查每个答案并标记
         const allCorrect = answers.every((answer, index) => {
             const correctAnswer = correctAnswers[index];
             const input = inputs[index];
-            const isCorrect = answer === correctAnswer;
+            const isCorrect = normalize(answer) === normalize(correctAnswer);
 
             // 根据正确与否设置样式
             if (isCorrect) {
