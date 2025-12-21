@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let unsubscribeFromFirestore = null; // To store the listener unsub function
 
     // --- Authentication Logic ---
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             // User is signed in
             currentUser = user;
@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             userDisplayName.textContent = `Welcome, ${user.displayName || 'User'}`;
             userDisplayName.style.display = 'inline';
 
-            // Start listening for realtime data updates
-            listenForData(user.uid);
+            // ** NEW: Start the robust sync process **
+            await syncData(user.uid);
 
         } else {
             // User is signed out
@@ -30,9 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stop listening to data updates
             if (unsubscribeFromFirestore) {
                 unsubscribeFromFirestore();
+                unsubscribeFromFirestore = null;
             }
-            // Here you might want to clear local data or reload the page
-            // For now, we'll just stop listening.
+            // Optional: Clear local storage on logout to prevent data conflicts
+            // localStorage.removeItem('typing_statistics');
+            // localStorage.removeItem('custom_collections');
         }
     });
 
@@ -49,59 +51,82 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Data Synchronization Logic ---
+    // --- NEW Data Synchronization Logic (Refactored) ---
 
-    // Function to listen for realtime data from Firestore
-    function listenForData(userId) {
+    async function syncData(userId) {
+        console.log("Starting data synchronization process...");
         const userDocRef = doc(db, 'users', userId);
 
-        unsubscribeFromFirestore = onSnapshot(userDocRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const cloudData = docSnap.data();
-                console.log("Received data from cloud:", cloudData);
-
-                // Update localStorage with cloud data
-                if (cloudData.custom_collections) {
-                    localStorage.setItem('custom_collections', cloudData.custom_collections);
-                }
-                if (cloudData.typing_statistics) {
-                    localStorage.setItem('typing_statistics', cloudData.typing_statistics);
-                }
-
-                // Dispatch events to notify other modules to update their views
-                window.dispatchEvent(new CustomEvent('collectionsUpdated'));
-                window.dispatchEvent(new CustomEvent('statisticsUpdated'));
-
-            } else {
-                console.log("No data in cloud for this user yet. Will upload local data.");
-                // If no data exists, upload local data to the cloud
-                uploadAllData(userId);
-            }
-        });
-    }
-
-    // Function to save all local data to Firestore
-    async function uploadAllData(userId) {
-        if (!userId) return;
-        console.log("Uploading all local data to Firestore...");
         try {
-            const userDocRef = doc(db, 'users', userId);
-            const localCollections = localStorage.getItem('custom_collections') || '{}';
-            const localStats = localStorage.getItem('typing_statistics') || '{}';
+            // 1. One-time fetch from Firestore to get the most current data
+            const docSnap = await getDoc(userDocRef);
 
-            await setDoc(userDocRef, {
-                custom_collections: localCollections,
-                typing_statistics: localStats,
-                lastUpdated: new Date().toISOString()
-            }, { merge: true }); // Merge to avoid overwriting with empty data
+            if (docSnap.exists()) {
+                // If cloud has data, it's the source of truth.
+                console.log("Cloud data found. Overwriting local storage.");
+                const cloudData = docSnap.data();
+                updateLocalStorage(cloudData);
+            } else {
+                // If cloud has NO data, check if local storage has anything to upload.
+                console.log("No cloud data found. Checking for local data to upload.");
+                const localStats = localStorage.getItem('typing_statistics');
+                const localCollections = localStorage.getItem('custom_collections');
 
-            console.log("Local data uploaded successfully.");
+                if (localStats || localCollections) {
+                    await uploadAllData(userId, localCollections, localStats);
+                }
+            }
+
+            // 2. Now, set up the realtime listener for subsequent changes from other devices.
+            // Make sure to not have multiple listeners running.
+            if (unsubscribeFromFirestore) {
+                unsubscribeFromFirestore();
+            }
+            unsubscribeFromFirestore = onSnapshot(userDocRef, (snapshot) => {
+                console.log("Realtime update received from cloud.");
+                if (snapshot.exists()) {
+                    const cloudData = snapshot.data();
+                    updateLocalStorage(cloudData);
+                } else {
+                    console.log("Realtime update: User document was deleted.");
+                }
+            });
+
         } catch (error) {
-            console.error("Error uploading data:", error);
+            console.error("Error during initial data sync:", error);
         }
     }
 
-    // Function to save a specific piece of data (e.g., collections)
+    function updateLocalStorage(cloudData) {
+        if (cloudData.custom_collections) {
+            localStorage.setItem('custom_collections', cloudData.custom_collections);
+        }
+        if (cloudData.typing_statistics) {
+            localStorage.setItem('typing_statistics', cloudData.typing_statistics);
+        }
+
+        // Dispatch events to notify other modules to update their views
+        window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+        window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+        console.log("Local storage updated and UI events dispatched.");
+    }
+
+    async function uploadAllData(userId, localCollections, localStats) {
+        if (!userId) return;
+        console.log("Uploading all local data to Firestore for the first time...");
+        try {
+            const userDocRef = doc(db, 'users', userId);
+            await setDoc(userDocRef, {
+                custom_collections: localCollections || '{}',
+                typing_statistics: localStats || '{}',
+                lastUpdated: new Date().toISOString()
+            });
+            console.log("Local data uploaded successfully.");
+        } catch (error) {
+            console.error("Error uploading initial data:", error);
+        }
+    }
+
     async function saveDataToFirebase(key, value) {
         if (!currentUser) return; // Only save if a user is logged in
 
