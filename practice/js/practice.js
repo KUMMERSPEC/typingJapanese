@@ -1043,37 +1043,31 @@ export class PracticeManager {
                 }
                 
                 if (nextLessonBtn) {
-                    if (this.course === 'collection') {
-                        // 收藏夹模式没有“下一课”
-                        nextLessonBtn.style.display = 'none';
-                    } else {
-                        // 预判是否为最后一课：如果下一课不存在则隐藏按钮
+                    // 默认立即隐藏，防止闪烁
+                    nextLessonBtn.style.display = 'none';
+
+                    if (this.course !== 'collection') {
+                        // 异步检查是否存在下一课
                         (async () => {
                             try {
                                 const currentNum = parseInt(String(this.lesson).replace(/[^0-9]/g, ''));
                                 const nextNum = isNaN(currentNum) ? null : currentNum + 1;
-                                if (!nextNum) {
-                                    nextLessonBtn.style.display = 'none';
-                                    return;
-                                }
+                                if (!nextNum) return;
+
                                 const nextLesson = `lesson${nextNum}`;
                                 await DataLoader.getCourseWithLessonData(this.course, nextLesson);
-                                // 如果能加载成功，保留按钮并绑定事件
-                                nextLessonBtn.addEventListener('click', async () => {
-                                    try {
-                                        const basePath = window.location.pathname;
-                                        const params = new URLSearchParams(window.location.search);
-                                        params.set('course', this.course);
-                                        params.set('lesson', nextLesson);
-                                        window.location.href = `${basePath}?${params.toString()}`;
-                                    } catch (error) {
-                                        console.error('跳转到下一课失败:', error);
-                                        alert('跳转失败，请稍后再试');
-                                    }
+                                
+                                // 如果能加载成功，则显示按钮并绑定事件
+                                nextLessonBtn.style.display = 'inline-flex'; // 或者 'block'
+                                nextLessonBtn.addEventListener('click', () => {
+                                    const basePath = window.location.pathname;
+                                    const params = new URLSearchParams(window.location.search);
+                                    params.set('lesson', nextLesson);
+                                    window.location.href = `${basePath}?${params.toString()}`;
                                 });
                             } catch (err) {
-                                // 无法加载下一课，隐藏按钮
-                                nextLessonBtn.style.display = 'none';
+                                // 无法加载下一课，按钮保持隐藏状态
+                                console.log('No next lesson found.');
                             }
                         })();
                     }

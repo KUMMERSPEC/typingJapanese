@@ -292,13 +292,21 @@ header h1 {
 .review-actions { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 15px; justify-content: center; }
 
 /* -- Course "Bubble" View -- */
+/* -- Course "Bubble" View -- */
 .course-timeline {
     position: relative;
-    height: 200px; /* 定义“气球池”的高度 */
+    height: 220px; /* 响应式高度 */
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    margin-top: 30px; /* 为标题留出空间 */
-    overflow: hidden; /* 防止气球飘出去 */
+    margin-top: 30px;
+    overflow: hidden;
+}
+
+/* 在较小的屏幕上减小高度 */
+@media (max-width: 768px) {
+    .course-timeline {
+        height: 180px;
+    }
 }
 
 /* “学习进度”标题，现在绝对安全 */
