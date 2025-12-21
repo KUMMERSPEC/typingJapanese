@@ -349,10 +349,18 @@ image.png/* -- Course "Bubble" View -- */
     overflow: hidden;
 }
 
-/* 在较小的屏幕上减小高度 */
+/* 在较小的屏幕上减小高度，并确保定位上下文正确 */
+@media (max-width: 1023px) { /* 覆盖到所有非桌面端布局 */
+    .course-timeline {
+        position: relative; /* 强制确保定位上下文 */
+        height: 220px; /* 提供一个固定的高度 */
+        min-height: 200px; /* 保证最小空间 */
+    }
+}
+
 @media (max-width: 768px) {
     .course-timeline {
-        height: 180px;
+        height: 180px; /* 在更小的屏幕上进一步减小高度 */
     }
 }
 
