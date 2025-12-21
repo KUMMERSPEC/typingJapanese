@@ -33,7 +33,13 @@ export class CustomCollectionsManager {
 
     // 保存到 localStorage
     saveCollections() {
-        localStorage.setItem('custom_collections', JSON.stringify(this.collections));
+        const collectionsJson = JSON.stringify(this.collections);
+        localStorage.setItem('custom_collections', collectionsJson);
+
+        // Also save to Firebase if the sync module is available
+        if (window.firebaseSync) {
+            window.firebaseSync.saveData('custom_collections', collectionsJson);
+        }
     }
 
     // 创建新收藏夹

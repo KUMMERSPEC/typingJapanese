@@ -390,9 +390,14 @@ class Statistics {
 
     saveStatistics(stats) {
         try {
-            console.log('Saving stats with totalSentences:', stats.totalSentences);
-            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-            console.log('Stats saved successfully');
+            const statsJson = JSON.stringify(stats);
+            localStorage.setItem(STATS_STORAGE_KEY, statsJson);
+            console.log('Stats saved successfully to localStorage');
+
+            // Also save to Firebase if the sync module is available
+            if (window.firebaseSync) {
+                window.firebaseSync.saveData('typing_statistics', statsJson);
+            }
         } catch (error) {
             console.error('Error saving statistics:', error);
         }
