@@ -422,3 +422,60 @@ header h1 {
     }
     .timeline-card-container { padding-top: 10px; }
 }
+
+/* ===== 桌面端最终布局：左侧今日固定，右侧课程横向滚动 ===== */
+@media (min-width:1024px){
+
+    /* 主区域仍是两列网格，不允许被撑宽 */
+    main{
+        display:grid;
+        grid-template-columns:360px 1fr;   /* 左360 右剩余 */
+        gap:20px;
+        align-items:start;
+        overflow:hidden;                   /* 主容器不横向滚动 */
+    }
+  
+    /* 右侧列：自身也不横向滚动，只让内部时间线滚动 */
+    .course-section{
+        min-width:0;                       /* 关键：允许被压缩到网格列宽 */
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;                   /* 防止列宽被内容撑大 */
+    }
+  
+    /* 课程时间线：占满列宽，内部节点横向滚动 */
+    .course-timeline{
+        display:inline-flex;               /* 让其宽度跟随内容，但不超出列滚动 */
+        min-width:100%;                    /* 至少与列同宽，不撑整个页面 */
+        gap:16px;                          /* 节点间距可调 */
+        overflow-x:auto;
+        overflow-y:hidden;
+        padding:8px 0 16px;
+    }
+  
+    /* 每个节点块仅 90px 宽，卡片展开后使用绝对定位不再撑宽父元素 */
+    .timeline-item{
+        flex:0 0 90px;
+        position:relative;
+        padding-top:48px;
+    }
+    .timeline-node{
+        position:absolute;left:50%;top:0;transform:translateX(-50%);
+    }
+  
+    /* 展开卡片绝对定位悬浮，不拉伸时间线宽度 */
+    .timeline-card-container{
+        position:absolute;
+        left:50%;
+        top:100%;             /* 节点下方 */
+        transform:translateX(-50%);
+        width:300px;          /* 卡片固定宽 */
+        z-index:5;
+        padding-top:12px;
+    }
+    .timeline-card-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s,opacity .3s;}
+    .timeline-card-content.expanded{max-height:800px;opacity:1;}
+  }
+  
+  /* section-header 按钮保持可见 */
+  .section-header{position:relative; z-index:10;}
