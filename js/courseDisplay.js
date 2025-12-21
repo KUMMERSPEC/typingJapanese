@@ -180,13 +180,26 @@ export class CourseDisplay {
 
                 const timelineItem = document.createElement('div');
                 timelineItem.className = 'timeline-item';
+
+                // --- 新增：随机化位置和动画延迟 ---
+                const containerWidth = timelineContainer.offsetWidth;
+                const containerHeight = timelineContainer.offsetHeight;
+                const nodeSize = 44; // 节点大致尺寸
+
+                // 随机位置，确保不超出边界
+                const randomLeft = Math.random() * (containerWidth - nodeSize);
+                const randomTop = Math.random() * (containerHeight - nodeSize);
+                timelineItem.style.left = `${randomLeft}px`;
+                timelineItem.style.top = `${randomTop}px`;
+
+                // 随机动画延迟，让气球不同步浮动
+                const randomDelay = -Math.random() * 15; // 负延迟让动画立即从不同点开始
+                // --- 结束新增 ---
+
                 timelineItem.innerHTML = `
-                    <div class="timeline-node status-${status}" data-course-id="${courseId}">
+                    <div class="timeline-node status-${status}" data-course-id="${courseId}" style="animation-delay: ${randomDelay}s;">
                         <span class="node-label">${course.name.charAt(0)}</span>
-                            </div>
-                    <div class="timeline-card-container">
-                        <div class="timeline-card-content" id="card-${courseId}"></div>
-                        </div>
+                    </div>
                 `;
                 timelineContainer.appendChild(timelineItem);
 

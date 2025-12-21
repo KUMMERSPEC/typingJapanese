@@ -291,39 +291,41 @@ header h1 {
 .review-options { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 20px; justify-content: center; }
 .review-actions { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 15px; justify-content: center; }
 
-/* -- Course Timeline View (全局横向换行布局) -- */
+/* -- Course "Bubble" View -- */
 .course-timeline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px; /* 节点间距 */
-    padding: 28px 0 10px; /* 顶部留出空间给“学习进度”文字 */
     position: relative;
+    height: 200px; /* 定义“气球池”的高度 */
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-top: 30px; /* 为标题留出空间 */
+    overflow: hidden; /* 防止气球飘出去 */
 }
 
-/* “学习进度”文字样式 */
+/* “学习进度”标题，现在绝对安全 */
 .course-timeline::before {
     content: '学习进度';
     position: absolute;
-    top: 0;
+    top: -24px;
     left: 0;
     font-size: 0.85rem;
     color: #999;
     font-weight: 500;
 }
 
-/* 隐藏旧的竖线 */
-.timeline-item::before { display: none; }
-
-/* 节点块 */
-.timeline-item {
-    flex: 0 0 44px; /* 固定宽度 */
-    height: 44px;
-    position: relative;
+/* 隐藏旧的 flex/grid 布局相关的所有样式 */
+.timeline-item,
+.timeline-item::before {
+    display: block;
+    position: absolute; /* 每个 item 都是一个绝对定位的容器 */
+    width: auto;
+    height: auto;
     margin: 0;
     padding: 0;
+    flex: none;
 }
 
 .timeline-node {
+    position: relative; /* 恢复相对定位，因为它在 item 内部 */
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -334,24 +336,35 @@ header h1 {
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative; /* 不再绝对定位，在 flex item 中正常排列 */
+    /* 应用浮动动画 */
+    animation: float-bubble 15s ease-in-out infinite;
+}
+
+/* 气球动画 */
+@keyframes float-bubble {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(5px, 10px); }
+    50% { transform: translate(-5px, -5px); }
+    75% { transform: translate(10px, -10px); }
+    100% { transform: translate(0, 0); }
 }
 
 .timeline-node .node-label { font-weight: bold; }
 .timeline-node.status-completed { border-color: #4CAF50; background: #e8f5e9; color: #4CAF50; }
 .timeline-node.status-in-progress { border-color: #4a90e2; background: #e3f2fd; color: #4a90e2; }
 .timeline-node.status-locked { border-color: #e5e7eb; background: #f9fafb; color: #9ca3af; }
-.timeline-node:hover { transform: scale(1.1); }
+.timeline-node:hover { transform: scale(1.2) !important; z-index: 10; } /* 鼠标悬浮时放大 */
 
 /* 隐藏旧的卡片容器 */
 .timeline-card-container { display: none; }
 
-/* 新的展开卡片容器样式 */
+/* 展开的卡片容器样式 */
 #expandedCardView {
     width: 100%;
     margin-top: 12px;
 }
 
+/* 返回按钮样式 */
 .back-to-timeline-btn {
     display: inline-flex;
     align-items: center;
@@ -377,57 +390,3 @@ header h1 {
 .back-to-timeline-btn i {
     font-size: 0.9rem;
 }
-
-/* ===== PC 端：节点换行紧凑，卡片横向铺满列 ===== */
-@media (min-width:1024px){
-
-    /* 时间线容器：多行流，节点间 gap 12px */
-    .course-timeline{
-        display:flex;
-        flex-wrap:wrap;
-        gap:12px;
-        overflow:visible;
-        padding:10px 0 20px;
-    }
-  
-    /* 每个节点块：圆点＋隐藏卡片 */
-    .timeline-item{
-        flex:0 0 46px;
-        height:46px;            /* 与圆点同高 */
-        position:relative;
-        margin:0;
-    }
-    .timeline-item::before{display:none;}
-  
-    .timeline-node{
-        width:40px;height:40px;
-        position:relative;
-        margin:auto;
-    }
-  
-    /* 卡片容器：占满课程列宽，浮在节点之下 */
-    .timeline-card-container{
-        position:relative;
-        /* 横向铺满：列宽 - 节点宽度 - gap */
-        width:calc(100% - 58px);   /* 46px 节点 + 12px gap */
-        margin-left:-58px;         /* 往左拉回来与节点贴边 */
-        padding-top:12px;
-        z-index:10;
-    }
-  
-    /* 折叠/展开动画 */
-    .timeline-card-content{
-        max-height:0;
-        overflow:hidden;
-        opacity:0;
-        transition:max-height .35s ease, opacity .3s;
-        background:#fff;           /* 如需与背景区分 */
-        border-radius:8px;
-        box-shadow:0 2px 8px rgba(0,0,0,.08);
-    }
-    .timeline-card-content.expanded{
-        max-height:800px;
-        opacity:1;
-        padding:12px 0;
-    }
-  }
