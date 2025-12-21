@@ -229,17 +229,45 @@ header h1 {
 @media screen and (min-width: 1024px) {
     main {
         display: grid;
-        grid-template-columns: 360px 1fr; /* 左侧今日面板，右侧课程列表 */
+        grid-template-columns: 360px 1fr; /* 左侧固定宽度，右侧自适应 */
         gap: 20px;
-        align-items: start;
+        /* align-items: stretch; 是 grid 的默认行为，确保两列等高 */
     }
-    main > .stats-section { grid-column: 1; margin: 0; }
-    main > .course-section { grid-column: 2; margin-top: 0; }
-    /* 其余元素（复习面板、统计面板、图表等）占满整行 */
-    main > :not(.stats-section):not(.course-section) { grid-column: 1 / -1; }
+
+    /* 让两个 section 都能在 flex 容器中正确拉伸 */
+    main > .stats-section,
+    main > .course-section {
+        display: flex;
+        flex-direction: column;
+        margin: 0; /* 重置外边距 */
+    }
+    
+    main > .course-section {
+        margin-top: 0;
+    }
+
+    /* 让卡片和气球池填满其父容器 */
+    .stats-card,
+    .course-section {
+        flex-grow: 1; /* 允许拉伸 */
+    }
 
     /* 左侧今日面板在窄列里改为单列竖排，更清晰 */
-    .stats-section .stats-content { grid-template-columns: 1fr; gap: 12px; }
+    .stats-section .stats-content {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* 气球池容器也需要能拉伸 */
+    .course-timeline {
+        flex-grow: 1; /* 关键：让气球池填满剩余空间 */
+        position: relative;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin-top: 30px;
+        overflow: hidden;
+        min-height: 250px; /* 保证一个最小高度 */
+    }
 }
 
 /* 响应式布局 */
@@ -291,7 +319,7 @@ header h1 {
 .review-options { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 20px; justify-content: center; }
 .review-actions { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 15px; justify-content: center; }
 
-/* -- Course "Bubble" View -- */
+image.png/* -- Course "Bubble" View -- */
 /* -- Course "Bubble" View -- */
 .course-timeline {
     position: relative;
