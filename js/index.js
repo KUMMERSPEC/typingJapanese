@@ -250,9 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
     checkCourseCompletion();
 
     // 监听统计更新事件
-    window.addEventListener('statisticsUpdated', (event) => {
-        console.log('Statistics update event received:', event.detail);
-        const stats = event.detail.stats;
+    window.addEventListener('statisticsUpdated', () => {
+        console.log('Statistics update event received, fetching new stats...');
+        const stats = statsData.getStatistics(); // 从数据源获取最新数据
         const learnedSentences = statsData.getLearnedSentences();
         
         // 更新首页统计数据

@@ -350,20 +350,16 @@ class Statistics {
             // 更新统计 - 直接使用 getMasteryStats
             stats.masteryStats = this.getMasteryStats();
 
-            // 保存到 localStorage
-            try {
-                localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-                console.log('更新后的句子状态:', {
-                    questionId,
-                    proficiency: item.proficiency,
-                    reviewCount: item.reviewCount,
-                    correctCount: item.correctCount,
-                    consecutiveCorrect: item.consecutiveCorrect,
-                    nextReviewDate: item.nextReviewDate
-                });
-            } catch (e) {
-                console.error('保存到 localStorage 失败:', e);
-            }
+            // 保存更新后的统计数据
+            this.saveStatistics(stats);
+            console.log('更新后的句子状态:', {
+                questionId,
+                proficiency: item.proficiency,
+                reviewCount: item.reviewCount,
+                correctCount: item.correctCount,
+                consecutiveCorrect: item.consecutiveCorrect,
+                nextReviewDate: item.nextReviewDate
+            });
 
             return item;
         } catch (error) {
