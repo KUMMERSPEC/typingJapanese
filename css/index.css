@@ -231,36 +231,41 @@ header h1 {
         display: grid;
         grid-template-columns: 360px 1fr; /* 左侧固定宽度，右侧自适应 */
         gap: 20px;
-        /* align-items: stretch; 是 grid 的默认行为，确保两列等高 */
+        align-items: start; /* 关键：确保两列都从顶部对齐 */
     }
 
-    /* 让两个 section 都能在 flex 容器中正确拉伸 */
+    /* 重置两个 section 的外边距 */
     main > .stats-section,
     main > .course-section {
+        margin: 0;
+    }
+
+    /* 左侧“今日”卡片保持其自然高度，不拉伸 */
+    .stats-section {
         display: flex;
         flex-direction: column;
-        margin: 0; /* 重置外边距 */
     }
-    
-    main > .course-section {
-        margin-top: 0;
+    .stats-card {
+        flex-grow: 0; /* 关键：禁止拉伸 */
     }
 
-    /* 让卡片和气球池填满其父容器 */
-    .stats-card,
+    /* 右侧“课程列表”区域填满可用空间 */
     .course-section {
-        flex-grow: 1; /* 允许拉伸 */
+        display: flex;
+        flex-direction: column;
+        /* 如果需要，可以设置一个最小高度来保证气球池有空间 */
+        min-height: 400px; 
     }
 
-    /* 左侧今日面板在窄列里改为单列竖排，更清晰 */
+    /* 左侧今日面板在窄列里改为单列竖排 */
     .stats-section .stats-content {
         grid-template-columns: 1fr;
         gap: 12px;
     }
 
-    /* 气球池容器也需要能拉伸 */
+    /* 气球池容器填满剩余空间 */
     .course-timeline {
-        flex-grow: 1; /* 关键：让气球池填满剩余空间 */
+        flex-grow: 1; /* 气球池拉伸以填满 .course-section */
         position: relative;
         border: 1px solid #e5e7eb;
         border-radius: 12px;
@@ -268,6 +273,19 @@ header h1 {
         overflow: hidden;
         min-height: 250px; /* 保证一个最小高度 */
     }
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 1200px) {
+    .stats-section .stats-content { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+}
+
+@media screen and (max-width: 768px) {
+    .stats-section .stats-content { grid-template-columns: 1fr; gap: 10px; }
+    .course-list { grid-template-columns: 1fr; }
+    .section-header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .header-buttons { width: 100%; gap: 10px; flex-direction: column; align-items: stretch; }
+    .select-control, .action-button, .view-all-btn { width: 100%; text-align: center; justify-content: center; box-sizing: border-box; margin: 0; }
 }
 
 /* 响应式布局 */
