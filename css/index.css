@@ -399,9 +399,10 @@ header h1 {
     box-sizing: border-box;
 }
 
-/* === PC端：节点换行 + 卡片单独整行显示 ================== */
+/* ===== PC 端：节点换行紧凑，卡片横向铺满列 ===== */
 @media (min-width:1024px){
 
+    /* 时间线容器：多行流，节点间 gap 12px */
     .course-timeline{
         display:flex;
         flex-wrap:wrap;
@@ -410,37 +411,44 @@ header h1 {
         padding:10px 0 20px;
     }
   
-    /* 紧凑的节点块 */
+    /* 每个节点块：圆点＋隐藏卡片 */
     .timeline-item{
-        width:46px;      /* = 圆点直径 + 余量 */
         flex:0 0 46px;
-        margin:0;
+        height:46px;            /* 与圆点同高 */
         position:relative;
+        margin:0;
     }
     .timeline-item::before{display:none;}
+  
     .timeline-node{
         width:40px;height:40px;
-        position:relative;              /* 现在相对定位即可 */
+        position:relative;
         margin:auto;
     }
   
-    /* ---- 卡片区域占满父 flex 行 ---- */
+    /* 卡片容器：占满课程列宽，浮在节点之下 */
     .timeline-card-container{
-        width:100%;            /* 整行宽度 */
-        flex:0 0 100%;         /* 强制独占一整行 */
-        order:1;               /* 确保排在节点之后 */
+        position:relative;
+        /* 横向铺满：列宽 - 节点宽度 - gap */
+        width:calc(100% - 58px);   /* 46px 节点 + 12px gap */
+        margin-left:-58px;         /* 往左拉回来与节点贴边 */
         padding-top:12px;
-        position:relative;     /* 回到普通流中，不再 absolute */
+        z-index:10;
     }
   
+    /* 折叠/展开动画 */
     .timeline-card-content{
         max-height:0;
         overflow:hidden;
         opacity:0;
         transition:max-height .35s ease, opacity .3s;
+        background:#fff;           /* 如需与背景区分 */
+        border-radius:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
     .timeline-card-content.expanded{
-        max-height:800px;      /* 足够大容纳卡片 */
+        max-height:800px;
         opacity:1;
+        padding:12px 0;
     }
   }
