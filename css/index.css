@@ -399,59 +399,54 @@ header h1 {
     box-sizing: border-box;
 }
 
-/* ===== 桌面端最终布局：左侧今日固定，右侧课程横向滚动 ===== */
+/* ── PC 横向时间线（节点重叠紧凑版） ───────────────────── */
 @media (min-width:1024px){
 
-    /* 主区域仍是两列网格，不允许被撑宽 */
-    main{
-        display:grid;
-        grid-template-columns:360px 1fr;   /* 左360 右剩余 */
-        gap:20px;
-        align-items:start;
-        overflow:hidden;                   /* 主容器不横向滚动 */
-    }
+    /* 主容器两列布局不变 */
+    main{display:grid;grid-template-columns:360px 1fr;gap:20px;}
   
-    /* 右侧列：自身也不横向滚动，只让内部时间线滚动 */
-    .course-section{
-        min-width:0;                       /* 关键：允许被压缩到网格列宽 */
-        display:flex;
-        flex-direction:column;
-        overflow:hidden;                   /* 防止列宽被内容撑大 */
-    }
-  
-    /* 课程时间线：占满列宽，内部节点横向滚动 */
+    /* 时间线容器：横向滚动，无 gap */
     .course-timeline{
-        display:inline-flex;               /* 让其宽度跟随内容，但不超出列滚动 */
-        min-width:100%;                    /* 至少与列同宽，不撑整个页面 */
-        gap:16px;                          /* 节点间距可调 */
+        display:flex;
         overflow-x:auto;
         overflow-y:hidden;
-        padding:8px 0 16px;
+        padding:10px 0 18px;
+        /* 圆点间重叠 12px（40-28） */
     }
   
-    /* 每个节点块仅 90px 宽，卡片展开后使用绝对定位不再撑宽父元素 */
+    /* 每个节点块宽度≈圆点 40px，负 margin 实现“左右叠” */
     .timeline-item{
-        flex:0 0 90px;
         position:relative;
-        padding-top:48px;
+        flex:0 0 40px;   /* 基本宽度 = 圆点直径 */
+        margin-left:-12px;     /* 与前一个节点重叠 12px，可调紧凑度 */
+        padding-top:48px;      /* 给圆点留垂直空间 */
     }
+    .timeline-item:first-child{margin-left:0;} /* 第一个不负边距 */
+  
+    /* 圆点水平居中 */
     .timeline-node{
-        position:absolute;left:50%;top:0;transform:translateX(-50%);
+        position:absolute;
+        left:50%;
+        top:0;
+        transform:translateX(-50%);
     }
   
-    /* 展开卡片绝对定位悬浮，不拉伸时间线宽度 */
+    /* 隐掉竖线 */
+    .timeline-item::before{display:none;}
+  
+    /* 卡片用绝对定位悬浮，不撑父宽 */
     .timeline-card-container{
         position:absolute;
         left:50%;
-        top:100%;             /* 节点下方 */
+        top:100%;          /* 圆点正下方 */
         transform:translateX(-50%);
-        width:300px;          /* 卡片固定宽 */
+        width:300px;       /* 卡片原始宽度，必要时调 */
         z-index:5;
         padding-top:12px;
     }
-    .timeline-card-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s,opacity .3s;}
+    .timeline-card-content{max-height:0;overflow:hidden;opacity:0;transition:max-height .3s ease,opacity .25s;}
     .timeline-card-content.expanded{max-height:800px;opacity:1;}
-  }
   
-  /* section-header 按钮保持可见 */
-  .section-header{position:relative; z-index:10;}
+    /* section-header 固定在上，避免被挤出 */
+    .section-header{position:relative;z-index:10;}
+  }
