@@ -225,6 +225,23 @@ header h1 {
 .view-all-btn::after { content: '→'; margin-left: 8px; transition: transform 0.2s ease; }
 .view-all-btn:hover::after { transform: translateX(3px); }
 
+/* 桌面端：今日概览与课程列表左右排布 */
+@media screen and (min-width: 1024px) {
+    main {
+        display: grid;
+        grid-template-columns: 360px 1fr; /* 左侧今日面板，右侧课程列表 */
+        gap: 20px;
+        align-items: start;
+    }
+    main > .stats-section { grid-column: 1; margin: 0; }
+    main > .course-section { grid-column: 2; margin-top: 0; }
+    /* 其余元素（复习面板、统计面板、图表等）占满整行 */
+    main > :not(.stats-section):not(.course-section) { grid-column: 1 / -1; }
+
+    /* 左侧今日面板在窄列里改为单列竖排，更清晰 */
+    .stats-section .stats-content { grid-template-columns: 1fr; gap: 12px; }
+}
+
 /* 响应式布局 */
 @media screen and (max-width: 1200px) {
     .stats-section .stats-content { grid-template-columns: repeat(2, 1fr); gap: 15px; }
