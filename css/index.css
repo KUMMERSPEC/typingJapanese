@@ -256,6 +256,26 @@ header h1 {
 }
 
 /* 其他组件样式 */
+
+/* 桌面端：让页面在100%缩放下无页面滚动，主区域自适应屏高 */
+@media (min-width: 1024px) {
+    html, body { height: 100%; overflow: hidden; }
+    .container { height: 100vh; display: flex; flex-direction: column; }
+    header { margin-bottom: 16px; }
+    header h1 { font-size: 2rem; }
+    main { flex: 1; min-height: 0; overflow: hidden; }
+    /* 右侧课程区域内部滚动，避免整页出现滚动条 */
+    .course-section { display: flex; flex-direction: column; min-height: 0; }
+    .course-section .section-header { flex-shrink: 0; }
+    .course-timeline { flex: 1; overflow-x: auto; overflow-y: hidden; }
+    /* 左侧今日卡片充满列，但不撑开页面 */
+    .stats-section { display: flex; flex-direction: column; min-height: 0; }
+    .stats-card { flex: 1; display: flex; flex-direction: column; }
+    .stats-section .stats-content { grid-template-columns: 1fr; gap: 12px; }
+    /* 底部图表限制高度，避免挤出首屏 */
+    #statsChart { max-height: 28vh; }
+}
+
 .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; display:none; }
 .overlay.show { display:block; opacity: 1; }
 
@@ -377,4 +397,28 @@ header h1 {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+/* 桌面端：将时间线改为左右排布 */
+@media (min-width: 1024px) {
+    .course-timeline { 
+        display: flex; 
+        gap: 20px; 
+        align-items: flex-start; 
+        overflow-x: auto; 
+        padding-bottom: 10px; 
+    }
+    .timeline-item { 
+        padding-left: 0; 
+        padding-top: 60px; 
+        margin-bottom: 0; 
+        min-width: 280px; 
+    }
+    .timeline-item::before { display: none; }
+    .timeline-node { 
+        left: 50%; 
+        transform: translateX(-50%); 
+        top: 0; 
+    }
+    .timeline-card-container { padding-top: 10px; }
 }

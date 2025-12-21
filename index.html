@@ -216,54 +216,12 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                // 初始化自定义收藏管理器
+                // 初始化自定义收藏管理器（其内部已处理所有相关事件绑定，避免重复）
                 window.customCollectionsManager = new CustomCollectionsManager();
                 
                 // 初始化课程显示
                 const courseDisplay = new CourseDisplay();
                 courseDisplay.loadCourses();
-
-                // 添加收藏夹相关事件监听
-                const collectionsModal = document.getElementById('collectionsModal');
-                const addCollectionModal = document.getElementById('addCollectionModal');
-                
-                // 打开收藏夹列表
-                document.querySelector('[data-action="manage-collections"]').addEventListener('click', () => {
-                    collectionsModal.classList.add('show');
-                });
-
-                // 关闭按钮事件
-                document.querySelectorAll('.close-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        collectionsModal.classList.remove('show');
-                        addCollectionModal.classList.remove('show');
-                    });
-                });
-
-                // 新建收藏夹按钮
-                document.querySelector('.add-collection-btn').addEventListener('click', () => {
-                    collectionsModal.classList.remove('show');
-                    addCollectionModal.classList.add('show');
-                });
-
-                // 处理新建收藏夹表单提交
-                document.getElementById('addCollectionForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const name = document.getElementById('collectionName').value;
-                    const description = document.getElementById('collectionDescription').value;
-                    window.customCollectionsManager.createCollection(name, description);
-                    addCollectionModal.classList.remove('show');
-                    document.getElementById('addCollectionForm').reset();
-                });
-
-                // 取消按钮事件
-                document.querySelectorAll('.cancel-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        addCollectionModal.classList.remove('show');
-                        document.getElementById('addCollectionForm').reset();
-                    });
-                });
-
             } catch (error) {
                 console.error('Error initializing:', error);
                 const courseList = document.querySelector('.course-list');
@@ -467,6 +425,24 @@
         window.addEventListener('statisticsUpdated', () => {
             updateStatisticsDisplay();
         });
+    </script>
+    <script>
+      (function(){
+        function applyFitScale(){
+          if (window.innerWidth < 1024) { document.querySelector('.container').style.transform=''; return; }
+          const root = document.querySelector('.container');
+          if (!root) return;
+          // 计算内容高度（包含主区域、时间线等）
+          const contentHeight = root.scrollHeight;
+          const vh = window.innerHeight;
+          // 仅当内容高度超过视口时按比例缩放，保底到 0.8，避免过小
+          const scale = Math.min(1, Math.max(0.8, vh / contentHeight));
+          root.style.transformOrigin = 'top center';
+          root.style.transform = scale < 1 ? `scale(${scale})` : '';
+        }
+        window.addEventListener('load', applyFitScale);
+        window.addEventListener('resize', () => { requestAnimationFrame(applyFitScale); });
+      })();
     </script>
 </body>
 </html> 
