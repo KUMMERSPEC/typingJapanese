@@ -399,44 +399,48 @@ header h1 {
     box-sizing: border-box;
 }
 
-/* ===== PC 端：时间线节点自动换行版 ===== */
+/* === PC端：节点换行 + 卡片单独整行显示 ================== */
 @media (min-width:1024px){
 
-    /* 时间线容器变为多行 flex，gap = 12px */
     .course-timeline{
         display:flex;
-        flex-wrap:wrap;        /* 关键：允许换行 */
+        flex-wrap:wrap;
         gap:12px;
-        overflow:visible;      /* 取消横向滚动条 */
-        padding:8px 0 16px;
+        overflow:visible;
+        padding:10px 0 20px;
     }
   
-    /* 节点块宽高≈圆点，让节点排得很密 */
+    /* 紧凑的节点块 */
     .timeline-item{
-        flex:0 0 46px;         /* 40px 圆点 + 6px 余量 */
-        height:46px;
-        position:relative;
+        width:46px;      /* = 圆点直径 + 余量 */
+        flex:0 0 46px;
         margin:0;
-        padding:0;             /* 不留顶部空白 */
+        position:relative;
     }
-    .timeline-item::before{display:none;}    /* 去掉竖线 */
+    .timeline-item::before{display:none;}
     .timeline-node{
         width:40px;height:40px;
-        position:absolute;inset:0;
-        margin:auto;           /* 完全居中 */
+        position:relative;              /* 现在相对定位即可 */
+        margin:auto;
     }
   
-    /* -- 卡片展开：占整行（100%），浮在节点下方 -- */
+    /* ---- 卡片区域占满父 flex 行 ---- */
     .timeline-card-container{
-        position:relative;     /* 让卡片在文档流中占块级宽度 */
-        width:100%;            /* 跨满一行 */
-        margin-top:4px;
+        width:100%;            /* 整行宽度 */
+        flex:0 0 100%;         /* 强制独占一整行 */
+        order:1;               /* 确保排在节点之后 */
+        padding-top:12px;
+        position:relative;     /* 回到普通流中，不再 absolute */
     }
+  
     .timeline-card-content{
-        max-height:0; overflow:hidden; opacity:0;
-        transition:max-height .3s ease, opacity .25s;
+        max-height:0;
+        overflow:hidden;
+        opacity:0;
+        transition:max-height .35s ease, opacity .3s;
     }
     .timeline-card-content.expanded{
-        max-height:800px; opacity:1; padding:12px 0;
+        max-height:800px;      /* 足够大容纳卡片 */
+        opacity:1;
     }
   }
