@@ -195,48 +195,44 @@ export class CourseDisplay {
                 }
             });
 
+            // 确保课程区域有一个用于显示展开卡片的独立容器
+            const courseSection = timelineContainer.closest('.course-section');
+            let expandedCardContainer = document.getElementById('expandedCardView');
+            if (courseSection && !expandedCardContainer) {
+                expandedCardContainer = document.createElement('div');
+                expandedCardContainer.id = 'expandedCardView';
+                expandedCardContainer.style.display = 'none'; // 默认隐藏
+                courseSection.appendChild(expandedCardContainer);
+            }
+
+            const showTimeline = () => {
+                timelineContainer.style.display = '';
+                if (expandedCardContainer) expandedCardContainer.style.display = 'none';
+                if (expandedCardContainer) expandedCardContainer.innerHTML = '';
+            };
+
+            const showCard = (courseId) => {
+                timelineContainer.style.display = 'none';
+                if (expandedCardContainer) {
+                    expandedCardContainer.style.display = 'block';
+                    // 生成卡片内容，并添加一个返回按钮
+                    expandedCardContainer.innerHTML = `
+                        <div class="expanded-card-wrapper">
+                            <button class="back-to-timeline-btn"><i class="fas fa-arrow-left"></i> 返回课程列表</button>
+                            ${this._generateCourseCard(courseId)}
+                        </div>
+                    `;
+                    // 为返回按钮添加事件
+                    expandedCardContainer.querySelector('.back-to-timeline-btn').addEventListener('click', showTimeline);
+                }
+            };
+
             // 为时间线容器统一添加点击事件监听
             timelineContainer.addEventListener('click', (e) => {
                 const node = e.target.closest('.timeline-node');
-                if (!node) return;
-
-                const courseId = node.dataset.courseId;
-                const cardContainer = document.getElementById(`card-${courseId}`);
-                if (!cardContainer) return;
-
-                const timelineItem = node.closest('.timeline-item');
-                if (!timelineItem) return;
-
-                const isExpanded = cardContainer.classList.contains('expanded');
-                const isFirst = timelineItem === timelineContainer.querySelector('.timeline-item:first-child');
-
-                // 如果点击的不是第一个，且卡片未展开，则移动到顶部
-                if (!isFirst && !isExpanded) {
-                    this.moveTimelineItemToTop(timelineItem, timelineContainer);
-                }
-
-                // 关闭其他已展开的卡片
-                document.querySelectorAll('.timeline-card-content.expanded').forEach(el => {
-                    if (el !== cardContainer) {
-                        el.classList.remove('expanded');
-                        el.innerHTML = '';
-                    }
-                });
-
-                if (!isExpanded) {
-                    cardContainer.innerHTML = this._generateCourseCard(courseId);
-                    setTimeout(() => {
-                        cardContainer.classList.add('expanded');
-                        // 如果移动到顶部，平滑滚动到时间线容器顶部
-                        if (!isFirst) {
-                            const courseSection = timelineContainer.closest('.course-section');
-                            if (courseSection) {
-                                courseSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            } else {
-                                timelineContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }
-                        }
-                    }, 10);
+                if (node) {
+                    const courseId = node.dataset.courseId;
+                    showCard(courseId);
                 }
             });
 
