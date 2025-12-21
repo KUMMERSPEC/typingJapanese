@@ -1044,7 +1044,7 @@ export class PracticeManager {
                 
                 if (nextLessonBtn) {
                     // 默认立即隐藏，防止闪烁
-                    nextLessonBtn.style.display = 'none';
+                        nextLessonBtn.style.display = 'none';
 
                     if (this.course !== 'collection') {
                         // 异步检查是否存在下一课
@@ -1060,10 +1060,10 @@ export class PracticeManager {
                                 // 如果能加载成功，则显示按钮并绑定事件
                                 nextLessonBtn.style.display = 'inline-flex'; // 或者 'block'
                                 nextLessonBtn.addEventListener('click', () => {
-                                    const basePath = window.location.pathname;
-                                    const params = new URLSearchParams(window.location.search);
-                                    params.set('lesson', nextLesson);
-                                    window.location.href = `${basePath}?${params.toString()}`;
+                                        const basePath = window.location.pathname;
+                                        const params = new URLSearchParams(window.location.search);
+                                        params.set('lesson', nextLesson);
+                                        window.location.href = `${basePath}?${params.toString()}`;
                                 });
                             } catch (err) {
                                 // 无法加载下一课，按钮保持隐藏状态

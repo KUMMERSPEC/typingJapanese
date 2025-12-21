@@ -2,15 +2,15 @@ import { courseData } from './courseData.js';
 
 export class CourseDisplay {
     constructor() {
-        this.selectedBook = localStorage.getItem('selectedBook') || 'word-group';
-        this.courses = (courseData[this.selectedBook] || {}).courses || {};
+            this.selectedBook = localStorage.getItem('selectedBook') || 'word-group';
+            this.courses = (courseData[this.selectedBook] || {}).courses || {};
         
         // DOM 元素只获取一次
         this.timelineContainer = document.querySelector('.course-timeline');
         this.courseSection = this.timelineContainer ? this.timelineContainer.closest('.course-section') : null;
         this.expandedCardContainer = null;
 
-        this.loadData();
+            this.loadData();
         this.initialize(); // 初始化一次
     }
 
@@ -132,31 +132,31 @@ export class CourseDisplay {
 
     async loadCourses() {
         if (!this.timelineContainer) return;
-        
+
         this.showTimeline(); // 确保开始时时间线是可见的
         this.timelineContainer.innerHTML = ''; // 清空旧的气球
         this.loadData();
 
         // ... (处理收藏夹卡片的逻辑保持不变)
-        const selectedCollection = localStorage.getItem('selectedCollection');
-        const mgr = window.customCollectionsManager;
-        if (selectedCollection && mgr) {
+            const selectedCollection = localStorage.getItem('selectedCollection');
+            const mgr = window.customCollectionsManager;
+            if (selectedCollection && mgr) {
             // ... (这部分代码和原来一样)
             return;
         }
 
         // 重新生成所有气球
         Object.entries(this.courses).forEach(([courseId, course]) => {
-            const total = Object.keys(course.lessons || {}).length;
-            const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
+                const total = Object.keys(course.lessons || {}).length;
+                const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
             const completedArr = Object.keys(completedMap).filter(k => k.startsWith(`${courseId}_`)).map(k => k.split('_')[1]);
-            const completed = completedArr.length;
-            const inProgress = completed > 0 && completed < total;
-            const isCompleted = total > 0 && completed === total;
+                const completed = completedArr.length;
+                const inProgress = completed > 0 && completed < total;
+                const isCompleted = total > 0 && completed === total;
             let status = isCompleted ? 'completed' : (inProgress ? 'in-progress' : 'locked');
 
-            const timelineItem = document.createElement('div');
-            timelineItem.className = 'timeline-item';
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
 
             const containerWidth = this.timelineContainer.offsetWidth;
             const containerHeight = this.timelineContainer.offsetHeight;
@@ -168,12 +168,12 @@ export class CourseDisplay {
 
             const randomDelay = -Math.random() * 15;
 
-            timelineItem.innerHTML = `
+                timelineItem.innerHTML = `
                 <div class="timeline-node status-${status}" data-course-id="${courseId}" style="animation-delay: ${randomDelay}s;">
-                    <span class="node-label">${course.name.charAt(0)}</span>
-                </div>
-            `;
+                        <span class="node-label">${course.name.charAt(0)}</span>
+                        </div>
+                `;
             this.timelineContainer.appendChild(timelineItem);
         });
     }
-}
+} 
