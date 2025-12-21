@@ -295,7 +295,8 @@ header h1 {
 /* -- Course "Bubble" View -- */
 .course-timeline {
     position: relative;
-    height: 220px; /* 响应式高度 */
+    height: 220px; /* 默认高度 */
+    min-height: 150px; /* 确保在 grid 布局中有一个最小高度 */
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     margin-top: 30px;

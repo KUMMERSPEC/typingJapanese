@@ -1442,6 +1442,13 @@ export class PracticeManager {
                 gap: 16px;
                 margin-top: 24px;
                 justify-content: center;
+                align-items: center; /* 垂直居中 */
+            }
+
+            .button-group > button {
+                display: inline-flex; /* 确保所有按钮都是 flex 容器 */
+                align-items: center;
+                justify-content: center;
             }
 
             .review-btn, .next-btn, .next-lesson-btn {
