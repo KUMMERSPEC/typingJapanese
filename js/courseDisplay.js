@@ -78,6 +78,7 @@ export class CourseDisplay {
 
     setCollection(collectionId) {
         localStorage.setItem('selectedCollection', collectionId);
+        localStorage.removeItem('selectedBook'); // 选择收藏夹时，清除课程选择
         this.loadCourses();
     }
 
@@ -130,6 +131,51 @@ export class CourseDisplay {
         `;
     }
 
+    _renderCollectionCard(collectionId) {
+        const mgr = window.customCollectionsManager;
+        if (!mgr) return;
+
+        const collection = mgr.collections[collectionId];
+        if (!collection) {
+            this.timelineContainer.innerHTML = '<p>找不到该收藏夹。</p>';
+            return;
+        }
+
+        const totalSentences = Object.keys(collection.sentences || {}).length;
+        const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
+
+        const cardHtml = `
+            <div class="course-card">
+                <div class="card-header">
+                    <h2>${collection.name.charAt(0)}</h2>
+                    <span class="continue-badge">收藏夹</span>
+                </div>
+                <div class="card-content">
+                    <h3>${collection.name}</h3>
+                    <p>${collection.description || '自定义收藏夹'}</p>
+                    <div class="course-stats">
+                        <span><i class="fas fa-book"></i> ${totalSentences} 句子</span>
+                    </div>
+                    <div class="course-actions">
+                        <a class="start-button" href="${basePath}practice/practice.html?collection=${collectionId}">
+                            <i class="fas fa-play"></i> 开始学习
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.timelineContainer.style.display = 'none';
+        this.expandedCardContainer.style.display = 'block';
+        this.expandedCardContainer.innerHTML = `
+            <div class="expanded-card-wrapper">
+                 <button class="back-to-timeline-btn"><i class="fas fa-arrow-left"></i> 返回课程列表</button>
+                ${cardHtml}
+            </div>
+        `;
+        this.expandedCardContainer.querySelector('.back-to-timeline-btn').addEventListener('click', () => this.showTimeline());
+    }
+
     async loadCourses() {
         if (!this.timelineContainer) return;
 
@@ -137,12 +183,12 @@ export class CourseDisplay {
         this.timelineContainer.innerHTML = ''; // 清空旧的气球
         this.loadData();
 
-        // ... (处理收藏夹卡片的逻辑保持不变)
-            const selectedCollection = localStorage.getItem('selectedCollection');
-            const mgr = window.customCollectionsManager;
-            if (selectedCollection && mgr) {
-            // ... (这部分代码和原来一样)
-            return;
+        const selectedCollection = localStorage.getItem('selectedCollection');
+        const mgr = window.customCollectionsManager;
+
+        if (selectedCollection && mgr) {
+            this._renderCollectionCard(selectedCollection);
+            return; // 渲染完收藏夹卡片后，直接返回
         }
 
         // 重新生成所有气球
@@ -176,4 +222,4 @@ export class CourseDisplay {
             this.timelineContainer.appendChild(timelineItem);
         });
     }
-} 
+}
