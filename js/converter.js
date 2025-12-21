@@ -150,7 +150,12 @@ class JapaneseConverter {
             }
 
             this.initializationPromise = new Promise((resolve, reject) => {
-                kuromoji.builder({ dicPath: this.dictPath }).build((err, tokenizer) => {
+                // 修正：始终使用相对于项目根目录的固定路径
+                const dicPath = window.location.hostname === 'kummerspec.github.io' 
+                    ? '/typingJapanese/dict/' 
+                    : './dict/';
+
+                kuromoji.builder({ dicPath: dicPath }).build((err, tokenizer) => {
                     if (err) {
                         console.error('Tokenizer initialization failed:', err);
                         this.isLoading = false;
