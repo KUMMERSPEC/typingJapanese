@@ -7,6 +7,15 @@ let reviewPage = 1;
 const REVIEW_PAGE_SIZE = 20;
 let reviewTotalPages = 1;
 
+function isTodayDue(item){
+    if (!item.nextReviewDate) return false;
+    if (item.proficiency === 'high' || item.proficiency === 'master') return false;
+    const d = new Date(item.nextReviewDate);
+    const today = new Date(); today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
+    return d.getTime() <= today.getTime();
+  }
+
 // 初始化复习面板
 function initReviewPanel() {
     const reviewTrigger = document.querySelector('[data-action="review"]');
@@ -194,18 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.learnedSentences.textContent = learnedSentences;
     }
     if (elements.reviewItems) {
-        // 只统计今天待复习的数量
-        const todayStr = new Date().toLocaleDateString();
-        const todayCount = Object.values(stats.reviewHistory || {})
-            .filter(it => {
-                if (!it.nextReviewDate) return false;
-                if (it.proficiency === 'high' || it.proficiency === 'master') return false;
-                const d = new Date(it.nextReviewDate);
-                const t0 = new Date(todayStr);
-                d.setHours(0,0,0,0);
-                return d.getTime() <= t0.getTime();
-            }).length;
-        elements.reviewItems.textContent = todayCount;
+        // 通过 statsData 获取待复习数量
+        elements.reviewItems.textContent = statsData.getReviewCount();
     }
 
     // 添加事件监听
@@ -280,15 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.learnedSentences.textContent = learnedSentences;
         }
         if (elements.reviewItems) {
-            const todayStr2 = new Date().toLocaleDateString();
-            const todayCount2 = Object.values(stats.reviewHistory || {})
-              .filter(it=>{
-                 if (!it.nextReviewDate) return false;
-                 if (it.proficiency === 'high' || it.proficiency === 'master') return false;
-                 const d=new Date(it.nextReviewDate); const t0=new Date(todayStr2); d.setHours(0,0,0,0);
-                 return d.getTime()<=t0.getTime();
-              }).length;
-            elements.reviewItems.textContent = todayCount2;
+            // 通过 statsData 获取待复习数量
+            elements.reviewItems.textContent = statsData.getReviewCount();
         }
 
         // 更新复习列表
@@ -355,57 +347,22 @@ function updateReviewList() {
     const reviewList = document.querySelector('.review-list');
     const reviewCountDiv = document.querySelector('.review-count');
     
-    // 获取所有复习项
-    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
-    const reviewHistory = stats.reviewHistory || {};
+        // 通过 statsData 获取统一的复习项
+    let allItems = statsData.getReviewItems();
     let items = [];
 
-    // 添加调试信息
-    console.log('复习历史数据:', reviewHistory);
-    
-    // 遍历复习历史
-    for (const key in reviewHistory) {
-        const item = reviewHistory[key];
-        
-        // 添加调试信息
-        console.log(`检查句子 ${key}:`, item);
-        
-        // 确保句子有内容 - 检查多个可能的属性
-        if (item && (item.sentence || item.japanese || item.text)) {
-            // 确保句子有显示内容
-            const displayText = item.sentence || item.japanese || item.text || key;
-            
-            // 根据筛选条件处理
-            switch (selectedFilter) {
-                case 'all':
-                    // 显示所有句子
-                    items.push({...item, displayText});
-                    break;
-                    
-                case 'today':
-                    // 显示今天需要复习的句子
-                    const reviewDate = new Date(item.nextReviewDate);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    
-                    if (reviewDate <= today && item.proficiency !== 'high' && item.proficiency !== 'master') {
-                        items.push({...item, displayText});
-                    }
-                    break;
-                    
-                case 'weak':
-                    // 显示需要加强的句子
-                    if (item.proficiency === 'low' || 
-                        (item.reviewCount > 0 && item.correctCount / item.reviewCount < 0.6)) {
-                        items.push({...item, displayText});
-                    }
-                    break;
-            }
-        } else {
-            console.warn(`句子 ${key} 没有内容:`, item);
-        }
+    // 根据筛选条件处理
+    switch (selectedFilter) {
+        case 'all':
+            items = allItems;
+            break;
+        case 'today':
+            items = allItems.filter(item => item.needsReview);
+            break;
+        case 'weak':
+            items = allItems.filter(item => item.proficiency === 'low' || 
+                (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6));
+            break;
     }
 
     // 按复习日期排序
@@ -430,10 +387,9 @@ function updateReviewList() {
             reviewList.innerHTML = '<div class="empty-message">没有需要复习的句子</div>';
         } else {
             reviewList.innerHTML = currentPageItems.map(item => {
-                // 使用我们统一的 getMasteryStatus 函数获取状态
-                const statusInfo = statsData.getMasteryStatus(item);
-                const status = statusInfo.text;
-                const statusClass = statusInfo.class;
+                // 直接使用 item 中已经计算好的状态
+                const status = item.displayStatus;
+                const statusClass = item.statusClass;
 
                 return `
                     <div class="review-item">
@@ -446,7 +402,11 @@ function updateReviewList() {
                         <div class="review-status">
                             <span class="status-badge ${statusClass}">${status}</span>
                             <span class="next-review">下次复习: ${
-                                new Date(item.nextReviewDate).toLocaleDateString()
+                                (()=>{
+                                    const d=new Date(item.nextReviewDate);
+                                    const t=new Date(); t.setHours(0,0,0,0); d.setHours(0,0,0,0);
+                                    return (d<t?t:d).toLocaleDateString();
+                                  })()
                             }</span>
                         </div>
                     </div>

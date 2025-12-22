@@ -1,22 +1,29 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+// 使用 index.html 中已经初始化的 Firebase 服务
+// 等待 Firebase 服务加载完成
+let auth, googleProvider;
+
+function initializeAuth() {
+    if (window.firebaseServices) {
+        auth = window.firebaseServices.auth;
+        googleProvider = new window.firebaseServices.GoogleAuthProvider();
+    } else {
+        // 如果服务还没加载，等待一下
+        setTimeout(initializeAuth, 100);
+        return;
+    }
+    
+    // 开始初始化认证逻辑
+    initAuthLogic();
+}
+
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  GoogleAuthProvider,
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { firebaseConfig } from "./firebaseConfig.js";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-
-// --- DOM Element References ---
-document.addEventListener('DOMContentLoaded', () => {
+// --- 认证逻辑初始化函数 ---
+function initAuthLogic() {
     const googleBtn = document.getElementById('googleBtn');
     const emailBtn = document.getElementById('emailBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -28,47 +35,47 @@ document.addEventListener('DOMContentLoaded', () => {
     function show(el) { if (el) el.style.display = 'inline-flex'; }
     function hide(el) { if (el) el.style.display = 'none'; }
 
-    // Listen for auth state changes to update UI
-    onAuthStateChanged(auth, user => {
+    // 监听认证状态变化，更新 UI
+    window.firebaseServices.onAuthStateChanged(auth, user => {
         if (user) {
-            // User is signed in
+            // 用户已登录
             hide(googleBtn);
             hide(emailBtn);
             show(logoutBtn);
         } else {
-            // User is signed out
+            // 用户已登出
             show(googleBtn);
             show(emailBtn);
             hide(logoutBtn);
         }
     });
 
-    // --- Event Listeners ---
+    // --- 事件监听器 ---
 
-    // Google Sign-In
+    // Google 登录
     if (googleBtn) {
         googleBtn.addEventListener('click', () => {
-            signInWithPopup(auth, googleProvider).catch(error => {
+            window.firebaseServices.signInWithPopup(auth, googleProvider).catch(error => {
                 console.error("Google sign-in error", error);
                 alert(`Google登录失败: ${error.message}`);
             });
         });
     }
 
-    // Show Email Sign-In Modal
+    // 显示邮箱登录模态框
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
             if (emailModal) emailModal.classList.add('show');
         });
     }
 
-    // Hide Email Sign-In Modal
+    // 隐藏邮箱登录模态框
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
             if (emailModal) emailModal.classList.remove('show');
         });
     }
-    // Also hide on overlay click
+    // 点击遮罩层隐藏
     if (emailModal) {
         emailModal.addEventListener('click', (e) => {
             if (e.target === emailModal) {
@@ -77,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Email Login/Registration Form Submission
+    // 处理邮箱登录/注册表单提交
     if (emailLoginForm) {
         emailLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -85,12 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = emailLoginForm.password.value;
 
             try {
-                // Attempt to sign in
+                // 尝试登录
                 await signInWithEmailAndPassword(auth, email, password);
                 if (emailModal) emailModal.classList.remove('show');
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
-                    // If user doesn't exist, ask to create a new account
+                    // 如果用户不存在，询问是否创建新账户
                     if (confirm('该邮箱未注册，是否要创建新账户？')) {
                         try {
                             await createUserWithEmailAndPassword(auth, email, password);
@@ -101,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } else {
-                    // Other errors (wrong password, etc.)
+                    // 其他错误（密码错误等）
                     console.error("Sign-in error", error);
                     alert(`登录失败: ${error.message}`);
                 }
@@ -109,13 +116,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Sign-Out
+    // 处理登出
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).catch(error => {
+            window.firebaseServices.signOut(auth).catch(error => {
                 console.error("Sign-out error", error);
             });
         });
     }
+}
+
+// 等待 DOM 加载完成后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAuth();
 });
 

@@ -98,20 +98,6 @@
     <!-- 在 head 部分添加 Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
-
-<!-- email modal will be appended later -->
-    <div class="modal-content" style="max-width:380px">
-      <button class="close-btn">×</button>
-      <h3 style="margin-top:0;">邮箱登录</h3>
-      <form id="emailLoginForm" style="display:flex;flex-direction:column;gap:12px;">
-        <input name="email"    type="email"    placeholder="Email" required>
-        <input name="password" type="password" placeholder="密码 (≥6位)" minlength="6" required>
-        <button type="submit" class="primary-btn">登录 / 注册</button>
-      </form>
-    </div>
-  </div>
-  
   
 <body>
     <!-- 添加加载指示器 -->
@@ -273,13 +259,13 @@
       // Your web app's Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyCaqffy_xL2RqNjIrtIBT0Wbe-mpUADKH8",
-        authDomain: "typinglanguage.firebaseapp.com",
+        authDomain: "typinglanguage.firebaseapp.com",  // 注意应为 .firebase**app**.com
         projectId: "typinglanguage",
-        storageBucket: "typinglanguage.appspot.com",
+        storageBucket: "typinglanguage.appspot.com",   // 注意应为 .app**spot**.com
         messagingSenderId: "804802637246",
         appId: "1:804802637246:web:0d6e540604c9d8fb179def",
         measurementId: "G-W4X986PRJS"
-      };
+        };
 
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
