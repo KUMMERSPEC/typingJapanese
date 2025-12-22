@@ -394,7 +394,7 @@ function updateReviewList() {
                 return `
                     <div class="review-item">
                         <div class="sentence-content">
-                            <div class="japanese">${item.displayText}</div>
+                            <div class="japanese">${item.japanese || item.sentence || item.text}</div>
                             <div class="hiragana">${item.hiragana || ''}</div>
                             <div class="meaning">${item.meaning || ''}</div>
                             <div class="course-info">${item.course || ''} ${item.lesson ? '- ' + item.lesson : ''}</div>
