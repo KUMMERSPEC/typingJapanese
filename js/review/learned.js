@@ -182,7 +182,14 @@ import statsData from '../common/statsData.js';
 
   function fmtDate(d) {
     if (!d) return '';
-    try { return new Date(d).toLocaleDateString(); } catch { return d; }
+    try {
+      const date = new Date(d);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      date.setHours(0,0,0,0);
+      const adjusted = date < today ? today : date;
+      return adjusted.toLocaleDateString();
+    } catch { return d; }
   }
 
   function render() {
@@ -214,6 +221,30 @@ import statsData from '../common/statsData.js';
     }
 
     if (pageInfoEl) pageInfoEl.textContent = `${page} / ${totalPages}`;
+
+    // 跳页输入
+    let jump = document.getElementById('learnedPageJump');
+    const pagWrap = document.querySelector('.pagination');
+    if (!jump && pagWrap) {
+        jump = document.createElement('input');
+        jump.type = 'number';
+        jump.id = 'learnedPageJump';
+        jump.style.width = '60px';
+        jump.style.textAlign = 'center';
+        jump.min = 1;
+        pagWrap.insertBefore(jump, btnNext);
+    }
+    if (jump) {
+        jump.max = totalPages;
+        jump.value = page;
+        jump.onchange = () => {
+           let n = parseInt(jump.value,10)||1;
+           n = Math.max(1, Math.min(totalPages, n));
+           page = n;
+           render();
+        };
+    }
+
     if (btnPrev) btnPrev.disabled = page <= 1;
     if (btnNext) btnNext.disabled = page >= totalPages;
   }

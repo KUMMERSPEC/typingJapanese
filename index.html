@@ -437,7 +437,7 @@
                             const nextReview = new Date(item.nextReviewDate);
                             const reviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
                             
-                            if (reviewDay <= today) {
+                            if (reviewDay.getTime() === today.getTime()) {
                                 reviewCount++;
                             }
                         }

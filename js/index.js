@@ -194,7 +194,17 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.learnedSentences.textContent = learnedSentences;
     }
     if (elements.reviewItems) {
-        elements.reviewItems.textContent = Object.keys(stats.reviewHistory || {}).length;
+        // 只统计今天待复习的数量
+        const todayStr = new Date().toLocaleDateString();
+        const todayCount = Object.values(stats.reviewHistory || {})
+            .filter(it => {
+                if (!it.nextReviewDate) return false;
+                const d = new Date(it.nextReviewDate);
+                const t0 = new Date(todayStr);
+                d.setHours(0,0,0,0);
+                return d.getTime() <= t0.getTime();
+            }).length;
+        elements.reviewItems.textContent = todayCount;
     }
 
     // 添加事件监听
@@ -269,7 +279,14 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.learnedSentences.textContent = learnedSentences;
         }
         if (elements.reviewItems) {
-            elements.reviewItems.textContent = Object.keys(stats.reviewHistory || {}).length;
+            const todayStr2 = new Date().toLocaleDateString();
+            const todayCount2 = Object.values(stats.reviewHistory || {})
+              .filter(it=>{
+                 if (!it.nextReviewDate) return false;
+                 const d=new Date(it.nextReviewDate); const t0=new Date(todayStr2); d.setHours(0,0,0,0);
+                 return d.getTime()<=t0.getTime();
+              }).length;
+            elements.reviewItems.textContent = todayCount2;
         }
 
         // 更新复习列表
@@ -332,7 +349,7 @@ function updateReviewList() {
     const btnNext = document.getElementById('reviewNext');
     const paginationEl = document.querySelector('.review-pagination');
     const filterSelect = document.getElementById('reviewFilter');
-    const selectedFilter = filterSelect ? filterSelect.value : 'all';
+    const selectedFilter = filterSelect ? filterSelect.value : 'today';
     const reviewList = document.querySelector('.review-list');
     const reviewCountDiv = document.querySelector('.review-count');
     
@@ -444,6 +461,28 @@ function updateReviewList() {
     // 更新分页信息
     if (pageInfoEl) {
         pageInfoEl.textContent = `${reviewPage} / ${reviewTotalPages}`;
+    }
+
+    // 跳页输入框
+    let jumpInput = document.getElementById('reviewPageJump');
+    if (!jumpInput && paginationEl) {
+        jumpInput = document.createElement('input');
+        jumpInput.type = 'number';
+        jumpInput.id = 'reviewPageJump';
+        jumpInput.style.width = '60px';
+        jumpInput.style.textAlign = 'center';
+        jumpInput.min = 1;
+        paginationEl.insertBefore(jumpInput, btnNext); // 插在下一页按钮之前
+    }
+    if (jumpInput) {
+        jumpInput.max = reviewTotalPages;
+        jumpInput.value = reviewPage;
+        jumpInput.onchange = () => {
+           let n = parseInt(jumpInput.value, 10) || 1;
+           n = Math.max(1, Math.min(reviewTotalPages, n));
+           reviewPage = n;
+           updateReviewList();
+        };
     }
 
     // 更新分页按钮状态
