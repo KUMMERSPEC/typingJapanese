@@ -505,14 +505,17 @@ class Statistics {
                     if (!stats.reviewHistory[questionId]) {
                         const [courseId, lessonName] = lessonId.split(':');
                         stats.reviewHistory[questionId] = {
-                            japanese: question.character,
+                            japanese: question.character, // 确保这里有值
+                            sentence: question.character, // 添加 sentence 作为备用
                             hiragana: question.hiragana,
                             meaning: question.meaning,
                             course: courseId,
                             lesson: lessonName,
                             lastReview: new Date().toISOString(),
                             nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                            proficiency: 'low'
+                            proficiency: 'low',
+                            reviewCount: 0, // 初始化 reviewCount
+                            correctCount: 0 // 初始化 correctCount
                         };
                     }
                 });

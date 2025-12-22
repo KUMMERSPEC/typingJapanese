@@ -202,9 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.learnedSentences) {
         elements.learnedSentences.textContent = learnedSentences;
     }
-    if (elements.reviewItems) {
-        // 通过 statsData 获取待复习数量
-        elements.reviewItems.textContent = statsData.getReviewCount();
+        if (elements.reviewItems) {
+        // 直接从过滤后的数组中获取“今日待复习”的数量
+        const todayCount = statsData.getReviewItems().filter(item => item.needsReview).length;
+        elements.reviewItems.textContent = todayCount;
     }
 
     // 添加事件监听
@@ -279,8 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.learnedSentences.textContent = learnedSentences;
         }
         if (elements.reviewItems) {
-            // 通过 statsData 获取待复习数量
-            elements.reviewItems.textContent = statsData.getReviewCount();
+            // 直接从过滤后的数组中获取“今日待复习”的数量
+            const todayCount = statsData.getReviewItems().filter(item => item.needsReview).length;
+            elements.reviewItems.textContent = todayCount;
         }
 
         // 更新复习列表
@@ -394,7 +396,7 @@ function updateReviewList() {
                 return `
                     <div class="review-item">
                         <div class="sentence-content">
-                            <div class="japanese">${item.japanese || item.sentence || item.text}</div>
+                            <div class="japanese">${item.japanese || item.sentence || item.text || 'Error: Missing Content'}</div>
                             <div class="hiragana">${item.hiragana || ''}</div>
                             <div class="meaning">${item.meaning || ''}</div>
                             <div class="course-info">${item.course || ''} ${item.lesson ? '- ' + item.lesson : ''}</div>

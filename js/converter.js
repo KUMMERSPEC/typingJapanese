@@ -179,7 +179,7 @@ class JapaneseConverter {
         }
     }
 
-    async convert(text) {
+    async convert(text, lang = 'ja') {
         try {
             console.log('Converting text:', text);
 
@@ -193,6 +193,18 @@ class JapaneseConverter {
             if (!this.tokenizer) {
                 console.error('Tokenizer not available');
                 throw new Error('Tokenizer not available');
+            }
+
+                        if (lang === 'en') {
+                const words = text.toLowerCase().split(/\s+/).filter(w => w);
+                return {
+                    success: true,
+                    data: {
+                        original: text,
+                        hiragana: words.join(':'),
+                        romaji: '' // 英语没有罗马音
+                    }
+                };
             }
 
             // 执行转换
