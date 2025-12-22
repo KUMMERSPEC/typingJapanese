@@ -24,7 +24,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
-  signOut
+  signOut,
+  RecaptchaVerifier
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 function initAuthLogic() {
@@ -39,6 +40,12 @@ function initAuthLogic() {
     // --- UI Management ---
     function show(el) { if (el) el.style.display = 'inline-flex'; }
     function hide(el) { if (el) el.style.display = 'none'; }
+
+    // 为防止滥用，初始化不可见的 reCAPTCHA 验证器
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible'
+    });
+    window.recaptchaVerifier.render();
 
     // 监听认证状态变化，更新 UI
     onAuthStateChanged(auth, user => {
