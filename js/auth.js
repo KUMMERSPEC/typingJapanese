@@ -1,11 +1,10 @@
 // 使用 index.html 中已经初始化的 Firebase 服务
 // 等待 Firebase 服务加载完成
-let auth, googleProvider;
+let auth;
 
 function initializeAuth() {
     if (window.firebaseServices) {
         auth = window.firebaseServices.auth;
-        googleProvider = new window.firebaseServices.GoogleAuthProvider();
     } else {
         // 如果服务还没加载，等待一下
         setTimeout(initializeAuth, 100);
@@ -19,7 +18,17 @@ function initializeAuth() {
 
 
 // --- 认证逻辑初始化函数 ---
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 function initAuthLogic() {
+    const googleProvider = new GoogleAuthProvider();
     const googleBtn = document.getElementById('googleBtn');
     const emailBtn = document.getElementById('emailBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -32,7 +41,7 @@ function initAuthLogic() {
     function hide(el) { if (el) el.style.display = 'none'; }
 
     // 监听认证状态变化，更新 UI
-    window.firebaseServices.onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, user => {
         if (user) {
             // 用户已登录
             hide(googleBtn);
@@ -60,7 +69,7 @@ function initAuthLogic() {
     // Google 登录
     if (googleBtn) {
         googleBtn.addEventListener('click', () => {
-            window.firebaseServices.signInWithPopup(auth, googleProvider).catch(error => {
+            signInWithPopup(auth, googleProvider).catch(error => {
                 console.error("Google sign-in error", error);
                 alert(`Google登录失败: ${error.message}`);
             });
@@ -98,14 +107,14 @@ function initAuthLogic() {
 
             try {
                 // 尝试登录
-                await window.firebaseServices.signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(auth, email, password);
                 if (emailModal) emailModal.classList.remove('show');
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
                     // 如果用户不存在，询问是否创建新账户
                     if (confirm('该邮箱未注册，是否要创建新账户？')) {
                         try {
-                            await window.firebaseServices.createUserWithEmailAndPassword(auth, email, password);
+                            await createUserWithEmailAndPassword(auth, email, password);
                             if (emailModal) emailModal.classList.remove('show');
                         } catch (createError) {
                             console.error("Account creation error", createError);
@@ -124,7 +133,7 @@ function initAuthLogic() {
     // 处理登出
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            window.firebaseServices.signOut(auth).catch(error => {
+            signOut(auth).catch(error => {
                 console.error("Sign-out error", error);
             });
         });
