@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const todayCount = Object.values(stats.reviewHistory || {})
             .filter(it => {
                 if (!it.nextReviewDate) return false;
+                if (it.proficiency === 'high' || it.proficiency === 'master') return false;
                 const d = new Date(it.nextReviewDate);
                 const t0 = new Date(todayStr);
                 d.setHours(0,0,0,0);
@@ -283,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const todayCount2 = Object.values(stats.reviewHistory || {})
               .filter(it=>{
                  if (!it.nextReviewDate) return false;
+                 if (it.proficiency === 'high' || it.proficiency === 'master') return false;
                  const d=new Date(it.nextReviewDate); const t0=new Date(todayStr2); d.setHours(0,0,0,0);
                  return d.getTime()<=t0.getTime();
               }).length;
@@ -388,7 +390,7 @@ function updateReviewList() {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     
-                    if (reviewDate <= tomorrow) {
+                    if (reviewDate <= today && item.proficiency !== 'high' && item.proficiency !== 'master') {
                         items.push({...item, displayText});
                     }
                     break;

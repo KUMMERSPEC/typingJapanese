@@ -51,7 +51,41 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
+
+        /* Pagination & action buttons in review panel */
+        .review-panel .pagination button,
+        .review-panel .review-actions button {
+            background:#6366f1;
+            color:#fff;
+            border:none;
+            padding:8px 16px;
+            border-radius:8px;
+            cursor:pointer;
+            transition:all .2s;
+        }
+        .review-panel .pagination button[disabled]{opacity:.5;cursor:not-allowed;}
+        .review-panel .pagination input[type=number]{
+            width:60px;
+            padding:6px 8px;
+            text-align:center;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+        }
+        .review-panel .review-actions{display:flex;gap:12px;margin:12px 0;justify-content:center;}
+
+        /* Google login button */
+        .google-btn{
+            display:flex;align-items:center;gap:8px;
+            background:#fff;
+            border:1px solid #d1d5db;
+            border-radius:6px;
+            padding:10px 20px;
+            font-weight:500;
+            box-shadow:0 2px 4px rgba(0,0,0,.06);
+            cursor:pointer;
+            transition:box-shadow .2s;
+        }
+        .google-btn:hover{box-shadow:0 4px 8px rgba(0,0,0,.08);}    </style>
 
     <!-- 在 head 部分添加 Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
