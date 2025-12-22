@@ -141,7 +141,13 @@ class Statistics {
                         ...item,
                         displayStatus: status.text,
                         statusClass: status.class,
-                        needsReview: new Date(item.nextReviewDate) <= now
+                        needsReview: (() => {
+                    const reviewDate = new Date(item.nextReviewDate);
+                    reviewDate.setHours(0, 0, 0, 0);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return reviewDate <= today;
+                })()
                     };
                 });
 
