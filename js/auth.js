@@ -42,11 +42,20 @@ function initAuthLogic() {
             hide(googleBtn);
             hide(emailBtn);
             show(logoutBtn);
+            const userDisplayName = document.getElementById('userDisplayName');
+            if (userDisplayName) {
+                userDisplayName.textContent = user.displayName || user.email;
+                userDisplayName.style.display = 'inline';
+            }
         } else {
             // 用户已登出
             show(googleBtn);
             show(emailBtn);
             hide(logoutBtn);
+            const userDisplayName = document.getElementById('userDisplayName');
+            if (userDisplayName) {
+                userDisplayName.style.display = 'none';
+            }
         }
     });
 

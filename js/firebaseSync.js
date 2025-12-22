@@ -3,8 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot } = window.firebaseServices;
 
-    const authButton = document.getElementById('authButton');
-    const userDisplayName = document.getElementById('userDisplayName');
+
 
     let currentUser = null;
     let unsubscribeFromFirestore = null; // To store the listener unsub function
@@ -14,9 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             // User is signed in
             currentUser = user;
-            authButton.textContent = 'Logout';
-            userDisplayName.textContent = `Welcome, ${user.displayName || 'User'}`;
-            userDisplayName.style.display = 'inline';
+            // UI updates are handled by auth.js
 
             // ** NEW: Start the robust sync process **
             await syncData(user.uid);
@@ -24,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // User is signed out
             currentUser = null;
-            authButton.textContent = 'Login with Google';
-            userDisplayName.style.display = 'none';
+            // UI updates are handled by auth.js
 
             // Stop listening to data updates
             if (unsubscribeFromFirestore) {
@@ -38,18 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    authButton.addEventListener('click', () => {
-        if (currentUser) {
-            // If user is logged in, log them out
-            signOut(auth);
-        } else {
-            // If user is not logged in, show Google login popup
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).catch(error => {
-                console.error("Authentication failed:", error);
-            });
-        }
-    });
+    // The auth logic is now handled in auth.js
 
     // --- NEW Data Synchronization Logic (Refactored) ---
 
