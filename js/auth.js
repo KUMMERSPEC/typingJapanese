@@ -16,11 +16,7 @@ function initializeAuth() {
     initAuthLogic();
 }
 
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 
 // --- 认证逻辑初始化函数 ---
 function initAuthLogic() {
@@ -102,14 +98,14 @@ function initAuthLogic() {
 
             try {
                 // 尝试登录
-                await signInWithEmailAndPassword(auth, email, password);
+                await window.firebaseServices.signInWithEmailAndPassword(auth, email, password);
                 if (emailModal) emailModal.classList.remove('show');
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
                     // 如果用户不存在，询问是否创建新账户
                     if (confirm('该邮箱未注册，是否要创建新账户？')) {
                         try {
-                            await createUserWithEmailAndPassword(auth, email, password);
+                            await window.firebaseServices.createUserWithEmailAndPassword(auth, email, password);
                             if (emailModal) emailModal.classList.remove('show');
                         } catch (createError) {
                             console.error("Account creation error", createError);
