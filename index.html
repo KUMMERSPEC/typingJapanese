@@ -85,11 +85,34 @@
             cursor:pointer;
             transition:box-shadow .2s;
         }
-        .google-btn:hover{box-shadow:0 4px 8px rgba(0,0,0,.08);}    </style>
+        .google-btn:hover{box-shadow:0 4px 8px rgba(0,0,0,.08);}
+
+        /* modal 基础 */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;
+               align-items:center;justify-content:center;z-index:1200;}
+        .modal.show{display:flex;}
+        .modal-content{background:#fff;padding:24px 32px;border-radius:12px;position:relative;}
+        .close-btn{position:absolute;top:8px;right:8px;border:none;background:none;font-size:20px;cursor:pointer;}
+        </style>
 
     <!-- 在 head 部分添加 Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
+
+<!-- email modal will be appended later -->
+    <div class="modal-content" style="max-width:380px">
+      <button class="close-btn">×</button>
+      <h3 style="margin-top:0;">邮箱登录</h3>
+      <form id="emailLoginForm" style="display:flex;flex-direction:column;gap:12px;">
+        <input name="email"    type="email"    placeholder="Email" required>
+        <input name="password" type="password" placeholder="密码 (≥6位)" minlength="6" required>
+        <button type="submit" class="primary-btn">登录 / 注册</button>
+      </form>
+    </div>
+  </div>
+  
+  
 <body>
     <!-- 添加加载指示器 -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -100,11 +123,12 @@
         <!-- 添加遮罩层 -->
         <div class="overlay"></div>
         
-        <header>
+        <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
             <h1>Typing-Japanese</h1>
-            <div class="user-auth-section">
-                <button id="authButton">Login with Google</button>
-                <span id="userDisplayName" style="display: none;"></span>
+            <div id="authZone" style="display:flex;gap:12px;align-items:center;">
+                <button id="googleBtn" class="google-btn">Google 登录</button>
+                <button id="emailBtn"  class="google-btn">邮箱登录</button>
+                <button id="logoutBtn" class="google-btn" style="display:none">登出</button>
             </div>
         </header>
 
@@ -510,5 +534,21 @@
         window.addEventListener('resize', () => { requestAnimationFrame(applyFitScale); });
       })();
     </script>
+
+<!-- 邮箱登录模态 -->
+<div id="emailModal" class="modal">
+  <div class="modal-content" style="max-width:380px">
+    <button class="close-btn">×</button>
+    <h3 style="margin-top:0;">邮箱登录</h3>
+    <form id="emailLoginForm" style="display:flex;flex-direction:column;gap:12px;">
+      <input name="email"    type="email"    placeholder="Email" required>
+      <input name="password" type="password" placeholder="密码 (≥6位)" minlength="6" required>
+      <button type="submit" class="primary-btn">登录 / 注册</button>
+    </form>
+  </div>
+</div>
+
+<!-- Auth 逻辑（整合 Google + Email） -->
+<script type="module" src="js/auth.js"></script>
 </body>
 </html> 
