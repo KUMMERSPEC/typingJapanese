@@ -15,7 +15,7 @@ function initializeAuth() {
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
