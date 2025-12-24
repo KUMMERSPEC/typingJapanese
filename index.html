@@ -275,8 +275,14 @@
 
       // Export for other modules
       window.firebaseServices = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot };
+
+      // Dynamically import firebaseSync.js after services are initialized
+      import('./js/firebaseSync.js').then(() => {
+        console.log('firebaseSync.js loaded dynamically.');
+      }).catch(err => {
+        console.error('Error loading firebaseSync.js:', err);
+      });
     </script>
-    <script type="module" src="js/firebaseSync.js"></script>
 
     <!-- 核心模块 -->
     <script type="module" src="js/common/statsData.js"></script>
