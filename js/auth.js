@@ -78,7 +78,7 @@ function initAuthLogic() {
         googleBtn.addEventListener('click', () => {
             if (googleBtn.disabled) return; // 防抖
             googleBtn.disabled = true;
-            signInWithPopup(auth, googleProvider)
+            signInWithRedirect(auth, googleProvider)
                 .catch(err => {
                     console.error('Google sign-in error', err);
                     alert(`Google 登录失败: ${err.message}`);
