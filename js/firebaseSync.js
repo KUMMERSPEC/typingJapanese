@@ -1,13 +1,10 @@
-// js/firebaseSync.js - with added debugging and robust initialization
+// js/firebaseSync.js - Rewritten to use Firestore API
 
 import {
-    ref,
-    get,
-    set,
-    child,
-    getDatabase
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    doc,
+    getDoc,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 let db;
 let auth;
@@ -15,9 +12,9 @@ let auth;
 // A promise that resolves when Firebase services are ready
 const firebaseReady = new Promise((resolve) => {
     function checkFirebaseServices() {
-        if (window.firebaseServices) {
+        if (window.firebaseServices && window.firebaseServices.db && window.firebaseServices.auth) {
             console.log("[firebaseSync] Firebase services are ready.");
-            db = window.firebaseServices.db;
+            db = window.firebaseServices.db; // This is a Firestore instance
             auth = window.firebaseServices.auth;
             resolve();
         } else {
@@ -28,7 +25,7 @@ const firebaseReady = new Promise((resolve) => {
     checkFirebaseServices();
 });
 
-// --- Function to load data from Firebase ---
+// --- Function to load data from Firestore ---
 async function loadDataFromFirebase() {
     await firebaseReady; // Wait for initialization
     const user = auth.currentUser;
@@ -37,35 +34,38 @@ async function loadDataFromFirebase() {
         return;
     }
 
-    console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
+    console.log(`[firebaseSync] Attempting to load data for user: ${user.uid} from Firestore.`);
     try {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, `users/${user.uid}/data`));
-        if (snapshot.exists()) {
-            const cloudData = snapshot.val();
-            console.log("[firebaseSync] Data successfully loaded from Firebase:", cloudData);
+        const userDocRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userDocRef);
+
+        if (docSnap.exists()) {
+            const cloudData = docSnap.data();
+            console.log("[firebaseSync] Data successfully loaded from Firestore:", cloudData);
             updateLocalStorage(cloudData);
         } else {
-            console.log("[firebaseSync] No data found for this user in Firebase. Local data will be used.");
+            console.log("[firebaseSync] No data found for this user in Firestore. Local data will be used.");
         }
     } catch (error) {
-        console.error("[firebaseSync] Error loading data from Firebase:", error);
+        console.error("[firebaseSync] Error loading data from Firestore:", error);
     }
 }
 
-// --- Function to save data to Firebase ---
+// --- Function to save data to Firestore ---
 async function saveDataToFirebase(key, value) {
     await firebaseReady; // Wait for initialization
     const user = auth.currentUser;
     if (!user) {
         return; // Silently fail if not logged in
     }
-    console.log(`[firebaseSync] Attempting to save data for user: ${user.uid}`, { key, size: value?.length });
+    console.log(`[firebaseSync] Attempting to save data for user: ${user.uid} to Firestore`, { key });
     try {
-        await set(ref(db, `users/${user.uid}/data/${key}`), value);
-        console.log(`[firebaseSync] Successfully saved key '${key}' to Firebase.`);
+        const userDocRef = doc(db, 'users', user.uid);
+        // Use setDoc with { merge: true } to update or create fields without overwriting the whole document
+        await setDoc(userDocRef, { [key]: value }, { merge: true });
+        console.log(`[firebaseSync] Successfully saved key '${key}' to Firestore.`);
     } catch (error) {
-        console.error(`[firebaseSync] Error saving key '${key}' to Firebase:`, error);
+        console.error(`[firebaseSync] Error saving key '${key}' to Firestore:`, error);
         throw error;
     }
 }
@@ -82,10 +82,13 @@ function updateLocalStorage(cloudData) {
     for (const key in cloudData) {
         if (Object.hasOwnProperty.call(cloudData, key)) {
             try {
-                const localData = localStorage.getItem(key);
-                const remoteData = JSON.stringify(cloudData[key]);
-                if (localData !== remoteData) {
-                    localStorage.setItem(key, remoteData);
+                // Data from Firestore is already in the correct format, but local storage needs strings.
+                const remoteValue = cloudData[key];
+                const remoteDataString = typeof remoteValue === 'string' ? remoteValue : JSON.stringify(remoteValue);
+                const localDataString = localStorage.getItem(key);
+
+                if (localDataString !== remoteDataString) {
+                    localStorage.setItem(key, remoteDataString);
                     console.log(`[firebaseSync] Updated local storage for key: ${key}`);
                     updated = true;
                 }
