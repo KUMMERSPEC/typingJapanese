@@ -1,28 +1,36 @@
-// js/firebaseSync.js - with added debugging
-
-// Firebase services are initialized in index.html
-let db;
-
-function initializeFirebaseSync() {
-    if (window.firebaseServices) {
-        db = window.firebaseServices.db;
-    } else {
-        setTimeout(initializeFirebaseSync, 100);
-        return;
-    }
-}
+// js/firebaseSync.js - with added debugging and robust initialization
 
 import {
     ref,
     get,
     set,
-    child
+    child,
+    getDatabase
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+let db;
+let auth;
+
+// A promise that resolves when Firebase services are ready
+const firebaseReady = new Promise((resolve) => {
+    function checkFirebaseServices() {
+        if (window.firebaseServices) {
+            console.log("[firebaseSync] Firebase services are ready.");
+            db = window.firebaseServices.db;
+            auth = window.firebaseServices.auth;
+            resolve();
+        } else {
+            console.log("[firebaseSync] Waiting for Firebase services...");
+            setTimeout(checkFirebaseServices, 100);
+        }
+    }
+    checkFirebaseServices();
+});
+
 // --- Function to load data from Firebase ---
 async function loadDataFromFirebase() {
-    const auth = getAuth();
+    await firebaseReady; // Wait for initialization
     const user = auth.currentUser;
     if (!user) {
         console.log("[firebaseSync] User not logged in. Cannot load data.");
@@ -47,11 +55,10 @@ async function loadDataFromFirebase() {
 
 // --- Function to save data to Firebase ---
 async function saveDataToFirebase(key, value) {
-    const auth = getAuth();
+    await firebaseReady; // Wait for initialization
     const user = auth.currentUser;
     if (!user) {
-        // Don't show an error if the user isn't logged in, just skip saving.
-        return;
+        return; // Silently fail if not logged in
     }
     console.log(`[firebaseSync] Attempting to save data for user: ${user.uid}`, { key, size: value?.length });
     try {
@@ -95,9 +102,6 @@ function updateLocalStorage(cloudData) {
         console.log("[firebaseSync] No local storage changes were necessary.");
     }
 }
-
-// Initialize on script load
-initializeFirebaseSync();
 
 // Expose functions to global scope so other scripts can use them
 window.loadDataFromFirebase = loadDataFromFirebase;
