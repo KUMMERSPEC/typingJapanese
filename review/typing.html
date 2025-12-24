@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    
     <div class="practice-container">
         <!-- 顶部信息栏 -->
         <div class="practice-header">
@@ -42,6 +43,33 @@
 
         <!-- 完成界面将通过JavaScript动态添加 -->
     </div>
+
+    <!-- Firebase + Sync (与 index.html 相同) -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCaqffy_xL2RqNjIrtIBT0Wbe-mpUADKH8",
+        authDomain: "typinglanguage.firebaseapp.com",
+        projectId: "typinglanguage",
+        storageBucket: "typinglanguage.appspot.com",
+        messagingSenderId: "804802637246",
+        appId: "1:804802637246:web:0d6e540604c9d8fb179def",
+        measurementId: "G-W4X986PRJS"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      const firebaseServices = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot };
+      window.firebaseServices = firebaseServices;
+
+      import { initFirebaseSync } from '../js/firebaseSync.js'; // 初始化云同步
+      initFirebaseSync(firebaseServices);
+    </script>
 
     <script type="module" src="../js/review/typing.js"></script>
 </body>
