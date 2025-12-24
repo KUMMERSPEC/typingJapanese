@@ -453,6 +453,9 @@ class PracticeManager {
         } catch (error) {
             console.error('Error in showComplete:', error);
         }
+        
+                 // 同步到云端
+        console.log('[practice] Saving updated statistics to Firebase …');
         statsData.saveStatistics(statsData.getStatistics());
     }
    
@@ -587,3 +590,4 @@ function showComplete(course, lesson, stats) {
         console.error('Error in showComplete:', error);
     }
 } 
+       
