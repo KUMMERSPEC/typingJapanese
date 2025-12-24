@@ -15,7 +15,8 @@ function initializeAuth() {
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
@@ -73,14 +74,29 @@ function initAuthLogic() {
         }
     });
 
+    // Google 登录改为使用 Redirect 流程，避免弹窗被拦截/重复调用问题
     if (googleBtn) {
         googleBtn.addEventListener('click', () => {
-            signInWithPopup(auth, googleProvider).catch(error => {
-                console.error("Google sign-in error", error);
+            googleBtn.disabled = true; // 防止重复点击
+            signInWithRedirect(auth, googleProvider).catch(error => {
+                console.error("Google redirect sign-in error", error);
                 alert(`Google登录失败: ${error.message}`);
+                googleBtn.disabled = false;
             });
         });
     }
+
+    // 页面加载后检查是否有重定向结果
+    getRedirectResult(auth).then(result => {
+        if (result?.user) {
+            console.log('[Auth] Google redirect completed, user:', result.user.email || result.user.uid);
+        }
+    }).catch(err => {
+        // 大多数情况下无需提示用户，这里仅记录
+        if (err.code !== 'auth/no-auth-event') {
+            console.warn('getRedirectResult error:', err);
+        }
+    });
 
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
