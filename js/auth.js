@@ -59,6 +59,13 @@ function initAuthLogic() {
                 userDisplayName.textContent = user.displayName || user.email;
                 userDisplayName.style.display = 'inline';
             }
+            // 用户已登录，从 Firebase 加载数据
+            if (typeof loadDataFromFirebase === 'function') {
+                console.log('[Auth] User logged in, attempting to load data from Firebase.');
+                loadDataFromFirebase();
+            } else {
+                console.error('[Auth] loadDataFromFirebase function not found!');
+            }
         } else {
             // 用户已登出
             show(googleBtn);

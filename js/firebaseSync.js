@@ -1,134 +1,104 @@
-// This module handles Firebase authentication and data synchronization.
+// js/firebaseSync.js - with added debugging
 
-document.addEventListener('DOMContentLoaded', () => {
-    const { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot } = window.firebaseServices;
+// Firebase services are initialized in index.html
+let db;
 
+function initializeFirebaseSync() {
+    if (window.firebaseServices) {
+        db = window.firebaseServices.db;
+    } else {
+        setTimeout(initializeFirebaseSync, 100);
+        return;
+    }
+}
 
+import {
+    ref,
+    get,
+    set,
+    child
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    let currentUser = null;
-    let unsubscribeFromFirestore = null; // To store the listener unsub function
+// --- Function to load data from Firebase ---
+async function loadDataFromFirebase() {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+        console.log("[firebaseSync] User not logged in. Cannot load data.");
+        return;
+    }
 
-    // --- Authentication Logic ---
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            // User is signed in
-            currentUser = user;
-            // UI updates are handled by auth.js
-
-            // ** NEW: Start the robust sync process **
-            await syncData(user.uid);
-
+    console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `users/${user.uid}/data`));
+        if (snapshot.exists()) {
+            const cloudData = snapshot.val();
+            console.log("[firebaseSync] Data successfully loaded from Firebase:", cloudData);
+            updateLocalStorage(cloudData);
         } else {
-            // User is signed out
-            currentUser = null;
-            // UI updates are handled by auth.js
-
-            // Stop listening to data updates
-            if (unsubscribeFromFirestore) {
-                unsubscribeFromFirestore();
-                unsubscribeFromFirestore = null;
-            }
-            // Optional: Clear local storage on logout to prevent data conflicts
-            // localStorage.removeItem('typing_statistics');
-            // localStorage.removeItem('custom_collections');
+            console.log("[firebaseSync] No data found for this user in Firebase. Local data will be used.");
         }
-    });
+    } catch (error) {
+        console.error("[firebaseSync] Error loading data from Firebase:", error);
+    }
+}
 
-    // The auth logic is now handled in auth.js
+// --- Function to save data to Firebase ---
+async function saveDataToFirebase(key, value) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+        // Don't show an error if the user isn't logged in, just skip saving.
+        return;
+    }
+    console.log(`[firebaseSync] Attempting to save data for user: ${user.uid}`, { key, size: value?.length });
+    try {
+        await set(ref(db, `users/${user.uid}/data/${key}`), value);
+        console.log(`[firebaseSync] Successfully saved key '${key}' to Firebase.`);
+    } catch (error) {
+        console.error(`[firebaseSync] Error saving key '${key}' to Firebase:`, error);
+        throw error;
+    }
+}
 
-    // --- NEW Data Synchronization Logic (Refactored) ---
+// --- Function to update local storage with cloud data ---
+function updateLocalStorage(cloudData) {
+    if (!cloudData) {
+        console.warn("[firebaseSync] Received null or undefined cloudData. Aborting update.");
+        return;
+    }
 
-    async function syncData(userId) {
-        console.log("Starting data synchronization process...");
-        const userDocRef = doc(db, 'users', userId);
-
-        try {
-            // 1. One-time fetch from Firestore to get the most current data
-            const docSnap = await getDoc(userDocRef);
-
-            if (docSnap.exists()) {
-                // If cloud has data, it's the source of truth.
-                console.log("Cloud data found. Overwriting local storage.");
-                const cloudData = docSnap.data();
-                updateLocalStorage(cloudData);
-            } else {
-                // If cloud has NO data, check if local storage has anything to upload.
-                console.log("No cloud data found. Checking for local data to upload.");
-                const localStats = localStorage.getItem('typing_statistics');
-                const localCollections = localStorage.getItem('custom_collections');
-
-                if (localStats || localCollections) {
-                    await uploadAllData(userId, localCollections, localStats);
+    console.log("[firebaseSync] Updating local storage with cloud data.", cloudData);
+    let updated = false;
+    for (const key in cloudData) {
+        if (Object.hasOwnProperty.call(cloudData, key)) {
+            try {
+                const localData = localStorage.getItem(key);
+                const remoteData = JSON.stringify(cloudData[key]);
+                if (localData !== remoteData) {
+                    localStorage.setItem(key, remoteData);
+                    console.log(`[firebaseSync] Updated local storage for key: ${key}`);
+                    updated = true;
                 }
+            } catch (e) {
+                console.error(`[firebaseSync] Failed to update local storage for key: ${key}`, e);
             }
-
-            // 2. Now, set up the realtime listener for subsequent changes from other devices.
-            // Make sure to not have multiple listeners running.
-            if (unsubscribeFromFirestore) {
-                unsubscribeFromFirestore();
-            }
-            unsubscribeFromFirestore = onSnapshot(userDocRef, (snapshot) => {
-                console.log("Realtime update received from cloud.");
-                if (snapshot.exists()) {
-                    const cloudData = snapshot.data();
-                    updateLocalStorage(cloudData);
-                } else {
-                    console.log("Realtime update: User document was deleted.");
-                }
-            });
-
-        } catch (error) {
-            console.error("Error during initial data sync:", error);
         }
     }
 
-    function updateLocalStorage(cloudData) {
-        if (cloudData.custom_collections) {
-            localStorage.setItem('custom_collections', cloudData.custom_collections);
-        }
-        if (cloudData.typing_statistics) {
-            localStorage.setItem('typing_statistics', cloudData.typing_statistics);
-        }
-
-        // Dispatch events to notify other modules to update their views
-        window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+    if (updated) {
+        console.log("[firebaseSync] Local storage has been updated. Dispatching 'statisticsUpdated' event.");
         window.dispatchEvent(new CustomEvent('statisticsUpdated'));
-        console.log("Local storage updated and UI events dispatched.");
+    } else {
+        console.log("[firebaseSync] No local storage changes were necessary.");
     }
+}
 
-    async function uploadAllData(userId, localCollections, localStats) {
-        if (!userId) return;
-        console.log("Uploading all local data to Firestore for the first time...");
-        try {
-            const userDocRef = doc(db, 'users', userId);
-            await setDoc(userDocRef, {
-                custom_collections: localCollections || '{}',
-                typing_statistics: localStats || '{}',
-                lastUpdated: new Date().toISOString()
-            });
-            console.log("Local data uploaded successfully.");
-        } catch (error) {
-            console.error("Error uploading initial data:", error);
-        }
-    }
+// Initialize on script load
+initializeFirebaseSync();
 
-    async function saveDataToFirebase(key, value) {
-        if (!currentUser) return; // Only save if a user is logged in
-
-        try {
-            const userDocRef = doc(db, 'users', currentUser.uid);
-            await setDoc(userDocRef, {
-                [key]: value,
-                lastUpdated: new Date().toISOString()
-            }, { merge: true }); // Use merge to only update the specified key
-            console.log(`Successfully saved '${key}' to Firebase.`);
-        } catch (error) {
-            console.error(`Error saving '${key}' to Firebase:`, error);
-        }
-    }
-
-    // Expose the saveDataToFirebase function to be used by other modules
-    window.firebaseSync = {
-        saveData: saveDataToFirebase
-    };
-});
+// Expose functions to global scope so other scripts can use them
+window.loadDataFromFirebase = loadDataFromFirebase;
+window.saveDataToFirebase = saveDataToFirebase;
