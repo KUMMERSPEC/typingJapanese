@@ -456,7 +456,12 @@ class PracticeManager {
         
                  // 同步到云端
                  console.log('%c[PRACTICE COMPLETE] ready to push stats', 'background:yellow;color:black');
-                 statsData.saveStatistics(statsData.getStatistics());
+                 statsData.saveStatistics(statsData.getStatistics());   // 先走统一入口
+                // 防守：如果内部仍未找到函数，再直接 push
+                if (typeof window.saveDataToFirebase === 'function') {
+                    window.saveDataToFirebase('typing_statistics',
+                     localStorage.getItem('typing_statistics'));
+                    }
     }
    
 }
