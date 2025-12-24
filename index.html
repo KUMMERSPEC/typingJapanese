@@ -274,14 +274,13 @@
       const db = getFirestore(app);
 
       // Export for other modules
-      window.firebaseServices = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot };
+      const firebaseServices = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot };
+      window.firebaseServices = firebaseServices; // Keep for other modules that might still use it
 
-      // Dynamically import firebaseSync.js after services are initialized
-      import('./js/firebaseSync.js').then(() => {
-        console.log('firebaseSync.js loaded dynamically.');
-      }).catch(err => {
-        console.error('Error loading firebaseSync.js:', err);
-      });
+      // Initialize firebaseSync module with dependency injection
+      import { initFirebaseSync } from './js/firebaseSync.js';
+      initFirebaseSync(firebaseServices);
+      console.log('firebaseSync.js initialized via dependency injection.');
     </script>
 
     <!-- 核心模块 -->
