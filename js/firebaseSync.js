@@ -80,3 +80,8 @@ function updateLocalStorage(cloudData) {
 // Expose functions to global scope
 window.loadDataFromFirebase = loadDataFromFirebase;
 window.saveDataToFirebase = saveDataToFirebase;
+// Provide a compatibility wrapper so other code can call window.firebaseSync.saveData(...)
+window.firebaseSync = {
+  saveData: saveDataToFirebase,
+  loadData: loadDataFromFirebase
+};
