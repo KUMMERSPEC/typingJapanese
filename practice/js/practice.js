@@ -1083,6 +1083,20 @@ export class PracticeManager {
         } catch (error) {
             console.error('Error in showComplete:', error);
         }
+
+        // === 同步到云端 ===
+        console.log('%c[PRACTICE COMPLETE] ready to push stats', 'background:yellow;color:black');
+        try {
+            statsData.saveStatistics(statsData.getStatistics());
+        } catch(e){
+            console.warn('[practice] statsData.saveStatistics failed', e);
+        }
+        if (typeof window.saveDataToFirebase === 'function') {
+            console.log('[practice] direct push to cloud');
+            window.saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics'));
+        } else {
+            console.warn('[practice] saveDataToFirebase not found');
+        }
     }
 
     // 标记课程为已完成
