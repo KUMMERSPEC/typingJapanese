@@ -101,29 +101,54 @@ function initAuthLogic() {
         });
     }
 
-    if (emailLoginForm) {
-        emailLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // 新的登录和注册按钮事件处理
+    const emailLoginBtn = document.getElementById('emailLoginBtn');
+    const emailRegisterBtn = document.getElementById('emailRegisterBtn');
+
+    if (emailLoginBtn) {
+        emailLoginBtn.addEventListener('click', async () => {
             const email = emailLoginForm.email.value;
             const password = emailLoginForm.password.value;
-
+            if (!email || !password) {
+                alert('请输入邮箱和密码。');
+                return;
+            }
             try {
                 await signInWithEmailAndPassword(auth, email, password);
                 if (emailModal) emailModal.classList.remove('show');
             } catch (error) {
+                console.error("Sign-in error", error);
                 if (error.code === 'auth/user-not-found') {
-                    if (confirm('该邮箱未注册，是否要创建新账户？')) {
-                        try {
-                            await createUserWithEmailAndPassword(auth, email, password);
-                            if (emailModal) emailModal.classList.remove('show');
-                        } catch (createError) {
-                            console.error("Account creation error", createError);
-                            alert(`账户创建失败: ${createError.message}`);
-                        }
-                    }
+                    alert('该邮箱未注册，请先注册。');
+                } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    alert('密码错误。');
                 } else {
-                    console.error("Sign-in error", error);
                     alert(`登录失败: ${error.message}`);
+                }
+            }
+        });
+    }
+
+    if (emailRegisterBtn) {
+        emailRegisterBtn.addEventListener('click', async () => {
+            const email = emailLoginForm.email.value;
+            const password = emailLoginForm.password.value;
+            if (!email || !password) {
+                alert('请输入邮箱和密码。');
+                return;
+            }
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                if (emailModal) emailModal.classList.remove('show');
+                alert('注册成功！已自动登录。');
+            } catch (error) {
+                console.error("Account creation error", error);
+                if (error.code === 'auth/email-already-in-use') {
+                    alert('该邮箱已被注册，请直接登录。');
+                } else if (error.code === 'auth/weak-password') {
+                    alert('密码太弱，请使用至少6位字符。');
+                } else {
+                    alert(`注册失败: ${error.message}`);
                 }
             }
         });

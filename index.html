@@ -587,7 +587,10 @@
     <form id="emailLoginForm" style="display:flex;flex-direction:column;gap:12px;">
       <input name="email"    type="email"    placeholder="Email" required>
       <input name="password" type="password" placeholder="密码 (≥6位)" minlength="6" required>
-      <button type="submit" class="primary-btn">登录 / 注册</button>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="button" id="emailLoginBtn" class="primary-btn" style="flex-grow: 1;">登录</button>
+        <button type="button" id="emailRegisterBtn" class="primary-btn" style="flex-grow: 1; background-color: #6c757d;">注册</button>
+      </div>
     </form>
   </div>
 </div>
