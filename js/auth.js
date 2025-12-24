@@ -166,7 +166,13 @@ function initAuthLogic() {
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).catch(error => {
+            signOut(auth).then(() => {
+                // Clear local storage to prevent data from leaking between accounts
+                console.log('[Auth] User signed out, clearing local data.');
+                localStorage.removeItem('typing_statistics');
+                // Reload the page to ensure a clean state
+                window.location.reload();
+            }).catch(error => {
                 console.error("Sign-out error", error);
             });
         });
