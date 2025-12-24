@@ -64,6 +64,9 @@ function initReviewPanel() {
         reviewTrigger.addEventListener('click', () => {
             if (reviewPanel && overlay) {
                 reviewPage = 1; // 打开时回到第一页
+                if (filterSelect) {
+                    filterSelect.value = 'today'; // 默认设置为“今日待复习”
+                }
                 reviewPanel.style.display = 'flex';
                 overlay.style.display = 'block';
                 setTimeout(() => {
@@ -359,7 +362,7 @@ function updateReviewList() {
             items = allItems;
             break;
         case 'today':
-            items = allItems.filter(item => item.needsReview);
+            items = allItems.filter(item => item.needsReview && item.proficiency !== 'high' && item.proficiency !== 'master');
             break;
         case 'weak':
             items = allItems.filter(item => item.proficiency === 'low' || 
