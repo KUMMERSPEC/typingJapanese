@@ -35,7 +35,16 @@ async function loadDataFromFirebase() {
             console.log("[firebaseSync] Data successfully loaded from Firestore:", cloudData);
             updateLocalStorage(cloudData);
         } else {
-            console.log("[firebaseSync] No data found for this user in Firestore.");
+            console.log("[firebaseSync] No data found for this user. Creating a new document.");
+            const initialData = {
+                typing_statistics: localStorage.getItem('typing_statistics') || '{}',
+                custom_collections: '{}',
+                isNewUser: true,
+                lastUpdated: new Date().toISOString()
+            };
+            await setDoc(userDocRef, initialData);
+            console.log("[firebaseSync] New user document created in Firestore.");
+            updateLocalStorage(initialData);
         }
     } catch (error) {
         console.error("[firebaseSync] Error loading data from Firestore:", error);
