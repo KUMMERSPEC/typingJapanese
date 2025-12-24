@@ -1,23 +1,17 @@
 // 使用 index.html 中已经初始化的 Firebase 服务
-// 等待 Firebase 服务加载完成
 let auth;
 
 function initializeAuth() {
     if (window.firebaseServices) {
         auth = window.firebaseServices.auth;
     } else {
-        // 如果服务还没加载，等待一下
         setTimeout(initializeAuth, 100);
         return;
     }
     
-    // 开始初始化认证逻辑
     initAuthLogic();
 }
 
-
-
-// --- 认证逻辑初始化函数 ---
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -37,20 +31,23 @@ function initAuthLogic() {
     const emailLoginForm = document.getElementById('emailLoginForm');
     const closeModalBtn = emailModal ? emailModal.querySelector('.close-btn') : null;
 
-    // --- UI Management ---
     function show(el) { if (el) el.style.display = 'inline-flex'; }
     function hide(el) { if (el) el.style.display = 'none'; }
 
-    // 为防止滥用，初始化不可见的 reCAPTCHA 验证器
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'invisible'
-    });
-    window.recaptchaVerifier.render();
+    // 初始化 reCAPTCHA，并捕获潜在的加载错误
+    try {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          'size': 'invisible'
+        });
+        window.recaptchaVerifier.render().catch(err => {
+            console.warn("[Auth] reCAPTCHA render failed. This might affect phone auth, but email/Google login should still work.", err);
+        });
+    } catch (err) {
+        console.warn("[Auth] Failed to initialize RecaptchaVerifier. This is often due to network issues or ad-blockers.", err);
+    }
 
-    // 监听认证状态变化，更新 UI
     onAuthStateChanged(auth, user => {
         if (user) {
-            // 用户已登录
             hide(googleBtn);
             hide(emailBtn);
             show(logoutBtn);
@@ -59,7 +56,6 @@ function initAuthLogic() {
                 userDisplayName.textContent = user.displayName || user.email;
                 userDisplayName.style.display = 'inline';
             }
-            // 用户已登录，从 Firebase 加载数据
             if (typeof loadDataFromFirebase === 'function') {
                 console.log('[Auth] User logged in, attempting to load data from Firebase.');
                 loadDataFromFirebase();
@@ -67,7 +63,6 @@ function initAuthLogic() {
                 console.error('[Auth] loadDataFromFirebase function not found!');
             }
         } else {
-            // 用户已登出
             show(googleBtn);
             show(emailBtn);
             hide(logoutBtn);
@@ -78,9 +73,6 @@ function initAuthLogic() {
         }
     });
 
-    // --- 事件监听器 ---
-
-    // Google 登录
     if (googleBtn) {
         googleBtn.addEventListener('click', () => {
             signInWithPopup(auth, googleProvider).catch(error => {
@@ -90,20 +82,17 @@ function initAuthLogic() {
         });
     }
 
-    // 显示邮箱登录模态框
     if (emailBtn) {
         emailBtn.addEventListener('click', () => {
             if (emailModal) emailModal.classList.add('show');
         });
     }
 
-    // 隐藏邮箱登录模态框
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
             if (emailModal) emailModal.classList.remove('show');
         });
     }
-    // 点击遮罩层隐藏
     if (emailModal) {
         emailModal.addEventListener('click', (e) => {
             if (e.target === emailModal) {
@@ -112,7 +101,6 @@ function initAuthLogic() {
         });
     }
 
-    // 处理邮箱登录/注册表单提交
     if (emailLoginForm) {
         emailLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -120,12 +108,10 @@ function initAuthLogic() {
             const password = emailLoginForm.password.value;
 
             try {
-                // 尝试登录
                 await signInWithEmailAndPassword(auth, email, password);
                 if (emailModal) emailModal.classList.remove('show');
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
-                    // 如果用户不存在，询问是否创建新账户
                     if (confirm('该邮箱未注册，是否要创建新账户？')) {
                         try {
                             await createUserWithEmailAndPassword(auth, email, password);
@@ -136,7 +122,6 @@ function initAuthLogic() {
                         }
                     }
                 } else {
-                    // 其他错误（密码错误等）
                     console.error("Sign-in error", error);
                     alert(`登录失败: ${error.message}`);
                 }
@@ -144,7 +129,6 @@ function initAuthLogic() {
         });
     }
 
-    // 处理登出
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             signOut(auth).catch(error => {
@@ -154,8 +138,6 @@ function initAuthLogic() {
     }
 }
 
-// 等待 DOM 加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
     initializeAuth();
 });
-
