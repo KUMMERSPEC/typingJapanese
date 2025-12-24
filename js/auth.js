@@ -15,7 +15,7 @@ function initializeAuth() {
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -26,17 +26,7 @@ import {
 function initAuthLogic() {
     const googleProvider = new GoogleAuthProvider();
 
-    // Handle redirect result
-    getRedirectResult(auth)
-        .then((result) => {
-            if (result) {
-                console.log("Google sign-in successful via redirect:", result.user);
-            }
-        })
-        .catch((error) => {
-            console.error('Error during Google sign-in redirect:', error);
-            alert(`Google 登录失败: ${error.message}`);
-        });
+
     const googleBtn = document.getElementById('googleBtn');
     const emailBtn = document.getElementById('emailBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -91,7 +81,7 @@ function initAuthLogic() {
         googleBtn.addEventListener('click', () => {
             if (googleBtn.disabled) return; // 防抖
             googleBtn.disabled = true;
-            signInWithRedirect(auth, googleProvider)
+            signInWithPopup(auth, googleProvider)
                 .catch(err => {
                     console.error('Google sign-in error', err);
                     alert(`Google 登录失败: ${err.message}`);
