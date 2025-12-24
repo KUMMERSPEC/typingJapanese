@@ -16,14 +16,27 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
   RecaptchaVerifier
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function initAuthLogic() {
     const googleProvider = new GoogleAuthProvider();
+
+    // Handle redirect result
+    getRedirectResult(auth)
+        .then((result) => {
+            if (result) {
+                console.log("Google sign-in successful via redirect:", result.user);
+            }
+        })
+        .catch((error) => {
+            console.error('Error during Google sign-in redirect:', error);
+            alert(`Google 登录失败: ${error.message}`);
+        });
     const googleBtn = document.getElementById('googleBtn');
     const emailBtn = document.getElementById('emailBtn');
     const logoutBtn = document.getElementById('logoutBtn');
