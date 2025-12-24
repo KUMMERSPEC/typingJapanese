@@ -453,7 +453,9 @@ class PracticeManager {
         } catch (error) {
             console.error('Error in showComplete:', error);
         }
+        statsData.saveStatistics(statsData.getStatistics());
     }
+   
 }
 
 export function initializePractice(courseId, lessonId) {
