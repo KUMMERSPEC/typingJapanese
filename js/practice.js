@@ -455,8 +455,8 @@ class PracticeManager {
         }
         
                  // 同步到云端
-        console.log('[practice] Saving updated statistics to Firebase …');
-        statsData.saveStatistics(statsData.getStatistics());
+                 console.log('%c[PRACTICE COMPLETE] ready to push stats', 'background:yellow;color:black');
+                 statsData.saveStatistics(statsData.getStatistics());
     }
    
 }
