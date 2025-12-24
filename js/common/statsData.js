@@ -396,9 +396,12 @@ class Statistics {
             localStorage.setItem(STATS_STORAGE_KEY, statsJson);
             console.log('Stats saved successfully to localStorage');
 
-            // Also save to Firebase if the sync module is available
-            if (window.firebaseSync) {
-                window.firebaseSync.saveData('typing_statistics', statsJson);
+            // At the time of saving, dynamically check if the sync function is available.
+            if (typeof window.saveDataToFirebase === 'function') {
+                console.log('[statsData] Cloud sync function found. Saving statistics to Firebase.');
+                window.saveDataToFirebase('typing_statistics', statsJson);
+            } else {
+                console.warn('[statsData] Cloud sync function (saveDataToFirebase) not found. Data will only be saved locally.');
             }
         } catch (error) {
             console.error('Error saving statistics:', error);
