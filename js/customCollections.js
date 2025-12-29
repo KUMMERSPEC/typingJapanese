@@ -889,12 +889,28 @@ export class CustomCollectionsManager {
                 const meaning = parts.slice(1).join(separator).trim();
                 if (!sentence || !meaning) continue;
                 if (lang === 'ja') {
-                    const converted = await converter.convert(sentence);
-                    if (!converted.success) continue;
+                    let hiragana = '';
+                    let romaji = '';
+                    try {
+                        // 尝试使用分词器转换。如果 kuromoji 尚未就绪或发生错误，继续使用回退方案
+                        const converted = await converter.convert(sentence);
+                        if (converted && converted.success) {
+                            hiragana = converted.data.hiragana;
+                            romaji = converted.data.romaji;
+                        }
+                    } catch (err) {
+                        /* eslint-disable no-console */
+                        console.warn('Japanese convert failed, fallback to simple mode:', err);
+                        /* eslint-enable no-console */
+                    }
+                    // 如果转换失败，则简单按字符拆分以保证预览可用
+                    if (!hiragana) {
+                        hiragana = sentence.split('').join(':');
+                    }
                     result.push({
                         japanese: sentence,
-                        hiragana: converted.data.hiragana,
-                        romaji: converted.data.romaji,
+                        hiragana,
+                        romaji,
                         meaning,
                         lang
                     });

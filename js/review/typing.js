@@ -82,6 +82,9 @@ class ReviewManager {
     }
 
     createInputBoxes(hiragana) {
+        const punctuationPattern = /^[、。！？….,，;；:：!！?？]+$/;
+        const stripPunct = (str) => str.split(':').filter(u=>!punctuationPattern.test(u)).join(':');
+        const punctuationPattern = /^[、。！？….,，;；:：!！?？]+$/;
         const inputArea = document.querySelector('.input-area');
         if (!inputArea) return;
 
@@ -99,7 +102,9 @@ class ReviewManager {
         }
 
         // 按冒号分割假名
+        // 预处理：确保标点符号被视为独立 token（已在保存阶段插入冒号）。
         const units = hiragana.split(':');
+        const answerUnits = units.filter(u => !punctuationPattern.test(u));
         
         // 创建输入框容器
         const inputsContainer = document.createElement('div');
@@ -108,7 +113,20 @@ class ReviewManager {
         inputsContainer.style.justifyContent = 'center';
         inputsContainer.style.gap = '10px';
 
+        let inputCounter = 0;
+        const lastInputIndex = answerUnits.length - 1;
         units.forEach((unit, unitIndex) => {
+            if (punctuationPattern.test(unit)) {
+                // 直接渲染标点符号
+                const punctSpan = document.createElement('span');
+                punctSpan.className = 'split-punctuation';
+                punctSpan.textContent = unit;
+                punctSpan.style.padding = '0 4px';
+                punctSpan.style.fontSize = '1.2rem';
+                inputsContainer.appendChild(punctSpan);
+                return; // 跳过创建输入框
+            }
+            const visibleIndex = inputCounter; inputCounter++;
             const inputWrapper = document.createElement('div');
             inputWrapper.className = 'split-input-wrapper';
 
@@ -129,7 +147,7 @@ class ReviewManager {
 
             // 处理输入事件 - 只在最后一个输入框检查答案
             input.addEventListener('input', () => {
-                if (!isComposing && unitIndex === units.length - 1) {
+                if (!isComposing && visibleIndex === lastInputIndex) {
                     // 如果是最后一个输入框，检查所有答案
                     const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
                     const allFilled = allInputs.every(input => input.value.trim() !== '');
@@ -198,7 +216,7 @@ class ReviewManager {
 
     checkAnswer(answer) {
         const current = this.sentences[this.currentIndex];
-        const isCorrect = answer === current.hiragana;
+        const isCorrect = stripPunct(answer) === stripPunct(current.hiragana);
         
         console.log('检查答案:', answer, '正确答案:', current.hiragana, '结果:', isCorrect);
         
@@ -208,7 +226,7 @@ class ReviewManager {
         if (!isCorrect) {
             // 只标记错误的输入框
             const inputs = document.querySelectorAll('.split-input');
-            const correctUnits = current.hiragana.split(':');
+            const correctUnits = stripPunct(current.hiragana).split(':');
             const answerUnits = answer.split(':');
             
             inputs.forEach((input, index) => {
@@ -707,3 +725,6 @@ class ReviewManager {
 
 // 创建全局实例
 window.reviewManager = new ReviewManager(); 
+import statsData from '../common/statsData.js';   // 文件顶部已有
+
+// 在 showComplete() 函数 try{} 内数据写入之后、界面跳转之前
