@@ -344,7 +344,7 @@ export class CustomCollectionsManager {
             batchImportModal.id = 'batchImportModal';
             batchImportModal.className = 'modal';
             batchImportModal.innerHTML = `
-                <div class="modal-content" style="max-width:1100px;width:95%">
+                <div class="modal-content" style="max-width:1100px;width:95%;max-height:90vh;overflow-y:auto;">
                     <div class="modal-header">
                         <h3>批量导入句子</h3>
                         <button class="close-btn">&times;</button>
@@ -370,6 +370,11 @@ export class CustomCollectionsManager {
                                 <div class="separator-option">
                                     <input type="radio" id="space" name="separator" value=" ">
                                     <label for="space">空格分隔</label>
+                                </div>
+                                <div class="separator-option">
+                                    <input type="radio" id="customSep" name="separator" value="__CUSTOM__">
+                                    <label for="customSep">自定义</label>
+                                    <input type="text" id="customSeparatorInput" placeholder="分隔符" style="width:80px;margin-left:6px;" disabled>
                                 </div>
                                 <span class="import-tips">格式：句子原文 [分隔符] 中文翻译</span>
                             </div>
@@ -786,7 +791,11 @@ export class CustomCollectionsManager {
             if (previewBtn) {
                 previewBtn.addEventListener('click', async () => {
                 const importText = (document.getElementById('batchImportText')).value.trim();
-                const separator = (document.querySelector('input[name="separator"]:checked')).value;
+                let separator = (document.querySelector('input[name="separator"]:checked')).value;
+                    if (separator === '__CUSTOM__') {
+                        separator = document.getElementById('customSeparatorInput').value || '';
+                        if (!separator) { alert('请输入自定义分隔符'); return; }
+                    }
                 const lang = (document.getElementById('batchLang'))?.value || 'ja';
                     if (!importText) {
                         alert('请输入要导入的内容');
