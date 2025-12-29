@@ -390,7 +390,21 @@ export class CustomCollectionsManager {
                 </div>
             `;
             document.body.appendChild(batchImportModal);
+            // 只注入一次预览表格样式
+            if (!document.getElementById('importPreviewExtraStyles')) {
+              const css = document.createElement('style');
+              css.id = 'importPreviewExtraStyles';
+              css.textContent = `
+                #importPreview{overflow-x:auto;}
+                .preview-table th,.preview-table td{min-width:120px;box-sizing:border-box;}
+                .preview-table input.preview-input{width:100%;min-width:100px;}
+              `;
+              document.head.appendChild(css);
+            }
         }
+      
+
+
 
         // 处理 Tab 键插入
         const batchModalEl = document.getElementById('batchImportModal');

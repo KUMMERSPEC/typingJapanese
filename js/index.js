@@ -2,6 +2,24 @@ import statsData from './common/statsData.js';
 import { CourseDisplay } from './courseDisplay.js'; // 导入 CourseDisplay 类
 import { CustomCollectionsManager } from './customCollections.js';
 
+/* ============ 首页「待学习」徽章 ============ */
+function updateLearnBadge() {
+    try {
+        const badgeEl = document.querySelector('#learnBadge');
+        if (!badgeEl) return;
+        const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+        // proficiency === 'low' 视为待学习
+        const needLearn = Object.values(stats.reviewHistory || {})
+                            .filter(r => r.proficiency === 'low').length;
+        badgeEl.textContent = needLearn;
+    } catch (err) {
+        console.warn('[index] updateLearnBadge failed', err);
+    }
+}
+// 页面加载完、以及标签页重新获得焦点时刷新一次
+document.addEventListener('DOMContentLoaded', updateLearnBadge);
+window.addEventListener('focus', updateLearnBadge);
+
 // 分页状态（待复习面板）
 let reviewPage = 1;
 const REVIEW_PAGE_SIZE = 20;

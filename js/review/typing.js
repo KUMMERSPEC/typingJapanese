@@ -66,6 +66,16 @@ class ReviewManager {
         const meaningElement = document.querySelector('.meaning');
         if (meaningElement) {
             meaningElement.textContent = current.meaning;
+
+        // 根据中文含义的长度动态调整字体大小，以适应长句
+        const meaningLength = current.meaning.length;
+        if (meaningLength > 25) {
+            meaningElement.style.fontSize = '1.5rem';
+        } else if (meaningLength > 15) {
+            meaningElement.style.fontSize = '2rem';
+        } else {
+            meaningElement.style.fontSize = ''; // 恢复默认大小
+        }
         }
 
         // 创建输入框
@@ -116,6 +126,7 @@ class ReviewManager {
         let inputCounter = 0;
         const lastInputIndex = answerUnits.length - 1;
         units.forEach((unit, unitIndex) => {
+            if (unit === '') return; // 跳过由 :: 产生的空片段
             if (punctuationPattern.test(unit)) {
                 // 直接渲染标点符号
                 const punctSpan = document.createElement('span');
