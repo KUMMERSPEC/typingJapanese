@@ -114,7 +114,8 @@ import statsData from '../common/statsData.js';
       // 3) 去重（按 日文+假名+中文）
       const seen = new Map();
       rows.forEach(r => {
-        const key = [r.japanese, r.hiragana, r.meaning].join('||');
+        const normalize = (s)=> (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+        const key = [normalize(r.japanese), normalize(r.hiragana), normalize(r.meaning)].join('||');
         if (!seen.has(key)) seen.set(key, r); else {
           // 保留掌握度较高或有 nextReviewDate 的一条
           const existed = seen.get(key);

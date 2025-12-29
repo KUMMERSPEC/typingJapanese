@@ -126,7 +126,7 @@ class ReviewManager {
         let inputCounter = 0;
         const lastInputIndex = answerUnits.length - 1;
         units.forEach((unit, unitIndex) => {
-            if (unit === '') return; // 跳过由 :: 产生的空片段
+            
             if (punctuationPattern.test(unit)) {
                 // 直接渲染标点符号
                 const punctSpan = document.createElement('span');
@@ -137,6 +137,8 @@ class ReviewManager {
                 inputsContainer.appendChild(punctSpan);
                 return; // 跳过创建输入框
             }
+
+            if (unit === '') return; // 跳过由 :: 产生的空片段
             const visibleIndex = inputCounter; inputCounter++;
             const inputWrapper = document.createElement('div');
             inputWrapper.className = 'split-input-wrapper';

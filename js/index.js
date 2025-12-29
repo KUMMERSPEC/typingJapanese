@@ -2,23 +2,30 @@ import statsData from './common/statsData.js';
 import { CourseDisplay } from './courseDisplay.js'; // 导入 CourseDisplay 类
 import { CustomCollectionsManager } from './customCollections.js';
 
-/* ============ 首页「待学习」徽章 ============ */
-function updateLearnBadge() {
-    try {
-        const badgeEl = document.querySelector('#learnBadge');
-        if (!badgeEl) return;
-        const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
-        // proficiency === 'low' 视为待学习
-        const needLearn = Object.values(stats.reviewHistory || {})
-                            .filter(r => r.proficiency === 'low').length;
-        badgeEl.textContent = needLearn;
-    } catch (err) {
-        console.warn('[index] updateLearnBadge failed', err);
+/* ========= 统一刷新首页统计徽章 ========= */
+function refreshHomeBadges() {
+    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+  
+    // 待学习
+    const learnBadge = document.querySelector('#learnBadge');
+    if (learnBadge) {
+      const needLearn = Object.values(stats.reviewHistory || {})
+                       .filter(r => r.proficiency === 'low').length;
+      learnBadge.textContent = needLearn;
     }
-}
-// 页面加载完、以及标签页重新获得焦点时刷新一次
-document.addEventListener('DOMContentLoaded', updateLearnBadge);
-window.addEventListener('focus', updateLearnBadge);
+  
+    // 待复习
+    const reviewBadge = document.querySelector('.review-items');
+    if (reviewBadge) {
+      const todayCount = statsData.getReviewItems()
+                         .filter(item => item.needsReview).length;
+      reviewBadge.textContent = todayCount;
+    }
+  }
+  
+  /* 首页加载 / 标签页返回时都刷新一次 */
+  document.addEventListener('DOMContentLoaded', refreshHomeBadges);
+  window.addEventListener('focus',          refreshHomeBadges);
 
 // 分页状态（待复习面板）
 let reviewPage = 1;
@@ -136,9 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化课程显示
     const courseDisplay = new CourseDisplay();
 
-    // 初始化自定义收藏功能
-    window.customCollections = new CustomCollectionsManager();
-    window.customCollectionsManager = window.customCollections; // 确保别名可用
+
 
     // 现在加载课程，此时收藏夹已准备就绪
     courseDisplay.loadCourses();
