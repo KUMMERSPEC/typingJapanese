@@ -932,6 +932,11 @@ export class CustomCollectionsManager {
     
     // 预览批量导入数据（可编辑，并保留删除）
     previewBatchImport(parsedData, lang = 'ja') {
+        console.log('[previewBatchImport] parsedData length:', Array.isArray(parsedData) ? parsedData.length : 'N/A', parsedData);
+        const previewContainerDebug = document.getElementById('importPreview');
+        if(!previewContainerDebug) {
+            console.warn('[previewBatchImport] #importPreview element not found in DOM');
+        }
         const previewContainer = document.getElementById('importPreview');
         if (!previewContainer) return;
         if (!Array.isArray(parsedData) || parsedData.length === 0) {
