@@ -639,8 +639,16 @@ function showStatsPanel() {
     const statsPanel = document.getElementById('statsPanel');
     const overlay = document.querySelector('.overlay');
     if (statsPanel && overlay) {
+        // 先显示以便能触发动画
         statsPanel.style.display = 'flex';
         overlay.style.display = 'block';
+
+        // 使用与复习面板相同的动画逻辑
+        setTimeout(() => {
+            statsPanel.classList.add('show');
+            overlay.classList.add('show');
+        }, 10);
+
         updateStatsDisplay();
     }
 }
@@ -650,8 +658,12 @@ window.closeStatsPanel = function() {
     const statsPanel = document.getElementById('statsPanel');
     const overlay = document.querySelector('.overlay');
     if (statsPanel && overlay) {
-        statsPanel.style.display = 'none';
-        overlay.style.display = 'none';
+        statsPanel.classList.remove('show');
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            statsPanel.style.display = 'none';
+            overlay.style.display = 'none';
+        }, 150);
     }
 }
 
