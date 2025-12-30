@@ -402,10 +402,10 @@ export class PracticeManager {
             inputsContainer.style.gap = '10px';
             
             words.forEach((word, index) => {
-                if(PUNCT_RE.test(word) || word===''){ // 直接显示标点或空片段
-                    const span=document.createElement('span');
-                    span.textContent=word;
-                    span.style.padding='0 4px';
+                if (PUNCT_RE.test(word) || word === '') { // 直接显示标点或空片段
+                    const span = document.createElement('span');
+                    span.className = 'punctuation-span';
+                    span.textContent = word;
                     inputsContainer.appendChild(span);
                     return;
                 }

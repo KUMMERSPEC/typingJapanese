@@ -148,6 +148,9 @@
     padding: 24px 24px 20px 24px; /* 增加内边距 */
     border-bottom: 1px solid #f0f0f0;
     background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%); /* 添加渐变背景 */
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .modal-header h3 {
