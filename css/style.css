@@ -626,12 +626,11 @@ form {
 }
 
 .preview-table {
-    width: max-content; /* 让表格根据内容自然宽度展开，超出容器时可横向滚动 */
+    width: 100%; /* 让表格宽度适应容器 */
     border-collapse: collapse;
     margin-top: 4px;
     font-size: 14px;
-    table-layout: fixed; /* 避免浏览器压缩列宽度到极窄；与 min-width 搭配让列更稳定 */
-    min-width: 1200px;  /* 略微扩展宽度，减少换行 */  /* 关键：为日语模式提供更宽的基础宽度 */
+    table-layout: auto; /* 允许表格根据内容自动调整列宽 */
 }
 
 .preview-table th,
@@ -640,6 +639,7 @@ form {
     border: 1px solid #ddd;
     text-align: left;
     vertical-align: middle;
+    word-break: break-all; /* 强制长文本换行 */
 }
 
 /* 让输入框占满单元格宽度，并设置合适的最小宽度，从而推动表格拉宽 */
@@ -652,12 +652,7 @@ form {
     font-size: 14px;
 }
 
-/* 为不同字段设置最小宽度（仅在桌面端生效）*/
-@media (min-width: 769px) {
-    .preview-table .preview-input[data-field="hiragana"] { min-width: 320px; }
-    .preview-table .preview-input[data-field="romaji"]  { min-width: 280px; }
-    .preview-table .preview-input[data-field="meaning"] { min-width: 240px; }
-}
+
 
 .preview-table th {
     background-color: #f5f5f5;
