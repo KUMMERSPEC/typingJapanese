@@ -190,17 +190,14 @@ class Statistics {
                     if (item) {
                         // 新句子计入 low 级别
                         if (!item.reviewCount) {
-                            console.log(`${id}: 新句子，计入 low`);
                             masteryStats.low++;
                         } 
                         // 已有复习记录的句子按照当前掌握度统计
                         else if (item.proficiency) {
                             // master 级别的句子计入 high
                             if (item.proficiency === 'master') {
-                                console.log(`${id}: master级别，计入high`);
                                 masteryStats.high++;
                             } else {
-                                console.log(`${id}: 掌握度 ${item.proficiency}`);
                                 masteryStats[item.proficiency]++;
                             }
                         }
@@ -718,7 +715,6 @@ class Statistics {
 
     // 修改 getMasteryStatus 方法，强制显示 master 级别句子的状态
     getMasteryStatus(item) {
-        console.log('获取状态:', item);
         
         // 如果是新句子（没有复习记录）
         if (!item || !item.reviewCount) {
@@ -727,7 +723,7 @@ class Statistics {
         
         // 特殊处理 master 级别的句子 - 无论何种情况都显示为"熟练"
         if (item.proficiency === 'master') {
-            console.log('发现 master 级别句子，强制显示为熟练');
+
             return { text: '熟练', class: 'status-high' };
         }
 
