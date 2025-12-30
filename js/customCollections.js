@@ -12,8 +12,8 @@ export class CustomCollectionsManager {
     // Method to get all collections
     getCollections() {
         return Object.entries(this.collections).map(([id, collection]) => ({
-                id,
-                ...collection,
+            id,
+            ...collection,
             sentences: Object.entries(collection.sentences || {}).map(([sentenceId, sentence]) => ({ id: sentenceId, ...sentence }))
         }));
     }
@@ -105,30 +105,27 @@ export class CustomCollectionsManager {
     initializeEventListeners() {
         document.body.addEventListener('click', (e) => {
             const actionTarget = e.target.closest('[data-action]');
-            if (!actionTarget) return;
-
-            const action = actionTarget.dataset.action;
-            const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
-
+            if (actionTarget) {
                 e.preventDefault();
-            switch (action) {
-                case 'manage-collections': this.showCollectionsModal(); break;
-                case 'add-collection': this.showAddCollectionModal(); break;
-                case 'edit-collection': this.showEditCollectionModal(collectionId); break;
-                case 'delete-collection': this.handleDeleteCollection(collectionId); break;
-                case 'add-sentence': this.showAddSentenceModal(collectionId); break;
-                case 'batch-import': this.showBatchImportModal(collectionId); break;
-                case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
+                const action = actionTarget.dataset.action;
+                const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
+                switch (action) {
+                    case 'manage-collections': this.showCollectionsModal(); break;
+                    case 'add-collection': this.showAddCollectionModal(); break;
+                    case 'edit-collection': this.showEditCollectionModal(collectionId); break;
+                    case 'delete-collection': this.handleDeleteCollection(collectionId); break;
+                    case 'add-sentence': this.showAddSentenceModal(collectionId); break;
+                    case 'batch-import': this.showBatchImportModal(collectionId); break;
+                    case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
+                }
             }
-        });
 
-        // Universal modal close handler
-        document.body.addEventListener('click', (e) => {
-            if (e.target.matches('.modal .close-btn, .modal .cancel-btn')) {
+            // Universal modal close handler
+            if (e.target.matches('.modal .close-btn, .modal .cancel-btn, .modal')) {
+                if (e.target.matches('.modal') && e.target.querySelector('.modal-content')?.contains(e.target)) {
+                    return; // Click inside modal content, do not close
+                }
                 e.target.closest('.modal').classList.remove('show');
-            }
-            if (e.target.matches('.modal')) {
-                e.target.classList.remove('show');
             }
         });
     }
@@ -138,26 +135,26 @@ export class CustomCollectionsManager {
         const lines = text.trim().split('\n').filter(line => line.trim());
         const results = [];
         for (const line of lines) {
-                const parts = line.split(separator);
-                if (parts.length < 2) continue;
-                const sentence = parts[0].trim();
-                const meaning = parts.slice(1).join(separator).trim();
-                if (!sentence || !meaning) continue;
+            const parts = line.split(separator);
+            if (parts.length < 2) continue;
+            const sentence = parts[0].trim();
+            const meaning = parts.slice(1).join(separator).trim();
+            if (!sentence || !meaning) continue;
 
             let hiragana = '', romaji = '';
-                if (lang === 'ja') {
-                    try {
-                        const converted = await converter.convert(sentence);
+            if (lang === 'ja') {
+                try {
+                    const converted = await converter.convert(sentence);
                     hiragana = converted?.data?.hiragana || sentence.split('').join(':');
                     romaji = converted?.data?.romaji || '';
                 } catch { hiragana = sentence.split('').join(':'); }
-                } else {
+            } else {
                 hiragana = sentence.toLowerCase().replace(/[^a-z0-9']+/gi, ' ').trim().split(/\s+/).join(':');
             }
             results.push({ japanese: sentence, hiragana, romaji, meaning, lang });
         }
         return results;
-        }
+    }
 
     previewBatchImport(parsedData, lang) {
         const table = document.createElement('table');
@@ -166,7 +163,7 @@ export class CustomCollectionsManager {
         table.innerHTML = `
             <thead><tr><th>#</th><th>${isJa ? '日语' : '英文'}</th><th>${isJa ? '假名' : '分词'}</th>${isJa ? '<th>罗马字</th>' : ''}<th>中文</th><th>操作</th></tr></thead>
             <tbody>${parsedData.map((item, i) => `
-                    <tr>
+                <tr>
                     <td>${i + 1}</td><td>${item.japanese}</td>
                     <td><textarea data-field="hiragana">${item.hiragana}</textarea></td>
                     ${isJa ? `<td><input type="text" value="${item.romaji}" data-field="romaji"></td>` : ''}
@@ -178,7 +175,7 @@ export class CustomCollectionsManager {
         table.addEventListener('click', e => {
             if (e.target.classList.contains('delete-preview-btn')) {
                 e.target.closest('tr')?.remove();
-                    this._updatePreviewRowNumbers(table);
+                this._updatePreviewRowNumbers(table);
             }
         });
 
@@ -190,7 +187,7 @@ export class CustomCollectionsManager {
                 }
             });
         }
-            this._openPreviewModal(table);
+        this._openPreviewModal(table);
     }
 
     _openPreviewModal(table) {
@@ -210,9 +207,6 @@ export class CustomCollectionsManager {
               </div>`;
             document.body.appendChild(modal);
 
-            const close = () => modal.classList.remove('show');
-            modal.querySelectorAll('.close-btn, .cancel-btn').forEach(btn => btn.onclick = close);
-
             modal.querySelector('.confirm-preview-btn').addEventListener('click', () => {
                 const lang = document.getElementById('batchLang')?.value || 'ja';
                 const data = [];
@@ -223,11 +217,11 @@ export class CustomCollectionsManager {
                     const meaning = row.querySelector('[data-field="meaning"]')?.value.trim();
                     if (japanese && hiragana && meaning && (lang !== 'ja' || romaji)) {
                         data.push({ japanese, hiragana, romaji, meaning, lang });
-                }
+                    }
                 });
                 this.confirmedImportData = data;
                 alert(`已确认 ${data.length} 条句子，请点击“导入”按钮完成操作。`);
-                close();
+                modal.classList.remove('show');
             });
         }
         modal.querySelector('.preview-modal-body').innerHTML = '';
@@ -240,7 +234,7 @@ export class CustomCollectionsManager {
             row.cells[0].textContent = index + 1;
         });
     }
-    
+
     // --- MODAL DISPLAY METHODS ---
     showCollectionsModal() {
         let modal = document.getElementById('collectionsModal');
@@ -252,15 +246,15 @@ export class CustomCollectionsManager {
                 <div class="modal-content">
                     <div class="modal-header"><h3>管理收藏夹</h3><button class="close-btn">&times;</button></div>
                     <div class="collections-container">
-                        <button data-action="add-collection">新建收藏夹</button>
+                        <button data-action="add-collection" class="btn btn-primary" style="width:100%; margin-bottom: 16px;">+ 新建收藏夹</button>
                         <div class="collections-list"></div>
                     </div>
                 </div>`;
             document.body.appendChild(modal);
         }
         this.refreshCollectionsList(modal.querySelector('.collections-list'));
-            modal.classList.add('show');
-        }
+        modal.classList.add('show');
+    }
 
     refreshCollectionsList(container) {
         if (!container) return;
@@ -273,11 +267,11 @@ export class CustomCollectionsManager {
                 <h3>${collection.name}</h3><p>${collection.description || ''}</p>
                 <div>${Object.keys(collection.sentences || {}).length} sentences</div>
                 <div class="actions">
-                    <button data-action="add-sentence">添加</button>
-                    <button data-action="batch-import">批量导入</button>
-                    <button data-action="edit-collection">编辑</button>
-                    <button data-action="delete-collection">删除</button>
-                    <button data-action="manage-sentences">管理句子</button>
+                    <button data-action="add-sentence" class="btn btn-secondary">添加</button>
+                    <button data-action="batch-import" class="btn btn-secondary">批量导入</button>
+                    <button data-action="edit-collection" class="btn btn-secondary">编辑</button>
+                    <button data-action="delete-collection" class="btn btn-danger">删除</button>
+                    <button data-action="manage-sentences" class="btn">管理句子</button>
                 </div>`;
             container.appendChild(item);
         });
@@ -299,10 +293,19 @@ export class CustomCollectionsManager {
             modal.innerHTML = `
                 <div class="modal-content" style="width:90%;max-width:800px;">
                     <div class="modal-header"><h3>批量导入句子</h3><button class="close-btn">&times;</button></div>
-                    <form id="batchImportForm">
-                        <p>语言: <select id="batchLang"><option value="ja">日语</option><option value="en">英语</option></select></p>
-                        <p>分隔符: <input type="text" id="batchSeparator" value=","></p>
-                        <textarea id="batchImportText" rows="10" style="width:98%;"></textarea>
+                    <form id="batchImportForm" class="modal-form">
+                        <div class="form-group">
+                            <label for="batchLang">语言</label>
+                            <select id="batchLang"><option value="ja">日语</option><option value="en">英语</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="batchSeparator">分隔符</label>
+                            <input type="text" id="batchSeparator" value=",">
+                        </div>
+                        <div class="form-group">
+                            <label for="batchImportText">句子</label>
+                            <textarea id="batchImportText" rows="8"></textarea>
+                        </div>
                         <div class="form-actions">
                             <button type="button" id="previewImportBtn" class="btn btn-secondary">预览</button>
                             <button type="submit" class="btn btn-primary">导入</button>
@@ -336,8 +339,8 @@ export class CustomCollectionsManager {
             });
         }
         modal.querySelector('form').dataset.collectionId = collectionId;
-            modal.classList.add('show');
-        }
+        modal.classList.add('show');
+    }
 
     showAddCollectionModal() {
         let modal = document.getElementById('addCollectionModal');
@@ -379,6 +382,70 @@ export class CustomCollectionsManager {
         modal.classList.add('show');
     }
 
+    showEditCollectionModal(collectionId) {
+        let modal = document.getElementById('editCollectionModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'editCollectionModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+              <div class="modal-content" style="max-width:400px;">
+                <div class="modal-header"><h3>编辑收藏夹</h3><button class="close-btn">&times;</button></div>
+                <form id="editCollectionForm" class="modal-form">
+                    <input type="hidden" id="ecId">
+                    <div class="form-group">
+                        <label for="ecName">名称</label>
+                        <input id="ecName" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ecDesc">描述</label>
+                        <textarea id="ecDesc" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary cancel-btn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+              </div>`;
+            document.body.appendChild(modal);
+
+            modal.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = modal.querySelector('#ecId').value;
+                const name = modal.querySelector('#ecName').value.trim();
+                const desc = modal.querySelector('#ecDesc').value.trim();
+                if (!name) { alert('名称不能为空'); return; }
+                this.editCollection(id, name, desc);
+                modal.classList.remove('show');
+                this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
+            });
+        }
+
+        const collection = this.collections[collectionId];
+        if (collection) {
+            modal.querySelector('#ecId').value = collectionId;
+            modal.querySelector('#ecName').value = collection.name;
+            modal.querySelector('#ecDesc').value = collection.description || '';
+            modal.classList.add('show');
+        }
+    }
+
+    showAddSentenceModal(collectionId) {
+        showAddSentenceModal(data => {
+            this.addSentence(collectionId, data);
+            this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
+        });
+    }
+
+    showEditSentenceModal(collectionId, sentenceId, sentenceData) {
+        showEditSentenceModal(sentenceData, updatedData => {
+            this.editSentence(collectionId, sentenceId, updatedData);
+            if (document.getElementById('manageSentencesModal')?.classList.contains('show')) {
+                this.renderManageSentences(); // Re-render the list if it's open
+            }
+        });
+    }
+    
     showManageSentencesModal(collectionId) {
         let modal = document.getElementById('manageSentencesModal');
         if (!modal) {
@@ -392,14 +459,14 @@ export class CustomCollectionsManager {
                         <div class="ms-toolbar">
                             <input id="msSearch" type="text" placeholder="搜索...">
                             <select id="msPageSize"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select>
-                    </div>
+                        </div>
                         <div class="sentences-container sentence-list"></div>
                         <div class="ms-pagination">
                             <button id="msPrev">上一页</button>
                             <span id="msPageInfo">1 / 1</span>
                             <button id="msNext">下一页</button>
+                        </div>
                     </div>
-                </div>
                 </div>`;
             document.body.appendChild(modal);
 
@@ -468,8 +535,8 @@ export class CustomCollectionsManager {
                     <div class="cn">${sentence.meaning || ''}</div>
                 </div>
                 <div class="actions">
-                    <button class="btn btn-secondary edit-sentence-btn">编辑</button>
-                    <button class="btn btn-danger delete-sentence-btn">删除</button>
+                    <button data-action="edit-sentence" class="btn btn-secondary">编辑</button>
+                    <button data-action="delete-sentence" class="btn btn-danger">删除</button>
                 </div>
             </div>`
         ).join('');
@@ -477,87 +544,5 @@ export class CustomCollectionsManager {
         pageInfo.textContent = `${this.manageState.page} / ${totalPages}`;
         prevBtn.disabled = this.manageState.page <= 1;
         nextBtn.disabled = this.manageState.page >= totalPages;
-            
-        // Add event listeners for edit/delete buttons
-        container.querySelectorAll('.edit-sentence-btn').forEach(btn => {
-            btn.onclick = () => {
-                const sentenceId = btn.closest('.sentence-item').dataset.sentenceId;
-                const sentence = this.collections[this.manageState.collectionId].sentences[sentenceId];
-                this.showEditSentenceModal(this.manageState.collectionId, sentenceId, sentence);
-            };
-        });
-        container.querySelectorAll('.delete-sentence-btn').forEach(btn => {
-            btn.onclick = () => {
-                if (confirm('确定删除该句子吗?')) {
-                    const sentenceId = btn.closest('.sentence-item').dataset.sentenceId;
-                    this.deleteSentence(this.manageState.collectionId, sentenceId);
-                    this.renderManageSentences(); // Re-render
-                }
-            };
-        });
-    }
-
-    showEditCollectionModal(collectionId) {
-        let modal = document.getElementById('editCollectionModal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'editCollectionModal';
-            modal.className = 'modal';
-            modal.innerHTML = `
-              <div class="modal-content" style="max-width:400px;">
-                <div class="modal-header"><h3>编辑收藏夹</h3><button class="close-btn">&times;</button></div>
-                <form id="editCollectionForm" class="modal-form">
-                    <input type="hidden" id="ecId">
-                    <div class="form-group">
-                        <label for="ecName">名称</label>
-                        <input id="ecName" type="text" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ecDesc">描述</label>
-                        <textarea id="ecDesc" rows="3"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary cancel-btn">取消</button>
-                        <button type="submit" class="btn btn-primary">保存</button>
-                    </div>
-                </form>
-              </div>`;
-            document.body.appendChild(modal);
-
-            modal.querySelector('form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = modal.querySelector('#ecId').value;
-                const name = modal.querySelector('#ecName').value.trim();
-                const desc = modal.querySelector('#ecDesc').value.trim();
-                if (!name) { alert('名称不能为空'); return; }
-                this.editCollection(id, name, desc);
-                modal.classList.remove('show');
-                this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
-            });
-        }
-
-        const collection = this.collections[collectionId];
-        if (collection) {
-            modal.querySelector('#ecId').value = collectionId;
-            modal.querySelector('#ecName').value = collection.name;
-            modal.querySelector('#ecDesc').value = collection.description || '';
-        modal.classList.add('show');
-    }
-    }
-
-    showAddSentenceModal(collectionId) {
-        showAddSentenceModal(data => {
-            this.addSentence(collectionId, data);
-            this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
-        });
-    }
-
-    showEditSentenceModal(collectionId, sentenceId, sentenceData) {
-        showEditSentenceModal(sentenceData, updatedData => {
-            this.editSentence(collectionId, sentenceId, updatedData);
-            if (document.getElementById('manageSentencesModal')?.classList.contains('show')) {
-                this.renderManageSentences(); // Re-render the list if it's open
-            }
-        });
     }
 }
