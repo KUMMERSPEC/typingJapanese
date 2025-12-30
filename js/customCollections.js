@@ -1,4 +1,5 @@
 import converter from './converter.js';
+import { showAddSentenceModal, showEditSentenceModal } from './sentenceModal.js';
 
 export class CustomCollectionsManager {
     constructor() {
@@ -103,27 +104,21 @@ export class CustomCollectionsManager {
     // Central event listener for modals
     initializeEventListeners() {
         document.body.addEventListener('click', (e) => {
-            const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
-            if (action) {
-                e.preventDefault();
-                const collectionId = e.target.closest('[data-collection-id]')?.dataset.collectionId;
-                switch (action) {
-                    case 'manage-collections': this.showCollectionsModal(); break;
-                    case 'add-collection': this.showAddCollectionModal(); break;
-                    case 'edit-collection': this.showEditCollectionModal(collectionId); break;
-                    case 'delete-collection': this.handleDeleteCollection(collectionId); break;
-                    case 'add-sentence': this.showAddSentenceModal(collectionId); break;
-                    case 'batch-import': this.showBatchImportModal(collectionId); break;
-                    case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
-                }
-            }
+            const actionTarget = e.target.closest('[data-action]');
+            if (!actionTarget) return;
 
-            if (e.target.matches('.modal .close-btn, .modal .cancel-btn, .modal.show')) {
-                 if (e.target.matches('.modal.show') && e.target.id !== 'importPreviewModal') {
-                    // prevent closing main modal when clicking on preview modal background
-                    if (document.getElementById('importPreviewModal')?.classList.contains('show')) return;
-                 }
-                 e.target.closest('.modal')?.classList.remove('show');
+            const action = actionTarget.dataset.action;
+            const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
+
+            e.preventDefault();
+            switch (action) {
+                case 'manage-collections': this.showCollectionsModal(); break;
+                case 'add-collection': this.showAddCollectionModal(); break;
+                case 'edit-collection': this.showEditCollectionModal(collectionId); break;
+                case 'delete-collection': this.handleDeleteCollection(collectionId); break;
+                case 'add-sentence': this.showAddSentenceModal(collectionId); break;
+                case 'batch-import': this.showBatchImportModal(collectionId); break;
+                case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
             }
         });
     }
@@ -333,7 +328,7 @@ export class CustomCollectionsManager {
         modal.querySelector('form').dataset.collectionId = collectionId;
         modal.classList.add('show');
     }
-    
+
     showAddCollectionModal() {
         let modal = document.getElementById('addCollectionModal');
         if (!modal) {
@@ -346,9 +341,9 @@ export class CustomCollectionsManager {
                 <form id="addCollectionForm">
                     <label>名称<input id="acName" type="text" required></label>
                     <label>描述<textarea id="acDesc" rows="3"></textarea></label>
-                    <div class="actions">
+                    <div class="actions" style="text-align:right; margin-top: 1em;">
                         <button type="button" class="cancel-btn">取消</button>
-                        <button type="submit">保存</button>
+                        <button type="submit" class="primary-btn">保存</button>
                     </div>
                 </form>
               </div>`;
@@ -499,9 +494,9 @@ export class CustomCollectionsManager {
                     <input type="hidden" id="ecId">
                     <label>名称<input id="ecName" type="text" required></label>
                     <label>描述<textarea id="ecDesc" rows="3"></textarea></label>
-                    <div class="actions">
+                    <div class="actions" style="text-align:right; margin-top: 1em;">
                         <button type="button" class="cancel-btn">取消</button>
-                        <button type="submit">保存</button>
+                        <button type="submit" class="primary-btn">保存</button>
                     </div>
                 </form>
               </div>`;
@@ -528,4 +523,19 @@ export class CustomCollectionsManager {
         }
     }
 
+    showAddSentenceModal(collectionId) {
+        showAddSentenceModal(data => {
+            this.addSentence(collectionId, data);
+            this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
+        });
+    }
+
+    showEditSentenceModal(collectionId, sentenceId, sentenceData) {
+        showEditSentenceModal(sentenceData, updatedData => {
+            this.editSentence(collectionId, sentenceId, updatedData);
+            if (document.getElementById('manageSentencesModal')?.classList.contains('show')) {
+                this.renderManageSentences(); // Re-render the list if it's open
+            }
+        });
+    }
 }
