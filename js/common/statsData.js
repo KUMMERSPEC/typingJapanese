@@ -391,6 +391,7 @@ class Statistics {
     }
 
     saveStatistics(stats) {
+        this._stats = null; // Invalidate cache before saving
         try {
             const statsJson = JSON.stringify(stats);
             localStorage.setItem(STATS_STORAGE_KEY, statsJson);
