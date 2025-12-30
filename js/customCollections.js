@@ -103,31 +103,41 @@ export class CustomCollectionsManager {
 
     // Central event listener for modals
     initializeEventListeners() {
-        document.body.addEventListener('click', (e) => {
-            const actionTarget = e.target.closest('[data-action]');
-            if (actionTarget) {
-                e.preventDefault();
-                const action = actionTarget.dataset.action;
-                const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
-                switch (action) {
-                    case 'manage-collections': this.showCollectionsModal(); break;
-                    case 'add-collection': this.showAddCollectionModal(); break;
-                    case 'edit-collection': this.showEditCollectionModal(collectionId); break;
-                    case 'delete-collection': this.handleDeleteCollection(collectionId); break;
-                    case 'add-sentence': this.showAddSentenceModal(collectionId); break;
-                    case 'batch-import': this.showBatchImportModal(collectionId); break;
-                    case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
-                }
-            }
-
-            // Universal modal close handler
-            if (e.target.matches('.modal .close-btn, .modal .cancel-btn, .modal')) {
-                if (e.target.matches('.modal') && e.target.querySelector('.modal-content')?.contains(e.target)) {
-                    return; // Click inside modal content, do not close
-                }
-                e.target.closest('.modal').classList.remove('show');
-            }
-        });
+      document.body.addEventListener('click', (e) => {
+        // 1) data-action events
+        const actionTarget = e.target.closest('[data-action]');
+        if (actionTarget) {
+          e.preventDefault();
+          e.stopPropagation();
+    
+          const action = actionTarget.dataset.action;
+          const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
+    
+          switch (action) {
+            case 'manage-collections': this.showCollectionsModal(); break;
+            case 'add-collection': this.showAddCollectionModal(); break;
+            case 'edit-collection': this.showEditCollectionModal(collectionId); break;
+            case 'delete-collection': this.handleDeleteCollection(collectionId); break;
+            case 'add-sentence': this.showAddSentenceModal(collectionId); break;
+            case 'batch-import': this.showBatchImportModal(collectionId); break;
+            case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
+          }
+          return; // Action handled, stop further processing
+        }
+    
+        // 2) Close on close/cancel button click
+        if (e.target.closest('.modal .close-btn') || e.target.closest('.modal .cancel-btn')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.target.closest('.modal')?.classList.remove('show');
+          return;
+        }
+    
+        // 3) Close on modal background click
+        if (e.target.classList && e.target.classList.contains('modal')) {
+          e.target.classList.remove('show');
+        }
+      });
     }
 
     // --- BATCH IMPORT LOGIC ---
