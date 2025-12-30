@@ -104,13 +104,16 @@ export class CustomCollectionsManager {
     // Central event listener for modals
     initializeEventListeners() {
         document.body.addEventListener('click', (e) => {
-            // 1) Handle data-action buttons
             const actionTarget = e.target.closest('[data-action]');
-            if (actionTarget) {
+            const legacyAddBtn = e.target.closest('.add-collection-btn');
+
+            // 1) Handle data-action buttons or legacy button
+            if (actionTarget || legacyAddBtn) {
                 e.preventDefault();
                 e.stopPropagation();
-                const action = actionTarget.dataset.action;
-                const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
+                
+                let action = actionTarget ? actionTarget.dataset.action : 'add-collection';
+                const collectionId = e.target.closest('[data-collection-id]')?.dataset.collectionId;
 
                 switch (action) {
                     case 'manage-collections': this.showCollectionsModal(); break;
