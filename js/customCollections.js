@@ -1027,8 +1027,13 @@ export class CustomCollectionsManager {
             </tbody>
         `;
         table.innerHTML = `${thead}${tbody}`;
-        previewContainer.innerHTML = '';
-        previewContainer.appendChild(table);
+        // ----- 使用独立弹窗展示预览表格 -----
+        if (typeof this._openPreviewModal === 'function') {
+            this._openPreviewModal(table);
+            return; // 不再渲染到旧容器
+        }
+        this._openPreviewModal(table);
+        return;      // ↓其余原来写回 previewContainer 的代码不再执行
         table.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-preview-btn')) {
                 const row = e.target.closest('tr');
@@ -1456,6 +1461,38 @@ export class CustomCollectionsManager {
     }
 
     checkReviewStatus() {
+        // existing method continues...
+    }
+
+    /* === 预览弹窗 === */
+    _openPreviewModal(table) {
+        let modal = document.getElementById('importPreviewModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'importPreviewModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+              <div class="modal-content preview-modal-content" style="max-width:95%;width:95%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+                 <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #f0f0f0;">
+                    <h3 style="margin:0;">导入预览</h3>
+                    <button class="close-btn" style="font-size:1.5rem;background:none;border:none;cursor:pointer;">&times;</button>
+                 </div>
+                 <div class="preview-modal-body" style="flex:1 1 auto;overflow:auto;padding:12px;"></div>
+              </div>`;
+            document.body.appendChild(modal);
+            // 关闭逻辑
+            const close = () => modal.classList.remove('show');
+            modal.querySelector('.close-btn').onclick = close;
+            modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+        }
+        const body = modal.querySelector('.preview-modal-body');
+        body.innerHTML = '';
+        body.appendChild(table);
+        modal.classList.add('show');
+    }
+
+    /*  ---- 保持原有方法继续 ---- */
+    checkReviewStatus_old() {
         const now = new Date();
         const needReview = [];
         Object.entries(this.collections).forEach(([id, collection]) => {
@@ -1468,4 +1505,32 @@ export class CustomCollectionsManager {
         });
         return needReview;
     }
+    /* ---------- 仅添加，不要删除任何现有代码 ---------- */
+/* 预览表格独立弹窗 */
+_openPreviewModal(table) {
+    let modal = document.getElementById('importPreviewModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'importPreviewModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+          <div class="modal-content preview-modal-content">
+            <div class="modal-header">
+              <h3>导入预览</h3>
+              <button class="close-btn">&times;</button>
+            </div>
+            <div class="preview-modal-body"></div>
+          </div>`;
+        document.body.appendChild(modal);
+        // 关闭逻辑
+        const close = () => modal.classList.remove('show');
+        modal.querySelector('.close-btn').onclick = close;
+        modal.onclick = e => { if (e.target === modal) close(); };
+    }
+    const body = modal.querySelector('.preview-modal-body');
+    body.innerHTML = '';           // 清空旧内容
+    body.appendChild(table);       // 填入最新表格
+    modal.classList.add('show');   // 显示弹窗
+}
+/* ---------- 追加方法结束 ---------- */
 }
