@@ -105,8 +105,10 @@ export class CustomCollectionsManager {
     initializeEventListeners() {
       document.body.addEventListener('click', (e) => {
         // 1) data-action events
+        console.log('Click event detected on body. Target:', e.target);
         const actionTarget = e.target.closest('[data-action]');
         if (actionTarget) {
+          console.log('Action target found:', actionTarget, 'Action:', actionTarget.dataset.action);
           e.preventDefault();
           e.stopPropagation();
     
