@@ -121,6 +121,16 @@ export class CustomCollectionsManager {
                 case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
             }
         });
+
+        // Universal modal close handler
+        document.body.addEventListener('click', (e) => {
+            if (e.target.matches('.modal .close-btn, .modal .cancel-btn')) {
+                e.target.closest('.modal').classList.remove('show');
+            }
+            if (e.target.matches('.modal')) {
+                e.target.classList.remove('show');
+            }
+        });
     }
 
     // --- BATCH IMPORT LOGIC ---
@@ -147,7 +157,7 @@ export class CustomCollectionsManager {
             results.push({ japanese: sentence, hiragana, romaji, meaning, lang });
         }
         return results;
-    }
+        }
 
     previewBatchImport(parsedData, lang) {
         const table = document.createElement('table');
@@ -156,7 +166,7 @@ export class CustomCollectionsManager {
         table.innerHTML = `
             <thead><tr><th>#</th><th>${isJa ? '日语' : '英文'}</th><th>${isJa ? '假名' : '分词'}</th>${isJa ? '<th>罗马字</th>' : ''}<th>中文</th><th>操作</th></tr></thead>
             <tbody>${parsedData.map((item, i) => `
-                <tr>
+                    <tr>
                     <td>${i + 1}</td><td>${item.japanese}</td>
                     <td><textarea data-field="hiragana">${item.hiragana}</textarea></td>
                     ${isJa ? `<td><input type="text" value="${item.romaji}" data-field="romaji"></td>` : ''}
@@ -213,7 +223,7 @@ export class CustomCollectionsManager {
                     const meaning = row.querySelector('[data-field="meaning"]')?.value.trim();
                     if (japanese && hiragana && meaning && (lang !== 'ja' || romaji)) {
                         data.push({ japanese, hiragana, romaji, meaning, lang });
-                    }
+                }
                 });
                 this.confirmedImportData = data;
                 alert(`已确认 ${data.length} 条句子，请点击“导入”按钮完成操作。`);
@@ -230,7 +240,7 @@ export class CustomCollectionsManager {
             row.cells[0].textContent = index + 1;
         });
     }
-
+    
     // --- MODAL DISPLAY METHODS ---
     showCollectionsModal() {
         let modal = document.getElementById('collectionsModal');
@@ -250,7 +260,7 @@ export class CustomCollectionsManager {
         }
         this.refreshCollectionsList(modal.querySelector('.collections-list'));
             modal.classList.add('show');
-    }
+        }
 
     refreshCollectionsList(container) {
         if (!container) return;
@@ -327,7 +337,7 @@ export class CustomCollectionsManager {
         }
         modal.querySelector('form').dataset.collectionId = collectionId;
             modal.classList.add('show');
-    }
+        }
 
     showAddCollectionModal() {
         let modal = document.getElementById('addCollectionModal');
@@ -338,12 +348,18 @@ export class CustomCollectionsManager {
             modal.innerHTML = `
               <div class="modal-content" style="max-width:400px;">
                 <div class="modal-header"><h3>新建收藏夹</h3><button class="close-btn">&times;</button></div>
-                <form id="addCollectionForm">
-                    <label>名称<input id="acName" type="text" required></label>
-                    <label>描述<textarea id="acDesc" rows="3"></textarea></label>
-                    <div class="actions" style="text-align:right; margin-top: 1em;">
-                        <button type="button" class="cancel-btn">取消</button>
-                        <button type="submit" class="primary-btn">保存</button>
+                <form id="addCollectionForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="acName">名称</label>
+                        <input id="acName" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="acDesc">描述</label>
+                        <textarea id="acDesc" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary cancel-btn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
                     </div>
                 </form>
               </div>`;
@@ -461,7 +477,7 @@ export class CustomCollectionsManager {
         pageInfo.textContent = `${this.manageState.page} / ${totalPages}`;
         prevBtn.disabled = this.manageState.page <= 1;
         nextBtn.disabled = this.manageState.page >= totalPages;
-
+            
         // Add event listeners for edit/delete buttons
         container.querySelectorAll('.edit-sentence-btn').forEach(btn => {
             btn.onclick = () => {
@@ -490,14 +506,20 @@ export class CustomCollectionsManager {
             modal.innerHTML = `
               <div class="modal-content" style="max-width:400px;">
                 <div class="modal-header"><h3>编辑收藏夹</h3><button class="close-btn">&times;</button></div>
-                <form id="editCollectionForm">
+                <form id="editCollectionForm" class="modal-form">
                     <input type="hidden" id="ecId">
-                    <label>名称<input id="ecName" type="text" required></label>
-                    <label>描述<textarea id="ecDesc" rows="3"></textarea></label>
-                    <div class="actions" style="text-align:right; margin-top: 1em;">
-                        <button type="button" class="cancel-btn">取消</button>
-                        <button type="submit" class="primary-btn">保存</button>
-                 </div>
+                    <div class="form-group">
+                        <label for="ecName">名称</label>
+                        <input id="ecName" type="text" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ecDesc">描述</label>
+                        <textarea id="ecDesc" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary cancel-btn">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
                 </form>
               </div>`;
             document.body.appendChild(modal);
@@ -519,8 +541,8 @@ export class CustomCollectionsManager {
             modal.querySelector('#ecId').value = collectionId;
             modal.querySelector('#ecName').value = collection.name;
             modal.querySelector('#ecDesc').value = collection.description || '';
-            modal.classList.add('show');
-        }
+        modal.classList.add('show');
+    }
     }
 
     showAddSentenceModal(collectionId) {
