@@ -1027,10 +1027,33 @@ export class CustomCollectionsManager {
             </tbody>
         `;
         table.innerHTML = `${thead}${tbody}`;
+        // 绑定删除和假名联动逻辑
+        table.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-preview-btn')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    row.remove();
+                    this._updatePreviewRowNumbers(table);
+                }
+            }
+        });
+        if (isJa) {
+            table.addEventListener('input', (e) => {
+                if (e.target && e.target.dataset.field === 'hiragana') {
+                    const row = e.target.closest('tr');
+                    if (row) {
+                        const romajiInput = row.querySelector('input[data-field="romaji"]');
+                        if (romajiInput) {
+                            romajiInput.value = converter.hiraganaToRomaji(e.target.value);
+                        }
+                    }
+                }
+            });
+        }
         // ----- 使用独立弹窗展示预览表格 -----
         if (typeof this._openPreviewModal === 'function') {
             this._openPreviewModal(table);
-            return; // 不再渲染到旧容器
+            return;
         }
         this._openPreviewModal(table);
         return;      // ↓其余原来写回 previewContainer 的代码不再执行
