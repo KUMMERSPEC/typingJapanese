@@ -8,6 +8,17 @@ export function initFirebaseSync(firebaseServices) {
         console.error("[firebaseSync] Initialization failed: Invalid services object provided.");
         return;
     }
+
+// ----- Auto-sync local changes to Firestore -----
+// Whenever the front-end dispatches 'statisticsUpdated', push latest typing_statistics.
+window.addEventListener('statisticsUpdated', () => {
+    try {
+        const statsStr = localStorage.getItem('typing_statistics') || '{}';
+        saveDataToFirebase('typing_statistics', statsStr);
+    } catch (err) {
+        console.warn('[firebaseSync] Failed to push typing_statistics on statisticsUpdated:', err);
+    }
+});
     console.log("[firebaseSync] Initializing with provided Firebase services.");
     db = firebaseServices.db;
     auth = firebaseServices.auth;
