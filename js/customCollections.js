@@ -1010,7 +1010,7 @@ export class CustomCollectionsManager {
                     <tr>
                         <td>${index + 1}</td>
                         <td>${item.japanese}</td>
-                        <td><input type="text" class="preview-input" value="${item.hiragana}" data-field="hiragana"></td>
+                        <td><textarea class="preview-input" data-field="hiragana">${item.hiragana}</textarea></td>
                         <td><input type="text" class="preview-input" value="${item.romaji}" data-field="romaji"></td>
                         <td><input type="text" class="preview-input" value="${item.meaning}" data-field="meaning"></td>
                         <td><button type="button" class="delete-preview-btn">删除</button></td>

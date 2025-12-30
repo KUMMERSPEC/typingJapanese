@@ -617,6 +617,14 @@ form {
 }
 
 /* 批量导入预览表格样式 */
+/* 调整序号列宽度 */
+.preview-table th:first-child,
+.preview-table td:first-child {
+    width: 60px;
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+}
 /* 容器允许横向滚动，并限制高度，避免撑满屏 */
 #batchImportModal .import-preview {
     margin-top: 12px;
@@ -650,6 +658,21 @@ form {
     border: 1px solid #dcdfe6;
     border-radius: 6px;
     font-size: 14px;
+}
+
+/* 预览表格中的文本域样式 */
+.preview-table textarea.preview-input {
+    min-height: 50px; /* 给予足够的初始高度 */
+    resize: vertical; /* 允许用户垂直调整大小 */
+    line-height: 1.5;
+    font-family: inherit;
+    white-space: pre-wrap; /* 保证换行符和空格被正确显示 */
+}
+
+/* 调整假名列宽度 */
+.preview-table th:nth-child(3),
+.preview-table td:nth-child(3) {
+    min-width: 220px; /* 为假名列设置最小宽度 */
 }
 
 
