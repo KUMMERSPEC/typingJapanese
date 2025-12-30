@@ -17,7 +17,8 @@ function createBaseModal() {
     modal.innerHTML = `
         <div class="modal-content" style="min-width:320px;max-width:460px;">
             <div class="modal-header"><h3 id="sentenceModalTitle">添加句子</h3><button class="close-btn">&times;</button></div>
-            <form id="sentenceForm" class="modal-form">
+            <div class="modal-body">
+                <form id="sentenceForm" class="modal-form">
                 <div class="form-group">
                     <label for="smLang">语言</label>
                     <select id="smLang">
@@ -49,6 +50,7 @@ function createBaseModal() {
                     <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
+        </div>
         </div>`;
     document.body.appendChild(modal);
 

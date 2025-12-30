@@ -630,3 +630,17 @@ image.png/* -- Course "Bubble" View -- */
     border-top: 1px solid #e5e7eb;
     padding-top: 16px;
 }
+
+.modal-content .modal-header {
+    background-color: #fff;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal-content .modal-body {
+    padding-top: 16px;
+    overflow-y: auto;
+}
