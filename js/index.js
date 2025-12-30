@@ -635,6 +635,7 @@ window.startReview = function(mode) {
 
 // 显示统计面板
 function showStatsPanel() {
+    console.log('[index.js] showStatsPanel function called.'); // DEBUG
     const statsPanel = document.getElementById('statsPanel');
     const overlay = document.querySelector('.overlay');
     if (statsPanel && overlay) {

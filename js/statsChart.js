@@ -272,12 +272,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.target.style.display === 'flex') {
+                    console.log('[statsChart.js] MutationObserver detected panel is visible.'); // DEBUG
                     console.log('Stats panel shown, initializing charts');
                     // 清除旧的图表实例
                     const oldChart = Chart.getChart('learningTrendChart');
                     if (oldChart) {
                         oldChart.destroy();
                     }
+                    console.log('[statsChart.js] Creating new StatsChart instance.'); // DEBUG
                     const chartManager = new StatsChart();
                 }
             });
