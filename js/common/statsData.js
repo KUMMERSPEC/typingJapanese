@@ -124,6 +124,8 @@ class Statistics {
             console.warn(`Discrepancy found: stats.totalSentences is ${stats.totalSentences}, but reviewHistory has ${totalFromHistory} items. Correcting...`);
             stats.totalSentences = totalFromHistory;
             this.saveStatistics(stats);
+            // Notify listeners that stats have been corrected
+            window.dispatchEvent(new CustomEvent('statisticsUpdated', {detail:{stats}}));
         }
 
         return totalFromHistory;

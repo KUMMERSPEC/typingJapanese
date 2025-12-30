@@ -1,4 +1,4 @@
-import Statistics from './common/statistics.js';
+import statsData from './common/statsData.js';
 
 // 确保Chart.js已加载
 if (typeof Chart === 'undefined') {
@@ -26,8 +26,8 @@ class StatsChart {
 
         console.log('Initializing proficiency chart');
         
-        // 从 Statistics 获取学习数据
-        const stats = Statistics.getStatistics();
+        // 从 statsData 获取学习数据
+        const stats = statsData.getStatistics();
         
         // 获取掌握程度分布
         const proficiencyData = this.getProficiencyDistribution(stats);
@@ -108,7 +108,7 @@ class StatsChart {
             canvas.height = 180;
         }
 
-        const stats = Statistics.getStatistics();
+        const stats = statsData.getStatistics();
         console.log('Current stats:', stats);
 
         // 获取最近35天的数据
@@ -299,7 +299,7 @@ function showStatsPanel() {
         statsPanel.style.display = 'flex';
         
         // 更新统计数据
-        const stats = Statistics.getStatistics();
+        const stats = statsData.getStatistics();
         document.getElementById('learningDays').textContent = stats.totalDays || 0;
         document.getElementById('totalSentences').textContent = stats.totalSentences || 0;
         document.getElementById('totalReviews').textContent = stats.totalReviews || 0;
@@ -307,4 +307,4 @@ function showStatsPanel() {
         // 初始化图表
         const chartManager = new StatsChart();
     }
-} 
+}

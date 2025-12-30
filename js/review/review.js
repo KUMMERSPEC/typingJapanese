@@ -1,4 +1,4 @@
-import statistics from '../common/statistics.js';
+import statsData from '../common/statsData.js';
 
 class ReviewManager {
     constructor() {
@@ -78,7 +78,7 @@ class ReviewManager {
         const isCorrect = input.value === current.hiragana;
         
         // 更新复习记录
-        statistics.updateReviewRecord(current.id, isCorrect);
+        statsData.updateReviewProgress(current.id, isCorrect);
 
         // 显示答案
         this.showAnswer(current, isCorrect);
