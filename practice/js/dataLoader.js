@@ -5,7 +5,7 @@ export default class DataLoader {
             console.log(`Loading lesson data for ${course}/${lesson}`);
             
             // 使用基于域名的绝对路径
-            const lessonPath = `/typingJapanese/practice/data/${course}/${lesson}.json`;
+            const lessonPath = `./data/${course}/${lesson}.json`;
             console.log('Fetching from path:', lessonPath);
 
             // 添加时间戳防止缓存
@@ -36,7 +36,7 @@ export default class DataLoader {
     static async getCourseData(course) {
         try {
             // 使用基于域名的绝对路径
-            const coursePath = `/typingJapanese/practice/data/${course}/config.json`;
+            const coursePath = `./data/${course}/config.json`;
             const response = await fetch(coursePath);
             
             if (!response.ok) {

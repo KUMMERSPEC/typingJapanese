@@ -48,15 +48,7 @@ export class PracticeManager {
             const lesson = urlParams.get('lesson');
             const collectionId = urlParams.get('collection');
 
-            console.log('URL parameters:', { course, lesson, collectionId     if(isOK){
-        input.classList.remove('error');
-        input.classList.add('correct');
-    }else{
-        input.classList.add('error');
-        input.classList.remove('correct');
-        console.log(`Answer at index ${i} is wrong:`, {userAnswer: ua, correctAnswer: ca});
-    }
-});
+            console.log('URL parameters:', { course, lesson, collectionId });
 
             // 如果是收藏夹练习
             if (collectionId) {

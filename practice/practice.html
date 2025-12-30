@@ -181,28 +181,6 @@
                 });
         });
     </script>
-    <!-- Firebase + Sync (与 index.html 相同，路径保持一致) -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
-            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot }
-            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  
-    const firebaseConfig = { /* 同一份配置 */ };
-  
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-  
-    const firebaseServices = {
-      auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
-      doc, setDoc, getDoc, onSnapshot
-    };
-    window.firebaseServices = firebaseServices;
-  
-    import { initFirebaseSync } from '../js/firebaseSync.js';   <!-- 路径按实际放置 -->
-    initFirebaseSync(firebaseServices);
-  </script>
+
 </body>
 </html> 
