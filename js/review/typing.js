@@ -1,5 +1,11 @@
 import statsData from '../common/statsData.js';
 
+// ===== 标点符号正则 & 工具函数 (全局) =====
+const PUNCT_RE = /^[、。！？….,，;；:：!！?？]+$/;
+function stripPunct(str='') {
+    return str.split(':').filter(u=>u && !PUNCT_RE.test(u)).join(':');
+}
+
 class ReviewManager {
     constructor() {
         this.currentIndex = 0;
@@ -92,9 +98,9 @@ class ReviewManager {
     }
 
     createInputBoxes(hiragana) {
-        const punctuationPattern = /^[、。！？….,，;；:：!！?？]+$/;
-        const stripPunct = (str) => str.split(':').filter(u=>!punctuationPattern.test(u)).join(':');
-        const punctuationPattern = /^[、。！？….,，;；:：!！?？]+$/;
+        
+
+        
         const inputArea = document.querySelector('.input-area');
         if (!inputArea) return;
 
@@ -114,7 +120,7 @@ class ReviewManager {
         // 按冒号分割假名
         // 预处理：确保标点符号被视为独立 token（已在保存阶段插入冒号）。
         const units = hiragana.split(':');
-        const answerUnits = units.filter(u => !punctuationPattern.test(u));
+        const const answerUnits = units.filter(u => !PUNCT_RE.test(u));
         
         // 创建输入框容器
         const inputsContainer = document.createElement('div');
@@ -127,7 +133,7 @@ class ReviewManager {
         const lastInputIndex = answerUnits.length - 1;
         units.forEach((unit, unitIndex) => {
             
-            if (punctuationPattern.test(unit)) {
+            if (PUNCT_RE.test(unit)) {
                 // 直接渲染标点符号
                 const punctSpan = document.createElement('span');
                 punctSpan.className = 'split-punctuation';

@@ -1119,6 +1119,13 @@ export class CustomCollectionsManager {
     }
 
     showBatchImportModal(collectionId) {
+        const updateSepInputState = () => {
+            const customSepInput = document.getElementById('customSeparatorInput');
+            if (!customSepInput) return;
+            const customChecked = document.getElementById('customSep')?.checked;
+            customSepInput.disabled = !customChecked;
+            if (customChecked) customSepInput.focus();
+        };
         const modal = document.getElementById('batchImportModal');
         if (modal) {
             const form = document.getElementById('batchImportForm');
