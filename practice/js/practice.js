@@ -1200,27 +1200,27 @@ export class PracticeManager {
 
         // 检查每个答案并标记
         const userPure = stripPunctArr(answers);
-        const allCorrect = userPure.every((ans,i)=> ans === correctAnswers[i]);
-        inputs.forEach((input,i)=>{ const ua = answers[i].trim(); const ca = correctAnswers[i] || ''; const isOK = normalize(ua) === normalize(ca);
+        let allCorrect = true;
+        inputs.forEach((input, i) => {
+            const ua = answers[i].trim();
+            const ca = correctAnswers[i] || '';
+            const isOK = normalize(ua) === normalize(ca);
 
-
-            // 根据正确与否设置样式
-            if (isCorrect) {
+            if (isOK) {
                 input.classList.remove('error');
                 input.classList.add('correct');
             } else {
+                allCorrect = false;
                 input.classList.add('error');
                 input.classList.remove('correct');
-                console.log(`Answer at index ${index} is wrong:`, {
-                    userAnswer: answer,
-                    correctAnswer: correctAnswer
-                });
+                console.log(`Answer at index ${i} is wrong:`, { userAnswer: ua, correctAnswer: ca });
             }
-
-            return isCorrect;
         });
 
-        // 调用更新熟练度：答对        this.updateProficiency(question, true);        if (allCorrect) {
+        // 调用更新熟练度
+        this.updateProficiency(question, allCorrect);
+
+        if (allCorrect) {
             // 更新历史记录
             this.updateHistory(question);
             
@@ -1305,59 +1305,64 @@ export class PracticeManager {
     // 新增：根据答题结果动态更新句子熟练度
     // ============
     updateProficiency(question, isCorrect) {
-        try {            
-            if (!question || question.type !== 'split') return; // 仅处理分词题            
-        //读取现有统计数据            
-           const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');            
-            if (!stats.reviewHistory) stats.reviewHistory = {};            
-        //构造唯一键：区分课程和收藏夹            
-            const keyPrefix = this.course === 'collection' ? `collection_${this.lesson}` : `${this.course}_${this.lesson}`;            
-            const reviewKey = `${keyPrefix}_${question.character}`;            
-             let entry = stats.reviewHistory[reviewKey];            
-          if (!entry) {                
-             entry = {                    
-            japanese: question.character,                    
-             hiragana: question.hiragana,                    
-         meaning: question.meaning,                    
-             course: this.course,                    
-         lesson: this.lesson,                    
-             proficiency: 'low',                    
-             reviewCount: 0,                    
-             correctCount: 0,                
-             };            
-             }            
-         entry.reviewCount = (entry.reviewCount || 0) + 1;            
-            if (isCorrect) {                
-            entry.correctCount = (entry.correctCount || 0) + 1; // 升级逻辑                
-            if (entry.proficiency === 'low' && entry.correctCount >= 2)
-              {                    
-             entry.proficiency = 'medium';                
-             } else if 
-             (entry.proficiency === 'medium' && entry.correctCount >= 3) {
-                                 entry.proficiency = 'high';                
-             } else if (entry.proficiency === 'high' && entry.correctCount >= 5) 
-            {                    entry.proficiency = 'master';                
-             }            }
-                else {              
-        // 答错：降级并重置 correctCount               
-            entry.correctCount = 0;                
-             if (entry.proficiency === 'medium') entry.proficiency = 'low';                
-            else if (entry.proficiency === 'high') entry.proficiency = 'medium';                
-             else if (entry.proficiency === 'master') entry.proficiency = 'high';            
-             }            
-        // 根据熟练度设置下一次复习间隔            
-            const now = new Date();            
-            let intervalDays = 1;           
-             switch (entry.proficiency) {                
-                case 'low': intervalDays = 1; break;                
-                case 'medium': intervalDays = 3; break;               
-                case 'high': intervalDays = 7; break;                
-                case 'master': intervalDays = 30; break;            
-            }            
-            const nextReview = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);            
-            entry.lastReview = now.toISOString();            
-            entry.nextReviewDate = nextReview.toISOString();            
-            stats.reviewHistory[reviewKey] = entry;            
+        try {
+            if (!question || question.type !== 'split') return; // 仅处理分词题
+
+            // 读取现有统计数据
+            const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+            if (!stats.reviewHistory) stats.reviewHistory = {};
+
+            // 构造唯一键：区分课程和收藏夹
+            const keyPrefix = this.course === 'collection' ? `collection_${this.lesson}` : `${this.course}_${this.lesson}`;
+            const reviewKey = `${keyPrefix}_${question.character}`;
+            let entry = stats.reviewHistory[reviewKey];
+
+            if (!entry) {
+                entry = {
+                    japanese: question.character,
+                    hiragana: question.hiragana,
+                    meaning: question.meaning,
+                    course: this.course,
+                    lesson: this.lesson,
+                    proficiency: 'low',
+                    reviewCount: 0,
+                    correctCount: 0,
+                };
+            }
+
+            entry.reviewCount = (entry.reviewCount || 0) + 1;
+
+            if (isCorrect) {
+                entry.correctCount = (entry.correctCount || 0) + 1; // 升级逻辑
+                if (entry.proficiency === 'low' && entry.correctCount >= 2) {
+                    entry.proficiency = 'medium';
+                } else if (entry.proficiency === 'medium' && entry.correctCount >= 3) {
+                    entry.proficiency = 'high';
+                } else if (entry.proficiency === 'high' && entry.correctCount >= 5) {
+                    entry.proficiency = 'master';
+                }
+            } else {
+                // 答错：降级并重置 correctCount
+                entry.correctCount = 0;
+                if (entry.proficiency === 'medium') entry.proficiency = 'low';
+                else if (entry.proficiency === 'high') entry.proficiency = 'medium';
+                else if (entry.proficiency === 'master') entry.proficiency = 'high';
+            }
+
+            // 根据熟练度设置下一次复习间隔
+            const now = new Date();
+            let intervalDays = 1;
+            switch (entry.proficiency) {
+                case 'low': intervalDays = 1; break;
+                case 'medium': intervalDays = 3; break;
+                case 'high': intervalDays = 7; break;
+                case 'master': intervalDays = 30; break;
+            }
+
+            const nextReview = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);
+            entry.lastReview = now.toISOString();
+            entry.nextReviewDate = nextReview.toISOString();
+            stats.reviewHistory[reviewKey] = entry;
             localStorage.setItem('typing_statistics', JSON.stringify(stats));
         } catch (err) {
             console.error('updateProficiency failed:', err);
