@@ -12,8 +12,8 @@ export class CustomCollectionsManager {
     // Method to get all collections
     getCollections() {
         return Object.entries(this.collections).map(([id, collection]) => ({
-            id,
-            ...collection,
+                id,
+                ...collection,
             sentences: Object.entries(collection.sentences || {}).map(([sentenceId, sentence]) => ({ id: sentenceId, ...sentence }))
         }));
     }
@@ -110,7 +110,7 @@ export class CustomCollectionsManager {
             const action = actionTarget.dataset.action;
             const collectionId = actionTarget.closest('[data-collection-id]')?.dataset.collectionId;
 
-            e.preventDefault();
+                e.preventDefault();
             switch (action) {
                 case 'manage-collections': this.showCollectionsModal(); break;
                 case 'add-collection': this.showAddCollectionModal(); break;
@@ -128,20 +128,20 @@ export class CustomCollectionsManager {
         const lines = text.trim().split('\n').filter(line => line.trim());
         const results = [];
         for (const line of lines) {
-            const parts = line.split(separator);
-            if (parts.length < 2) continue;
-            const sentence = parts[0].trim();
-            const meaning = parts.slice(1).join(separator).trim();
-            if (!sentence || !meaning) continue;
+                const parts = line.split(separator);
+                if (parts.length < 2) continue;
+                const sentence = parts[0].trim();
+                const meaning = parts.slice(1).join(separator).trim();
+                if (!sentence || !meaning) continue;
 
             let hiragana = '', romaji = '';
-            if (lang === 'ja') {
-                try {
-                    const converted = await converter.convert(sentence);
+                if (lang === 'ja') {
+                    try {
+                        const converted = await converter.convert(sentence);
                     hiragana = converted?.data?.hiragana || sentence.split('').join(':');
                     romaji = converted?.data?.romaji || '';
                 } catch { hiragana = sentence.split('').join(':'); }
-            } else {
+                } else {
                 hiragana = sentence.toLowerCase().replace(/[^a-z0-9']+/gi, ' ').trim().split(/\s+/).join(':');
             }
             results.push({ japanese: sentence, hiragana, romaji, meaning, lang });
@@ -168,7 +168,7 @@ export class CustomCollectionsManager {
         table.addEventListener('click', e => {
             if (e.target.classList.contains('delete-preview-btn')) {
                 e.target.closest('tr')?.remove();
-                this._updatePreviewRowNumbers(table);
+                    this._updatePreviewRowNumbers(table);
             }
         });
 
@@ -180,7 +180,7 @@ export class CustomCollectionsManager {
                 }
             });
         }
-        this._openPreviewModal(table);
+            this._openPreviewModal(table);
     }
 
     _openPreviewModal(table) {
@@ -194,8 +194,8 @@ export class CustomCollectionsManager {
                  <div class="modal-header"><h3>导入预览</h3><button class="close-btn">&times;</button></div>
                  <div class="preview-modal-body" style="flex:1;overflow:auto;padding:12px;"></div>
                  <div class="preview-modal-footer">
-                     <button type="button" class="confirm-preview-btn">确认修改</button>
-                     <button type="button" class="cancel-btn">取消</button>
+                     <button type="button" class="btn btn-primary confirm-preview-btn">确认修改</button>
+                     <button type="button" class="btn btn-secondary cancel-btn">取消</button>
                  </div>
               </div>`;
             document.body.appendChild(modal);
@@ -249,7 +249,7 @@ export class CustomCollectionsManager {
             document.body.appendChild(modal);
         }
         this.refreshCollectionsList(modal.querySelector('.collections-list'));
-        modal.classList.add('show');
+            modal.classList.add('show');
     }
 
     refreshCollectionsList(container) {
@@ -294,9 +294,9 @@ export class CustomCollectionsManager {
                         <p>分隔符: <input type="text" id="batchSeparator" value=","></p>
                         <textarea id="batchImportText" rows="10" style="width:98%;"></textarea>
                         <div class="form-actions">
-                            <button type="button" id="previewImportBtn">预览</button>
-                            <button type="submit">导入</button>
-                            <button type="button" class="cancel-btn">取消</button>
+                            <button type="button" id="previewImportBtn" class="btn btn-secondary">预览</button>
+                            <button type="submit" class="btn btn-primary">导入</button>
+                            <button type="button" class="cancel-btn btn btn-secondary">取消</button>
                         </div>
                     </form>
                 </div>`;
@@ -326,7 +326,7 @@ export class CustomCollectionsManager {
             });
         }
         modal.querySelector('form').dataset.collectionId = collectionId;
-        modal.classList.add('show');
+            modal.classList.add('show');
     }
 
     showAddCollectionModal() {
@@ -376,14 +376,14 @@ export class CustomCollectionsManager {
                         <div class="ms-toolbar">
                             <input id="msSearch" type="text" placeholder="搜索...">
                             <select id="msPageSize"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select>
-                        </div>
+                    </div>
                         <div class="sentences-container sentence-list"></div>
                         <div class="ms-pagination">
                             <button id="msPrev">上一页</button>
                             <span id="msPageInfo">1 / 1</span>
                             <button id="msNext">下一页</button>
-                        </div>
                     </div>
+                </div>
                 </div>`;
             document.body.appendChild(modal);
 
@@ -416,10 +416,10 @@ export class CustomCollectionsManager {
         const { collectionId, query } = this.manageState;
         const collection = this.collections[collectionId];
         if (!collection || !collection.sentences) return [];
-
+        
         const sentences = Object.entries(collection.sentences).map(([id, sentence]) => ({ id, ...sentence }));
         if (!query) return sentences;
-
+        
         const lowerQuery = query.toLowerCase();
         return sentences.filter(s => 
             s.japanese?.toLowerCase().includes(lowerQuery) ||
@@ -431,12 +431,12 @@ export class CustomCollectionsManager {
     renderManageSentences() {
         const modal = document.getElementById('manageSentencesModal');
         if (!modal) return;
-
+        
         const container = modal.querySelector('.sentences-container');
         const pageInfo = modal.querySelector('#msPageInfo');
         const prevBtn = modal.querySelector('#msPrev');
         const nextBtn = modal.querySelector('#msNext');
-
+        
         const filtered = this.getFilteredSentences();
         const totalPages = Math.max(1, Math.ceil(filtered.length / this.manageState.pageSize));
         this.manageState.page = Math.max(1, Math.min(this.manageState.page, totalPages));
@@ -446,14 +446,14 @@ export class CustomCollectionsManager {
         container.innerHTML = paginated.map(sentence => `
             <div class="sentence-item" data-sentence-id="${sentence.id}">
                 <div class="sentence-main">
-                    <div class="jp">${sentence.japanese || ''} <span class="lang-badge">${sentence.lang}</span></div>
+                    <div class="jp">${sentence.japanese || ''} <span class="lang-badge lang-badge-${sentence.lang}">${sentence.lang}</span></div>
                     <div class="meta">分词：${sentence.hiragana || ''}</div>
                     ${sentence.romaji ? `<div class="meta">罗马音：${sentence.romaji}</div>` : ''}
                     <div class="cn">${sentence.meaning || ''}</div>
                 </div>
                 <div class="actions">
-                    <button class="edit-sentence-btn">编辑</button>
-                    <button class="delete-sentence-btn">删除</button>
+                    <button class="btn btn-secondary edit-sentence-btn">编辑</button>
+                    <button class="btn btn-danger delete-sentence-btn">删除</button>
                 </div>
             </div>`
         ).join('');
@@ -497,7 +497,7 @@ export class CustomCollectionsManager {
                     <div class="actions" style="text-align:right; margin-top: 1em;">
                         <button type="button" class="cancel-btn">取消</button>
                         <button type="submit" class="primary-btn">保存</button>
-                    </div>
+                 </div>
                 </form>
               </div>`;
             document.body.appendChild(modal);
