@@ -113,17 +113,20 @@ class Statistics {
     }
 
     // 获取已学习的句子总数
+    // 获取已学习的句子总数
     getLearnedSentences() {
         const stats = this.getStatistics();
-        // 从复习历史中计算总句子数
-        const reviewHistory = stats.reviewHistory || {};
-        const totalSentences = Object.keys(reviewHistory).length;
-        console.log('Calculating learned sentences:', {
-            reviewHistory,
-            totalSentences,
-            storedTotal: stats.totalSentences
-        });
-        return totalSentences;
+        // The single source of truth for learned sentences is the number of items in reviewHistory.
+        const totalFromHistory = Object.keys(stats.reviewHistory || {}).length;
+
+        // If the stored totalSentences is different, correct it.
+        if (stats.totalSentences !== totalFromHistory) {
+            console.warn(`Discrepancy found: stats.totalSentences is ${stats.totalSentences}, but reviewHistory has ${totalFromHistory} items. Correcting...`);
+            stats.totalSentences = totalFromHistory;
+            this.saveStatistics(stats);
+        }
+
+        return totalFromHistory;
     }
 
     // 获取待复习数量
