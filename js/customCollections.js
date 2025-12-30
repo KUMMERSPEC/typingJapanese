@@ -370,7 +370,37 @@ export class CustomCollectionsManager {
 
     showAddCollectionModal() {
         let modal = document.getElementById('addCollectionModal');
+
+        const bindSubmitListener = () => {
+            const form = modal.querySelector('form');
+            if (form.dataset.listenerAttached) return;
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nameInput = modal.querySelector('#collectionName'); // Correct ID from index.html
+                const descInput = modal.querySelector('#collectionDescription'); // Correct ID from index.html
+                
+                const name = nameInput ? nameInput.value.trim() : '';
+                const desc = descInput ? descInput.value.trim() : '';
+
+                if (!name) {
+                    alert('名称不能为空');
+                    return;
+                }
+
+                this.createCollection(name, desc);
+                modal.classList.remove('show');
+                // Also refresh the main collections list if it's visible
+                const collectionsList = document.querySelector('#collectionsModal .collections-list');
+                if (collectionsList) {
+                    this.refreshCollectionsList(collectionsList);
+                }
+            });
+            form.dataset.listenerAttached = 'true';
+        };
+
         if (!modal) {
+            // Fallback for safety: if modal is not in HTML, create it dynamically
             modal = document.createElement('div');
             modal.id = 'addCollectionModal';
             modal.className = 'modal';
@@ -379,31 +409,24 @@ export class CustomCollectionsManager {
                 <div class="modal-header"><h3>新建收藏夹</h3><button class="close-btn">&times;</button></div>
                 <form id="addCollectionForm" class="modal-form">
                     <div class="form-group">
-                        <label for="acName">名称</label>
-                        <input id="acName" type="text" required>
+                        <label for="collectionName">名称</label>
+                        <input id="collectionName" type="text" required>
                     </div>
                     <div class="form-group">
-                        <label for="acDesc">描述</label>
-                        <textarea id="acDesc" rows="3"></textarea>
+                        <label for="collectionDescription">描述</label>
+                        <textarea id="collectionDescription" rows="3"></textarea>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary cancel-btn">取消</button>
-                        <button type="submit" class="btn btn-primary">保存</button>
+                        <button type="submit" class="btn btn-primary">创建</button>
                     </div>
                 </form>
               </div>`;
             document.body.appendChild(modal);
-
-            modal.querySelector('form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = modal.querySelector('#acName').value.trim();
-                const desc = modal.querySelector('#acDesc').value.trim();
-                if (!name) { alert('名称不能为空'); return; }
-                this.createCollection(name, desc);
-                modal.classList.remove('show');
-                this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
-            });
         }
+
+        // Bind the listener and show the modal
+        bindSubmitListener();
         modal.querySelector('form').reset();
         modal.classList.add('show');
     }
