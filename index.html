@@ -503,62 +503,7 @@
         });
     </script>
 
-    <!-- 修改这里：添加 type="module" -->
-    <script type="module">
-        import Statistics from './js/common/statistics.js';
 
-        // 更新统计显示
-        function updateStatisticsDisplay() {
-            // 获取最新统计数据
-            const stats = Statistics.getStatistics();
-            
-            // 更新学习天数
-            const learningDaysElement = document.querySelector('.learning-days');
-            if (learningDaysElement) {
-                learningDaysElement.textContent = Statistics.getLearningDays();
-            }
-
-            // 更新已学句子数
-            const learnedSentencesElement = document.querySelector('.learned-sentences');
-            if (learnedSentencesElement) {
-                learnedSentencesElement.textContent = Statistics.getLearnedSentences();
-            }
-
-            // 更新待复习数量
-            const reviewItemsElement = document.querySelector('.review-items');
-            if (reviewItemsElement) {
-                const now = new Date();
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                let reviewCount = 0;
-
-                // 从 reviewHistory 中获取待复习数据
-                if (stats.reviewHistory) {
-                    Object.values(stats.reviewHistory).forEach(item => {
-                        if (item.nextReviewDate) {
-                            const nextReview = new Date(item.nextReviewDate);
-                            const reviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
-                            
-                            if (reviewDay.getTime() === today.getTime()) {
-                                reviewCount++;
-                            }
-                        }
-                    });
-                }
-
-                reviewItemsElement.textContent = reviewCount;
-            }
-        }
-
-        // 页面加载时更新显示
-        document.addEventListener('DOMContentLoaded', () => {
-            updateStatisticsDisplay();
-        });
-
-        // 监听统计更新事件
-        window.addEventListener('statisticsUpdated', () => {
-            updateStatisticsDisplay();
-        });
-    </script>
     <script>
       (function(){
         function applyFitScale(){
