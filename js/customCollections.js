@@ -334,6 +334,198 @@ export class CustomCollectionsManager {
         modal.classList.add('show');
     }
     
-    // Other methods like showAddCollectionModal, showEditCollectionModal, showManageSentencesModal would go here
-    // They should also follow the create-on-demand pattern
+    showAddCollectionModal() {
+        let modal = document.getElementById('addCollectionModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'addCollectionModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+              <div class="modal-content" style="max-width:400px;">
+                <div class="modal-header"><h3>新建收藏夹</h3><button class="close-btn">&times;</button></div>
+                <form id="addCollectionForm">
+                    <label>名称<input id="acName" type="text" required></label>
+                    <label>描述<textarea id="acDesc" rows="3"></textarea></label>
+                    <div class="actions">
+                        <button type="button" class="cancel-btn">取消</button>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+              </div>`;
+            document.body.appendChild(modal);
+
+            modal.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = modal.querySelector('#acName').value.trim();
+                const desc = modal.querySelector('#acDesc').value.trim();
+                if (!name) { alert('名称不能为空'); return; }
+                this.createCollection(name, desc);
+                modal.classList.remove('show');
+                this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
+            });
+        }
+        modal.querySelector('form').reset();
+        modal.classList.add('show');
+    }
+
+    showManageSentencesModal(collectionId) {
+        let modal = document.getElementById('manageSentencesModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'manageSentencesModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width:900px;">
+                    <div class="modal-header"><h3>管理句子</h3><button class="close-btn">&times;</button></div>
+                    <div class="modal-body">
+                        <div class="ms-toolbar">
+                            <input id="msSearch" type="text" placeholder="搜索...">
+                            <select id="msPageSize"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select>
+                        </div>
+                        <div class="sentences-container sentence-list"></div>
+                        <div class="ms-pagination">
+                            <button id="msPrev">上一页</button>
+                            <span id="msPageInfo">1 / 1</span>
+                            <button id="msNext">下一页</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+
+            // Bind events once
+            const searchInput = modal.querySelector('#msSearch');
+            const pageSizeSelect = modal.querySelector('#msPageSize');
+            const prevBtn = modal.querySelector('#msPrev');
+            const nextBtn = modal.querySelector('#msNext');
+
+            const render = () => this.renderManageSentences();
+
+            searchInput.addEventListener('input', () => { this.manageState.query = searchInput.value; this.manageState.page = 1; render(); });
+            pageSizeSelect.addEventListener('change', () => { this.manageState.pageSize = parseInt(pageSizeSelect.value); this.manageState.page = 1; render(); });
+            prevBtn.addEventListener('click', () => { if (this.manageState.page > 1) { this.manageState.page--; render(); } });
+            nextBtn.addEventListener('click', () => { 
+                const totalPages = Math.ceil(this.getFilteredSentences().length / this.manageState.pageSize);
+                if (this.manageState.page < totalPages) { this.manageState.page++; render(); } 
+            });
+        }
+
+        this.manageState.collectionId = collectionId;
+        this.manageState.page = 1;
+        this.manageState.query = '';
+        modal.querySelector('#msSearch').value = '';
+        this.renderManageSentences();
+        modal.classList.add('show');
+    }
+
+    getFilteredSentences() {
+        const { collectionId, query } = this.manageState;
+        const collection = this.collections[collectionId];
+        if (!collection || !collection.sentences) return [];
+
+        const sentences = Object.entries(collection.sentences).map(([id, sentence]) => ({ id, ...sentence }));
+        if (!query) return sentences;
+
+        const lowerQuery = query.toLowerCase();
+        return sentences.filter(s => 
+            s.japanese?.toLowerCase().includes(lowerQuery) ||
+            s.hiragana?.toLowerCase().includes(lowerQuery) ||
+            s.meaning?.toLowerCase().includes(lowerQuery)
+        );
+    }
+
+    renderManageSentences() {
+        const modal = document.getElementById('manageSentencesModal');
+        if (!modal) return;
+
+        const container = modal.querySelector('.sentences-container');
+        const pageInfo = modal.querySelector('#msPageInfo');
+        const prevBtn = modal.querySelector('#msPrev');
+        const nextBtn = modal.querySelector('#msNext');
+
+        const filtered = this.getFilteredSentences();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / this.manageState.pageSize));
+        this.manageState.page = Math.max(1, Math.min(this.manageState.page, totalPages));
+        const startIndex = (this.manageState.page - 1) * this.manageState.pageSize;
+        const paginated = filtered.slice(startIndex, startIndex + this.manageState.pageSize);
+
+        container.innerHTML = paginated.map(sentence => `
+            <div class="sentence-item" data-sentence-id="${sentence.id}">
+                <div class="sentence-main">
+                    <div class="jp">${sentence.japanese || ''} <span class="lang-badge">${sentence.lang}</span></div>
+                    <div class="meta">分词：${sentence.hiragana || ''}</div>
+                    ${sentence.romaji ? `<div class="meta">罗马音：${sentence.romaji}</div>` : ''}
+                    <div class="cn">${sentence.meaning || ''}</div>
+                </div>
+                <div class="actions">
+                    <button class="edit-sentence-btn">编辑</button>
+                    <button class="delete-sentence-btn">删除</button>
+                </div>
+            </div>`
+        ).join('');
+
+        pageInfo.textContent = `${this.manageState.page} / ${totalPages}`;
+        prevBtn.disabled = this.manageState.page <= 1;
+        nextBtn.disabled = this.manageState.page >= totalPages;
+
+        // Add event listeners for edit/delete buttons
+        container.querySelectorAll('.edit-sentence-btn').forEach(btn => {
+            btn.onclick = () => {
+                const sentenceId = btn.closest('.sentence-item').dataset.sentenceId;
+                const sentence = this.collections[this.manageState.collectionId].sentences[sentenceId];
+                this.showEditSentenceModal(this.manageState.collectionId, sentenceId, sentence);
+            };
+        });
+        container.querySelectorAll('.delete-sentence-btn').forEach(btn => {
+            btn.onclick = () => {
+                if (confirm('确定删除该句子吗?')) {
+                    const sentenceId = btn.closest('.sentence-item').dataset.sentenceId;
+                    this.deleteSentence(this.manageState.collectionId, sentenceId);
+                    this.renderManageSentences(); // Re-render
+                }
+            };
+        });
+    }
+
+    showEditCollectionModal(collectionId) {
+        let modal = document.getElementById('editCollectionModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'editCollectionModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+              <div class="modal-content" style="max-width:400px;">
+                <div class="modal-header"><h3>编辑收藏夹</h3><button class="close-btn">&times;</button></div>
+                <form id="editCollectionForm">
+                    <input type="hidden" id="ecId">
+                    <label>名称<input id="ecName" type="text" required></label>
+                    <label>描述<textarea id="ecDesc" rows="3"></textarea></label>
+                    <div class="actions">
+                        <button type="button" class="cancel-btn">取消</button>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+              </div>`;
+            document.body.appendChild(modal);
+
+            modal.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = modal.querySelector('#ecId').value;
+                const name = modal.querySelector('#ecName').value.trim();
+                const desc = modal.querySelector('#ecDesc').value.trim();
+                if (!name) { alert('名称不能为空'); return; }
+                this.editCollection(id, name, desc);
+                modal.classList.remove('show');
+                this.refreshCollectionsList(document.querySelector('#collectionsModal .collections-list'));
+            });
+        }
+
+        const collection = this.collections[collectionId];
+        if (collection) {
+            modal.querySelector('#ecId').value = collectionId;
+            modal.querySelector('#ecName').value = collection.name;
+            modal.querySelector('#ecDesc').value = collection.description || '';
+            modal.classList.add('show');
+        }
+    }
+
 }
