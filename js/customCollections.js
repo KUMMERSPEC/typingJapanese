@@ -238,6 +238,20 @@ export class CustomCollectionsManager {
         modal.classList.add('show');
     }
 
+    async processBatchImport(sentencesToImport, collectionId) {
+        if (!this.collections[collectionId]) throw new Error('收藏夹不存在');
+        let successCount = 0;
+        sentencesToImport.forEach(sentence => {
+            const id = `sentence_${Date.now()}_${successCount++}`;
+            this.collections[collectionId].sentences[id] = {
+                ...sentence,
+                created_at: new Date().toISOString()
+            };
+        });
+        this.saveCollections();
+        return { success: successCount };
+    }
+
     _updatePreviewRowNumbers(table) {
         table.querySelectorAll('tbody tr').forEach((row, index) => {
             row.cells[0].textContent = index + 1;
