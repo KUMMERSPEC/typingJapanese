@@ -615,18 +615,18 @@ form {
 /* 容器允许横向滚动，并限制高度，避免撑满屏 */
 #batchImportModal .import-preview {
     margin-top: 12px;
-    max-height: 46vh;
+    max-height: 70vh; /* 提高可见高度，纵向更多内容无需缩放 */
     overflow: auto; /* 同时支持横向与纵向滚动 */
     padding: 4px 2px;
 }
 
 .preview-table {
-    width: 100%;
+    width: max-content; /* 让表格根据内容自然宽度展开，超出容器时可横向滚动 */
     border-collapse: collapse;
     margin-top: 4px;
     font-size: 14px;
-    table-layout: auto; /* 让列宽自然扩展 */
-    min-width: 1000px;  /* 关键：为日语模式提供更宽的基础宽度 */
+    table-layout: fixed; /* 避免浏览器压缩列宽度到极窄；与 min-width 搭配让列更稳定 */
+    min-width: 1200px;  /* 略微扩展宽度，减少换行 */  /* 关键：为日语模式提供更宽的基础宽度 */
 }
 
 .preview-table th,

@@ -801,6 +801,17 @@ export class CustomCollectionsManager {
         }
 
         // 批量导入 - 事件绑定
+        // 切换自定义分隔符输入框启用状态
+        const separatorRadios = document.querySelectorAll('input[name="separator"]');
+        const customSepInput  = document.getElementById('customSeparatorInput');
+        const updateSepInputState = () => {
+            if (!customSepInput) return;
+            const customChecked = document.getElementById('customSep')?.checked;
+            customSepInput.disabled = !customChecked;
+            if (customChecked) customSepInput.focus();
+        };
+        separatorRadios.forEach(r => r.addEventListener('change', updateSepInputState));
+        updateSepInputState();
         const previewBtn = document.getElementById('previewImportBtn');
             if (previewBtn) {
                 previewBtn.addEventListener('click', async () => {
