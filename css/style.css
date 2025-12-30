@@ -692,6 +692,66 @@ form {
     color: #666;
 }
 
+/* ===== 导入预览弹窗（importPreviewModal）专项修正 ===== */
+#importPreviewModal .modal-content {
+    /* 防止弹窗主体出现横向滚动，横向滚动交给 body */
+    overflow-x: hidden;
+}
+
+#importPreviewModal .preview-modal-body {
+    overflow: auto;              /* 该区域负责横向/纵向滚动 */
+}
+
+#importPreviewModal .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #fff;
+    padding: 12px 16px;          /* 更紧凑，减少遮挡 */
+}
+
+#importPreviewModal .modal-header h3 {
+    font-size: 1.1rem;           /* 字体调小一些 */
+    margin: 0;
+}
+
+/* 关闭键固定在弹窗右上角（不随滚动条移动） */
+#importPreviewModal .modal-header .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+}
+
+/* 操作列更窄 */
+#importPreviewModal .preview-table th:last-child,
+#importPreviewModal .preview-table td:last-child {
+    width: 72px;
+    min-width: 72px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* 美化删除按钮，并使其宽度基本等于操作列 */
+#importPreviewModal .preview-table .delete-preview-btn {
+    width: 60px;
+    height: 30px;
+    border: 1px solid #ef4444;
+    background: #fff;
+    color: #ef4444;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+#importPreviewModal .preview-table .delete-preview-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+#importPreviewModal .preview-table .delete-preview-btn:active {
+    transform: translateY(1px);
+}
+
 /* 导入结果消息样式 */
 .import-result {
     margin-top: 10px;
