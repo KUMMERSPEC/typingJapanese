@@ -17,21 +17,36 @@ function createBaseModal() {
     modal.innerHTML = `
         <div class="modal-content" style="min-width:320px;max-width:460px;">
             <div class="modal-header"><h3 id="sentenceModalTitle">添加句子</h3><button class="close-btn">&times;</button></div>
-            <form id="sentenceForm" style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
-                <label>语言
+            <form id="sentenceForm" class="modal-form">
+                <div class="form-group">
+                    <label for="smLang">语言</label>
                     <select id="smLang">
                         <option value="ja" selected>日语</option>
                         <option value="en">英语</option>
                     </select>
-                </label>
-                <label>句子<input id="smJapanese" type="text" required></label>
-                <button type="button" id="smConvertBtn" style="align-self:flex-start;">转换/分词</button>
-                <label>分词<textarea id="smHiragana" rows="2" required></textarea></label>
-                <label id="smRomajiLabel">罗马字<input id="smRomaji" type="text"></label>
-                <label>中文<input id="smMeaning" type="text" required></label>
-                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
-                    <button type="button" class="cancel-btn">取消</button>
-                    <button type="submit" class="primary-btn">保存</button>
+                </div>
+                <div class="form-group">
+                    <label for="smJapanese">句子</label>
+                    <input id="smJapanese" type="text" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="smConvertBtn" class="btn btn-secondary" style="width:auto;">转换/分词</button>
+                </div>
+                <div class="form-group">
+                    <label for="smHiragana">分词</label>
+                    <textarea id="smHiragana" rows="2" required></textarea>
+                </div>
+                <div class="form-group" id="smRomajiLabel">
+                    <label for="smRomaji">罗马字</label>
+                    <input id="smRomaji" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="smMeaning">中文</label>
+                    <input id="smMeaning" type="text" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
         </div>`;
@@ -76,13 +91,13 @@ function createBaseModal() {
         }
     };
 
-    updateUIForLang(); // Initial setup
-
     // 分词(假名) -> 罗马字联动（仅日语）
     hiraArea.addEventListener('input', () => {
         if (langSelect.value !== 'ja') return;
         romaInput.value = converter.hiraganaToRomaji(hiraArea.value);
     });
+    
+    updateUIForLang(); // Initial setup
 
     return modal;
 }
@@ -115,6 +130,7 @@ export function showEditSentenceModal(originalData, onSave) {
     form.querySelector('#smHiragana').value = originalData.hiragana || '';
     form.querySelector('#smRomaji').value = originalData.romaji || '';
     form.querySelector('#smMeaning').value = originalData.meaning || '';
+    form.querySelector('#smLang').value = originalData.lang || 'ja';
 
     form.onsubmit = (e) => {
         e.preventDefault();
@@ -130,4 +146,3 @@ export function showEditSentenceModal(originalData, onSave) {
     };
     modal.classList.add('show');
 }
-
