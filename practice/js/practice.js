@@ -48,7 +48,15 @@ export class PracticeManager {
             const lesson = urlParams.get('lesson');
             const collectionId = urlParams.get('collection');
 
-            console.log('URL parameters:', { course, lesson, collectionId });
+            console.log('URL parameters:', { course, lesson, collectionId     if(isOK){
+        input.classList.remove('error');
+        input.classList.add('correct');
+    }else{
+        input.classList.add('error');
+        input.classList.remove('correct');
+        console.log(`Answer at index ${i} is wrong:`, {userAnswer: ua, correctAnswer: ca});
+    }
+});
 
             // 如果是收藏夹练习
             if (collectionId) {
@@ -1200,11 +1208,9 @@ export class PracticeManager {
 
         // 检查每个答案并标记
         const userPure = stripPunctArr(answers);
-        const allCorrect = userPure.every((answer,index)=> answer===correctAnswers[index]);
-        answers.forEach((ans,idx)=>{
-            const correctAnswer = correctAnswers[index];
-            const input = inputs[index];
-            const isCorrect = normalize(answer) === normalize(correctAnswer);
+        const allCorrect = userPure.every((ans,i)=> ans === correctAnswers[i]);
+        inputs.forEach((input,i)=>{ const ua = answers[i].trim(); const ca = correctAnswers[i] || ''; const isOK = normalize(ua) === normalize(ca);
+
 
             // 根据正确与否设置样式
             if (isCorrect) {
