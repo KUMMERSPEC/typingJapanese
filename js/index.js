@@ -688,19 +688,11 @@ function updateStatsDisplay() {
     }
 
     // 更新掌握度指标
-    const completedQuestions = stats.completedQuestions || {};
-    let low = 0, medium = 0, high = 0;
+    const masteryStats = statsData.getMasteryStats();
 
-    Object.values(completedQuestions).forEach(question => {
-        const correctRate = question.correctCount / question.totalAttempts;
-        if (correctRate < 0.6) low++;
-        else if (correctRate < 0.9) medium++;
-        else high++;
-    });
-
-    if (elements.masteryHigh) elements.masteryHigh.textContent = high;
-    if (elements.masteryMedium) elements.masteryMedium.textContent = medium;
-    if (elements.masteryLow) elements.masteryLow.textContent = low;
+    if (elements.masteryHigh) elements.masteryHigh.textContent = masteryStats.high || 0;
+    if (elements.masteryMedium) elements.masteryMedium.textContent = masteryStats.medium || 0;
+    if (elements.masteryLow) elements.masteryLow.textContent = masteryStats.low || 0;
 }
 
 // 点击遮罩层关闭面板
