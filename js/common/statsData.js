@@ -247,22 +247,54 @@ class Statistics {
      * 更改为调用 this.getStatistics() / this.saveStatistics()
      * ----------------------------------------------------------------*/
 
-    // 获取学习天数
+    // 获取连续学习天数（重新计算，避免缓存错误）
     getLearningDays() {
         const stats = this.getStatistics();
-        const today = new Date().toLocaleDateString();
-        if (stats.dailyStats && stats.dailyStats[today]) {
-            if (stats.lastStudyDate !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                const yStr = yesterday.toLocaleDateString();
-                stats.consecutiveDays = (stats.dailyStats[yStr]) ? (stats.consecutiveDays || 0) + 1 : 1;
-                stats.lastStudyDate = today;
-                this.saveStatistics(stats);
+        const daily = stats.dailyStats || {};
+        const dates = Object.keys(daily);
+        if (dates.length === 0) return 0;
+
+        // 将日期字符串转为时间戳并降序排列
+        const sorted = dates.sort((a, b) => new Date(b) - new Date(a));
+        let streak = 0;
+        let cursor = new Date(sorted[0]); // 最近一次学习日期
+        for (const ds of sorted) {
+            const d = new Date(ds);
+            if (d.toDateString() === cursor.toDateString()) {
+                // 该天确实学过句子才算有效
+                if ((daily[ds].sentencesLearned || 0) > 0) {
+                    streak++;
+                    cursor.setDate(cursor.getDate() - 1); // 期待再往前一天
+                    continue;
+                }
             }
-            return stats.consecutiveDays || 1;
+            break; // 不是连续天，结束
         }
-        return stats.consecutiveDays || 0;
+        return streak;
+    }
+
+    // 获取历史最长连续学习天数
+    getLongestStreak() {
+        const daily = this.getStatistics().dailyStats || {};
+        const dates = Object.keys(daily).sort(); // 升序
+        let longest = 0, current = 0, prev = null;
+        for (const ds of dates) {
+            if ((daily[ds].sentencesLearned || 0) === 0) continue;
+            if (prev) {
+                const exp = new Date(prev);
+                exp.setDate(exp.getDate() + 1);
+                if (new Date(ds).toDateString() === exp.toDateString()) {
+                    current++;
+                } else {
+                    current = 1;
+                }
+            } else {
+                current = 1;
+            }
+            longest = Math.max(longest, current);
+            prev = ds;
+        }
+        return longest;
     }
 
     // 获取已学习句子总数
