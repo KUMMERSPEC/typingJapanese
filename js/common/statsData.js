@@ -145,6 +145,8 @@ const INTERVAL_ADJUSTMENTS = {
 
 class Statistics {
     constructor() {
+        // 确保初始化时执行本地⇆IndexedDB 迁移
+        this._initMigration();
         this._stats = null;               // 内存缓存
         this._isUpdating = false;         // 防止递归调用
         this._storage = storageManager;   // 统一数据访问入口
@@ -313,7 +315,7 @@ class Statistics {
             console.error('获取复习项目出错:', error);
             return [];
         }
-    }
+    }image.png
 
     // 获取掌握情况统计（保持原逻辑）
     getMasteryStats() {
