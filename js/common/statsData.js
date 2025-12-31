@@ -247,27 +247,44 @@ class Statistics {
             stats.totalSentences = Object.keys(stats.reviewHistory).length;
             console.log('计算得到的总句子数:', stats.totalSentences);
             
-            // 清理损坏的 / 非 split 的 reviewHistory 条目
+            // 清理 reviewHistory：只保留 split（以 hiragana 内含 ':' 作为唯一判定）
+            // - 适用于日语 split 分句与英语分词（两者都使用 ':' 分隔）
+            // - 会清除历史上误入的 normal 单词条目
+            let reviewHistoryChanged = false;
             if (stats.reviewHistory) {
                 Object.entries(stats.reviewHistory).forEach(([k, v]) => {
                     // 1) 缺少核心字段
                     if (!v || (!v.japanese && !v.sentence)) {
                         delete stats.reviewHistory[k];
+                        reviewHistoryChanged = true;
                         return;
                     }
-                    // 2) 过滤 normal 等非 split（不计入待复习/已学）
-                    //    旧数据可能没有 type 字段：用 key 规则兜底（normal 往往是 course:lesson:character 或其它）
-                    if (v.type && v.type !== 'split') {
+
+                    // 2) 只保留 hiragana 中含 ':' 的记录
+                    const hira = String(v.hiragana || '');
+                    const isSplit = hira.includes(':');
+                    if (!isSplit) {
                         delete stats.reviewHistory[k];
+                        reviewHistoryChanged = true;
                         return;
                     }
-                    // 若无 type 字段，但字段结构像 normal（通常缺少 hiragana 或 nextReviewDate），也清理
-                    if (!v.type && (!v.hiragana || !v.nextReviewDate)) {
-                        // 为避免误删旧 split 数据，这里只在缺少 hiragana/nextReviewDate 时删除
-                        delete stats.reviewHistory[k];
+
+                    // 补齐 type 标记，便于后续逻辑判断
+                    if (!v.type) {
+                        v.type = 'split';
+                        reviewHistoryChanged = true;
                     }
                 });
             }
+
+            // 重新计算总句子数（以 reviewHistory 为准）
+            stats.totalSentences = Object.keys(stats.reviewHistory || {}).length;
+
+            // 若发生清理/修正，写回 localStorage + Firebase（避免下次同步又恢复旧数据）
+            if (reviewHistoryChanged) {
+                this.saveStatistics(stats);
+            }
+
             this._stats = stats;
             console.log('=== getStatistics 结束 ===');
             return stats;
