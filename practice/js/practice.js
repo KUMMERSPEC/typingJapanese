@@ -412,6 +412,10 @@ export class PracticeManager {
             this.$.ansDisplay.classList.remove('show');
             this.$.ansDisplay.style.display = 'none';
         }
+                // 显示输入区域和功能按钮
+        this.$.inputArea.style.display = 'flex';
+        this.$.char.style.display = 'block';
+        this.$.funcBtns.style.display = 'flex';   // ★ 确保按钮重新显示
         this.showQuestion();
 
         setTimeout(() => { this.isTransitioning = false; }, 500);

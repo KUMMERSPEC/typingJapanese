@@ -247,6 +247,14 @@ class Statistics {
             stats.totalSentences = Object.keys(stats.reviewHistory).length;
             console.log('计算得到的总句子数:', stats.totalSentences);
             
+            // 清理损坏的 reviewHistory 条目（缺少 sentence / japanese 字段）
+            if (stats.reviewHistory) {
+                Object.entries(stats.reviewHistory).forEach(([k, v]) => {
+                    if (!v || (!v.japanese && !v.sentence)) {
+                        delete stats.reviewHistory[k];
+                    }
+                });
+            }
             this._stats = stats;
             console.log('=== getStatistics 结束 ===');
             return stats;

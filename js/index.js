@@ -376,7 +376,8 @@ function updateReviewList() {
     const reviewCountDiv = document.querySelector('.review-count');
     
         // 通过 statsData 获取统一的复习项
-    let allItems = statsData.getReviewItems();
+    // 通过 statsData 获取统一的复习项，并过滤掉无效数据
+    let allItems = statsData.getReviewItems().filter(item => item && (item.japanese || item.sentence));
     let items = [];
 
     // 根据筛选条件处理
