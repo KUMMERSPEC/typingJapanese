@@ -56,7 +56,7 @@ class ReviewManager {
         }
 
         // 显示问题
-        const characterElement = document.querySelector('.character');
+        const characterElement = this.$.char;
         if (characterElement) {
             characterElement.textContent = current.japanese;
         }
