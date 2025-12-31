@@ -315,7 +315,7 @@ class Statistics {
             console.error('获取复习项目出错:', error);
             return [];
         }
-    }image.png
+    }
 
     // -- 新增回补：处理练习完成时的数据更新
     updateDailyStats(lessonId, splitCount, questions) {
