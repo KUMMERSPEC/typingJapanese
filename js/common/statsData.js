@@ -145,8 +145,7 @@ const INTERVAL_ADJUSTMENTS = {
 
 class Statistics {
     constructor() {
-        // 确保初始化时执行本地⇆IndexedDB 迁移
-        this._initMigration();
+
         this._stats = null;               // 内存缓存
         this._isUpdating = false;         // 防止递归调用
         this._storage = storageManager;   // 统一数据访问入口
