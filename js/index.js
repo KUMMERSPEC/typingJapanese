@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Initial stats:', { stats, learnedSentences });
 
     if (elements.learningDays) {
-        elements.learningDays.textContent = stats.consecutiveDays || 0;
+        elements.learningDays.textContent = statsData.getLearningDays();
     }
     if (elements.learnedSentences) {
         elements.learnedSentences.textContent = learnedSentences;
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (elements.learningDays) {
-            elements.learningDays.textContent = stats.consecutiveDays || 0;
+            elements.learningDays.textContent = statsData.getLearningDays();
         }
         if (elements.learnedSentences) {
             elements.learnedSentences.textContent = learnedSentences;
@@ -681,7 +681,7 @@ function updateStatsDisplay() {
     };
 
     // 只在元素存在时更新内容
-    if (elements.totalDays) elements.totalDays.textContent = stats.consecutiveDays || 0;
+    if (elements.totalDays) elements.totalDays.textContent = statsData.getLearningDays();
     if (elements.totalSentences) elements.totalSentences.textContent = stats.totalSentences || 0;
     if (elements.totalReviews) {
         elements.totalReviews.textContent = Object.values(stats.reviewHistory || {})

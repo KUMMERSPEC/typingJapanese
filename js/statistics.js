@@ -98,7 +98,7 @@ class Statistics {
         // 更新学习天数
         const learningDaysElement = document.querySelector('.learning-days');
         if (learningDaysElement) {
-            learningDaysElement.textContent = stats.consecutiveDays || 0;
+            learningDaysElement.textContent = statsData.getLearningDays();
         }
 
         // 更新已学句子数

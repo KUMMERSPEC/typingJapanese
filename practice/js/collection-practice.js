@@ -1,4 +1,5 @@
 import { PracticeManager } from './practice.js';
+import statsData from '../../js/common/statsData.js';
 
 class CollectionPracticeManager extends PracticeManager {
     constructor() {
@@ -73,7 +74,7 @@ class CollectionPracticeManager extends PracticeManager {
                 <h1>おめでとう！</h1>
                 <p>练习完成！</p>
                 <p>今日已学习: ${this.questions.length} 个句子</p>
-                <p>连续学习: ${this.getLearningDays()} 天</p>
+                <p>连续学习: ${statsData.getLearningDays()} 天</p>
                 <div class="button-group">
                     <button class="restart-btn" onclick="location.reload()">重新开始</button>
                     <button class="return-btn" onclick="window.location.href='/typingJapanese/'">返回首页</button>
@@ -110,11 +111,7 @@ class CollectionPracticeManager extends PracticeManager {
         }
     }
 
-    // 获取学习天数
-    getLearningDays() {
-        const stats = JSON.parse(localStorage.getItem('learningStats') || '{}');
-        return stats.learningDays || 0;
-    }
+
 }
 
 // 初始化收藏夹练习
