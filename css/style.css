@@ -49,6 +49,11 @@
 }
 
 /* 统计弹窗基础样式 */
+
+/* 更紧凑的掌握情况卡片 */
+.stats-panel .stats-item{padding:12px 14px;}
+.stats-panel .stats-item .value{font-size:1.4rem;}
+.stats-panel .stats-item .label{font-size:0.9rem;margin-bottom:4px;}
 .stats-panel {
     position: fixed;
     top: 50%;
@@ -751,6 +756,11 @@ form {
 #importPreviewModal .preview-table .delete-preview-btn:active {
     transform: translateY(1px);
 }
+/* 防止 header 横向参与滚动布局 */
+#importPreviewModal .modal-header { overflow: hidden; }
+
+/* 避免 sticky header 压住表格第一行 */
+#importPreviewModal .preview-modal-body { padding: 56px 12px 12px; }
 
 /* 导入结果消息样式 */
 .import-result {
