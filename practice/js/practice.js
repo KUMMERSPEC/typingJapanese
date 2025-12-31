@@ -223,7 +223,34 @@ export class PracticeManager {
             });
             mainContainer.appendChild(inputsContainer);
         } else {
-            // Handle non-split questions if any
+            // Non-split question: single input field
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'single-input';
+            adjustInputWidth(input);
+
+            const possibleAnswers = [question.hiragana, question.character, question.romaji].filter(Boolean);
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.showCorrectAnswer(question, true);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const ans = input.value.trim();
+                    if (!ans) return;
+                    if (possibleAnswers.includes(ans)) {
+                        input.classList.add('correct');
+                        this.showCorrectAnswer(question);
+                        setTimeout(() => this.nextQuestion(), 2000);
+                    } else {
+                        input.classList.add('error');
+                        setTimeout(() => input.classList.remove('error'), 500);
+                    }
+                }
+            });
+
+            mainContainer.appendChild(input);
         }
 
         if (this.$.inputArea) this.$.inputArea.appendChild(mainContainer);
@@ -255,9 +282,10 @@ export class PracticeManager {
                 nextInput?.focus();
             } else if (e.key === 'Enter') {
                 e.preventDefault();
-                const nextInput = e.currentTarget.parentElement.nextElementSibling?.querySelector('input');
-                if (nextInput) {
-                    nextInput.focus();
+                const allInputs = Array.from(this.$.inputArea.querySelectorAll('.split-input'));
+                const currentIndex = allInputs.indexOf(e.currentTarget);
+                if (currentIndex < allInputs.length - 1) {
+                    allInputs[currentIndex + 1].focus();
                 } else {
                     this.checkSplitAnswer();
                 }
