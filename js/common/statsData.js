@@ -342,6 +342,42 @@ class Statistics {
     }
 
     /* ---------------- 以下 updateReviewProgress 等方法保持不变，仅在保存处调用 saveStatistics ---------------- */
+
+    // 计算单条句子的掌握状态（供复习列表显示）
+    getMasteryStatus(item) {
+        // 新句子（没有记录）
+        if (!item || !item.reviewCount) {
+            return { text: '生疏', class: 'status-new' };
+        }
+        // master 始终显示熟练
+        if (item.proficiency === 'master') {
+            return { text: '熟练', class: 'status-high' };
+        }
+        const nextReview = new Date(item.nextReviewDate);
+        const now = new Date();
+        const lastReview = item.lastReview ? new Date(item.lastReview) : null;
+        // 刚复习完，显示掌握度
+        if (lastReview && lastReview.toDateString() === now.toDateString()) {
+            switch (item.proficiency) {
+                case 'high': return { text: '熟练', class: 'status-high' };
+                case 'medium': return { text: '基本掌握', class: 'status-medium' };
+                case 'low': return { text: '需要加强', class: 'status-low' };
+                default: return { text: '未知', class: 'status-unknown' };
+            }
+        }
+        // 到了复习时间
+        if (nextReview <= now) {
+            return { text: '待复习', class: 'status-review' };
+        }
+        // 其他情况
+        switch (item.proficiency) {
+            case 'high': return { text: '熟练', class: 'status-high' };
+            case 'medium': return { text: '基本掌握', class: 'status-medium' };
+            case 'low': return { text: '需要加强', class: 'status-low' };
+            default: return { text: '未知', class: 'status-unknown' };
+        }
+    }
+
     // ... 由于篇幅原因，此处省略原文件其余 ~600 行代码 ...
 }
 
