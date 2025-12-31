@@ -808,22 +808,15 @@ function showLearnedSentencesPanel() {
                 meaning: item.meaning || ''
             }));
         
-        // 构建面板内容
+        // 构建面板骨架（虚拟滚动）
         learnedPanel.innerHTML = `
             <div class="panel-header">
                 <h3>已学句子 (${items.length})</h3>
                 <button class="close-btn" type="button">×</button>
             </div>
-            <div class="learned-list">
-                ${items.length === 0 ? 
-                    '<div class="empty-message">还没有学习过的句子</div>' :
-                    items.map(item => `
-                        <div class="learned-item">
-                            <div class="japanese">${item.japanese}</div>
-                            <div class="meaning">${item.meaning}</div>
-                        </div>
-                    `).join('')
-                }
+            <div class="learned-list vscroll">
+                <div class="vscroll-spacer" style="height:${items.length*48}px"></div>
+                <div class="vscroll-pool"></div>
             </div>
         `;
 
@@ -831,6 +824,46 @@ function showLearnedSentencesPanel() {
         document.body.appendChild(overlay);
         document.body.appendChild(learnedPanel);
         
+        // 初始化虚拟列表
+        const ROW_H = 48;
+        const listEl = learnedPanel.querySelector('.vscroll');
+        const poolEl = learnedPanel.querySelector('.vscroll-pool');
+        const poolSize = Math.min(items.length, Math.ceil(learnedPanel.offsetHeight / ROW_H) + 5);
+        let firstIdx = 0;
+        // 创建池
+        for (let i = 0; i < poolSize; i++) {
+            const div = document.createElement('div');
+            div.className = 'learned-item';
+            div.style.position = 'absolute';
+            div.style.width = '100%';
+            div.style.height = ROW_H + 'px';
+            poolEl.appendChild(div);
+        }
+        function fill(node, data) {
+            node.innerHTML = `<div class="japanese">${data.japanese}</div><div class="meaning">${data.meaning}</div>`;
+        }
+        function render(start) {
+            for (let i = 0; i < poolSize; i++) {
+                const idx = start + i;
+                const node = poolEl.children[i];
+                if (idx >= items.length) {
+                    node.style.display = 'none';
+                    continue;
+                }
+                node.style.display = '';
+                node.style.transform = `translateY(${idx * ROW_H}px)`;
+                fill(node, items[idx]);
+            }
+        }
+        render(0);
+        listEl.addEventListener('scroll', () => {
+            const newFirst = Math.floor(listEl.scrollTop / ROW_H);
+            if (newFirst !== firstIdx) {
+                firstIdx = newFirst;
+                render(firstIdx);
+            }
+        });
+
         // 显示遮罩和面板
         overlay.style.display = 'block';
         requestAnimationFrame(() => {
