@@ -317,6 +317,67 @@ class Statistics {
         }
     }image.png
 
+    // -- 新增回补：处理练习完成时的数据更新
+    updateDailyStats(lessonId, splitCount, questions) {
+        if (this._isUpdating) return null; // 防止重复调用
+        try {
+            this._isUpdating = true;
+            let stats = this.getStatistics();
+            const today = new Date().toLocaleDateString();
+
+            // 初始化数据结构
+            if (!stats.dailyStats) stats.dailyStats = {};
+            if (!stats.dailyStats[today]) {
+                stats.dailyStats[today] = {
+                    sentencesLearned: 0,
+                    completedLessons: {}
+                };
+            }
+
+            // 更新今日句子数量
+            stats.totalSentences = (stats.totalSentences || 0) + splitCount;
+            stats.dailyStats[today].sentencesLearned =
+                (stats.dailyStats[today].sentencesLearned || 0) + splitCount;
+
+            // 将 split 题目写入 reviewHistory
+            if (questions && Array.isArray(questions)) {
+                questions.forEach(q => {
+                    if (!q || q.type !== 'split') return;
+                    const questionId = `${q.character}:${q.hiragana}`;
+                    if (!stats.reviewHistory[questionId]) {
+                        const [courseId, lessonName] = lessonId.split(':');
+                        stats.reviewHistory[questionId] = {
+                            type: 'split',
+                            japanese: q.character,
+                            sentence: q.character,
+                            hiragana: q.hiragana,
+                            meaning: q.meaning,
+                            course: courseId,
+                            lesson: lessonName,
+                            lastReview: new Date().toISOString(),
+                            nextReviewDate: new Date(Date.now() + 24*60*60*1000).toISOString(),
+                            proficiency: 'low',
+                            reviewCount: 0,
+                            correctCount: 0
+                        };
+                    }
+                });
+            }
+
+            // 更新掌握情况统计
+            stats.masteryStats = this.getMasteryStats();
+
+            // 保存
+            this.saveStatistics(stats);
+            return stats;
+        } catch (err) {
+            console.error('Error in updateDailyStats:', err);
+            return null;
+        } finally {
+            this._isUpdating = false;
+        }
+    }
+
     // 获取掌握情况统计（保持原逻辑）
     getMasteryStats() {
         try {
