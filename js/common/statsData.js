@@ -247,10 +247,23 @@ class Statistics {
             stats.totalSentences = Object.keys(stats.reviewHistory).length;
             console.log('计算得到的总句子数:', stats.totalSentences);
             
-            // 清理损坏的 reviewHistory 条目（缺少 sentence / japanese 字段）
+            // 清理损坏的 / 非 split 的 reviewHistory 条目
             if (stats.reviewHistory) {
                 Object.entries(stats.reviewHistory).forEach(([k, v]) => {
+                    // 1) 缺少核心字段
                     if (!v || (!v.japanese && !v.sentence)) {
+                        delete stats.reviewHistory[k];
+                        return;
+                    }
+                    // 2) 过滤 normal 等非 split（不计入待复习/已学）
+                    //    旧数据可能没有 type 字段：用 key 规则兜底（normal 往往是 course:lesson:character 或其它）
+                    if (v.type && v.type !== 'split') {
+                        delete stats.reviewHistory[k];
+                        return;
+                    }
+                    // 若无 type 字段，但字段结构像 normal（通常缺少 hiragana 或 nextReviewDate），也清理
+                    if (!v.type && (!v.hiragana || !v.nextReviewDate)) {
+                        // 为避免误删旧 split 数据，这里只在缺少 hiragana/nextReviewDate 时删除
                         delete stats.reviewHistory[k];
                     }
                 });
@@ -521,12 +534,16 @@ class Statistics {
             if (questions && Array.isArray(questions)) {
                 questions.forEach(question => {
                     if (!question) return;
+                    // 只将 split 类型句子加入 reviewHistory
+                    if (question.type !== 'split') return;
+
                     const questionId = `${question.character}:${question.hiragana}`;
                     if (!stats.reviewHistory[questionId]) {
                         const [courseId, lessonName] = lessonId.split(':');
                         stats.reviewHistory[questionId] = {
-                            japanese: question.character, // 确保这里有值
-                            sentence: question.character, // 添加 sentence 作为备用
+                            type: 'split',
+                            japanese: question.character,
+                            sentence: question.character,
                             hiragana: question.hiragana,
                             meaning: question.meaning,
                             course: courseId,
@@ -534,8 +551,8 @@ class Statistics {
                             lastReview: new Date().toISOString(),
                             nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
                             proficiency: 'low',
-                            reviewCount: 0, // 初始化 reviewCount
-                            correctCount: 0 // 初始化 correctCount
+                            reviewCount: 0,
+                            correctCount: 0
                         };
                     }
                 });
