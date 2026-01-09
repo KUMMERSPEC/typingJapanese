@@ -88,7 +88,7 @@ class ReviewManager {
         this.createInputBoxes(current.hiragana);
 
         // 隐藏答案显示
-        const answerDisplay = this.$.ansDisplay;
+        const answerDisplay = document.querySelector('.answer-display');
         if (answerDisplay) {
             answerDisplay.classList.remove('show');
         }
@@ -101,7 +101,7 @@ class ReviewManager {
         
 
         
-        const inputArea = this.$.inputArea;
+        const inputArea = document.querySelector('.input-area');
         if (!inputArea) return;
 
         // 清空现有输入框
@@ -272,7 +272,7 @@ class ReviewManager {
         console.log('答案正确，显示答案');
         
         // 显示答案区域
-        const answerDisplay = this.$.ansDisplay;
+        const answerDisplay = document.querySelector('.answer-display');
         if (answerDisplay) {
             // 填充答案内容
             const kanjiText = answerDisplay.querySelector('.kanji-text');
@@ -418,7 +418,7 @@ class ReviewManager {
     }
 
     showAnswer(question, isCorrect) {
-        const answerDisplay = this.$.ansDisplay;
+        const answerDisplay = document.querySelector('.answer-display');
         if (!answerDisplay) return;
 
         const kanji = answerDisplay.querySelector('.kanji-text');
