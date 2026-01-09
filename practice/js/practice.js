@@ -2,7 +2,7 @@ import DataLoader from './dataLoader.js';
 import statsData from '../../js/common/statsData.js';
 
 // #region UTILITY FUNCTIONS
-const PUNCT_RE = /^[、。！？….,，;；:：!！?？]+$/;
+const PUNCT_RE = /^[、。！？….,，;；:：!！?？"“”「」『』]+$/;
 
 function stripPunctArr(arr) {
     return arr.filter(u => u && !PUNCT_RE.test(u));
@@ -211,27 +211,11 @@ export class PracticeManager {
             const words = question.hiragana.split(':');
 
             const processedWords = [];
+            const punctRegex = /[、。！？….,，;；:：!！?？"“”「」『』]/g;
             words.forEach(unit => {
-                let currentUnit = unit;
-                while (currentUnit.length > 0) {
-                    const preMatch = currentUnit.match(/^[、。！？….,，;；:：!！?？]+/);
-                    if (preMatch) {
-                        processedWords.push(preMatch[0]);
-                        currentUnit = currentUnit.slice(preMatch[0].length);
-                        continue;
-                    }
-
-                    const postMatch = currentUnit.match(/[、。！？….,，;；:：!！?？]+$/);
-                    if (postMatch && postMatch.index > 0) {
-                        processedWords.push(currentUnit.slice(0, postMatch.index));
-                        processedWords.push(postMatch[0]);
-                        currentUnit = '';
-                        continue;
-                    }
-                    
-                    processedWords.push(currentUnit);
-                    currentUnit = '';
-                }
+                if (!unit) return;
+                const parts = unit.match(/[^、。！？….,，;；:：!！?？"“”「」『』]+|[、。！？….,，;；:：!！?？"“”「」『』]/g) || [unit];
+                processedWords.push(...parts);
             });
 
             processedWords.forEach((word, index) => {

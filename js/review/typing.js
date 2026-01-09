@@ -1,7 +1,7 @@
 import statsData from '../common/statsData.js';
 
 // ===== 标点符号正则 & 工具函数 (全局) =====
-const PUNCT_RE = /^[、。！？….,，;；:：!！?？]+$/;
+const PUNCT_RE = /^[、。！？….,，;；:：!！?？"“”「」『』]+$/;
 function stripPunct(str='') {
     return str.split(':').filter(u=>u && !PUNCT_RE.test(u)).join(':');
 }
@@ -122,24 +122,9 @@ class ReviewManager {
         const units = hiragana.split(':');
         const processedUnits = [];
         units.forEach(unit => {
-            let currentUnit = unit;
-            while (currentUnit.length > 0) {
-                const preMatch = currentUnit.match(/^[、。！？….,，;；:：!！?？]+/);
-                if (preMatch) {
-                    processedUnits.push(preMatch[0]);
-                    currentUnit = currentUnit.slice(preMatch[0].length);
-                    continue;
-                }
-                const postMatch = currentUnit.match(/[、。！？….,，;；:：!！?？]+$/);
-                if (postMatch && postMatch.index > 0) {
-                    processedUnits.push(currentUnit.slice(0, postMatch.index));
-                    processedUnits.push(postMatch[0]);
-                    currentUnit = '';
-                    continue;
-                }
-                processedUnits.push(currentUnit);
-                currentUnit = '';
-            }
+             if (!unit) return;
+             const parts = unit.match(/[^、。！？….,，;；:：!！?？"“”「」『』]+|[、。！？….,，;；:：!！?？"“”「」『』]/g) || [unit];
+             processedUnits.push(...parts);
         });
 
         const answerUnits = processedUnits.filter(u => !PUNCT_RE.test(u));
