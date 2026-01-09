@@ -743,7 +743,6 @@ class ReviewManager {
 }
 
 // 创建全局实例
-window.reviewManager = new ReviewManager(); 
-import statsData from '../common/statsData.js';   // 文件顶部已有
+window.reviewManager = new ReviewManager();
 
 // 在 showComplete() 函数 try{} 内数据写入之后、界面跳转之前
