@@ -1215,6 +1215,16 @@ form {
     background-color: #4bb04e;
 }
 
+/* 待复习状态 - 紫色 */
+.status-badge.status-review {
+    background-color: #9c27b0;
+}
+
+/* 未知状态 - 棕色 */
+.status-badge.status-unknown {
+    background-color: #795548;
+}
+
 /* 生疏状态 - 红色 */
 .status-badge.status-low {
     background-color: #f44336;
