@@ -562,10 +562,12 @@ export class CustomCollectionsManager {
             const prevBtn = modal.querySelector('#msPrev');
             const nextBtn = modal.querySelector('#msNext');
 
+            const debounce = (fn,delay=200)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn.apply(this,args),delay);} }; 
             const render = () => this.renderManageSentences();
+            const renderDebounced = debounce(render,200);
 
-            searchInput.addEventListener('input', () => { this.manageState.query = searchInput.value; this.manageState.page = 1; render(); });
-            pageSizeSelect.addEventListener('change', () => { this.manageState.pageSize = parseInt(pageSizeSelect.value); this.manageState.page = 1; render(); });
+            searchInput.addEventListener('input', () => { this.manageState.query = searchInput.value; this.manageState.page = 1; renderDebounced(); });
+            pageSizeSelect.addEventListener('change', () => { this.manageState.pageSize = parseInt(pageSizeSelect.value); this.manageState.page = 1; renderDebounced(); });
             prevBtn.addEventListener('click', () => { if (this.manageState.page > 1) { this.manageState.page--; render(); } });
             nextBtn.addEventListener('click', () => { 
                 const totalPages = Math.ceil(this.getFilteredSentences().length / this.manageState.pageSize);
