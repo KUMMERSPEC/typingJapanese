@@ -26,6 +26,10 @@ function refreshHomeBadges() {
   /* 首页加载 / 标签页返回时都刷新一次 */
   document.addEventListener('DOMContentLoaded', refreshHomeBadges);
   window.addEventListener('focus',          refreshHomeBadges);
+// 跨标签页监听：任何标签页更新 typing_statistics 时立即刷新首页徽章
+window.addEventListener('storage', (e)=>{
+  if(e.key === 'typing_statistics') refreshHomeBadges();
+});
 
 // 分页状态（待复习面板）
 let reviewPage = 1;
