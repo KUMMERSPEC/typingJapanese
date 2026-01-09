@@ -123,6 +123,27 @@ export class CustomCollectionsManager {
                     case 'add-sentence': this.showAddSentenceModal(collectionId); break;
                     case 'batch-import': this.showBatchImportModal(collectionId); break;
                     case 'manage-sentences': this.showManageSentencesModal(collectionId); break;
+                    case 'edit-sentence': {
+                        const sentenceItem = e.target.closest('[data-sentence-id]');
+                        if (!sentenceItem) break;
+                        const sId = sentenceItem.dataset.sentenceId;
+                        const data = this.collections[collectionId]?.sentences[sId];
+                        if (data) {
+                            this.showEditSentenceModal(collectionId, sId, data);
+                        }
+                        break;
+                    }
+                    case 'delete-sentence': {
+                        const sentenceItem = e.target.closest('[data-sentence-id]');
+                        if (!sentenceItem) break;
+                        const sId = sentenceItem.dataset.sentenceId;
+                        if (confirm('确定删除这条句子吗？')) {
+                            this.deleteSentence(collectionId, sId);
+                            // 重新渲染列表
+                            this.renderManageSentences();
+                        }
+                        break;
+                    }
                 }
                 return; // Action handled
             }
