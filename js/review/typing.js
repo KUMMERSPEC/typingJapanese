@@ -12,6 +12,8 @@ class ReviewManager {
         this.sentences = [];
         this.questionStartTime = null;
         this.logs = [];
+        this.correctCount = 0;
+        this.totalAttempts = 0;
         this.init();
         this.initKeyboardMaintain();
     }
@@ -240,6 +242,8 @@ class ReviewManager {
         console.log('检查答案:', answer, '正确答案:', current.hiragana, '结果:', isCorrect);
         
         // 更新复习记录
+        this.totalAttempts++;
+        if(isCorrect) this.correctCount++;
         statsData.updateReviewProgress(current.id, isCorrect);
 
         if (!isCorrect) {
@@ -280,9 +284,9 @@ class ReviewManager {
             const romajiText = answerDisplay.querySelector('.romaji-text');
             const meaningText = answerDisplay.querySelector('.meaning-text');
             
-            if (kanjiText) kanjiText.textContent = current.japanese;
-            if (kanaText) kanaText.textContent = current.hiragana.replace(/:/g, '');
-            if (romajiText) romajiText.textContent = current.romaji;
+            if (kanjiText) kanjiText.textContent = current.japanese || current.sentence || current.character || current.text || '';
+            if (kanaText) kanaText.textContent = (current.hiragana || '').replace(/:/g, '');
+            if (romajiText) romajiText.textContent = current.romaji || '' ;
             if (meaningText) meaningText.textContent = current.meaning;
             
             // 显示答案区域
@@ -532,11 +536,11 @@ class ReviewManager {
                     <div class="stats-summary">
                         <div class="stat-item">
                             <span class="stat-label">正确率</span>
-                            <span class="stat-value">${Math.round(correctCount / totalAttempts * 100)}%</span>
+                            <span class="stat-value">${this.totalAttempts?Math.round(this.correctCount/this.totalAttempts*100):0}%</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">复习句子</span>
-                            <span class="stat-value">${sentences.length}</span>
+                            <span class="stat-value">${this.sentences.length}</span>
                         </div>
                     </div>
                     <div class="button-group">
