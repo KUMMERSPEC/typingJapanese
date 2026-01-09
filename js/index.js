@@ -24,7 +24,12 @@ function refreshHomeBadges() {
   }
   
   /* 首页加载 / 标签页返回时都刷新一次 */
-  document.addEventListener('DOMContentLoaded', refreshHomeBadges);
+  document.addEventListener('DOMContentLoaded', () => {
+  refreshHomeBadges();
+  // 清理可能遗留的遮罩并恢复滚动
+  document.querySelectorAll('.overlay.show').forEach(el => el.classList.remove('show'));
+  document.body.style.overflow = '';
+});
   window.addEventListener('focus',          refreshHomeBadges);
 // 跨标签页监听：任何标签页更新 typing_statistics 时立即刷新首页徽章
 window.addEventListener('storage', (e)=>{
