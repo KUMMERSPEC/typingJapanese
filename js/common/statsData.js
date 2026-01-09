@@ -144,6 +144,10 @@ const INTERVAL_ADJUSTMENTS = {
 };
 
 class Statistics {
+    /** 清空内部缓存，让下次读取重新从 StorageManager 获取 */
+    invalidateCache() {
+        this._stats = null;
+    }
     constructor() {
 
         this._stats = null;               // 内存缓存
@@ -435,7 +439,76 @@ class Statistics {
         }
     }
 
-    /* ---------------- 以下 updateReviewProgress 等方法保持不变，仅在保存处调用 saveStatistics ---------------- */
+    /* ------------------------------------------------------------------
+     * 复习进度更新：在打字/闪卡复习页面调用，更新 reviewHistory 并重新计算
+     * ------------------------------------------------------------------*/
+    /**
+     * 更新单条句子的复习记录并推算下一次复习时间。
+     * @param {string} sentenceId   句子唯一 id（reviewHistory 的 key）
+     * @param {boolean} isCorrect   用户这次答题是否正确
+     * @param {object}  options     { responseTime:number(ms), hintUsed:boolean }
+     */
+    updateReviewProgress(sentenceId, isCorrect, options = {}) {
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory || !stats.reviewHistory[sentenceId]) {
+                console.warn('[statsData] updateReviewProgress: 未找到句子', sentenceId);
+                return;
+            }
+            const record = stats.reviewHistory[sentenceId];
+
+            // --- 基础计数 ---
+            record.reviewCount = (record.reviewCount || 0) + 1;
+            if (isCorrect) {
+                record.correctCount = (record.correctCount || 0) + 1;
+            }
+
+            // --- 掌握度调整 ---
+            const proficiencyOrder = ['low', 'medium', 'high', 'master'];
+            let idx = proficiencyOrder.indexOf(record.proficiency || 'low');
+            if (isCorrect) {
+                idx = Math.min(idx + 1, proficiencyOrder.length - 1);
+            } else {
+                idx = Math.max(idx - 1, 0);
+            }
+            record.proficiency = proficiencyOrder[idx];
+
+            // --- 下一次复习间隔 ---
+            const profCfg = REVIEW_INTERVALS[record.proficiency] || REVIEW_INTERVALS.low;
+            const baseDays = isCorrect ? profCfg.success : profCfg.failure;
+            let intervalDays = baseDays;
+
+            // 连续正确次数微调
+            record._consec = isCorrect ? (record._consec || 0) + 1 : 0;
+            const adj = INTERVAL_ADJUSTMENTS.consecutiveCorrect[record._consec] || 1;
+            intervalDays *= adj;
+
+            // 依据响应速度调整（可选）
+            if (options.responseTime) {
+                const rt = options.responseTime;
+                if (rt < 1500) intervalDays *= INTERVAL_ADJUSTMENTS.responseTime.fast;
+                else if (rt > 6000) intervalDays *= INTERVAL_ADJUSTMENTS.responseTime.slow;
+            }
+
+            // 依据提示使用调整（可选）
+            if (options.hintUsed) {
+                intervalDays *= INTERVAL_ADJUSTMENTS.hintUsage.frequent;
+            }
+
+            // 记录复习时间
+            const now = new Date();
+            record.lastReview = now.toISOString();
+            record.nextReviewDate = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000).toISOString();
+
+            // 回写并保存
+            stats.reviewHistory[sentenceId] = record;
+            this.saveStatistics(stats);
+        } catch (err) {
+            console.error('[statsData] updateReviewProgress error:', err);
+        }
+    }
+
+    /* ---------------- 以下其他工具方法保持不变 ---------------- */
 
     // 计算单条句子的掌握状态（供复习列表显示）
     getMasteryStatus(item) {
