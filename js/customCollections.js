@@ -124,7 +124,8 @@ export class CustomCollectionsManager {
                 e.stopPropagation();
                 
                 let action = actionTarget ? actionTarget.dataset.action : 'add-collection';
-                const collectionId = e.target.closest('[data-collection-id]')?.dataset.collectionId;
+                let collectionId = e.target.closest('[data-collection-id]')?.dataset.collectionId;
+                if (!collectionId) collectionId = this.manageState?.collectionId;
 
                 switch (action) {
                     case 'manage-collections': this.showCollectionsModal(); break;
@@ -538,6 +539,10 @@ export class CustomCollectionsManager {
                     <div class="modal-header"><h3>管理句子</h3><button class="close-btn">&times;</button></div>
                     <div class="modal-body">
                         <div class="ms-toolbar">
+                            <div class="ms-bulkbar" style="display:flex;align-items:center;gap:12px;margin:6px 0;">
+                                <label><input type="checkbox" id="msCheckAll"> 全选</label>
+                                <button id="msBulkDel" class="btn btn-danger" disabled>批量删除</button>
+                            </div>
                             <input id="msSearch" type="text" placeholder="搜索...">
                             <select id="msPageSize"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select>
                         </div>
@@ -565,6 +570,31 @@ export class CustomCollectionsManager {
             nextBtn.addEventListener('click', () => { 
                 const totalPages = Math.ceil(this.getFilteredSentences().length / this.manageState.pageSize);
                 if (this.manageState.page < totalPages) { this.manageState.page++; render(); } 
+            });
+
+            // ---- 批量删除绑定 ----
+            const listEl = modal.querySelector('.sentences-container');
+            const bulkBtn = modal.querySelector('#msBulkDel');
+            const chkAll  = modal.querySelector('#msCheckAll');
+
+            const updateBulkBtn = () => {
+                bulkBtn.disabled = !listEl.querySelector('.ms-check:checked');
+            };
+
+            listEl.addEventListener('change', e => {
+                if (e.target.classList.contains('ms-check')) updateBulkBtn();
+            });
+            chkAll.addEventListener('change', () => {
+                listEl.querySelectorAll('.ms-check').forEach(cb=> cb.checked = chkAll.checked);
+                updateBulkBtn();
+            });
+            bulkBtn.addEventListener('click', () => {
+                const ids = Array.from(listEl.querySelectorAll('.ms-check:checked')).map(cb=> cb.dataset.sid);
+                if (!ids.length) return;
+                if (!confirm(`确定删除选中的 ${ids.length} 句？`)) return;
+                ids.forEach(id=> this.deleteSentence(this.manageState.collectionId, id));
+                this.renderManageSentences();
+                chkAll.checked = false; bulkBtn.disabled = true;
             });
         }
 
@@ -609,6 +639,7 @@ export class CustomCollectionsManager {
 
         container.innerHTML = paginated.map(sentence => `
             <div class="sentence-item" data-sentence-id="${sentence.id}">
+                    <input type="checkbox" class="ms-check" data-sid="${sentence.id}" style="margin-right:8px;">
                 <div class="sentence-main">
                     <div class="jp">${sentence.japanese || ''} <span class="lang-badge lang-badge-${sentence.lang}">${sentence.lang}</span></div>
                     <div class="meta">分词：${sentence.hiragana || ''}</div>
