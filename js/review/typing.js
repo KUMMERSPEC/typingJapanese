@@ -100,9 +100,6 @@ class ReviewManager {
     }
 
     createInputBoxes(hiragana) {
-        
-
-        
         const inputArea = document.querySelector('.input-area');
         if (!inputArea) return;
 
@@ -122,12 +119,31 @@ class ReviewManager {
             return;
         }
 
-        // 按冒号分割假名
-        // 预处理：确保标点符号被视为独立 token（已在保存阶段插入冒号）。
         const units = hiragana.split(':');
-        const answerUnits = units.filter(u => !PUNCT_RE.test(u));
+        const processedUnits = [];
+        units.forEach(unit => {
+            let currentUnit = unit;
+            while (currentUnit.length > 0) {
+                const preMatch = currentUnit.match(/^[、。！？….,，;；:：!！?？]+/);
+                if (preMatch) {
+                    processedUnits.push(preMatch[0]);
+                    currentUnit = currentUnit.slice(preMatch[0].length);
+                    continue;
+                }
+                const postMatch = currentUnit.match(/[、。！？….,，;；:：!！?？]+$/);
+                if (postMatch && postMatch.index > 0) {
+                    processedUnits.push(currentUnit.slice(0, postMatch.index));
+                    processedUnits.push(postMatch[0]);
+                    currentUnit = '';
+                    continue;
+                }
+                processedUnits.push(currentUnit);
+                currentUnit = '';
+            }
+        });
+
+        const answerUnits = processedUnits.filter(u => !PUNCT_RE.test(u));
         
-        // 创建输入框容器
         const inputsContainer = document.createElement('div');
         inputsContainer.style.display = 'flex';
         inputsContainer.style.flexWrap = 'wrap';
@@ -136,34 +152,19 @@ class ReviewManager {
 
         let inputCounter = 0;
         const lastInputIndex = answerUnits.length - 1;
-        units.forEach((rawUnit, unitIndexOriginal) => {
-            let unit = rawUnit;
-            // 拆分前置或末尾标点，确保标点独立 token
-            const pre = unit.match(/^[、。！？….,，;；:：!！?？]+/);
-            if(pre){
-                units.splice(unitIndexOriginal,0,pre[0]);
-                unit = unit.slice(pre[0].length);
-            }
-            const post = unit.match(/[、。！？….,，;；:：!！?？]+$/);
-            if(post && post[0].length!==unit.length){
-                units.splice(unitIndexOriginal+1,0,post[0]);
-                unit = unit.slice(0,-post[0].length);
-            }
-            
-            
+        processedUnits.forEach((unit, unitIndex) => {
             if(unit===''){return;}
             if (PUNCT_RE.test(unit)) {
-                // 直接渲染标点符号
                 const punctSpan = document.createElement('span');
                 punctSpan.className = 'split-punctuation';
                 punctSpan.textContent = unit;
                 punctSpan.style.padding = '0 4px';
                 punctSpan.style.fontSize = '1.2rem';
                 inputsContainer.appendChild(punctSpan);
-                return; // 跳过创建输入框
+                return; 
             }
 
-            if (unit === '') return; // 跳过由 :: 产生的空片段
+            if (unit === '') return; 
             const visibleIndex = inputCounter; inputCounter++;
             const inputWrapper = document.createElement('div');
             inputWrapper.className = 'split-input-wrapper';
@@ -175,7 +176,6 @@ class ReviewManager {
             const w = Math.min(140, Math.max(60, unit.length * 16 + 28));
             input.style.width = w + 'px';
 
-            // 添加输入法事件监听
             let isComposing = false;
             input.addEventListener('compositionstart', () => {
                 isComposing = true;
@@ -184,10 +184,8 @@ class ReviewManager {
                 isComposing = false;
             });
 
-            // 处理输入事件 - 只在最后一个输入框检查答案
             input.addEventListener('input', () => {
                 if (!isComposing && visibleIndex === lastInputIndex) {
-                    // 如果是最后一个输入框，检查所有答案
                     const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
                     const allFilled = allInputs.every(input => input.value.trim() !== '');
                     if (allFilled) {
@@ -197,23 +195,19 @@ class ReviewManager {
                 }
             });
 
-            // 处理键盘事件
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || (e.code === 'Space' && !isComposing)) {
                     handleInputComplete();
                 }
             });
 
-            // 添加移动设备的回车键处理
             input.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') {
                     handleInputComplete();
                 }
             });
 
-            // 处理输入完成的函数
             const handleInputComplete = () => {
-                // 防止事件重复触发
                 if (this.isHandlingInput) return;
                 this.isHandlingInput = true;
                 
@@ -221,14 +215,13 @@ class ReviewManager {
                     this.isHandlingInput = false;
                 }, 300);
                 
-                if (unitIndex < units.length - 1) {
+                if (unitIndex < processedUnits.length - 1) {
                     const nextInput = inputsContainer.querySelector(`input[data-index="${unitIndex + 1}"]`);
                     if (nextInput) {
                         input.value = input.value.trim();
                         nextInput.focus();
                     }
                 } else {
-                    // 检查所有输入是否已完成
                     const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
                     const allFilled = allInputs.every(input => input.value.trim() !== '');
                     if (allFilled) {
@@ -244,7 +237,6 @@ class ReviewManager {
 
         inputArea.appendChild(inputsContainer);
 
-        // 自动聚焦第一个输入框
         const firstInput = inputsContainer.querySelector('input');
         if (firstInput) {
             setTimeout(() => {
@@ -259,13 +251,11 @@ class ReviewManager {
         
         console.log('检查答案:', answer, '正确答案:', current.hiragana, '结果:', isCorrect);
         
-        // 更新复习记录
         this.totalAttempts++;
         if(isCorrect) this.correctCount++;
         statsData.updateReviewProgress(current.id, isCorrect);
 
         if (!isCorrect) {
-            // 只标记错误的输入框
             const inputs = document.querySelectorAll('.split-input');
             const correctUnits = stripPunct(current.hiragana).split(':');
             const answerUnits = answer.split(':');
@@ -273,7 +263,6 @@ class ReviewManager {
             inputs.forEach((input, index) => {
                 if (index < correctUnits.length && index < answerUnits.length) {
                     if (answerUnits[index] !== correctUnits[index]) {
-                        // 只标记错误的输入框
                         input.classList.add('error');
                     }
                 }
@@ -281,7 +270,6 @@ class ReviewManager {
             
             console.log('答案错误，只标记错误的输入框');
             
-            // 1秒后移除错误样式
             setTimeout(() => {
                 inputs.forEach(input => {
                     input.classList.remove('error');
@@ -293,10 +281,8 @@ class ReviewManager {
 
         console.log('答案正确，显示答案');
         
-        // 显示答案区域
         const answerDisplay = document.querySelector('.answer-display');
         if (answerDisplay) {
-            // 填充答案内容
             const kanjiText = answerDisplay.querySelector('.kanji-text');
             const kanaText = answerDisplay.querySelector('.kana-text');
             const romajiText = answerDisplay.querySelector('.romaji-text');
@@ -307,19 +293,15 @@ class ReviewManager {
             if (romajiText) romajiText.textContent = current.romaji || '' ;
             if (meaningText) meaningText.textContent = current.meaning;
             
-            // 显示答案区域
             answerDisplay.classList.add('show');
             answerDisplay.style.display = 'block';
         }
         
-        // 确保使用平假名版本播放
         const textToSpeak = current.hiragana.replace(/:/g, '');
         this.playAudioWithUserInteraction(textToSpeak);
         
-        // 触发答案检查事件
         document.dispatchEvent(new Event('answer-checked'));
         
-        // 自动跳转到下一题
         setTimeout(() => {
             if (this.currentIndex < this.sentences.length - 1) {
                 this.currentIndex++;
@@ -329,10 +311,9 @@ class ReviewManager {
                 this.showComplete();
                 console.log('已完成所有题目');
             }
-        }, 2000); // 2秒后自动跳转，给用户足够时间看答案
+        }, 2000); 
     }
 
-    // 修改 speak 方法，使用与 flashcard 一致的实现
     async speak(text) {
         try {
             if (!text) {
@@ -346,7 +327,6 @@ class ReviewManager {
                 return;
             }
             
-            // 尝试从多个可能的属性获取日语内容
             const textToSpeak = text || 
                                currentSentence.japanese || 
                                currentSentence.sentence || 
@@ -359,16 +339,14 @@ class ReviewManager {
 
             console.log('Speaking text:', textToSpeak);
 
-            // 预加载音频
             const audio = new Audio();
-            audio.preload = 'auto';  // 设置预加载
+            audio.preload = 'auto';  
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
 
-            // 等待音频加载完成
             await new Promise((resolve, reject) => {
                 audio.oncanplaythrough = resolve;
                 audio.onerror = reject;
-                audio.load();  // 开始加载
+                audio.load();  
             });
 
             try {
@@ -385,7 +363,6 @@ class ReviewManager {
         }
     }
 
-    // 修改 fallbackSpeak 方法，使用与 flashcard 一致的实现
     fallbackSpeak(text) {
         try {
             if (!('speechSynthesis' in window)) {
@@ -393,7 +370,6 @@ class ReviewManager {
                 return;
             }
 
-            // 取消所有正在进行的语音
             window.speechSynthesis.cancel();
             
             const utterance = new SpeechSynthesisUtterance(text);
@@ -402,7 +378,6 @@ class ReviewManager {
             utterance.volume = 1;
             utterance.lang = 'ja-JP';
 
-            // 获取日语语音
             const voices = window.speechSynthesis.getVoices();
             const japaneseVoice = voices.find(voice => 
                 voice.lang.includes('ja') || voice.lang.includes('JP')
@@ -418,10 +393,8 @@ class ReviewManager {
         }
     }
 
-    // 修改 playAudioWithUserInteraction 方法，使用新的 speak 方法
     async playAudioWithUserInteraction(text) {
         try {
-            // 添加详细的调试信息
             console.log('准备播放音频:', {
                 text: text,
                 isJapanese: /[\u3040-\u309F\u30A0-\u30FF]/.test(text),
@@ -448,18 +421,15 @@ class ReviewManager {
         const romaji = answerDisplay.querySelector('.romaji-text');
         const meaning = answerDisplay.querySelector('.meaning-text');
 
-        if (kanji) kanji.textContent = question.japanese;
-        if (kana) kana.textContent = question.hiragana;
-        if (romaji) romaji.textContent = question.romaji;
+        if (kanji) kanji.textContent = question.japanese || current.sentence || current.character || current.text || '';
+        if (kana) kana.textContent = (question.hiragana || '').replace(/:/g, '');
+        if (romaji) romaji.textContent = question.romaji || '' ;
         if (meaning) meaning.textContent = question.meaning;
 
-        // 显示答案
         answerDisplay.classList.add('show');
 
-        // 朗读
         this.speak(question.japanese);
 
-        // 3秒后显示下一题
         setTimeout(() => {
             if (this.currentIndex < this.sentences.length - 1) {
                 this.currentIndex++;
@@ -499,30 +469,25 @@ class ReviewManager {
         const current = this.sentences[this.currentIndex];
         if (!current) return;
 
-        // 显示提示
         const inputs = document.querySelectorAll('.split-input');
         const units = current.hiragana.split(':');
         inputs.forEach((input, index) => {
             input.value = units[index] || '';
         });
 
-        // 朗读一次
         this.speak(current.japanese);
 
-        // 降低掌握度
         this.decreaseProficiency(current.id);
 
-        // 短暂显示后清除提示内容
         setTimeout(() => {
             inputs.forEach(input => {
                 input.value = '';
             });
-            // 聚焦第一个输入框
             const firstInput = document.querySelector('.split-input');
             if (firstInput) {
                 firstInput.focus();
             }
-        }, 2000); // 2秒后清除提示
+        }, 2000); 
 
         this.hintUsed = true;
     }
@@ -536,16 +501,14 @@ class ReviewManager {
 
     showComplete() {
         try {
-            // 清除答题区和历史记录区
             const practiceContainer = document.querySelector('.practice-container');
             const historyPanel = document.querySelector('.history-panel');
             if (practiceContainer) practiceContainer.style.display = 'none';
             if (historyPanel) historyPanel.style.display = 'none';
             
-            // 获取正确的基础路径
             const basePath = window.location.hostname === 'kummerspec.github.io' 
                 ? '/typingJapanese/' 
-                : '../';  // 返回到主目录
+                : '../';  
                 
             practiceContainer.innerHTML = `
                 <div class="completion-screen">
@@ -568,10 +531,8 @@ class ReviewManager {
                 </div>
             `;
             
-            // 清除 sessionStorage 中的复习数据，防止再次点击复习时使用旧数据
             sessionStorage.removeItem('reviewSentences');
             
-            // 显示完成效果
             new CompletionEffect().show();
 
         } catch (error) {
@@ -580,7 +541,6 @@ class ReviewManager {
         }
     }
 
-    // 创建彩花效果
     createConfetti(container) {
         const colors = ['#ff66ff', '#6b6bff', '#66ff66', '#ffeb3b', '#ff4444'];
         const confettiCount = 50;
@@ -596,7 +556,6 @@ class ReviewManager {
         }
     }
 
-    // 创建星星效果
     createStars(container) {
         const starCount = 20;
         const positions = [
@@ -612,16 +571,13 @@ class ReviewManager {
             const star = document.createElement('div');
             star.className = 'star';
             
-            // 随机位置
             star.style.left = Math.random() * 100 + 'vw';
             star.style.top = Math.random() * 100 + 'vh';
             
-            // 随机大小
             const size = 10 + Math.random() * 20;
             star.style.width = size + 'px';
             star.style.height = size + 'px';
             
-            // 添加动画
             star.style.animation = `starTwinkle ${1 + Math.random() * 2}s ease-in-out infinite`;
             star.style.animationDelay = Math.random() * 2 + 's';
             
@@ -648,7 +604,6 @@ class ReviewManager {
         return texts[proficiency] || '未知';
     }
 
-    // 添加降低掌握度的方法
     decreaseProficiency(sentenceId) {
         try {
             const stats = JSON.parse(localStorage.getItem('typing_statistics'));
@@ -656,7 +611,6 @@ class ReviewManager {
 
             const record = stats.reviewHistory[sentenceId];
             
-            // 降低掌握度
             switch (record.proficiency) {
                 case 'high':
                     record.proficiency = 'medium';
@@ -664,14 +618,11 @@ class ReviewManager {
                 case 'medium':
                     record.proficiency = 'low';
                     break;
-                // 如果已经是 'low'，保持不变
             }
 
-            // 更新统计数据
             stats.reviewHistory[sentenceId] = record;
             localStorage.setItem('typing_statistics', JSON.stringify(stats));
 
-            // 更新当前句子的掌握度显示
             const proficiencyElement = document.querySelector('.proficiency');
             if (proficiencyElement) {
                 proficiencyElement.textContent = this.getProficiencyText(record.proficiency);
@@ -684,18 +635,15 @@ class ReviewManager {
     }
 
     initKeyboardMaintain() {
-        // 获取隐藏的输入框
         const keyboardInput = document.querySelector('.keyboard-maintain');
         if (!keyboardInput) return;
 
-        // 修复无障碍性问题 - 移除 aria-hidden 属性，改用 inert 属性
         keyboardInput.removeAttribute('aria-hidden');
         keyboardInput.setAttribute('inert', '');
         keyboardInput.style.opacity = '0.01';
         keyboardInput.style.position = 'fixed';
         keyboardInput.style.pointerEvents = 'none';
 
-        // 在每次答案检查后保持键盘焦点
         const maintainKeyboard = () => {
             if (this.currentIndex < this.sentences.length) {
                 setTimeout(() => {
@@ -704,24 +652,19 @@ class ReviewManager {
             }
         };
 
-        // 监听答案检查事件
         document.addEventListener('answer-checked', maintainKeyboard);
 
-        // 初始聚焦
         keyboardInput.focus();
         
-        // 记录日志
         console.log('键盘维持初始化完成');
     }
 
-    // 添加移动设备检测
     isMobile() {
         return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                ('ontouchstart' in window) ||
                (navigator.maxTouchPoints > 0);
     }
 
-    // 添加日志方法
     log(message, data) {
         const logEntry = {
             time: new Date().toISOString(),
@@ -731,16 +674,12 @@ class ReviewManager {
         this.logs.push(logEntry);
         console.log(`[LOG] ${message}`, data);
         
-        // 更新日志显示
         this.updateLogDisplay();
     }
 
-    // 显示日志
     updateLogDisplay() {
-        // 检查是否存在日志显示区域
         let logDisplay = document.getElementById('debug-log');
         if (!logDisplay) {
-            // 创建日志显示区域
             logDisplay = document.createElement('div');
             logDisplay.id = 'debug-log';
             logDisplay.style.position = 'fixed';
@@ -757,14 +696,10 @@ class ReviewManager {
             document.body.appendChild(logDisplay);
         }
         
-        // 更新日志内容
         logDisplay.innerHTML = this.logs.slice(-10).map(entry => 
             `<div>${entry.time.split('T')[1].split('.')[0]} - ${entry.message}</div>`
         ).join('');
     }
 }
 
-// 创建全局实例
 window.reviewManager = new ReviewManager();
-
-// 在 showComplete() 函数 try{} 内数据写入之后、界面跳转之前
