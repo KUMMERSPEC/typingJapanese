@@ -3,6 +3,7 @@ import { showAddSentenceModal, showEditSentenceModal } from './sentenceModal.js'
 
 export class CustomCollectionsManager {
     constructor() {
+        this._lastTap = 0;
         this.collections = this.loadCollections();
         this.manageState = { page: 1, pageSize: 10, query: '', collectionId: null };
         this.confirmedImportData = null; // To store edited sentences from preview
@@ -103,6 +104,16 @@ export class CustomCollectionsManager {
 
     // Central event listener for modals
     initializeEventListeners() {
+        // Prevent duplicate click on touch devices (double synthesized click)
+        document.addEventListener('click',(e)=>{
+            const now = Date.now();
+            if(now - this._lastTap < 250){
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                return;
+            }
+            this._lastTap = now;
+        },true);
         document.body.addEventListener('click', (e) => {
             const actionTarget = e.target.closest('[data-action]');
             const legacyAddBtn = e.target.closest('.add-collection-btn');
