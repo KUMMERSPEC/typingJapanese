@@ -439,36 +439,44 @@ class Statistics {
 
     // 计算单条句子的掌握状态（供复习列表显示）
     getMasteryStatus(item) {
-        // 新句子（没有记录）
-        if (!item || !item.reviewCount) {
+        if (!item) {
             return { text: '生疏', class: 'status-new' };
         }
-        // master 始终显示熟练
-        if (item.proficiency === 'master') {
-            return { text: '熟练', class: 'status-high' };
-        }
-        const nextReview = new Date(item.nextReviewDate);
+
+        // 如果到了复习日期，优先显示“待复习”
         const now = new Date();
-        const lastReview = item.lastReview ? new Date(item.lastReview) : null;
-        // 刚复习完，显示掌握度
-        if (lastReview && lastReview.toDateString() === now.toDateString()) {
-            switch (item.proficiency) {
-                case 'high': return { text: '熟练', class: 'status-high' };
-                case 'medium': return { text: '基本掌握', class: 'status-medium' };
-                case 'low': return { text: '需要加强', class: 'status-low' };
-                default: return { text: '未知', class: 'status-unknown' };
-            }
-        }
-        // 到了复习时间
-        if (nextReview <= now) {
+        const nextReview = new Date(item.nextReviewDate || 0);
+        if (nextReview && nextReview <= now) {
             return { text: '待复习', class: 'status-review' };
         }
-        // 其他情况
+
+        // 刚复习完（今天内）——显示掌握度
+        const lastReview = item.lastReview ? new Date(item.lastReview) : null;
+        if (lastReview && lastReview.toDateString() === now.toDateString()) {
+            switch (item.proficiency) {
+                case 'high':
+                case 'master':
+                    return { text: '熟练', class: 'status-high' };
+                case 'medium':
+                    return { text: '基本掌握', class: 'status-medium' };
+                case 'low':
+                    return { text: '需要加强', class: 'status-low' };
+                default:
+                    return { text: '未知', class: 'status-unknown' };
+            }
+        }
+
+        // 根据 proficiency 显示
         switch (item.proficiency) {
-            case 'high': return { text: '熟练', class: 'status-high' };
-            case 'medium': return { text: '基本掌握', class: 'status-medium' };
-            case 'low': return { text: '需要加强', class: 'status-low' };
-            default: return { text: '未知', class: 'status-unknown' };
+            case 'high':
+            case 'master':
+                return { text: '熟练', class: 'status-high' };
+            case 'medium':
+                return { text: '基本掌握', class: 'status-medium' };
+            case 'low':
+                return { text: '需要加强', class: 'status-low' };
+            default:
+                return { text: '生疏', class: 'status-new' };
         }
     }
 
@@ -476,3 +484,4 @@ class Statistics {
 }
 
 export default new Statistics();
+
