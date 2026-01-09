@@ -208,7 +208,7 @@ export class PracticeManager {
         if (question.type === 'split') {
             const inputsContainer = document.createElement('div');
             inputsContainer.style.cssText = 'display:flex; flex-wrap:wrap; justify-content:center; gap:10px;';
-            const words = question.hiragana.split(':');
+            const words = (question.hiragana || '').split(':').filter(Boolean);
 
             const processedWords = [];
             const punctRegex = /[、。！？….,，;；:：!！?？"“”「」『』]/g;

@@ -119,7 +119,7 @@ class ReviewManager {
             return;
         }
 
-        const units = hiragana.split(':');
+        const units = (hiragana || '').split(':').filter(Boolean);
         const processedUnits = [];
         units.forEach(unit => {
              if (!unit) return;
