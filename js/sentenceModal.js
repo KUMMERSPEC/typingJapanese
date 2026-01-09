@@ -12,6 +12,7 @@ function createBaseModal() {
     if (modal) return modal;
 
     modal = document.createElement('div');
+    modal.style.zIndex = 2200;
     modal.id = 'sentenceModal';
     modal.className = 'modal';
     modal.innerHTML = `
