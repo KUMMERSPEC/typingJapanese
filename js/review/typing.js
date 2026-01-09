@@ -88,7 +88,7 @@ class ReviewManager {
         this.createInputBoxes(current.hiragana);
 
         // 隐藏答案显示
-        const answerDisplay = this.$.ansDisplay);
+        const answerDisplay = this.$.ansDisplay;
         if (answerDisplay) {
             answerDisplay.classList.remove('show');
         }
@@ -120,7 +120,7 @@ class ReviewManager {
         // 按冒号分割假名
         // 预处理：确保标点符号被视为独立 token（已在保存阶段插入冒号）。
         const units = hiragana.split(':');
-        const const answerUnits = units.filter(u => !PUNCT_RE.test(u));
+        const answerUnits = units.filter(u => !PUNCT_RE.test(u));
         
         // 创建输入框容器
         const inputsContainer = document.createElement('div');
@@ -272,7 +272,7 @@ class ReviewManager {
         console.log('答案正确，显示答案');
         
         // 显示答案区域
-        const answerDisplay = this.$.ansDisplay);
+        const answerDisplay = this.$.ansDisplay;
         if (answerDisplay) {
             // 填充答案内容
             const kanjiText = answerDisplay.querySelector('.kanji-text');
@@ -418,7 +418,7 @@ class ReviewManager {
     }
 
     showAnswer(question, isCorrect) {
-        const answerDisplay = this.$.ansDisplay);
+        const answerDisplay = this.$.ansDisplay;
         if (!answerDisplay) return;
 
         const kanji = answerDisplay.querySelector('.kanji-text');
