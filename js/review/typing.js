@@ -136,8 +136,22 @@ class ReviewManager {
 
         let inputCounter = 0;
         const lastInputIndex = answerUnits.length - 1;
-        units.forEach((unit, unitIndex) => {
+        units.forEach((rawUnit, unitIndexOriginal) => {
+            let unit = rawUnit;
+            // 拆分前置或末尾标点，确保标点独立 token
+            const pre = unit.match(/^[、。！？….,，;；:：!！?？]+/);
+            if(pre){
+                units.splice(unitIndexOriginal,0,pre[0]);
+                unit = unit.slice(pre[0].length);
+            }
+            const post = unit.match(/[、。！？….,，;；:：!！?？]+$/);
+            if(post && post[0].length!==unit.length){
+                units.splice(unitIndexOriginal+1,0,post[0]);
+                unit = unit.slice(0,-post[0].length);
+            }
             
+            
+            if(unit===''){return;}
             if (PUNCT_RE.test(unit)) {
                 // 直接渲染标点符号
                 const punctSpan = document.createElement('span');

@@ -210,11 +210,23 @@ export class PracticeManager {
             inputsContainer.style.cssText = 'display:flex; flex-wrap:wrap; justify-content:center; gap:10px;';
             const words = question.hiragana.split(':');
 
-            words.forEach((word, index) => {
-                if (PUNCT_RE.test(word) || word === '') {
+            words.forEach((rawUnit, index) => {
+                let unit = rawUnit;
+                const pre = unit.match(/^[、。！？….,，;；:：!！?？]+/);
+                if (pre){
+                    words.splice(index,0,pre[0]);
+                    unit = unit.slice(pre[0].length);
+                }
+                const post = unit.match(/[、。！？….,，;；:：!！?？]+$/);
+                if (post && post[0].length!==unit.length){
+                    words.splice(index+1,0,post[0]);
+                    unit = unit.slice(0,-post[0].length);
+                }
+
+                if (PUNCT_RE.test(unit) || unit === '') {
                     const span = document.createElement('span');
                     span.className = 'punctuation-span';
-                    span.textContent = word;
+                    span.textContent = unit;
                     inputsContainer.appendChild(span);
                 } else {
                     const input = this._createSplitInput(index, words, question);
