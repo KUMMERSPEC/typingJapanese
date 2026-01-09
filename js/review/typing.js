@@ -108,6 +108,9 @@ class ReviewManager {
 
         // 清空现有输入框
         inputArea.innerHTML = '';
+        // 若句子过长，限制输入区域高度并允许内部滚动
+        inputArea.style.maxHeight = '45vh';
+        inputArea.style.overflowY = 'auto';
 
         // 如果没有假名，显示错误信息
         if (!hiragana) {
@@ -155,7 +158,8 @@ class ReviewManager {
             input.type = 'text';
             input.className = 'split-input';
             input.dataset.index = unitIndex;
-            input.style.width = `${Math.max(unit.length * 20 + 40, 80)}px`;
+            const w = Math.min(140, Math.max(60, unit.length * 16 + 28));
+            input.style.width = w + 'px';
 
             // 添加输入法事件监听
             let isComposing = false;
