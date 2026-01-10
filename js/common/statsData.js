@@ -324,6 +324,16 @@ class Statistics {
             if (!stats.reviewHistory) return [];
             const now = new Date();
             let items = Object.entries(stats.reviewHistory).map(([id, item]) => {
+                // 处理收藏夹显示
+                if (item.course && String(item.course).startsWith('collection_')) {
+                    try {
+                        const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+                        item.course = '收藏夹';
+                        item.lesson = collections[item.course]?.name || item.lesson;
+                    } catch (_) {
+                        item.course = '收藏夹';
+                    }
+                }
                 const status = this.getMasteryStatus(item);
                 return {
                     id,
