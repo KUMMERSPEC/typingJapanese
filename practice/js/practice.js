@@ -30,7 +30,7 @@ function adjustInputWidth(input) {
         const value = input.value || input.placeholder || 'ああああ';
         measureSpan.textContent = value;
         const width = measureSpan.offsetWidth;
-        input.style.width = `${Math.max(width + 16, 80)}px`;
+                input.style.width = `${Math.max(width + 24, 80)}px`;
     };
 
     updateWidth();
@@ -160,15 +160,9 @@ export class PracticeManager {
             const question = this.questions[this.currentQuestionIndex] || {};
             const textToSpeak = (lang === 'ja' ? (question.hiragana || question.character) : (question.character || text)).replace(/:/g, ' ');
 
-            if (lang === 'ja') {
-                const audio = new Audio(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`);
-                await audio.play();
-            } else {
-                this.fallbackSpeak(textToSpeak, lang);
-            }
+            this.fallbackSpeak(textToSpeak, lang);
         } catch (error) {
-            console.warn('Audio playback failed, using fallback:', error);
-            this.fallbackSpeak(text, lang);
+            console.error('Speech synthesis failed:', error);
         }
     }
 
@@ -436,8 +430,9 @@ export class PracticeManager {
 
     showComplete() {
         const splitCount = this.questions.filter(q => q.type === 'split').length;
-        if (this.course && this.lesson && this.course !== 'collection') {
-            statsData.updateDailyStats(`${this.course}:${this.lesson}`, splitCount, this.questions);
+        if (this.course && this.lesson) {
+            const statId = this.course === 'collection' ? this.lesson : `${this.course}:${this.lesson}`;
+            statsData.updateDailyStats(statId, splitCount, this.questions);
         }
 
         const completeScreen = document.createElement('div');
@@ -552,7 +547,9 @@ export class PracticeManager {
     // Deprecated methods, kept for compatibility, can be removed later
     bindCompletionEvents() {}
     updateProficiency(question, isCorrect) {
-        // This logic is now part of statsData or should be
+        if (!question || !this.course || !this.lesson) return;
+        const key = `${this.course}:${this.lesson}:${question.character}`;
+        statsData.updateReviewProgress(key, isCorrect, { isNew: true, questionData: question });
     }
 }
 
