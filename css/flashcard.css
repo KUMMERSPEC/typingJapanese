@@ -155,7 +155,83 @@ body {
     margin: 20px 0;
 }
 
-.flip-btn, .speak-btn {
+.flip-btn {
+    padding: 12px 24px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 美化语音播放按钮为圆形并添加脉冲动画 */
+.speak-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #6366f1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.speak-btn i {
+    pointer-events: none;
+}
+
+.speak-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(99, 102, 241, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulseRing 1.6s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.8;
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.6);
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.speak-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+}
+
+.speak-btn:active {
+    transform: scale(0.95);
+}
+
+/* 保留翻转按钮原有样式 */
+    position: relative;
+    overflow: hidden;
     padding: 12px 24px;
     background: #6366f1;
     color: white;
