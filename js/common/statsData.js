@@ -328,8 +328,9 @@ class Statistics {
                 if (item.course && String(item.course).startsWith('collection_')) {
                     try {
                         const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+                        const cid = item.course;   // 保留原 ID
                         item.course = '收藏夹';
-                        item.lesson = collections[item.course]?.name || item.lesson;
+                        item.lesson = (collections[cid] && collections[cid].name) || cid;
                     } catch (_) {
                         item.course = '收藏夹';
                     }
