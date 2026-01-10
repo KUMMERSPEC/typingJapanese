@@ -380,7 +380,19 @@ class Statistics {
                     if (!q || q.type !== 'split') return;
                     const questionId = `${q.character}:${q.hiragana}`;
                     if (!stats.reviewHistory[questionId]) {
-                        const [courseId, lessonName] = lessonId.split(':');
+                        let courseId, lessonName;
+                        if (lessonId.startsWith('collection_')) {
+                            courseId = '收藏夹'; // Course is 'Favorites'
+                            try {
+                                const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+                                lessonName = collections[lessonId]?.name || lessonId; // Use name, fallback to ID
+                            } catch (e) {
+                                lessonName = lessonId; // Fallback to ID on error
+                            }
+                        } else {
+                            [courseId, lessonName] = lessonId.split(':');
+                        }
+
                         stats.reviewHistory[questionId] = {
                             type: 'split',
                             japanese: q.character,
