@@ -316,7 +316,7 @@ header h1 {
     .course-timeline { flex: 1; overflow-x: auto; overflow-y: hidden; }
     /* 左侧今日卡片充满列，但不撑开页面 */
     .stats-section { display: flex; flex-direction: column; min-height: 0; }
-    .stats-card { flex: 1; display: flex; flex-direction: column; }
+    .stats-card { display: flex; flex-direction: column; }
     .stats-section .stats-content { grid-template-columns: 1fr; gap: 12px; }
     /* 底部图表限制高度，避免挤出首屏 */
     #statsChart { max-height: 28vh; }

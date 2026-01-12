@@ -408,7 +408,10 @@ class PracticeManager {
             const splitCount = this.questions.filter(q => q.type === 'split').length;
             completeScreen.innerHTML = `
                 <h1>🎉 课程完成!</h1>
-                <p>本次练习: ${splitCount} 个句子</p>
+                <div class="completion-summary">
+                    <span class="r-icon">R</span>
+                    <p>本次练习: ${splitCount} 个句子</p>
+                </div>
                 <div class="button-group">
                     <button class="restart-btn completion-btn">复习本课程</button>
                     <button class="next-lesson-btn completion-btn" style="display: none;">下一课</button>

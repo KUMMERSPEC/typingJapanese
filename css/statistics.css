@@ -99,8 +99,7 @@
     flex-direction: column;
     gap: 15px;
     padding: 16px 8px;
-    overflow-y: auto;
-    max-height: 300px;
+    overflow-y: visible;
 }
 
 .mastery-item {
