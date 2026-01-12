@@ -311,7 +311,7 @@ header h1 {
     header h1 { font-size: 2rem; }
     main { flex: 1; min-height: 0; overflow: hidden; }
     /* 右侧课程区域内部滚动，避免整页出现滚动条 */
-    .course-section { display: flex; flex-direction: column; min-height: 0; }
+    .course-section { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
     .course-section .section-header { flex-shrink: 0; }
     .course-timeline { flex: 1; overflow-x: auto; overflow-y: hidden; }
     /* 左侧今日卡片充满列，但不撑开页面 */
