@@ -412,9 +412,9 @@ class PracticeManager {
                 <p>今日已学习: ${splitCount} 个句子</p>
                 <p>连续学习: ${statsData.getLearningDays()} 天</p>
                 <div class="button-group">
-                    <button class="restart-btn">重新学习</button>
-                    <button class="next-lesson-btn" style="display: none;">下一课</button>
-                    <a href="../" class="return-btn">返回首页</a>
+                    <button class="restart-btn completion-btn">重新学习</button>
+                    <button class="next-lesson-btn completion-btn" style="display: none;">下一课</button>
+                    <button class="return-btn completion-btn" onclick="window.location.href='../'">返回首页</button>
                 </div>
             `;
 
