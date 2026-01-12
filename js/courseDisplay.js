@@ -96,9 +96,13 @@ export class CourseDisplay {
         const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
         let completedArr = [];
         if (Array.isArray(completedMap[courseId])) {
-            // 兼容旧结构：completedLessons = { [courseId]: ['lesson1', 'lesson2'] }
+            // 旧结构：数组形式
             completedArr = completedMap[courseId];
+        } else if (typeof completedMap[courseId] === 'object') {
+            // 另一旧结构：以 lessonId 为键的对象形式
+            completedArr = Object.keys(completedMap[courseId]);
         } else {
+            // 新结构：扁平键 course_lesson
             completedArr = Object.keys(completedMap)
                 .filter(k => k.startsWith(`${courseId}_`))
                 .map(k => k.split('_')[1]);
