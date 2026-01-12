@@ -114,14 +114,14 @@ class Statistics {
         }
 
         // 更新掌握情况
-        const masteryStats = stats.masteryStats || { low: 0, medium: 0, high: 0 };
+        const masteryStats = window.statsData ? window.statsData.getMasteryStats() : (stats.masteryStats || { low:0,medium:0,high:0,master:0 });
         const elements = {
             high: document.getElementById('masteryHigh'),
             medium: document.getElementById('masteryMedium'),
             low: document.getElementById('masteryLow')
         };
 
-        if (elements.high) elements.high.textContent = masteryStats.high;
+        if (elements.high) elements.high.textContent = (masteryStats.high||0)+(masteryStats.master||0);
         if (elements.medium) elements.medium.textContent = masteryStats.medium;
         if (elements.low) elements.low.textContent = masteryStats.low;
     }
