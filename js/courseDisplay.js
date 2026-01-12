@@ -94,9 +94,15 @@ export class CourseDisplay {
         const basePath = window.location.hostname === 'kummerspec.github.io' ? '/typingJapanese/' : '';
         const total = Object.keys(course.lessons || {}).length;
         const completedMap = (this.stats && this.stats.completedLessons) ? this.stats.completedLessons : {};
-        const completedArr = Object.keys(completedMap)
-            .filter(k => k.startsWith(`${courseId}_`))
-            .map(k => k.split('_')[1]);
+        let completedArr = [];
+        if (Array.isArray(completedMap[courseId])) {
+            // 兼容旧结构：completedLessons = { [courseId]: ['lesson1', 'lesson2'] }
+            completedArr = completedMap[courseId];
+        } else {
+            completedArr = Object.keys(completedMap)
+                .filter(k => k.startsWith(`${courseId}_`))
+                .map(k => k.split('_')[1]);
+        }
         const completed = completedArr.length;
         let nextLesson = 'lesson1';
         for (let i = 1; i <= total; i++) {
