@@ -223,8 +223,8 @@ import statsData from '../common/statsData.js';
             <td>${escapeHtml(r.japanese)}</td>
             <td>${escapeHtml(formatHiraganaDisplay(r.hiragana, r.lang))}</td>
             <td>${escapeHtml(r.meaning)}</td>
-            <td class="nowrap">${escapeHtml(r.course)}</td>
-            <td class="nowrap">${escapeHtml(r.lesson)}</td>
+            <td class="nowrap">${escapeHtml(displayText(r.course))}</td>
+            <td class="nowrap">${escapeHtml(displayText(r.lesson))}</td>
             <td class="nowrap"><span class="badge ${badgeClass(r.proficiency)}">${proficiencyText(r.proficiency)}</span></td>
             <td class="nowrap">${fmtDate(r.nextReviewDate)}</td>
           </tr>
@@ -269,6 +269,12 @@ import statsData from '../common/statsData.js';
       case 'low':
       default: return '需要加强';
     }
+  }
+
+  function displayText(v){
+    if(typeof v==='string') return v;
+    if(v && typeof v==='object') return v.name || JSON.stringify(v);
+    return v==null ? '' : String(v);
   }
 
   function escapeHtml(s) {
