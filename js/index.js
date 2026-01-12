@@ -435,7 +435,7 @@ function updateReviewList() {
                             <div class="japanese">${item.japanese || item.sentence || item.text || 'Error: Missing Content'}</div>
                             <div class="hiragana">${item.hiragana || ''}</div>
                             <div class="meaning">${item.meaning || ''}</div>
-                            <div class="course-info">${item.course || ''} ${item.lesson ? '- ' + item.lesson : ''}</div>
+                            <div class="course-info">${(()=>{const dt=v=>typeof v==='string'?v:(v&&v.name)||String(v);return `${dt(item.course||'')}${item.lesson? ' - '+dt(item.lesson):''}`;})()}</div>
                         </div>
                         <div class="review-status">
                             <span class="status-badge ${statusClass}">${status}</span>
