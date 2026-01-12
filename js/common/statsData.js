@@ -317,13 +317,19 @@ class Statistics {
     // 获取已学习句子总数
     getLearnedSentences() {
         const stats = this.getStatistics();
-        const totalFromHistory = Object.keys(stats.reviewHistory || {}).length;
-        if (stats.totalSentences !== totalFromHistory) {
-            console.warn(`Discrepancy found: stats.totalSentences is ${stats.totalSentences}, but reviewHistory has ${totalFromHistory} items. Correcting...`);
-            stats.totalSentences = totalFromHistory;
+        // 统一与去重口径一致
+        const seen = new Set();
+        const norm = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+        Object.values(stats.reviewHistory || {}).forEach(it=>{
+            const key=[norm(it.japanese||it.sentence||''),norm(it.hiragana||''),norm(it.meaning||'')].join('||');
+            seen.add(key);
+        });
+        const dedupTotal = seen.size;
+        if (stats.totalSentences !== dedupTotal) {
+            stats.totalSentences = dedupTotal;
             this.saveStatistics(stats);
         }
-        return totalFromHistory;
+        return dedupTotal;
     }
 
     // （其余业务方法原封不动，如需查阅请向下滚动）
