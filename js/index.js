@@ -713,7 +713,10 @@ function updateStatsDisplay() {
     // 更新掌握度指标
     const masteryStats = statsData.getMasteryStats();
 
-    if (elements.masteryHigh) elements.masteryHigh.textContent = masteryStats.high || 0;
+    if (elements.masteryHigh) {
+        const mastered = (masteryStats.high || 0) + (masteryStats.master || 0);
+        elements.masteryHigh.textContent = mastered;
+    }
     if (elements.masteryMedium) elements.masteryMedium.textContent = masteryStats.medium || 0;
     if (elements.masteryLow) elements.masteryLow.textContent = masteryStats.low || 0;
 }
