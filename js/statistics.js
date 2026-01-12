@@ -20,6 +20,16 @@ class Statistics {
     }
 
     bindEvents() {
+        // Listen for stats updates and refresh display
+        window.addEventListener('statisticsUpdated', () => this.updateDisplay());
+
+        // Listen for changes in localStorage from other tabs/windows
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'typing_statistics') {
+                console.log('Storage changed, forcing stats update...');
+                this.updateDisplay();
+            }
+        });
         // 绑定统计按钮点击事件
         const statsButton = document.querySelector('[data-action="stats"]');
         if (statsButton) {
