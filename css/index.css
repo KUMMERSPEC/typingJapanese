@@ -313,7 +313,7 @@ header h1 {
     /* 右侧课程区域内部滚动，避免整页出现滚动条 */
     .course-section { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
     .course-section .section-header { flex-shrink: 0; }
-    .course-timeline { flex: 1; overflow-x: auto; overflow-y: hidden; }
+    .course-timeline { flex: 1; overflow-x: auto; overflow-y: auto; }
     /* 左侧今日卡片充满列，但不撑开页面 */
     .stats-section { display: flex; flex-direction: column; min-height: 0; }
     .stats-card { display: flex; flex-direction: column; }
