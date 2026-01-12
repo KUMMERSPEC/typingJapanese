@@ -22,6 +22,23 @@ function refreshHomeBadges() {
                          .filter(item => item.needsReview).length;
       reviewBadge.textContent = todayCount;
     }
+
+    // 更新掌握情况
+    const masteryElements = {
+        highs: Array.from(document.querySelectorAll('#masteryHighTotal, #masteryHigh')),
+        medium: document.getElementById('masteryMedium'),
+        low: document.getElementById('masteryLow')
+    };
+
+    if (masteryElements.highs.length > 0) {
+        masteryElements.highs.forEach(el => el.textContent = (masteryStats.high || 0) + (masteryStats.master || 0));
+    }
+    if (masteryElements.medium) {
+        masteryElements.medium.textContent = masteryStats.medium || 0;
+    }
+    if (masteryElements.low) {
+        masteryElements.low.textContent = masteryStats.low || 0;
+    }
   }
   
   /* 首页加载 / 标签页返回时都刷新一次 */
