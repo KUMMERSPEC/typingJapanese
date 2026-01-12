@@ -231,8 +231,7 @@
 }
 
 .completion-btn {
-    width: 80%;
-    max-width: 280px; /* Set a max-width for larger screens */
+    width: 260px; /* fixed width to match all buttons */
     padding: 1rem;
     border: none;
     border-radius: 12px;
