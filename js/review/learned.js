@@ -82,6 +82,12 @@ import statsData from '../common/statsData.js';
           if (String(courseId).startsWith('collection_')) {
             courseDisp = '收藏夹';
             lessonDisp = (collections[courseId] && collections[courseId].name) || courseId;
+          } else if (courseId === 'collection' && String(lessonDisp).startsWith('collection_')) {
+            const cid = lessonDisp;
+            courseDisp = '收藏夹';
+            lessonDisp = (collections[cid] && collections[cid].name) || cid;
+            courseDisp = '收藏夹';
+            lessonDisp = (collections[courseId] && collections[courseId].name) || courseId;
           }
           return {
             id,
