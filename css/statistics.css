@@ -6,7 +6,7 @@
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 1000px;
-    height: 85vh;
+    max-height: 85vh; /* Use max-height instead of fixed height */
     background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -95,11 +95,10 @@
 
 /* 掌握度指示器 */
 .mastery-indicators {
-    display: flex;
-    flex-direction: column;
+    display: grid; /* Change to grid */
+    grid-template-columns: 1fr; /* Single column grid */
     gap: 15px;
     padding: 16px 8px;
-    overflow-y: visible;
 }
 
 .mastery-item {
