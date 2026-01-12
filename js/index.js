@@ -387,6 +387,19 @@ function updateReviewList() {
         // 通过 statsData 获取统一的复习项
     // 通过 statsData 获取统一的复习项，并过滤掉无效数据
     let allItems = statsData.getReviewItems().filter(item => item && (item.japanese || item.sentence));
+    // --- 去重：同一句（按日文+假名+中文）保留掌握度高/有复习日期的 ---
+    const seen = new Map();
+    const norm = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+    allItems.forEach(it=>{
+        const key = [norm(it.japanese||it.sentence||''), norm(it.hiragana||''), norm(it.meaning||'')].join('||');
+        if(!seen.has(key)) { seen.set(key, it); return; }
+        const existed = seen.get(key);
+        const profRank = p=>({low:0,medium:1,high:2,master:3}[p]??0);
+        const pick = ((existed.nextReviewDate?1:0)+profRank(existed.proficiency)) >= ((it.nextReviewDate?1:0)+profRank(it.proficiency)) ? existed : it;
+        seen.set(key, pick);
+    });
+    allItems = Array.from(seen.values());
+
     let items = [];
 
     // 根据筛选条件处理
