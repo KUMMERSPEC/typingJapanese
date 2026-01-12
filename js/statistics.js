@@ -92,8 +92,9 @@ class Statistics {
     }
 
     updateDisplay() {
+        // 始终直接从 statsData 模块获取最新数据，忽略任何可能传入的旧 stats 对象
         const stats = statsData.getStatistics();
-        console.log('Updating display with stats:', stats);
+        console.log('Forcing update with latest stats:', stats);
 
         // 更新学习天数
         const learningDaysElement = document.querySelector('.learning-days');
