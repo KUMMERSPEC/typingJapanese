@@ -71,21 +71,32 @@ import statsData from '../common/statsData.js';
       const reviewHistory = stats.reviewHistory || {};
 
       // 1) 从 reviewHistory 读取
+      const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+
       const rows = Object.entries(reviewHistory)
         .filter(([id, item]) => item && (item.japanese || item.sentence))
-        .map(([id, item]) => ({
-          id,
-          japanese: item.japanese || item.sentence || '',
-          hiragana: item.hiragana || '',
-          romaji: item.romaji || '',
-          meaning: item.meaning || '',
-          course: item.course || '',
-          lesson: item.lesson || '',
-          proficiency: item.proficiency || 'low',
-          nextReviewDate: item.nextReviewDate || '',
-          lastReview: item.lastReview || '',
-          lang: item.lang || 'ja'
-        }));
+        .map(([id, item]) => {
+          const courseId = item.course || '';
+          let courseDisp = courseId;
+          let lessonDisp = item.lesson || '';
+          if (String(courseId).startsWith('collection_')) {
+            courseDisp = '收藏夹';
+            lessonDisp = (collections[courseId] && collections[courseId].name) || courseId;
+          }
+          return {
+            id,
+            japanese: item.japanese || item.sentence || '',
+            hiragana: item.hiragana || '',
+            romaji: item.romaji || '',
+            meaning: item.meaning || '',
+            course: courseDisp,
+            lesson: lessonDisp,
+            proficiency: item.proficiency || 'low',
+            nextReviewDate: item.nextReviewDate || '',
+            lastReview: item.lastReview || '',
+            lang: item.lang || 'ja'
+          };
+        });
 
       // 2) 合并自定义收藏夹内容
       try {
