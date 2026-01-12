@@ -4,7 +4,8 @@ import { CustomCollectionsManager } from './customCollections.js';
 
 /* ========= 统一刷新首页统计徽章 ========= */
 function refreshHomeBadges() {
-    const stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+    const masteryStats = statsData.getMasteryStats();
+    const stats = statsData.getStatistics(); // Keep for reviewHistory if needed
   
     // 待学习
     const learnBadge = document.querySelector('#learnBadge');
