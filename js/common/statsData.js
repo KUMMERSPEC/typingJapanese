@@ -195,8 +195,21 @@ class Statistics {
             if (!stats.completedLessons) stats.completedLessons = {};
             if (!stats.dailyStats) stats.dailyStats = {};
 
-            // 重新计算总句子数
-            stats.totalSentences = Object.keys(stats.reviewHistory).length;
+            // 重新计算总句子数（去重后，与 learned/review 列表口径一致）
+            {
+                const seen = new Set();
+                const normalize = s => (s || '').replace(/[:、。！？….,，;；:：!？\s]+/g, '');
+                Object.values(stats.reviewHistory).forEach(item => {
+                    if (!item) return;
+                    const key = [
+                        normalize(item.japanese || item.sentence || ''),
+                        normalize(item.hiragana || ''),
+                        normalize(item.meaning || '')
+                    ].join('||');
+                    seen.add(key);
+                });
+                stats.totalSentences = seen.size;
+            }
 
             // 清理 reviewHistory：只保留 split
             let reviewHistoryChanged = false;
