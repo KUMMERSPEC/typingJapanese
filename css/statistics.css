@@ -145,6 +145,9 @@
 
 .mastery-info {
     flex: 1;
+    min-width: 0;
+
+    flex: 1;
 }
 
 .mastery-label {
@@ -152,6 +155,7 @@
     color: #4b5563;
     margin-bottom: 6px;
     font-weight: 500;
+    white-space: normal; /* Ensure text can wrap */
 }
 
 .mastery-value {

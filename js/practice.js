@@ -407,12 +407,10 @@ class PracticeManager {
             // 根据类型显示不同的完成信息
             const splitCount = this.questions.filter(q => q.type === 'split').length;
             completeScreen.innerHTML = `
-                <h1>おめでとう！</h1>
-                <p>练习完成！</p>
-                <p>今日已学习: ${splitCount} 个句子</p>
-                <p>连续学习: ${statsData.getLearningDays()} 天</p>
+                <h1>🎉 课程完成!</h1>
+                <p>本次练习: ${splitCount} 个句子</p>
                 <div class="button-group">
-                    <button class="restart-btn completion-btn">重新学习</button>
+                    <button class="restart-btn completion-btn">复习本课程</button>
                     <button class="next-lesson-btn completion-btn" style="display: none;">下一课</button>
                     <button class="return-btn completion-btn" onclick="window.location.href='../'">返回首页</button>
                 </div>

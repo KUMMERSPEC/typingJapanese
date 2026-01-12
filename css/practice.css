@@ -205,3 +205,61 @@
         width: 100%;
     }
 } 
+
+/* Completion Screen Styles */
+.completion-screen {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.completion-screen h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.completion-screen p {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-bottom: 2.5rem;
+}
+
+.completion-screen .button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.completion-btn {
+    width: 80%;
+    max-width: 280px; /* Set a max-width for larger screens */
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.completion-btn.restart-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.completion-btn.next-lesson-btn {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.completion-btn.return-btn {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.completion-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
