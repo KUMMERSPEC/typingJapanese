@@ -2,97 +2,181 @@
 
 let db, auth, doc, getDoc, setDoc;
 
-// Helper: validate JSON quickly
+/************************* Utility helpers *************************/
 function jsonIsValid(str) {
   if (typeof str !== 'string') return false;
   try { JSON.parse(str); return true; } catch (_) { return false; }
 }
 
-// Helper: attempt to salvage a JSON string by trimming trailing rubbish
-function salvageJson(str, maxTrim = 2000) {
+function salvageJson(str) {
   if (!str || typeof str !== 'string') return null;
-  for (let cut = 0; cut < Math.min(maxTrim, str.length); cut++) {
-    const sub = str.slice(0, str.length - cut);
-    if (sub.trim().endsWith('}')) {
-      if (jsonIsValid(sub)) return sub;
+  const start = str.indexOf('{');
+  const end = str.lastIndexOf('}');
+  if (start === -1 || end === -1 || end <= start) return null;
+  const candidate = str.slice(start, end + 1);
+  return jsonIsValid(candidate) ? candidate : null;
+}
+
+const CHUNK_SIZE = 300000; // chars < 1MiB
+const EMPTY_STATS = () => JSON.stringify({
+  firstUseDate: new Date().toISOString(),
+  lastStudyDate: '',
+  consecutiveDays: 0,
+  dailyStats: {},
+  totalSentences: 0,
+  completedQuestions: [],
+  reviewHistory: {}
+});
+
+/*******************************************************************/
+// Public init
+export function initFirebaseSync(services) {
+  if (!services?.db || !services?.auth) {
+    console.error('[firebaseSync] Invalid firebaseServices');
+    return;
+  }
+  db = services.db;
+  auth = services.auth;
+  ({ doc, getDoc, setDoc } = services);
+
+  // push on change
+  window.addEventListener('statisticsUpdated', () => {
+    try {
+      saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics') || '{}');
+    } catch (e) { console.warn('[firebaseSync] push fail', e); }
+  });
+  console.log('[firebaseSync] Initialized');
+
+  // expose helper APIs
+  window.exportStatisticsChunks = exportChunks;
+  window.importFixedStatistics = importFixedStatistics;
+}
+
+/******************** Core load / save ******************************/
+async function loadDataFromFirebase() {
+  if (!db || !auth) return;
+  const user = auth.currentUser; if (!user) return;
+
+  console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) return;
+    const raw = snap.data();
+    console.log('[firebaseSync] Raw data:', raw);
+
+    // 1. store raw chunk fields to localStorage for inspection
+    Object.entries(raw).forEach(([k, v]) => {
+      if (/^typing_statistics_chunk\d+$/.test(k)) {
+        localStorage.setItem(k, v);
+      }
+    });
+
+    // 2. assemble
+    const assembled = assembleChunkedFields(raw);
+    console.log('[firebaseSync] Assembled:', assembled);
+
+    // 3. validate / salvage typing_statistics
+    if (assembled.typing_statistics) {
+      let ts = assembled.typing_statistics;
+      if (!jsonIsValid(ts)) {
+        const salvaged = salvageJson(ts);
+        if (salvaged) {
+          console.warn('[firebaseSync] Salvaged typing_statistics via trim');
+          ts = salvaged;
+        } else if (raw.typing_statistics && jsonIsValid(raw.typing_statistics)) {
+          console.warn('[firebaseSync] Falling back to non-chunked typing_statistics');
+          ts = raw.typing_statistics;
+        } else {
+          console.warn('[firebaseSync] typing_statistics irrecoverable; resetting');
+          ts = EMPTY_STATS();
+        }
+        assembled.typing_statistics = ts;
+      }
+    } else {
+      assembled.typing_statistics = EMPTY_STATS();
+    }
+
+    updateLocalStorage(assembled);
+  } catch (e) {
+    console.error('[firebaseSync] load error', e);
+  }
+}
+
+async function saveDataToFirebase(key, value) {
+  if (!db || !auth) return;
+  const user = auth.currentUser; if (!user) return;
+  try {
+    const ref = doc(db, 'users', user.uid);
+    let writeObj = {};
+    if (typeof value !== 'string') value = JSON.stringify(value);
+    if (value.length > CHUNK_SIZE) {
+      chunkString(value, CHUNK_SIZE).forEach((c, i) => writeObj[`${key}_chunk${i}`] = c);
+    } else {
+      writeObj[key] = value;
+    }
+    await setDoc(ref, writeObj, { merge: true });
+    console.log(`[firebaseSync] Saved ${key}`);
+  } catch (e) {
+    console.error('[firebaseSync] save error', e);
+  }
+}
+
+/************************* Helpers *********************************/
+function chunkString(s, size) {
+  const arr = []; for (let i = 0; i < s.length; i += size) arr.push(s.slice(i, i + size)); return arr;
+}
+function concatChunks(arr) { return arr.join(''); }
+function assembleChunkedFields(raw) {
+  const byBase = {}, res = {};
+  for (const k in raw) {
+    const m = k.match(/^(.*)_chunk(\d+)$/);
+    if (m) {
+      const base = m[1], idx = +m[2];
+      (byBase[base] ||= [])[idx] = raw[k];
+    } else {
+      res[k] = raw[k];
     }
   }
-  return null;
-}
-
-// An initialization function to be called from index.html
-export function initFirebaseSync(firebaseServices) {
-    if (!firebaseServices || !firebaseServices.db || !firebaseServices.auth) {
-        console.error("[firebaseSync] Initialization failed: Invalid services object provided.");
-        return;
+  for (const b in byBase) {
+    const parts = [];
+    for (let i = 0; i < byBase[b].length; i++) {
+      if (byBase[b][i] == null) break;
+      parts.push(byBase[b][i]);
     }
-
-    window.addEventListener('statisticsUpdated', () => {
-        try {
-            const statsStr = localStorage.getItem('typing_statistics') || '{}';
-            saveDataToFirebase('typing_statistics', statsStr);
-        } catch (err) {
-            console.warn('[firebaseSync] Failed to push typing_statistics on statisticsUpdated:', err);
-        }
-    });
-    console.log("[firebaseSync] Initializing with provided Firebase services.");
-    db = firebaseServices.db;
-    auth = firebaseServices.auth;
-    doc = firebaseServices.doc;
-    getDoc = firebaseServices.getDoc;
-    setDoc = firebaseServices.setDoc;
+    res[b] = concatChunks(parts);
+  }
+  return res;
 }
 
-async function loadDataFromFirebase() {
-    if (!db || !auth) { console.error('[firebaseSync] Firebase not ready'); return; }
-    const user = auth.currentUser; if (!user) return;
-
-    console.log(`[firebaseSync] Attempting to load data for user: ${user.uid} from Firestore.`);
-    try {
-        const ref = doc(db, 'users', user.uid);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) return;
-        const raw = snap.data();
-        console.log('[firebaseSync] Raw data loaded from Firestore:', raw);
-
-        const assembled = assembleChunkedFields(raw);
-        console.log('[firebaseSync] Data after assembling chunks:', assembled);
-
-        // --- fix typing_statistics ---
-        if (assembled.typing_statistics) {
-            let ts = assembled.typing_statistics;
-            if (!jsonIsValid(ts)) {
-                const salv = salvageJson(ts);
-                if (salv) {
-                    console.warn('[firebaseSync] Salvaged typing_statistics via trim');
-                    ts = salv;
-                } else if (raw.typing_statistics && jsonIsValid(raw.typing_statistics)) {
-                    console.warn('[firebaseSync] Falling back to non-chunked typing_statistics');
-                    ts = raw.typing_statistics;
-                } else {
-                    console.warn('[firebaseSync] typing_statistics irrecoverable; resetting');
-                    ts = JSON.stringify({ firstUseDate:new Date().toISOString(), lastStudyDate:'', consecutiveDays:0, dailyStats:{}, totalSentences:0, completedQuestions:[], reviewHistory:{} });
-                }
-                assembled.typing_statistics = ts;
-            }
-        }
-
-        updateLocalStorage(assembled);
-    } catch (err) { console.error('[firebaseSync] Error load', err); }
+function updateLocalStorage(data) {
+  let changed = false;
+  for (const k in data) {
+    const vStr = typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]);
+    if (localStorage.getItem(k) !== vStr) { localStorage.setItem(k, vStr); changed = true; }
+  }
+  if (changed) window.dispatchEvent(new CustomEvent('statisticsUpdated'));
 }
 
-// ---------- chunk helpers ----------
-const CHUNK_SIZE = 300000;
-function chunkString(s,size){const arr=[];for(let i=0;i<s.length;i+=size)arr.push(s.slice(i,i+size));return arr;}
-function concatChunks(a){return a.join('');}
-function assembleChunkedFields(raw){
-  const byBase={},res={};
-  for(const k in raw){const m=k.match(/^(.*)_chunk(\d+)$/);if(m){const b=m[1],idx=+m[2];(byBase[b]||(byBase[b]=[]))[idx]=raw[k];}else res[k]=raw[k];}
-  for(const b in byBase){const arr=byBase[b];let parts=[];for(let i=0;i<arr.length;i++){if(arr[i]==null) break; parts.push(arr[i]);}res[b]=concatChunks(parts);}return res;
+/********************** Debug utilities ****************************/
+function exportChunks() {
+  const out = {};
+  ['typing_statistics_chunk0', 'typing_statistics_chunk1', 'typing_statistics_chunk2'].forEach(k => {
+    out[k] = localStorage.getItem(k) || null;
+  });
+  console.log('[firebaseSync] exportChunks:', out);
+  return out;
 }
 
-async function saveDataToFirebase(key,val){if(!db||!auth)return;const user=auth.currentUser;if(!user)return;try{const ref=doc(db,'users',user.uid);let obj={};if(typeof val!=='string')val=JSON.stringify(val);if(val.length>CHUNK_SIZE){chunkString(val,CHUNK_SIZE).forEach((c,i)=>obj[`${key}_chunk${i}`]=c);}else obj[key]=val;await setDoc(ref,obj,{merge:true});console.log(`[firebaseSync] Saved ${key}`);}catch(e){console.error('[firebaseSync] save error',e);}}
+function importFixedStatistics(jsonStr) {
+  if (!jsonIsValid(jsonStr)) { console.error('[firebaseSync] import: invalid JSON'); return; }
+  localStorage.setItem('typing_statistics', jsonStr);
+  window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+  // also push to cloud
+  saveDataToFirebase('typing_statistics', jsonStr);
+  console.log('[firebaseSync] importFixedStatistics: saved');
+}
 
-function updateLocalStorage(cloud){let changed=false;for(const k in cloud){const v=typeof cloud[k]==='string'?cloud[k]:JSON.stringify(cloud[k]);if(localStorage.getItem(k)!==v){localStorage.setItem(k,v);changed=true;}}if(changed)window.dispatchEvent(new CustomEvent('statisticsUpdated'));}
-
-window.loadDataFromFirebase=loadDataFromFirebase;window.saveDataToFirebase=saveDataToFirebase;window.firebaseSync={saveData:saveDataToFirebase,loadData:loadDataFromFirebase};
+/********************** Expose globals *****************************/
+window.loadDataFromFirebase = loadDataFromFirebase;
+window.saveDataToFirebase = saveDataToFirebase;
+window.firebaseSync = { loadData: loadDataFromFirebase, saveData: saveDataToFirebase };
