@@ -1,4 +1,5 @@
 import DataLoader from './dataLoader.js';
+import { encodeId } from '../../js/common/idCodec.js';
 import statsData from '../../js/common/statsData.js';
 
 // #region UTILITY FUNCTIONS
@@ -187,10 +188,12 @@ export class PracticeManager {
         if (this.$.char) this.$.char.style.display = 'block';
         if (this.$.inputArea) this.$.inputArea.style.display = 'flex';
 
-        const questionKey = `${this.course}:${this.lesson}:${question.character}`;
+        const questionKey = encodeId(`${this.course}:${this.lesson}:${question.character}`);
         if (this.$.markBtn) {
-            this.$.markBtn.setAttribute('data-question', questionKey);
-            const isMastered = JSON.parse(localStorage.getItem('masteredSentences') || '{}')[questionKey];
+            this.$.markBtn.setAttribute('data-question', encodeId(questionKey));
+            const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
+        const encodedKey = encodeId(questionKey);
+        const isMastered = masteredSentences[encodedKey] || masteredSentences[questionKey];
             this.$.markBtn.classList.toggle('mastered', !!isMastered);
             this.$.markBtn.innerHTML = `<span class="btn-icon">✓</span><span class="btn-text">${isMastered ? '已掌握' : '标记掌握'}</span><span class="btn-shortcut">Alt+M</span>`;
         }
@@ -379,7 +382,8 @@ export class PracticeManager {
     markAsMastered(question) {
         if (!question) return;
         const masteredSentences = JSON.parse(localStorage.getItem('masteredSentences') || '{}');
-        const key = `${this.course}:${this.lesson}:${question.character}`;
+        const rawKey = `${this.course}:${this.lesson}:${question.character}`;
+        const key = encodeId(rawKey);
         const wasMarked = !!masteredSentences[key];
 
         if (wasMarked) {
@@ -564,7 +568,7 @@ export class PracticeManager {
     bindCompletionEvents() {}
     updateProficiency(question, isCorrect) {
         if (!question || !this.course || !this.lesson) return;
-        const key = `${this.course}:${this.lesson}:${question.character}`;
+        const key = encodeId(`${this.course}:${this.lesson}:${question.character}`);
         statsData.updateReviewProgress(key, isCorrect, { isNew: true, questionData: question });
     }
 }

@@ -7,6 +7,7 @@
  */
 
 import { getProgress, getHistory } from './storage.js';
+import { encodeId, decodeId } from './idCodec.js';
 import indexedDBManager from './indexedDBManager.js';
 
 /****************************************************************************************
@@ -231,6 +232,17 @@ class Statistics {
 
             // 清理 reviewHistory：确保基础字段存在，避免明显脏数据导致报错，但**不再强制仅保留 split**。
             let reviewHistoryChanged = false;
+            // --- migrate old keys containing special chars ---
+            Object.keys(stats.reviewHistory).forEach(oldKey => {
+                if (oldKey.includes(':') || /[\u3040-\u30FF\u4E00-\u9FFF"'、。！？….,，;；:：!？]/.test(oldKey)) {
+                    const newKey = encodeId(oldKey);
+                    if (!stats.reviewHistory[newKey]) {
+                        stats.reviewHistory[newKey] = stats.reviewHistory[oldKey];
+                    }
+                    delete stats.reviewHistory[oldKey];
+                    reviewHistoryChanged = true;
+                }
+            });
             Object.entries(stats.reviewHistory).forEach(([k, v]) => {
                 if (!v || (!v.japanese && !v.sentence)) {
                     delete stats.reviewHistory[k];
@@ -354,7 +366,9 @@ class Statistics {
             const stats = this.getStatistics();
             if (!stats.reviewHistory) return [];
             const now = new Date();
-            let items = Object.entries(stats.reviewHistory).map(([id, item]) => {
+            let items = Object.entries(stats.reviewHistory).map(([rawId, item]) => {
+                // ensure id safe encoded for UI & downstream operations
+                const id = rawId.includes(':') ? encodeId(rawId) : rawId;
                 // 处理收藏夹显示
                 if (item.course && String(item.course).startsWith('collection_')) {
                     try {
@@ -420,7 +434,8 @@ class Statistics {
             if (questions && Array.isArray(questions)) {
                 questions.forEach(q => {
                     if (!q || q.type !== 'split') return;
-                    const questionId = `${q.character}:${q.hiragana}`;
+                    const rawId = `${q.character}:${q.hiragana}`;
+                    const questionId = encodeId(rawId);
                     if (!stats.reviewHistory[questionId]) {
                         let courseId, lessonName;
                         if (lessonId.startsWith('collection_')) {
@@ -503,6 +518,18 @@ class Statistics {
      * @param {object}  options     { responseTime:number(ms), hintUsed:boolean }
      */
     updateReviewProgress(sentenceId, isCorrect, options = {}) {
+        const stats = this.getStatistics();
+        // 尝试在不同编码形式之间匹配 key，确保兼容旧逻辑
+        const resolveKey = (id) => {
+            if (stats.reviewHistory && stats.reviewHistory[id]) return id;
+            const enc = encodeId(id);
+            if (stats.reviewHistory && stats.reviewHistory[enc]) return enc;
+            const dec = decodeId(id);
+            if (stats.reviewHistory && stats.reviewHistory[dec]) return dec;
+            return id;
+        };
+        const safeId = resolveKey(sentenceId);
+        sentenceId = safeId;
         try {
             const stats = this.getStatistics();
             if (!stats.reviewHistory || !stats.reviewHistory[sentenceId]) {
