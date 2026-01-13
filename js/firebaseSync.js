@@ -47,6 +47,43 @@ async function loadDataFromFirebase() {
             // Re-assemble any values saved in chunked format before updating localStorage
             const assembledData = assembleChunkedFields(rawData);
             console.log("[firebaseSync] Data after assembling chunks:", assembledData);
+
+            // --- Validate typing_statistics JSON ---
+            if (assembledData.typing_statistics) {
+                const chunkedStr = assembledData.typing_statistics;
+                let ok = false;
+                try {
+                    JSON.parse(chunkedStr);
+                    ok = true;
+                } catch (_) {}
+
+                if (!ok) {
+                    console.warn('[firebaseSync] Parsed chunked typing_statistics invalid, trying non-chunked field');
+                    const fallback = rawData.typing_statistics;
+                    if (fallback) {
+                        try {
+                            JSON.parse(fallback);
+                            assembledData.typing_statistics = fallback;
+                            ok = true;
+                        } catch (_) {
+                            console.warn('[firebaseSync] Fallback non-chunked typing_statistics also invalid – will reset');
+                        }
+                    }
+                }
+
+                if (!ok) {
+                    assembledData.typing_statistics = JSON.stringify({
+                        firstUseDate: new Date().toISOString(),
+                        lastStudyDate: '',
+                        consecutiveDays: 0,
+                        dailyStats: {},
+                        totalSentences: 0,
+                        completedQuestions: [],
+                        reviewHistory: {}
+                    });
+                }
+            }
+
             updateLocalStorage(assembledData);
         } else {
             console.log("[firebaseSync] No data found for this user. Creating a new document.");
