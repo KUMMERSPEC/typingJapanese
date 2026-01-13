@@ -97,8 +97,8 @@
 .mastery-indicators {
     display: grid; /* Change to grid */
     grid-template-columns: 1fr; /* Single column grid */
-    gap: 15px;
-    padding: 16px 8px;
+    gap: 12px;
+    padding: 12px 6px;
 }
 
 .mastery-item {
@@ -149,7 +149,7 @@
 }
 
 .mastery-label {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #4b5563;
     margin-bottom: 6px;
     font-weight: 500;
