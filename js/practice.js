@@ -392,6 +392,47 @@ class PracticeManager {
     }
 
     showComplete() {
+        showComplete() {
+            // === 调试日志 ===
+            console.log('showComplete called with course:', this.course, 'lesson:', this.lesson);
+        
+            // === 标准课程完成记录写入 ===
+            if (this.course && this.course !== 'collection') {
+                const stats = statsData.getStatistics();
+                if (!stats.completedLessons) stats.completedLessons = {};
+        
+                const lessonKey = `${this.course}_${this.lesson}`;
+        
+                // 仅在第一次完成时写入
+                if (!stats.completedLessons[lessonKey]) {
+                    stats.completedLessons[lessonKey] = {
+                        completedAt: new Date().toISOString(),
+                        course: this.course,
+                        lesson: this.lesson
+                    };
+                    console.log('Saving completion for standard course. New entry ->', lessonKey);
+        
+                    // 持久化到 localStorage（statsData 内部会写回）
+                    statsData.saveStatistics(stats);
+        
+                    // 派发事件通知首页更新
+                    window.dispatchEvent(new CustomEvent('statisticsUpdated', { detail: { stats } }));
+                } else {
+                    console.log('Lesson already marked completed:', lessonKey);
+                }
+                // 打印保存后的结果
+                console.log('Current completedLessons after save:',
+                    JSON.stringify(stats.completedLessons, null, 2));
+            }
+        
+            // ====== 以下保持原有逻辑 ======
+            try {
+                // 隐藏练习相关的元素
+                const practiceElements = document.querySelectorAll('.character, .input-area, .answer-display, .previous-question');
+                practiceElements.forEach(element => { if (element) element.style.display = 'none'; });
+        
+                // 创建完成界面 ...
+}
         try {
             // 隐藏练习相关的元素
             const practiceElements = document.querySelectorAll('.character, .input-area, .answer-display, .previous-question');
