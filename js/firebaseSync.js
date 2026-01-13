@@ -99,7 +99,13 @@ function assembleChunkedFields(raw){
     // Assemble chunk arrays and override corresponding plain keys if needed.
     for(const base in chunksByBase){
         const arr = chunksByBase[base];
-        result[base] = concatChunks(arr);
+        // Only concatenate contiguous chunks starting from index 0 to avoid leftovers from old writes.
+        let contiguous = [];
+        for (let i = 0; i < arr.length; i++) {
+            if (typeof arr[i] === 'undefined') break;
+            contiguous.push(arr[i]);
+        }
+        result[base] = concatChunks(contiguous);
     }
 
     return result;

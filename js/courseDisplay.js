@@ -83,7 +83,13 @@ export class CourseDisplay {
     }
 
     loadData() {
-        this.stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+        try {
+            this.stats = JSON.parse(localStorage.getItem('typing_statistics') || '{}');
+        } catch (err) {
+            console.warn('[CourseDisplay] 解析 typing_statistics 失败，已清空损坏数据');
+            localStorage.removeItem('typing_statistics');
+            this.stats = {};
+        }
         this.completedLessons = this.stats.completedLessons || {};
     }
 

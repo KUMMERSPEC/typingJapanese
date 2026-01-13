@@ -97,8 +97,8 @@
 .mastery-indicators {
     display: grid; /* Change to grid */
     grid-template-columns: 1fr; /* Single column grid */
-    gap: 10px;
-    padding: 10px 6px;
+    gap: 5px;
+    padding: 5px 3px;
 }
 
 .mastery-item {

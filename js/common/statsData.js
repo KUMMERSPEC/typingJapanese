@@ -79,7 +79,22 @@ class StorageManager {
     /** 对外：获取统计对象 */
     getStats() {
         const raw = this._getRaw();
-        return raw ? JSON.parse(raw) : null;
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            // Attempt to auto-repair common corruption cases such as double-encoded JSON strings (wrapped in quotes)
+            try {
+                const trimmed = raw.trim();
+                if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith('\"') && trimmed.endsWith('\"'))) {
+                    const unwrapped = trimmed.replace(/^"|"$/g, '');
+                    return JSON.parse(unwrapped);
+                }
+            } catch (_) {}
+            console.warn('[StorageManager] JSON 解析失败，已重置损坏的统计数据');
+            localStorage.removeItem(this.key);
+            return null;
+        }
     }
 
     /** 对外：保存统计对象 */
@@ -88,7 +103,7 @@ class StorageManager {
         // 可选：同步到 Firebase（保持与旧逻辑一致）
         if (ok && typeof window.saveDataToFirebase === 'function') {
             try {
-                window.saveDataToFirebase(this.key, JSON.stringify(statsObj));
+                window.saveDataToFirebase(this.key, statsObj);
             } catch (err) {
                 console.warn('[StorageManager] 同步 Firebase 失败:', err);
             }
