@@ -9,16 +9,16 @@ export function initFirebaseSync(firebaseServices) {
         return;
     }
 
-// ----- Auto-sync local changes to Firestore -----
-// Whenever the front-end dispatches 'statisticsUpdated', push latest typing_statistics.
-window.addEventListener('statisticsUpdated', () => {
-    try {
-        const statsStr = localStorage.getItem('typing_statistics') || '{}';
-        saveDataToFirebase('typing_statistics', statsStr);
-    } catch (err) {
-        console.warn('[firebaseSync] Failed to push typing_statistics on statisticsUpdated:', err);
-    }
-});
+    // ----- Auto-sync local changes to Firestore -----
+    // Whenever the front-end dispatches 'statisticsUpdated', push latest typing_statistics.
+    window.addEventListener('statisticsUpdated', () => {
+        try {
+            const statsStr = localStorage.getItem('typing_statistics') || '{}';
+            saveDataToFirebase('typing_statistics', statsStr);
+        } catch (err) {
+            console.warn('[firebaseSync] Failed to push typing_statistics on statisticsUpdated:', err);
+        }
+    });
     console.log("[firebaseSync] Initializing with provided Firebase services.");
     db = firebaseServices.db;
     auth = firebaseServices.auth;
@@ -50,29 +50,31 @@ async function loadDataFromFirebase() {
 
             // --- Validate typing_statistics JSON ---
             if (assembledData.typing_statistics) {
-                const chunkedStr = assembledData.typing_statistics;
-                let ok = false;
-                try {
-                    JSON.parse(chunkedStr);
-                    ok = true;
-                } catch (_) {}
+                let candidate = assembledData.typing_statistics;
+                let ok = jsonIsValid(candidate);
 
+                // If invalid, try salvage by truncating at last '}'
                 if (!ok) {
-                    console.warn('[firebaseSync] Parsed chunked typing_statistics invalid, trying non-chunked field');
-                    const fallback = rawData.typing_statistics;
-                    if (fallback) {
-                        try {
-                            JSON.parse(fallback);
-                            assembledData.typing_statistics = fallback;
+                    const lastBrace = candidate.lastIndexOf('}');
+                    if (lastBrace > 0) {
+                        const truncated = candidate.slice(0, lastBrace + 1);
+                        if (jsonIsValid(truncated)) {
+                            candidate = truncated;
                             ok = true;
-                        } catch (_) {
-                            console.warn('[firebaseSync] Fallback non-chunked typing_statistics also invalid – will reset');
+                            console.warn('[firebaseSync] Salvaged typing_statistics by truncating to last }');
                         }
                     }
                 }
-
+                // If still invalid, fallback to non-chunked field
+                if (!ok && rawData.typing_statistics && jsonIsValid(rawData.typing_statistics)) {
+                    candidate = rawData.typing_statistics;
+                    ok = true;
+                    console.warn('[firebaseSync] Used fallback non-chunked typing_statistics field');
+                }
+                // Reset to empty structure as last resort
                 if (!ok) {
-                    assembledData.typing_statistics = JSON.stringify({
+                    console.warn('[firebaseSync] typing_statistics irrecoverable; resetting');
+                    candidate = JSON.stringify({
                         firstUseDate: new Date().toISOString(),
                         lastStudyDate: '',
                         consecutiveDays: 0,
@@ -82,6 +84,7 @@ async function loadDataFromFirebase() {
                         reviewHistory: {}
                     });
                 }
+                assembledData.typing_statistics = candidate;
             }
 
             updateLocalStorage(assembledData);
@@ -104,27 +107,27 @@ async function loadDataFromFirebase() {
 
 // --- helper for chunked save/load ----------------------------------
 const CHUNK_SIZE = 300000; // chars, well under 1 MiB per doc
-function chunkString(str,size){
-  const arr=[];
-  for(let i=0;i<str.length;i+=size) arr.push(str.slice(i,i+size));
-  return arr;
+function chunkString(str, size) {
+    const arr = [];
+    for (let i = 0; i < str.length; i += size) arr.push(str.slice(i, i + size));
+    return arr;
 }
-function concatChunks(arr){return arr.join('');}
+function concatChunks(arr) { return arr.join(''); }
 
 // Convert raw Firestore data object where some fields might be stored as
 // `${key}_chunk0`, `${key}_chunk1`, ... back into a plain object with the
 // original keys. If both the original key **and** chunked keys exist, the
 // chunked representation wins (it is assumed to be newer / larger).
-function assembleChunkedFields(raw){
+function assembleChunkedFields(raw) {
     const chunksByBase = {};
     const result = {};
 
-    for(const k in raw){
+    for (const k in raw) {
         const m = k.match(/^(.*)_chunk(\d+)$/);
-        if(m){
+        if (m) {
             const base = m[1];
-            const idx = parseInt(m[2],10);
-            if(!chunksByBase[base]) chunksByBase[base] = [];
+            const idx = parseInt(m[2], 10);
+            if (!chunksByBase[base]) chunksByBase[base] = [];
             chunksByBase[base][idx] = raw[k];
         } else {
             // Tentatively copy non-chunked value; may be overwritten later if a
@@ -134,7 +137,7 @@ function assembleChunkedFields(raw){
     }
 
     // Assemble chunk arrays and override corresponding plain keys if needed.
-    for(const base in chunksByBase){
+    for (const base in chunksByBase) {
         const arr = chunksByBase[base];
         // Only concatenate contiguous chunks starting from index 0 to avoid leftovers from old writes.
         let contiguous = [];
@@ -146,6 +149,10 @@ function assembleChunkedFields(raw){
     }
 
     return result;
+}
+
+function jsonIsValid(str) {
+    try { JSON.parse(str); return true; } catch (_) { return false; }
 }
 
 async function saveDataToFirebase(key, value) {
@@ -162,9 +169,9 @@ async function saveDataToFirebase(key, value) {
 
         // Build the object to write, handling chunking for large payloads.
         let writeObj = {};
-        if(typeof value !== 'string') value = JSON.stringify(value);
+        if (typeof value !== 'string') value = JSON.stringify(value);
 
-        if(value.length > CHUNK_SIZE){
+        if (value.length > CHUNK_SIZE) {
             const chunks = chunkString(value, CHUNK_SIZE);
             chunks.forEach((chunk, idx) => {
                 writeObj[`${key}_chunk${idx}`] = chunk;
@@ -205,6 +212,6 @@ window.loadDataFromFirebase = loadDataFromFirebase;
 window.saveDataToFirebase = saveDataToFirebase;
 // Provide a compatibility wrapper so other code can call window.firebaseSync.saveData(...)
 window.firebaseSync = {
-  saveData: saveDataToFirebase,
-  loadData: loadDataFromFirebase
+    saveData: saveDataToFirebase,
+    loadData: loadDataFromFirebase
 };
