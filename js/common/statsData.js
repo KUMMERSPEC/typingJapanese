@@ -168,6 +168,9 @@ class Statistics {
         this._stats = null;               // 内存缓存
         this._isUpdating = false;         // 防止递归调用
         this._storage = storageManager;   // 统一数据访问入口
+        // 当其他模块(如 firebaseSync)写入 localStorage 并触发 statisticsUpdated 时，
+        // 这里清理缓存，确保后续读取最新数据
+        window.addEventListener('statisticsUpdated', () => this.invalidateCache());
     }
 
     /* ---------------------- 初始化 / 获取 ---------------------- */
@@ -226,7 +229,7 @@ class Statistics {
                 stats.totalSentences = seen.size;
             }
 
-            // 清理 reviewHistory：只保留 split
+            // 清理 reviewHistory：确保基础字段存在，避免明显脏数据导致报错，但**不再强制仅保留 split**。
             let reviewHistoryChanged = false;
             Object.entries(stats.reviewHistory).forEach(([k, v]) => {
                 if (!v || (!v.japanese && !v.sentence)) {
@@ -234,14 +237,8 @@ class Statistics {
                     reviewHistoryChanged = true;
                     return;
                 }
-                const hira = String(v.hiragana || '');
-                if (!hira.includes(':')) {
-                    delete stats.reviewHistory[k];
-                    reviewHistoryChanged = true;
-                    return;
-                }
                 if (!v.type) {
-                    v.type = 'split';
+                    v.type = 'split'; // 补默认类型，不删除
                     reviewHistoryChanged = true;
                 }
             });
