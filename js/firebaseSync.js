@@ -93,23 +93,7 @@ async function loadDataFromFirebase() {
     const assembled = assembleChunkedFields(raw);
     console.log('[firebaseSync] Assembled:', assembled);
 
-    // 3. pick better typing_statistics (prefer chunked & larger)
-    const safeParse = (str) => { if (!str||typeof str!=='string') return null; try { return JSON.parse(str);} catch(_){ const salv=salvageJson(str); try{ return salv?JSON.parse(salv):null;}catch{ return null;} } };
-    const chunkCandidate = safeParse(assembled.typing_statistics);
-    const singleCandidate = safeParse(raw.typing_statistics);
-    let chosen;
-    if (chunkCandidate && singleCandidate) {
-      const chunkCount = Object.keys(chunkCandidate.reviewHistory||{}).length;
-      const singleCount = Object.keys(singleCandidate.reviewHistory||{}).length;
-      chosen = chunkCount>=singleCount?chunkCandidate:singleCandidate;
-    } else {
-      chosen = chunkCandidate||singleCandidate||null;
-    }
-    if (chosen) {
-      assembled.typing_statistics = JSON.stringify(chosen);
-    } else {
-      assembled.typing_statistics = EMPTY_STATS();
-    }
+    // 3. validate / salvage typing_statistics
     if (assembled.typing_statistics) {
       let ts = assembled.typing_statistics;
       if (!jsonIsValid(ts)) {
