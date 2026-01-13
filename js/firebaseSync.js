@@ -1,6 +1,10 @@
 // js/firebaseSync.js - Using explicit initialization (dependency injection)
 
-let db, auth, doc, getDoc, setDoc;
+let db, auth, doc, getDoc, setDoc, deleteField; // <-- include deleteField
+
+/************************* Runtime flags *************************/
+let cloudLoaded = false;      // 是否已完成一次从云端拉取
+let pushingInProgress = false; // 防止回环写入
 
 /************************* Utility helpers *************************/
 function jsonIsValid(str) {
@@ -37,14 +41,28 @@ export function initFirebaseSync(services) {
   }
   db = services.db;
   auth = services.auth;
-  ({ doc, getDoc, setDoc } = services);
+  ({ doc, getDoc, setDoc, deleteField } = services); // accept deleteField
 
-  // push on change
+  // 拉取远程 → 覆盖本地 → 再监听变动
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      await loadDataFromFirebase();
+      cloudLoaded = true;
+      // 首次拉取后立即 push 合并后的最终本地数据，确保云端最新
+      saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics'));
+    }
+  });
+
+  // push on local change（需等云端数据加载完毕）
   window.addEventListener('statisticsUpdated', () => {
+    if (!cloudLoaded || pushingInProgress) return;
     try {
+      pushingInProgress = true;
       saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics') || '{}');
     } catch (e) { console.warn('[firebaseSync] push fail', e); }
+    finally { pushingInProgress = false; }
   });
+
   console.log('[firebaseSync] Initialized');
 
   // expose helper APIs
@@ -96,9 +114,32 @@ async function loadDataFromFirebase() {
       assembled.typing_statistics = EMPTY_STATS();
     }
 
+    mergeWithLocal(assembled.typing_statistics);
+
     updateLocalStorage(assembled);
   } catch (e) {
     console.error('[firebaseSync] load error', e);
+  }
+}
+
+// 合并云端 reviewHistory（优先云端记录）
+function mergeWithLocal(cloudJsonStr) {
+  try {
+    if (!jsonIsValid(cloudJsonStr)) return;
+    const cloudStats = JSON.parse(cloudJsonStr);
+    const localRaw = localStorage.getItem('typing_statistics');
+    if (localRaw && jsonIsValid(localRaw)) {
+      const localStats = JSON.parse(localRaw);
+      const merged = { ...localStats, ...cloudStats };
+      merged.reviewHistory = { ...localStats.reviewHistory, ...cloudStats.reviewHistory };
+      // 更新其它可累加字段
+      merged.totalSentences = Object.keys(merged.reviewHistory || {}).length;
+      localStorage.setItem('typing_statistics', JSON.stringify(merged));
+    } else {
+      localStorage.setItem('typing_statistics', cloudJsonStr);
+    }
+  } catch (err) {
+    console.warn('[firebaseSync] merge error', err);
   }
 }
 
@@ -109,10 +150,23 @@ async function saveDataToFirebase(key, value) {
     const ref = doc(db, 'users', user.uid);
     let writeObj = {};
     if (typeof value !== 'string') value = JSON.stringify(value);
+
+    // helper to mark chunk keys for deletion when switching to unchunked
+    const markChunkDeletions = () => {
+      if (!deleteField) return;
+      for (let i = 0; i < 10; i++) {
+        writeObj[`${key}_chunk${i}`] = deleteField();
+      }
+    };
+
     if (value.length > CHUNK_SIZE) {
+      // switching to chunked: ensure non-chunked key removed
+      if (deleteField) writeObj[key] = deleteField();
       chunkString(value, CHUNK_SIZE).forEach((c, i) => writeObj[`${key}_chunk${i}`] = c);
     } else {
+      // unchunked; ensure old chunks removed
       writeObj[key] = value;
+      markChunkDeletions();
     }
     await setDoc(ref, writeObj, { merge: true });
     console.log(`[firebaseSync] Saved ${key}`);
