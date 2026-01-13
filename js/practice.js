@@ -369,20 +369,19 @@ class PracticeManager {
                 );
             } else {
                 // 标准课程完成逻辑
-                const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
-                if (!completedLessons[this.currentCourse]) {
-                    completedLessons[this.currentCourse] = [];
-                }
-                if (!completedLessons[this.currentCourse].includes(this.currentLesson)) {
-                    completedLessons[this.currentCourse].push(this.currentLesson);
-                }
-                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
-                
-                // 更新统计数据并触发全局事件
+                // 新版：使用扁平键保存到 typing_statistics
                 const stats = statsData.getStatistics();
-                stats.completedLessons = completedLessons;
-                statsData.saveStatistics(stats);
-                window.dispatchEvent(new CustomEvent('statisticsUpdated', { detail: { stats } }));
+                if (!stats.completedLessons) stats.completedLessons = {};
+                const lessonKey = `${this.currentCourse}_${this.currentLesson}`;
+                if (!stats.completedLessons[lessonKey]) {
+                    stats.completedLessons[lessonKey] = {
+                        completedAt: new Date().toISOString(),
+                        course: this.currentCourse,
+                        lesson: this.currentLesson
+                    };
+                    statsData.saveStatistics(stats);
+                    window.dispatchEvent(new CustomEvent('statisticsUpdated', { detail: { stats } }));
+                }
             }
 
             // 触发完成事件
