@@ -429,6 +429,22 @@ export class PracticeManager {
     }
 
     showComplete() {
+        // 记录课程完成（仅标准课程）
+        if (this.course && this.course !== 'collection') {
+            const stats = statsData.getStatistics();
+            if (!stats.completedLessons) stats.completedLessons = {};
+            const lessonKey = `${this.course}_${this.lesson}`;
+            if (!stats.completedLessons[lessonKey]) {
+                stats.completedLessons[lessonKey] = {
+                    completedAt: new Date().toISOString(),
+                    course: this.course,
+                    lesson: this.lesson
+                };
+                statsData.saveStatistics(stats);
+                window.dispatchEvent(new CustomEvent('statisticsUpdated', { detail: { stats } }));
+            }
+        }
+
         const splitCount = this.questions.filter(q => q.type === 'split').length;
         if (this.course && this.lesson) {
             const statId = this.course === 'collection' ? this.lesson : `${this.course}:${this.lesson}`;
