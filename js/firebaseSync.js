@@ -12,6 +12,12 @@ function jsonIsValid(str) {
   try { JSON.parse(str); return true; } catch (_) { return false; }
 }
 
+// safe parse that returns null upon failure
+function safeParse(str) {
+  if (typeof str !== 'string') return null;
+  try { return JSON.parse(str); } catch { return null; }
+}
+
 function salvageJson(str) {
   if (!str || typeof str !== 'string') return null;
   const start = str.indexOf('{');
@@ -32,6 +38,26 @@ const EMPTY_STATS = () => JSON.stringify({
   reviewHistory: {}
 });
 
+/*******************************************************************
+ * Incremental extractor for partially corrupted typing_statistics
+ *******************************************************************/
+function extractEntries(joined, targetObj = {}) {
+  if (!joined || typeof joined !== 'string') return targetObj;
+  const regex = /\"([A-Za-z0-9+/=]{10,})\":\{([^}]+?)\}/g;
+  let m;
+  while ((m = regex.exec(joined))) {
+    const key = m[1];
+    if (targetObj[key]) continue; // skip existing
+    try {
+      const entryJson = '{' + m[2] + '}';
+      const entry = JSON.parse(entryJson);
+      targetObj[key] = entry;
+    } catch {
+      // ignore broken snippet
+    }
+  }
+  return targetObj;
+}
 /*******************************************************************/
 // Public init
 export function initFirebaseSync(services) {
@@ -112,6 +138,19 @@ async function loadDataFromFirebase() {
       }
     } else {
       assembled.typing_statistics = EMPTY_STATS();
+    }
+
+    // ---- 增量提取修补逻辑 ----
+    // 尝试完整解析 assembled.typing_statistics
+    let parsed = safeParse(assembled.typing_statistics);
+    if (!parsed) {
+      const baseObj = safeParse(raw.typing_statistics) || safeParse(EMPTY_STATS());
+      if (baseObj && typeof baseObj === 'object') {
+        baseObj.reviewHistory ||= {};
+        extractEntries(assembled.typing_statistics, baseObj.reviewHistory);
+        baseObj.totalSentences = Object.keys(baseObj.reviewHistory).length;
+        assembled.typing_statistics = JSON.stringify(baseObj);
+      }
     }
 
     mergeWithLocal(assembled.typing_statistics);
