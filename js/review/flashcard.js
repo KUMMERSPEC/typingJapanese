@@ -261,9 +261,10 @@ class FlashcardManager {
         // 显示卡片
         flashcard.style.visibility = 'visible';
         
-        // 更新进度和状态
+        // 更新进度、状态和页面标题
         this.updateProgress();
         this.updateStatus(currentSentence);
+        document.title = currentSentence.meaning || 'Flashcard Review';
         
         // 如果是日语在正面，播放音频
         if (this.mode !== 'cn-jp') {
@@ -328,13 +329,10 @@ class FlashcardManager {
                 audio.load();  // 开始加载
             });
 
-            try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
+            audio.play().catch(error => {
                 console.error('播放失败，尝试后备方案:', error);
                 this.fallbackSpeak(textToSpeak);
-            }
+            });
 
         } catch (error) {
             console.error('播放语音失败:', error);
@@ -713,6 +711,20 @@ class FlashcardManager {
                 </div>
             </div>
         `;
+                // === 同步到云端 ===
+                console.log('%c[FLASHCARD COMPLETE] push stats', 'background:yellow;color:black');
+                try {
+                    statsData.saveStatistics(statsData.getStatistics());
+                } catch (e) {
+                    console.warn('[flashcard] statsData.saveStatistics failed', e);
+                }
+                if (typeof window.saveDataToFirebase === 'function') {
+                    console.log('[flashcard] direct push to cloud');
+                    window.saveDataToFirebase('typing_statistics',
+                        localStorage.getItem('typing_statistics'));
+                } else {
+                    console.warn('[flashcard] saveDataToFirebase not found');
+                }
     }
 
     // 添加初始化UI的方法
