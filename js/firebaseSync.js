@@ -362,9 +362,19 @@ function updateLocalStorage(data) {
   let changed = false;
   for (const k in data) {
     const vStr = typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]);
-    if (localStorage.getItem(k) !== vStr) { localStorage.setItem(k, vStr); changed = true; }
+    if (localStorage.getItem(k) !== vStr) { 
+      localStorage.setItem(k, vStr); 
+      changed = true; 
+    }
   }
-  if (changed) window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+  if (changed) {
+    console.log('[firebaseSync] Local data changed. Dispatching statisticsUpdated event shortly...');
+    // Defer the event to prevent race conditions with UI script loading.
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('statisticsUpdated'));
+      console.log('[firebaseSync] statisticsUpdated event dispatched.');
+    }, 0);
+  }
 }
 
 /********************** Debug utilities ****************************/
