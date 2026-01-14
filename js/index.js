@@ -313,33 +313,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 检查课程完成状态
     checkCourseCompletion();
 
-    // 监听统计更新事件
+    // 监听统计更新事件，统一刷新所有徽章和统计
     window.addEventListener('statisticsUpdated', () => {
-        console.log('Statistics update event received, fetching new stats...');
-        const stats = statsData.getStatistics(); // 从数据源获取最新数据
-        const learnedSentences = statsData.getLearnedSentences();
-        
-        // 更新首页统计数据
-        const elements = {
-            learningDays: document.querySelector('.learning-days'),
-            learnedSentences: document.querySelector('.learned-sentences'),
-            reviewItems: document.querySelector('.review-items')
-        };
-
-        if (elements.learningDays) {
-            elements.learningDays.textContent = statsData.getLearningDays();
+        console.log('Statistics update event received, refreshing all home badges...');
+        refreshHomeBadges();
+        // 更新复习列表（如果面板是打开的）
+        if (document.querySelector('.review-panel.show')) {
+            updateReviewList();
         }
-        if (elements.learnedSentences) {
-            elements.learnedSentences.textContent = learnedSentences;
-        }
-        if (elements.reviewItems) {
-            // 直接从过滤后的数组中获取“今日待复习”的数量
-            const todayCount = statsData.getReviewItems().filter(item => item.needsReview).length;
-            elements.reviewItems.textContent = todayCount;
-        }
-
-        // 更新复习列表
-        updateReviewList();
     });
 
     // 添加已学句子点击事件
