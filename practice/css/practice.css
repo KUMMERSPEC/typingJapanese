@@ -638,6 +638,7 @@ header {
 
 /* 答题历史显示区域 */
 .history-panel {
+    /* moved to right on smaller screens to avoid covering inputs */
     position: fixed;
     left: 20px;
     bottom: 20px;
