@@ -221,7 +221,7 @@ async function saveDataToFirebase(key, value) {
     if (value.length > CHUNK_SIZE) {
       // switching to chunked: ensure non-chunked key removed
       if (deleteField) writeObj[key] = deleteField();
-      chunkString(value, CHUNK_SIZE).forEach((c, i) => writeObj[`${key}_chunk${i}`] = c);
+      chunkStringSafely(value, CHUNK_SIZE).forEach((c, i) => writeObj[`${key}_chunk${i}`] = c);
     } else {
       // unchunked; ensure old chunks removed
       writeObj[key] = value;
@@ -252,8 +252,30 @@ async function cleanupLegacyField(raw, key) {
 }
 
 /************************* Helpers *********************************/
-function chunkString(s, size) {
-  const arr = []; for (let i = 0; i < s.length; i += size) arr.push(s.slice(i, i + size)); return arr;
+function chunkStringSafely(str, chunkSize) {
+  if (chunkSize <= 0) throw new Error('Chunk size must be positive.');
+  const chunks = [];
+  let i = 0;
+  while (i < str.length) {
+    let chunkEnd = i + chunkSize;
+    if (chunkEnd >= str.length) {
+      chunks.push(str.slice(i));
+      break;
+    }
+
+    // Backtrack to the start of the last character to avoid splitting it
+    let lastCharIndex = chunkEnd;
+    // Check if we are in the middle of a surrogate pair (for characters outside BMP)
+    const highSurrogate = str.charCodeAt(lastCharIndex - 1);
+    if (highSurrogate >= 0xD800 && highSurrogate <= 0xDBFF) {
+      // we might have cut a surrogate pair, go back one more char
+      lastCharIndex--;
+    }
+
+    chunks.push(str.slice(i, lastCharIndex));
+    i = lastCharIndex;
+  }
+  return chunks;
 }
 function concatChunks(arr) { return arr.join(''); }
 function assembleChunkedFields(raw) {
@@ -277,14 +299,12 @@ function assembleChunkedFields(raw) {
     }
   }
 
-  // Finally, assemble the chunks.
+  // Finally, assemble the chunks in the correct order.
   for (const b in byBase) {
-    const parts = [];
-    for (let i = 0; i < byBase[b].length; i++) {
-      if (byBase[b][i] == null) break;
-      parts.push(byBase[b][i]);
-    }
-    res[b] = concatChunks(parts);
+    const parts = byBase[b];
+    // Filter out empty/null slots and join.
+    // This handles sparse arrays correctly if chunks are missing.
+    res[b] = parts.filter(p => p != null).join('');
   }
   return res;
 }
