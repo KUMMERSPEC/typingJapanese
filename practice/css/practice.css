@@ -106,6 +106,7 @@ header {
 
 .input-area {
     display: flex;
+    flex-wrap: wrap; /* Allow items to wrap */
     gap: 10px;
     justify-content: center;
     align-items: center;

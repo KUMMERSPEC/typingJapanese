@@ -406,6 +406,9 @@ class Statistics {
                 return {
                     id,
                     ...item,
+                    // 确保即使 item.japanese 是一个对象，也能正确提取文本
+                    japanese: (item.japanese && typeof item.japanese === 'object') ? item.japanese.sentence : (item.japanese || item.sentence),
+                    hiragana: (item.japanese && typeof item.japanese === 'object') ? item.japanese.hiragana : item.hiragana,
                     displayStatus: status.text,
                     statusClass: status.class,
                     needsReview: (() => {

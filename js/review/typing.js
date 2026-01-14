@@ -70,20 +70,22 @@ class ReviewManager {
             }`;
         }
 
-        // 显示中文意思
+        // 显示中文意思并设置页面标题
         const meaningElement = document.querySelector('.meaning');
         if (meaningElement) {
-            meaningElement.textContent = current.meaning;
+            const meaningText = current.meaning || 'Typing Review';
+            meaningElement.textContent = meaningText;
+            document.title = meaningText; // 修复页面标题
 
-        // 根据中文含义的长度动态调整字体大小，以适应长句
-        const meaningLength = current.meaning.length;
-        if (meaningLength > 25) {
-            meaningElement.style.fontSize = '1.5rem';
-        } else if (meaningLength > 15) {
-            meaningElement.style.fontSize = '2rem';
-        } else {
-            meaningElement.style.fontSize = ''; // 恢复默认大小
-        }
+            // 根据中文含义的长度动态调整字体大小，以适应长句
+            const meaningLength = meaningText.length;
+            if (meaningLength > 25) {
+                meaningElement.style.fontSize = '1.5rem';
+            } else if (meaningLength > 15) {
+                meaningElement.style.fontSize = '2rem';
+            } else {
+                meaningElement.style.fontSize = ''; // 恢复默认大小
+            }
         }
 
         // 创建输入框
@@ -120,33 +122,90 @@ class ReviewManager {
         }
 
         const units = (hiragana || '').split(':').filter(Boolean);
-        const processedUnits = [];
-        units.forEach(unit => {
-             if (!unit) return;
-             const parts = unit.match(/[^、。！？….,，;；:：!！?？"“”「」『』]+|[、。！？….,，;；:：!！?？"“”「」『』]/g) || [unit];
-             processedUnits.push(...parts);
-        });
-
-        const answerUnits = processedUnits.filter(u => !PUNCT_RE.test(u));
-        
         const inputsContainer = document.createElement('div');
         inputsContainer.style.display = 'flex';
         inputsContainer.style.flexWrap = 'wrap';
         inputsContainer.style.justifyContent = 'center';
         inputsContainer.style.gap = '10px';
+        inputsContainer.style.alignItems = 'center';
 
         let inputCounter = 0;
+        const answerUnits = units.map(u => u.replace(PUNCT_RE, '')).filter(Boolean);
         const lastInputIndex = answerUnits.length - 1;
-        processedUnits.forEach((unit, unitIndex) => {
-            if(unit===''){return;}
-            if (PUNCT_RE.test(unit)) {
+
+        units.forEach((unit, unitIndex) => {
+            if (unit === '') return;
+
+            const wordMatch = unit.match(/^([^、。！？….,，;；:：!！?？"“”「」『』]+)/);
+            const punctMatch = unit.match(/([、。！？….,，;；:：!！?？"“”「」『』]+)$/);
+
+            const word = wordMatch ? wordMatch[1] : null;
+            const punctuation = punctMatch ? punctMatch[1] : null;
+
+            if (word) {
+                const visibleIndex = inputCounter++;
+                const inputWrapper = document.createElement('div');
+                inputWrapper.className = 'split-input-wrapper';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'split-input';
+                input.dataset.index = unitIndex;
+                const w = Math.min(140, Math.max(60, word.length * 16 + 28));
+                input.style.width = w + 'px';
+
+                let isComposing = false;
+                input.addEventListener('compositionstart', () => { isComposing = true; });
+                input.addEventListener('compositionend', () => { isComposing = false; });
+
+                input.addEventListener('input', () => {
+                    if (!isComposing && visibleIndex === lastInputIndex) {
+                        const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                        const allFilled = allInputs.every(input => input.value.trim() !== '');
+                        if (allFilled) {
+                            const answer = allInputs.map(input => input.value.trim()).join(':');
+                            this.checkAnswer(answer);
+                        }
+                    }
+                });
+
+                const handleInputComplete = () => {
+                    if (this.isHandlingInput) return;
+                    this.isHandlingInput = true;
+                    setTimeout(() => { this.isHandlingInput = false; }, 300);
+
+                    const nextElement = inputWrapper.nextElementSibling;
+                    if (nextElement && nextElement.querySelector('input')) {
+                        input.value = input.value.trim();
+                        nextElement.querySelector('input').focus();
+                    } else {
+                        const allInputs = Array.from(inputsContainer.querySelectorAll('.split-input'));
+                        const allFilled = allInputs.every(input => input.value.trim() !== '');
+                        if (allFilled) {
+                            const answer = allInputs.map(input => input.value.trim()).join(':');
+                            this.checkAnswer(answer);
+                        }
+                    }
+                };
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || (e.code === 'Space' && !isComposing)) {
+                        e.preventDefault();
+                        handleInputComplete();
+                    }
+                });
+
+                inputWrapper.appendChild(input);
+                inputsContainer.appendChild(inputWrapper);
+            }
+
+            if (punctuation) {
                 const punctSpan = document.createElement('span');
                 punctSpan.className = 'split-punctuation';
-                punctSpan.textContent = unit;
+                punctSpan.textContent = punctuation;
                 punctSpan.style.padding = '0 4px';
                 punctSpan.style.fontSize = '1.2rem';
                 inputsContainer.appendChild(punctSpan);
-                return; 
             }
 
             if (unit === '') return; 
@@ -282,11 +341,17 @@ class ReviewManager {
             answerDisplay.style.display = 'block';
         }
         
-        const textToSpeak = current.hiragana.replace(/:/g, '');
-        this.playAudioWithUserInteraction(textToSpeak);
-        
+        // 播放音频和跳转到下一题应该并行，且音频失败不应阻塞流程
+        try {
+            const textToSpeak = (current.hiragana || '').replace(/:/g, '');
+            this.playAudioWithUserInteraction(textToSpeak);
+        } catch (e) {
+            console.error("Audio playback threw a synchronous error:", e);
+        }
+
         document.dispatchEvent(new Event('answer-checked'));
-        
+
+        // 无论音频是否成功，都应该在2秒后继续
         setTimeout(() => {
             if (this.currentIndex < this.sentences.length - 1) {
                 this.currentIndex++;
