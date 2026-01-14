@@ -174,102 +174,99 @@ export function initFirebaseSync(services) {
 /******************** Core load / save ******************************/
 async function loadDataFromFirebase() {
     if (!db || !auth) return;
-    const user = auth.currentUser; if (!user) return;
+    const user = auth.currentUser;
+    if (!user) return;
 
     console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
     try {
         const userDocRef = doc(db, 'users', user.uid);
         const snap = await getDoc(userDocRef);
-        if (!snap.exists()) return;
+        if (!snap.exists()) {
+            console.log('[firebaseSync] No user document found. Initializing with empty stats.');
+            mergeWithLocal(EMPTY_STATS());
+            updateLocalStorage({ typing_statistics: EMPTY_STATS() });
+            return;
+        }
 
         const raw = snap.data();
-        let assembled = { ...raw }; // Start with raw data
+        let finalStatsJson = null;
 
-        // 1. Attempt to load from subcollection first (new method)
+        // 1. 优先从子集合加载 (新方法)
         const chunksColRef = collection(userDocRef, 'statistics_chunks');
         const chunksSnap = await getDocs(query(chunksColRef));
 
         if (!chunksSnap.empty) {
             console.log('[firebaseSync] Found chunks in subcollection. Assembling...');
             const chunks = chunksSnap.docs
-                .map(doc => ({ id: doc.id, data: doc.data() }))
+                .map(d => ({ id: d.id, content: d.data().content }))
                 .sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(b.id.split('_')[1]));
-            
-            const fullContent = chunks.map(c => c.data.content).join('');
-            assembled.typing_statistics = fullContent;
-            // Since we successfully loaded from subcollection, delete legacy fields from the assembled object
-            delete assembled.typing_statistics_chunk0;
-            delete assembled.typing_statistics_chunk1;
-            delete assembled.typing_statistics_chunk2; // etc.
-
+            finalStatsJson = chunks.map(c => c.content).join('');
         } else {
-            console.log('[firebaseSync] No subcollection found. Falling back to legacy chunk fields.');
-            // 2. Fallback to legacy chunk fields
+            // 2. 回退到旧的分块字段
             const legacyChunks = [];
             for (let i = 0; i < 10; i++) {
                 if (raw[`typing_statistics_chunk${i}`]) {
-                    legacyChunks[i] = raw[`typing_statistics_chunk${i}`];
+                    legacyChunks.push(raw[`typing_statistics_chunk${i}`]);
                 } else {
-                    break; // Stop if a chunk is missing
+                    break;
                 }
             }
             if (legacyChunks.length > 0) {
-                assembled.typing_statistics = legacyChunks.join('');
+                console.log('[firebaseSync] No subcollection found. Assembling from legacy chunk fields.');
+                finalStatsJson = legacyChunks.join('');
+            } else if (raw.typing_statistics) {
+                // 3. 回退到单一字段
+                console.log('[firebaseSync] No chunks found. Using single typing_statistics field.');
+                finalStatsJson = raw.typing_statistics;
             }
         }
 
-        // 3. Validate and salvage the final assembled statistics
-        if (assembled.typing_statistics) {
-            let ts = assembled.typing_statistics;
-            ts = repairUtf8(ts); // Always repair before validation
-
-            if (!jsonIsValid(ts)) {
+        // 4. 验证、修复并更新本地存储
+        if (finalStatsJson) {
+            const repairedJson = repairUtf8(finalStatsJson);
+            if (jsonIsValid(repairedJson)) {
+                finalStatsJson = repairedJson;
+            } else {
                 console.warn('[firebaseSync] Assembled statistics are invalid JSON. Attempting to salvage...');
-                const salvaged = salvageJson(ts);
+                const salvaged = salvageJson(repairedJson);
                 if (salvaged) {
-                    console.warn('[firebaseSync] Successfully salvaged typing_statistics.');
-                    ts = salvaged;
-                } else if (raw.typing_statistics && jsonIsValid(raw.typing_statistics)) {
-                    console.warn('[firebaseSync] Salvage failed. Falling back to non-chunked typing_statistics field.');
-                    ts = raw.typing_statistics;
+                    console.log('[firebaseSync] Successfully salvaged typing_statistics.');
+                    finalStatsJson = salvaged;
                 } else {
-                    console.warn('[firebaseSync] All recovery methods failed. Resetting statistics.');
-                    ts = EMPTY_STATS();
+                    console.error('[firebaseSync] All recovery methods failed. Resetting statistics to prevent data loss.');
+                    finalStatsJson = EMPTY_STATS();
                 }
             }
-            assembled.typing_statistics = ts;
         } else {
-            // No statistics found at all, create new empty stats
-            assembled.typing_statistics = EMPTY_STATS();
+            console.log('[firebaseSync] No statistics data found in cloud. Initializing with empty stats.');
+            finalStatsJson = EMPTY_STATS();
         }
 
-        // 4. Merge with local data and update UI
-        mergeWithLocal(assembled.typing_statistics);
-        updateLocalStorage(assembled);
+        // 5. 将最终的、干净的数据写入本地
+        mergeWithLocal(finalStatsJson);
+        // `updateLocalStorage` 会触发 UI 更新
+        updateLocalStorage({ typing_statistics: finalStatsJson });
 
     } catch (e) {
-        console.error('[firebaseSync] load error', e);
+        console.error('[firebaseSync] A critical error occurred during data load:', e);
+        // 在发生严重错误时，也使用空数据以避免应用崩溃
+        mergeWithLocal(EMPTY_STATS());
+        updateLocalStorage({ typing_statistics: EMPTY_STATS() });
     }
 }
 
-// 合并云端 reviewHistory（优先云端记录）
+// 用从云端加载的权威数据直接覆盖本地缓存
 function mergeWithLocal(cloudJsonStr) {
   try {
-    if (!jsonIsValid(cloudJsonStr)) return;
-    const cloudStats = JSON.parse(cloudJsonStr);
-    const localRaw = localStorage.getItem('typing_statistics');
-    if (localRaw && jsonIsValid(localRaw)) {
-      const localStats = JSON.parse(localRaw);
-      const merged = { ...localStats, ...cloudStats };
-      merged.reviewHistory = { ...localStats.reviewHistory, ...cloudStats.reviewHistory };
-      // 更新其它可累加字段
-      merged.totalSentences = Object.keys(merged.reviewHistory || {}).length;
-      localStorage.setItem('typing_statistics', JSON.stringify(merged));
-    } else {
-      localStorage.setItem('typing_statistics', cloudJsonStr);
+    if (!jsonIsValid(cloudJsonStr)) {
+        console.warn('[firebaseSync] Cloud data is invalid, skipping update.');
+        return;
     }
+    // 云端是权威数据源。在加载时，直接用云端数据覆盖本地缓存。
+    localStorage.setItem('typing_statistics', cloudJsonStr);
+    console.log('[firebaseSync] Local storage has been updated with authoritative data from the cloud.');
   } catch (err) {
-    console.warn('[firebaseSync] merge error', err);
+    console.warn('[firebaseSync] An error occurred while updating local storage with cloud data:', err);
   }
 }
 
