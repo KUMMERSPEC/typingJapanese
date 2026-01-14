@@ -1,6 +1,6 @@
 // js/firebaseSync.js - Using explicit initialization (dependency injection)
 
-let db, auth, doc, getDoc, setDoc, deleteField; // <-- include deleteField
+let db, auth, doc, getDoc, setDoc, deleteField, collection, writeBatch, getDocs, query, where, deleteDoc; // Firestore SDK functions
 
 /************************* Runtime flags *************************/
 let cloudLoaded = false;      // 是否已完成一次从云端拉取
@@ -142,7 +142,7 @@ export function initFirebaseSync(services) {
   }
   db = services.db;
   auth = services.auth;
-  ({ doc, getDoc, setDoc, deleteField } = services); // accept deleteField
+  ({ doc, getDoc, setDoc, deleteField, collection, writeBatch, getDocs, query, where, deleteDoc } = services); // Destructure all required Firestore functions
 
   // 拉取远程 → 覆盖本地 → 再监听变动
   auth.onAuthStateChanged(async user => {
@@ -173,74 +173,83 @@ export function initFirebaseSync(services) {
 
 /******************** Core load / save ******************************/
 async function loadDataFromFirebase() {
-  if (!db || !auth) return;
-  const user = auth.currentUser; if (!user) return;
+    if (!db || !auth) return;
+    const user = auth.currentUser; if (!user) return;
 
-  console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
-  try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (!snap.exists()) return;
-    const raw = snap.data();
-    console.log('[firebaseSync] Raw data:', raw);
+    console.log(`[firebaseSync] Attempting to load data for user: ${user.uid}`);
+    try {
+        const userDocRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userDocRef);
+        if (!snap.exists()) return;
 
-    // Cleanup legacy field if chunks exist
-    await cleanupLegacyField(raw, 'typing_statistics');
+        const raw = snap.data();
+        let assembled = { ...raw }; // Start with raw data
 
-    // 1. store raw chunk fields to localStorage for inspection
-    Object.entries(raw).forEach(([k, v]) => {
-      if (/^typing_statistics_chunk\d+$/.test(k)) {
-        localStorage.setItem(k, v);
-      }
-    });
+        // 1. Attempt to load from subcollection first (new method)
+        const chunksColRef = collection(userDocRef, 'statistics_chunks');
+        const chunksSnap = await getDocs(query(chunksColRef));
 
-    // 2. assemble
-    const assembled = assembleChunkedFields(raw);
-    console.log('[firebaseSync] Assembled:', assembled);
+        if (!chunksSnap.empty) {
+            console.log('[firebaseSync] Found chunks in subcollection. Assembling...');
+            const chunks = chunksSnap.docs
+                .map(doc => ({ id: doc.id, data: doc.data() }))
+                .sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(b.id.split('_')[1]));
+            
+            const fullContent = chunks.map(c => c.data.content).join('');
+            assembled.typing_statistics = fullContent;
+            // Since we successfully loaded from subcollection, delete legacy fields from the assembled object
+            delete assembled.typing_statistics_chunk0;
+            delete assembled.typing_statistics_chunk1;
+            delete assembled.typing_statistics_chunk2; // etc.
 
-    // 3. validate / salvage typing_statistics
-    if (assembled.typing_statistics) {
-      let ts = assembled.typing_statistics;
-
-      // Repair potential UTF-8 corruption before validation.
-      ts = repairUtf8(ts);
-
-      if (!jsonIsValid(ts)) {
-        const salvaged = salvageJson(ts);
-        if (salvaged) {
-          console.warn('[firebaseSync] Salvaged typing_statistics via trim');
-          ts = salvaged;
-        } else if (raw.typing_statistics && jsonIsValid(raw.typing_statistics)) {
-          console.warn('[firebaseSync] Falling back to non-chunked typing_statistics');
-          ts = raw.typing_statistics;
         } else {
-          console.warn('[firebaseSync] typing_statistics irrecoverable; resetting');
-          ts = EMPTY_STATS();
+            console.log('[firebaseSync] No subcollection found. Falling back to legacy chunk fields.');
+            // 2. Fallback to legacy chunk fields
+            const legacyChunks = [];
+            for (let i = 0; i < 10; i++) {
+                if (raw[`typing_statistics_chunk${i}`]) {
+                    legacyChunks[i] = raw[`typing_statistics_chunk${i}`];
+                } else {
+                    break; // Stop if a chunk is missing
+                }
+            }
+            if (legacyChunks.length > 0) {
+                assembled.typing_statistics = legacyChunks.join('');
+            }
         }
-        assembled.typing_statistics = ts;
-      }
-    } else {
-      assembled.typing_statistics = EMPTY_STATS();
+
+        // 3. Validate and salvage the final assembled statistics
+        if (assembled.typing_statistics) {
+            let ts = assembled.typing_statistics;
+            ts = repairUtf8(ts); // Always repair before validation
+
+            if (!jsonIsValid(ts)) {
+                console.warn('[firebaseSync] Assembled statistics are invalid JSON. Attempting to salvage...');
+                const salvaged = salvageJson(ts);
+                if (salvaged) {
+                    console.warn('[firebaseSync] Successfully salvaged typing_statistics.');
+                    ts = salvaged;
+                } else if (raw.typing_statistics && jsonIsValid(raw.typing_statistics)) {
+                    console.warn('[firebaseSync] Salvage failed. Falling back to non-chunked typing_statistics field.');
+                    ts = raw.typing_statistics;
+                } else {
+                    console.warn('[firebaseSync] All recovery methods failed. Resetting statistics.');
+                    ts = EMPTY_STATS();
+                }
+            }
+            assembled.typing_statistics = ts;
+        } else {
+            // No statistics found at all, create new empty stats
+            assembled.typing_statistics = EMPTY_STATS();
+        }
+
+        // 4. Merge with local data and update UI
+        mergeWithLocal(assembled.typing_statistics);
+        updateLocalStorage(assembled);
+
+    } catch (e) {
+        console.error('[firebaseSync] load error', e);
     }
-
-        // ---- 增量提取修补逻辑 ----
-    const baseObj = safeParse(raw.typing_statistics) || safeParse(EMPTY_STATS());
-    if (baseObj && typeof baseObj === 'object') {
-      baseObj.reviewHistory ||= {};
-      const before = Object.keys(baseObj.reviewHistory).length;
-      extractEntries(assembled.typing_statistics, baseObj.reviewHistory);
-      const after = Object.keys(baseObj.reviewHistory).length;
-      if (after > before) {
-        baseObj.totalSentences = after;
-        assembled.typing_statistics = JSON.stringify(baseObj);
-      }
-    }
-
-    mergeWithLocal(assembled.typing_statistics);
-
-    updateLocalStorage(assembled);
-  } catch (e) {
-    console.error('[firebaseSync] load error', e);
-  }
 }
 
 // 合并云端 reviewHistory（优先云端记录）
@@ -265,52 +274,61 @@ function mergeWithLocal(cloudJsonStr) {
 }
 
 async function saveDataToFirebase(key, value) {
-  if (!db || !auth) return;
-  const user = auth.currentUser; if (!user) return;
-  try {
-    const ref = doc(db, 'users', user.uid);
-    let writeObj = {};
-    if (typeof value !== 'string') value = JSON.stringify(value);
+    if (!db || !auth || key !== 'typing_statistics') return;
+    const user = auth.currentUser;
+    if (!user) return;
 
-    // helper to mark chunk keys for deletion when switching to unchunked
-    const markChunkDeletions = () => {
-      if (!deleteField) return;
-      for (let i = 0; i < 10; i++) {
-        writeObj[`${key}_chunk${i}`] = deleteField();
-      }
-    };
-
-    if (value.length > CHUNK_SIZE) {
-      // switching to chunked: ensure non-chunked key removed
-      if (deleteField) writeObj[key] = deleteField();
-      chunkStringSafely(value, CHUNK_SIZE).forEach((c, i) => writeObj[`${key}_chunk${i}`] = c);
-    } else {
-      // unchunked; ensure old chunks removed
-      writeObj[key] = value;
-      markChunkDeletions();
-    }
-    await setDoc(ref, writeObj, { merge: true });
-    console.log(`[firebaseSync] Saved ${key}`);
-  } catch (e) {
-    console.error('[firebaseSync] save error', e);
-  }
-}
-
-/************************* Helpers *********************************/
-async function cleanupLegacyField(raw, key) {
-  if (!db || !auth || !deleteField) return;
-  const user = auth.currentUser; if (!user) return;
-
-  // If chunks exist, the legacy field is obsolete.
-  if (raw[`${key}_chunk0`]) {
     try {
-      const ref = doc(db, 'users', user.uid);
-      await setDoc(ref, { [key]: deleteField() }, { merge: true });
-      console.log(`[firebaseSync] Cleaned up legacy field: ${key}`);
+        if (typeof value !== 'string') value = JSON.stringify(value);
+
+        const userDocRef = doc(db, 'users', user.uid);
+        const chunksColRef = collection(userDocRef, 'statistics_chunks');
+        const batch = writeBatch(db);
+
+        // Clean up old chunk fields on the main document for migration
+        for (let i = 0; i < 10; i++) {
+            batch.update(userDocRef, { [`${key}_chunk${i}`]: deleteField() });
+        }
+
+        if (value.length > CHUNK_SIZE) {
+            // Data is large, use subcollection
+            console.log('[firebaseSync] Data is large, saving to subcollection.');
+
+            // 1. Delete the single field if it exists
+            batch.update(userDocRef, { [key]: deleteField() });
+
+            // 2. Clear the subcollection before writing new chunks
+            const existingChunks = await getDocs(query(chunksColRef));
+            existingChunks.forEach(doc => batch.delete(doc.ref));
+
+            // 3. Add new chunks to the subcollection
+            const chunks = chunkStringSafely(value, CHUNK_SIZE);
+            chunks.forEach((chunk, index) => {
+                const chunkDocRef = doc(chunksColRef, `chunk_${index}`);
+                batch.set(chunkDocRef, { content: chunk });
+            });
+
+        } else {
+            // Data is small, use a single field
+            console.log('[firebaseSync] Data is small, saving to a single field.');
+
+            // 1. Save data to the single field
+            batch.set(userDocRef, { [key]: value }, { merge: true });
+
+            // 2. Clear the subcollection as it's no longer needed
+            const existingChunks = await getDocs(query(chunksColRef));
+            if (!existingChunks.empty) {
+                console.log('[firebaseSync] Clearing obsolete subcollection chunks.');
+                existingChunks.forEach(doc => batch.delete(doc.ref));
+            }
+        }
+
+        await batch.commit();
+        console.log(`[firebaseSync] Successfully saved ${key}.`);
+
     } catch (e) {
-      console.error(`[firebaseSync] Error cleaning up legacy field ${key}:`, e);
+        console.error('[firebaseSync] save error', e);
     }
-  }
 }
 
 /************************* Helpers *********************************/
@@ -338,37 +356,6 @@ function chunkStringSafely(str, chunkSize) {
     i = lastCharIndex;
   }
   return chunks;
-}
-function concatChunks(arr) { return arr.join(''); }
-function assembleChunkedFields(raw) {
-  const byBase = {}, res = {};
-  const chunkedBases = new Set();
-
-  // First, find all fields that are chunked and group them.
-  for (const k in raw) {
-    const m = k.match(/^(.*)_chunk(\d+)$/);
-    if (m) {
-      const base = m[1], idx = +m[2];
-      chunkedBases.add(base);
-      (byBase[base] ||= [])[idx] = raw[k];
-    }
-  }
-
-  // Copy non-chunk fields, EXCLUDING legacy fields that have been chunked.
-  for (const k in raw) {
-    if (!/^(.*)_chunk(\d+)$/.test(k) && !chunkedBases.has(k)) {
-      res[k] = raw[k];
-    }
-  }
-
-  // Finally, assemble the chunks in the correct order.
-  for (const b in byBase) {
-    const parts = byBase[b];
-    // Filter out empty/null slots and join.
-    // This handles sparse arrays correctly if chunks are missing.
-    res[b] = parts.filter(p => p != null).join('');
-  }
-  return res;
 }
 
 function updateLocalStorage(data) {
