@@ -585,9 +585,24 @@ class Statistics {
 
             // 回写并保存
             stats.reviewHistory[sentenceId] = record;
-            this.saveStatistics(stats);
+            stats.reviewHistory[sentenceId] = record;
+            this._stats = stats;
+            // 不再立即保存，由外部调用者决定何时保存
+            // this.saveStatistics(stats);
+            return stats; // 返回更新后的状态
         } catch (err) {
             console.error('[statsData] updateReviewProgress error:', err);
+            return null;
+        }
+    }
+
+    /**
+     * 显式保存当前的统计数据。
+     * updateReviewProgress 不再自动保存，需要在练习结束后手动调用此方法。
+     */
+    save() {
+        if (this._stats) {
+            this.saveStatistics(this._stats);
         }
     }
 
