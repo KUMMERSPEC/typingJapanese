@@ -252,30 +252,8 @@
     
     <!-- Firebase and Sync Module -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-      import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCaqffy_xL2RqNjIrtIBT0Wbe-mpUADKH8",
-        authDomain: "typinglanguage.firebaseapp.com",  // 注意应为 .firebase**app**.com
-        projectId: "typinglanguage",
-        storageBucket: "typinglanguage.appspot.com",   // 注意应为 .app**spot**.com
-        messagingSenderId: "804802637246",
-        appId: "1:804802637246:web:0d6e540604c9d8fb179def",
-        measurementId: "G-W4X986PRJS"
-        };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-
-      // Export for other modules
-      const firebaseServices = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, getDoc, onSnapshot };
-      window.firebaseServices = firebaseServices; // Keep for other modules that might still use it
+      // Centralized Firebase initialization
+      import firebaseServices from './js/firebase-init.js';
 
       // Initialize firebaseSync module with dependency injection
       import { initFirebaseSync } from './js/firebaseSync.js';
