@@ -455,6 +455,9 @@ export class PracticeManager {
             statsData.updateDailyStats(statId, splitCount, this.questions);
         }
 
+        // 一次性保存本次练习的所有复习进度更新
+        statsData.save();
+
         const completeScreen = document.createElement('div');
         completeScreen.className = 'complete-screen';
         completeScreen.innerHTML = `
