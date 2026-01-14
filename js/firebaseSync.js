@@ -125,6 +125,9 @@ async function loadDataFromFirebase() {
     const raw = snap.data();
     console.log('[firebaseSync] Raw data:', raw);
 
+    // Cleanup legacy field if chunks exist
+    await cleanupLegacyField(raw, 'typing_statistics');
+
     // 1. store raw chunk fields to localStorage for inspection
     Object.entries(raw).forEach(([k, v]) => {
       if (/^typing_statistics_chunk\d+$/.test(k)) {
@@ -232,21 +235,49 @@ async function saveDataToFirebase(key, value) {
 }
 
 /************************* Helpers *********************************/
+async function cleanupLegacyField(raw, key) {
+  if (!db || !auth || !deleteField) return;
+  const user = auth.currentUser; if (!user) return;
+
+  // If chunks exist, the legacy field is obsolete.
+  if (raw[`${key}_chunk0`]) {
+    try {
+      const ref = doc(db, 'users', user.uid);
+      await setDoc(ref, { [key]: deleteField() }, { merge: true });
+      console.log(`[firebaseSync] Cleaned up legacy field: ${key}`);
+    } catch (e) {
+      console.error(`[firebaseSync] Error cleaning up legacy field ${key}:`, e);
+    }
+  }
+}
+
+/************************* Helpers *********************************/
 function chunkString(s, size) {
   const arr = []; for (let i = 0; i < s.length; i += size) arr.push(s.slice(i, i + size)); return arr;
 }
 function concatChunks(arr) { return arr.join(''); }
 function assembleChunkedFields(raw) {
   const byBase = {}, res = {};
+  const chunkedBases = new Set();
+
+  // First, find all fields that are chunked and group them.
   for (const k in raw) {
     const m = k.match(/^(.*)_chunk(\d+)$/);
     if (m) {
       const base = m[1], idx = +m[2];
+      chunkedBases.add(base);
       (byBase[base] ||= [])[idx] = raw[k];
-    } else {
+    }
+  }
+
+  // Copy non-chunk fields, EXCLUDING legacy fields that have been chunked.
+  for (const k in raw) {
+    if (!/^(.*)_chunk(\d+)$/.test(k) && !chunkedBases.has(k)) {
       res[k] = raw[k];
     }
   }
+
+  // Finally, assemble the chunks.
   for (const b in byBase) {
     const parts = [];
     for (let i = 0; i < byBase[b].length; i++) {
