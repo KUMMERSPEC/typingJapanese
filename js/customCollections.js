@@ -38,12 +38,20 @@ export class CustomCollectionsManager {
 
     // Method to save collections to localStorage and Firebase
     saveCollections() {
+        // 持久化到 localStorage
         const collectionsJson = JSON.stringify(this.collections);
         localStorage.setItem('custom_collections', collectionsJson);
+
+        // 同步到 Firebase（直接传对象，避免二次 stringify）
         if (window.firebaseSync) {
-            window.firebaseSync.saveData('custom_collections', collectionsJson);
+            window.firebaseSync.saveData('custom_collections', this.collections);
         }
-        window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+
+        // 统一通知并刷新列表
+        window.dispatchEvent(new CustomEvent('collectionsUpdated', { detail: { collections: this.collections } }));
+        // 如果管理弹窗已打开，刷新列表
+        const listEl = document.querySelector('#collectionsModal .collections-list');
+        if (listEl) this.refreshCollectionsList(listEl);
     }
 
     // Method to create a new collection
