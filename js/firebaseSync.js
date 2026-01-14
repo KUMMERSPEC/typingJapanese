@@ -366,6 +366,7 @@ function chunkStringSafely(str, chunkSize) {
 
 function updateLocalStorage(data) {
   let changed = false;
+  let collectionsChanged = false;
   for (const k in data) {
     const vStr = typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]);
     if (localStorage.getItem(k) !== vStr) { 
