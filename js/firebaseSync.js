@@ -140,15 +140,15 @@ async function loadDataFromFirebase() {
       assembled.typing_statistics = EMPTY_STATS();
     }
 
-    // ---- 增量提取修补逻辑 ----
-    // 尝试完整解析 assembled.typing_statistics
-    let parsed = safeParse(assembled.typing_statistics);
-    if (!parsed) {
-      const baseObj = safeParse(raw.typing_statistics) || safeParse(EMPTY_STATS());
-      if (baseObj && typeof baseObj === 'object') {
-        baseObj.reviewHistory ||= {};
-        extractEntries(assembled.typing_statistics, baseObj.reviewHistory);
-        baseObj.totalSentences = Object.keys(baseObj.reviewHistory).length;
+        // ---- 增量提取修补逻辑 ----
+    const baseObj = safeParse(raw.typing_statistics) || safeParse(EMPTY_STATS());
+    if (baseObj && typeof baseObj === 'object') {
+      baseObj.reviewHistory ||= {};
+      const before = Object.keys(baseObj.reviewHistory).length;
+      extractEntries(assembled.typing_statistics, baseObj.reviewHistory);
+      const after = Object.keys(baseObj.reviewHistory).length;
+      if (after > before) {
+        baseObj.totalSentences = after;
         assembled.typing_statistics = JSON.stringify(baseObj);
       }
     }
