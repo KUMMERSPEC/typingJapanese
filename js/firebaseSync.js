@@ -43,18 +43,35 @@ const EMPTY_STATS = () => JSON.stringify({
  *******************************************************************/
 function extractEntries(joined, targetObj = {}) {
   if (!joined || typeof joined !== 'string') return targetObj;
-  const regex = /\"([A-Za-z0-9+/=]{10,})\":\{([^}]+?)\}/g;
+
+  const keyRegex = /"([A-Za-z0-9+/=]{10,})":\{/g;
   let m;
-  while ((m = regex.exec(joined))) {
+  while ((m = keyRegex.exec(joined))) {
     const key = m[1];
-    if (targetObj[key]) continue; // skip existing
-    try {
-      const entryJson = '{' + m[2] + '}';
-      const entry = JSON.parse(entryJson);
-      targetObj[key] = entry;
-    } catch {
-      // ignore broken snippet
+    if (targetObj[key]) continue;
+
+    // Starting index of the opening brace for this entry
+    let startIdx = keyRegex.lastIndex - 1; // points to the '{'
+    let depth = 0;
+    let endIdx = -1;
+    for (let i = startIdx; i < joined.length; i++) {
+      const ch = joined[i];
+      if (ch === '{') depth++;
+      else if (ch === '}') {
+        depth--;
+        if (depth === 0) { endIdx = i; break; }
+      }
     }
+    if (endIdx === -1) break; // unmatched braces, abort loop
+
+    const entryJson = joined.slice(startIdx, endIdx + 1);
+    try {
+      targetObj[key] = JSON.parse(entryJson);
+    } catch {
+      // ignore invalid json fragment
+    }
+    // Move regex cursor past this segment to avoid back-tracking cost
+    keyRegex.lastIndex = endIdx + 1;
   }
   return targetObj;
 }
