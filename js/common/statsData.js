@@ -244,13 +244,15 @@ class Statistics {
                 }
             });
             Object.entries(stats.reviewHistory).forEach(([k, v]) => {
-                if (!v || (!v.japanese && !v.sentence)) {
-                    delete stats.reviewHistory[k];
-                    reviewHistoryChanged = true;
-                    return;
-                }
-                if (!v.type) {
-                    v.type = 'split'; // 补默认类型，不删除
+                // We will no longer delete entries with missing sentences to avoid data loss.
+                // Instead, downstream code should be robust enough to handle them.
+                // if (!v || (!v.japanese && !v.sentence)) {
+                //     delete stats.reviewHistory[k];
+                //     reviewHistoryChanged = true;
+                //     return;
+                // }
+                if (v && !v.type) { // Check if v exists before modifying
+                    v.type = 'split'; // Add default type if missing
                     reviewHistoryChanged = true;
                 }
             });
