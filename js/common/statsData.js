@@ -232,31 +232,51 @@ class Statistics {
 
             // 清理 reviewHistory：确保基础字段存在，避免明显脏数据导致报错，但**不再强制仅保留 split**。
             let reviewHistoryChanged = false;
-            // --- migrate old keys containing special chars ---
+            const cleanedHistory = {};
+            const seen = new Set();
+            const normalize = s => (s || '').replace(/[:、。！？….,，;；:：!？\s]+/g, '');
+
             Object.keys(stats.reviewHistory).forEach(oldKey => {
+                let v = stats.reviewHistory[oldKey];
+                let currentKey = oldKey;
+
+                // 1. 迁移旧的、包含特殊字符的 key
                 if (oldKey.includes(':') || /[\u3040-\u30FF\u4E00-\u9FFF"'、。！？….,，;；:：!？]/.test(oldKey)) {
                     const newKey = encodeId(oldKey);
                     if (!stats.reviewHistory[newKey]) {
-                        stats.reviewHistory[newKey] = stats.reviewHistory[oldKey];
+                        currentKey = newKey;
+                        reviewHistoryChanged = true;
+                    } else {
+                        // 如果新 key 已存在，则此条为重复数据，跳过
+                        return;
                     }
-                    delete stats.reviewHistory[oldKey];
+                }
+
+                // 2. 清理无效数据：必须有原文内容
+                if (!v || (!v.japanese && !v.sentence)) {
+                    reviewHistoryChanged = true;
+                    return; // 跳过无效条目
+                }
+
+                // 3. 统一去重逻辑
+                const uniqueKey = [normalize(v.japanese || v.sentence || ''), normalize(v.hiragana || ''), normalize(v.meaning || '')].join('||');
+                if (seen.has(uniqueKey)) {
+                    reviewHistoryChanged = true;
+                    return; // 跳过重复条目
+                }
+                seen.add(uniqueKey);
+
+                // 4. 修复旧数据（如果需要）
+                if (!v.type) {
+                    v.type = 'split';
                     reviewHistoryChanged = true;
                 }
+
+                cleanedHistory[currentKey] = v;
             });
-            Object.entries(stats.reviewHistory).forEach(([k, v]) => {
-                // We will no longer delete entries with missing sentences to avoid data loss.
-                // Instead, downstream code should be robust enough to handle them.
-                // if (!v || (!v.japanese && !v.sentence)) {
-                //     delete stats.reviewHistory[k];
-                //     reviewHistoryChanged = true;
-                //     return;
-                // }
-                if (v && !v.type) { // Check if v exists before modifying
-                    v.type = 'split'; // Add default type if missing
-                    reviewHistoryChanged = true;
-                }
-            });
-            stats.totalSentences = Object.keys(stats.reviewHistory).length;
+
+            stats.reviewHistory = cleanedHistory;
+            stats.totalSentences = seen.size;
 
             if (reviewHistoryChanged) {
                 this.saveStatistics(stats);

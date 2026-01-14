@@ -144,13 +144,14 @@ export function initFirebaseSync(services) {
   auth = services.auth;
   ({ doc, getDoc, setDoc, deleteField, collection, writeBatch, getDocs, query, where, deleteDoc } = services); // Destructure all required Firestore functions
 
-  // 拉取远程 → 覆盖本地 → 再监听变动
-  auth.onAuthStateChanged(async user => {
+  // 只有在用户登录后，才允许响应本地数据变动并推送到云端
+  auth.onAuthStateChanged(user => {
     if (user) {
-      await loadDataFromFirebase();
       cloudLoaded = true;
-      // 首次拉取后立即 push 合并后的最终本地数据，确保云端最新
-      saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics'));
+      console.log('[firebaseSync] User is authenticated. Sync to cloud is now active.');
+    } else {
+      cloudLoaded = false;
+      console.log('[firebaseSync] User is not authenticated. Sync to cloud is disabled.');
     }
   });
 
@@ -159,6 +160,7 @@ export function initFirebaseSync(services) {
     if (!cloudLoaded || pushingInProgress) return;
     try {
       pushingInProgress = true;
+      console.log('[firebaseSync] statisticsUpdated detected, pushing to cloud...');
       saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics') || '{}');
     } catch (e) { console.warn('[firebaseSync] push fail', e); }
     finally { pushingInProgress = false; }
