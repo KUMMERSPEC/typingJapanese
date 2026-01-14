@@ -369,9 +369,13 @@ function updateLocalStorage(data) {
   let collectionsChanged = false;
   for (const k in data) {
     const vStr = typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]);
-    if (localStorage.getItem(k) !== vStr) { 
-      localStorage.setItem(k, vStr); 
-      changed = true; 
+    if (localStorage.getItem(k) !== vStr) {
+      localStorage.setItem(k, vStr);
+      changed = true;
+      if (k === 'custom_collections') {
+        // 立即广播，供移动端 <select>/弹窗刷新
+        window.dispatchEvent(new CustomEvent('collectionsUpdated'));
+      }
     }
   }
   if (changed) {
