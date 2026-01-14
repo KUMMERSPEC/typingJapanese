@@ -19,9 +19,21 @@ export class CustomCollectionsManager {
         }));
     }
 
-    // Method to load collections from localStorage
+    // Method to load collections from localStorage, with auto-repair for corrupted data
     loadCollections() {
-        return JSON.parse(localStorage.getItem('custom_collections') || '{}');
+        let rawData = localStorage.getItem('custom_collections') || '{}';
+        try {
+            let parsed = JSON.parse(rawData);
+            // Check for double-stringified JSON (e.g., "{\"key\":\"value\"}")
+            if (typeof parsed === 'string') {
+                console.warn('[CustomCollections] Detected double-stringified JSON, attempting to repair.');
+                parsed = JSON.parse(parsed); // Parse the inner string
+            }
+            return parsed;
+        } catch (e) {
+            console.error('[CustomCollections] Failed to parse collections, resetting to empty.', e);
+            return {}; // Return empty object on failure to prevent further errors
+        }
     }
 
     // Method to save collections to localStorage and Firebase
