@@ -19,12 +19,52 @@ function safeParse(str) {
 }
 
 function salvageJson(str) {
-  if (!str || typeof str !== 'string') return null;
-  const start = str.indexOf('{');
-  const end = str.lastIndexOf('}');
-  if (start === -1 || end === -1 || end <= start) return null;
-  const candidate = str.slice(start, end + 1);
-  return jsonIsValid(candidate) ? candidate : null;
+    if (!str || typeof str !== 'string') return null;
+
+    // First, try to repair any UTF-8 corruption.
+    str = repairUtf8(str);
+
+    let bestCandidate = null;
+    let bestLength = 0;
+
+    // Find the largest, valid, brace-balanced JSON object in the string.
+    for (let start = 0; (start = str.indexOf('{', start)) !== -1; start++) {
+        let depth = 0;
+        for (let i = start; i < str.length; i++) {
+            if (str[i] === '{') {
+                depth++;
+            } else if (str[i] === '}') {
+                depth--;
+                if (depth === 0) {
+                    const candidate = str.substring(start, i + 1);
+                    if (jsonIsValid(candidate)) {
+                        if (candidate.length > bestLength) {
+                            bestCandidate = candidate;
+                            bestLength = candidate.length;
+                        }
+                    }
+                    break; // Found a balanced object, continue search from the start.
+                }
+            }
+        }
+    }
+
+    // If a valid, balanced JSON object was found, return it.
+    if (bestCandidate) {
+        return bestCandidate;
+    }
+
+    // As a last resort, fall back to the original simple trim strategy.
+    const start = str.indexOf('{');
+    const end = str.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+        const candidate = str.slice(start, end + 1);
+        if (jsonIsValid(candidate)) {
+            return candidate;
+        }
+    }
+
+    return null; // Return null if no valid JSON could be salvaged.
 }
 
 const CHUNK_SIZE = 300000; // chars < 1MiB
@@ -37,6 +77,24 @@ const EMPTY_STATS = () => JSON.stringify({
   completedQuestions: [],
   reviewHistory: {}
 });
+
+function repairUtf8(str) {
+  try {
+    // The TextDecoder will throw an error if the input is not valid UTF-8.
+    // We encode the string into a Uint8Array first to simulate reading raw bytes.
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder('utf-8', { fatal: true });
+    decoder.decode(encoder.encode(str));
+    return str; // String is valid, return as is.
+  } catch (e) {
+    // If decoding fails, it means there are invalid sequences.
+    // We can use a non-fatal decoder to replace them with the replacement character (�).
+    console.warn('[firebaseSync] Detected and repairing invalid UTF-8 sequence.');
+    const decoder = new TextDecoder('utf-8', { fatal: false });
+    const encoder = new TextEncoder();
+    return decoder.decode(encoder.encode(str));
+  }
+}
 
 /*******************************************************************
  * Incremental extractor for partially corrupted typing_statistics
@@ -142,6 +200,10 @@ async function loadDataFromFirebase() {
     // 3. validate / salvage typing_statistics
     if (assembled.typing_statistics) {
       let ts = assembled.typing_statistics;
+
+      // Repair potential UTF-8 corruption before validation.
+      ts = repairUtf8(ts);
+
       if (!jsonIsValid(ts)) {
         const salvaged = salvageJson(ts);
         if (salvaged) {
