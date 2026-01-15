@@ -263,11 +263,30 @@ async function loadDataFromFirebase() {
             collectionsStr = '{}';
         }
 
+        // --- 决定以谁为准，本地 or 云端 ---
+        let pushToCloud = false;
+        try {
+            const localPrevStr = localStorage.getItem('custom_collections') || '{}';
+            const localObj = JSON.parse(localPrevStr);
+            const cloudObj = JSON.parse(collectionsStr || '{}');
+            if (Object.keys(localObj).length > Object.keys(cloudObj).length) {
+                // 本地收藏夹更多，认为本地较新
+                console.log('[firebaseSync] Local collections newer, will push to cloud');
+                collectionsStr = localPrevStr;
+                pushToCloud = true;
+            }
+        } catch (e) { console.warn('[firebaseSync] compare collections failed', e); }
+
         // 统一写入 localStorage 并触发相应事件
         updateLocalStorage({
             typing_statistics: finalStatsJson,
             custom_collections: collectionsStr
         });
+
+        // 如需推送，将较新的本地收藏夹写回云端
+        if (pushToCloud) {
+            saveDataToFirebase('custom_collections', collectionsStr);
+        }
 
     } catch (e) {
         console.error('[firebaseSync] A critical error occurred during data load:', e);
