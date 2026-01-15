@@ -1,0 +1,23 @@
+/* Mobile specific fixes */
+@media (max-width: 480px) {
+  /* Uniform auth buttons and wrapping */
+  .auth-zone {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    justify-content: center;
+  }
+  .auth-zone .google-btn {
+    flex: 1 1 140px;
+    max-width: 180px;
+    text-align: center;
+  }
+
+  /* Stats panel fits viewport and keeps close button visible */
+  .stats-panel {
+    width: 95% !important;
+    height: 90vh !important;
+  }
+  .stats-panel .stats-content {
+    overflow-y: auto;
+  }
+}

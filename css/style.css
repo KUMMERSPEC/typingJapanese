@@ -145,7 +145,6 @@
     flex-direction: column;
     flex: 1;
 }
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -1270,3 +1269,4 @@ form {
 /* 让编辑句子弹窗位于管理句子弹窗之上 */
 #manageSentencesModal { z-index: 2000; }
 #editSentenceModal { z-index: 2100; }
+
