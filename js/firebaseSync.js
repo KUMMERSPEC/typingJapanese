@@ -156,15 +156,19 @@ export function initFirebaseSync(services) {
   });
 
   // push on local change（需等云端数据加载完毕）
-  window.addEventListener('statisticsUpdated', () => {
+  const pushIfReady = (key) => {
     if (!cloudLoaded || pushingInProgress) return;
     try {
       pushingInProgress = true;
-      console.log('[firebaseSync] statisticsUpdated detected, pushing to cloud...');
-      saveDataToFirebase('typing_statistics', localStorage.getItem('typing_statistics') || '{}');
+      console.log(`[firebaseSync] ${key} updated, pushing to cloud...`);
+      const val = localStorage.getItem(key) || (key==='custom_collections' ? '{}' : '{}');
+      saveDataToFirebase(key, val);
     } catch (e) { console.warn('[firebaseSync] push fail', e); }
     finally { pushingInProgress = false; }
-  });
+  };
+
+  window.addEventListener('statisticsUpdated', () => pushIfReady('typing_statistics'));
+  window.addEventListener('collectionsUpdated', () => pushIfReady('custom_collections'));
 
   console.log('[firebaseSync] Initialized');
 
