@@ -74,12 +74,15 @@ export class CourseDisplay {
         localStorage.removeItem('selectedCollection');
         this.courses = (courseData[bookId] || {}).courses || {};
         this.loadCourses();
+        // 通知首页下拉框刷新
+        window.dispatchEvent(new CustomEvent('coursesChanged'));
     }
 
     setCollection(collectionId) {
         localStorage.setItem('selectedCollection', collectionId);
         localStorage.removeItem('selectedBook'); // 选择收藏夹时，清除课程选择
         this.loadCourses();
+        window.dispatchEvent(new CustomEvent('coursesChanged'));
     }
 
     loadData() {

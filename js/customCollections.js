@@ -5,9 +5,19 @@ export class CustomCollectionsManager {
     constructor() {
         this._lastTap = 0;
         this.collections = this.loadCollections();
+        setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('collectionsUpdated', { detail: { collections: this.collections }}));
+              }, 0); // 让 event 队列中的其他 DOM 任务先完成
         this.manageState = { page: 1, pageSize: 10, query: '', collectionId: null };
         this.confirmedImportData = null; // To store edited sentences from preview
         this.initializeEventListeners();
+        // 当数据更新时，如果管理弹窗已打开则刷新列表
+        window.addEventListener('collectionsUpdated', () => {
+            const listEl = document.querySelector('#collectionsModal .collections-list');
+            if (listEl && listEl.offsetParent) { // 弹窗存在且可见
+                this.refreshCollectionsList(listEl);
+            }
+        });
     }
 
     // Method to get all collections

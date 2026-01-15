@@ -221,13 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 监听收藏夹变更，自动刷新选项
-        window.addEventListener('collectionsUpdated', () => {
+        const refreshSelect = () => {
             buildOptions();
-            // 保持当前选择
             const savedCollection2 = localStorage.getItem('selectedCollection');
             const savedBook2 = localStorage.getItem('selectedBook') || 'word-group';
             courseSelector.value = savedCollection2 ? `collection:${savedCollection2}` : `book:${savedBook2}`;
-        });
+        };
+        window.addEventListener('collectionsUpdated', refreshSelect);
+        window.addEventListener('coursesChanged', refreshSelect);
     }
     
     // 更新今日日期
