@@ -54,7 +54,8 @@ export class CustomCollectionsManager {
 
         // 同步到 Firebase（直接传对象，避免二次 stringify）
         if (window.firebaseSync) {
-            window.firebaseSync.saveData('custom_collections', this.collections);
+            // 传已经序列化好的字符串，避免双重 stringify
+            window.firebaseSync.saveData('custom_collections', collectionsJson);
         }
 
         // 统一通知并刷新列表

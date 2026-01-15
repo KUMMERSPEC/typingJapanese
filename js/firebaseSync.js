@@ -317,9 +317,7 @@ async function saveDataToFirebase(key, value) {
     if (!user) return;
 
     // 确保数据只被编码一次
-    if (key === 'custom_collections' && typeof value === 'object') {
-        value = JSON.stringify(value);
-    } else if (key === 'typing_statistics' && typeof value !== 'string') {
+    if (key === 'typing_statistics' && typeof value !== 'string') {
         value = JSON.stringify(value);
     }
 
