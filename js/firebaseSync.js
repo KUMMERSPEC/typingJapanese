@@ -201,7 +201,7 @@ async function loadDataFromFirebase() {
             console.log('[firebaseSync] Found chunks in subcollection. Assembling...');
             const chunks = chunksSnap.docs
                 .map(d => ({ id: d.id, content: d.data().content }))
-                .sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(b.id.split('_')[1]));
+                .sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(a.id.split('_')[1]));
             finalStatsJson = chunks.map(c => c.content).join('');
         } else {
             // 2. 回退到旧的分块字段
@@ -244,10 +244,26 @@ async function loadDataFromFirebase() {
             finalStatsJson = EMPTY_STATS();
         }
 
-        // 5. 将最终的、干净的数据写入本地
+        // 5. 将最终的、干净的数据写入本地 (typing_statistics)
         mergeWithLocal(finalStatsJson);
-        // `updateLocalStorage` 会触发 UI 更新
-        updateLocalStorage({ typing_statistics: finalStatsJson });
+
+        // 6. 处理 custom_collections（收藏夹）
+        let collectionsStr = raw.custom_collections;
+        if (collectionsStr && typeof collectionsStr !== 'string') {
+            collectionsStr = JSON.stringify(collectionsStr);
+        }
+        if (!collectionsStr) {
+            collectionsStr = '{}'; // 保底空对象
+        } else if (!jsonIsValid(collectionsStr)) {
+            console.warn('[firebaseSync] custom_collections invalid JSON, fallback to empty object.');
+            collectionsStr = '{}';
+        }
+
+        // 统一写入 localStorage 并触发相应事件
+        updateLocalStorage({
+            typing_statistics: finalStatsJson,
+            custom_collections: collectionsStr
+        });
 
     } catch (e) {
         console.error('[firebaseSync] A critical error occurred during data load:', e);
