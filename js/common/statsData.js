@@ -121,6 +121,46 @@ const storageManager = new StorageManager(STATS_STORAGE_KEY);
  ****************************************************************************************/
 
 // 间隔复习算法配置
+// ====== Daily review cap (configurable) ======
+const DEFAULT_DAILY_REVIEW_CAP = 80; // fallback when user未设置
+function getDailyReviewCap(){
+  const v = parseInt(localStorage.getItem('review_daily_cap')||'');
+  return Number.isFinite(v) && v>0 ? v : DEFAULT_DAILY_REVIEW_CAP;
+}
+function setDailyReviewCap(n){
+  localStorage.setItem('review_daily_cap', String(n));
+  // reset applied flag so今天立即生效
+  localStorage.removeItem('review_cap_applied');
+}
+window.setDailyReviewCap = setDailyReviewCap;
+
+// ====== Smooth scheduler ======
+function smoothSchedule(days=10){
+  try{
+    const stats = statsData.getStatistics();
+    const today = new Date(); today.setHours(0,0,0,0);
+    const backlog = Object.entries(stats.reviewHistory||{})
+      .filter(([id,item])=>{
+        if(!item||!item.nextReviewDate) return false;
+        const d=new Date(item.nextReviewDate);d.setHours(0,0,0,0);
+        return d<=today && (item.proficiency!=='high'&&item.proficiency!=='master');
+      })
+      .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
+    if(!backlog.length){alert('当前没有需要平滑的超量句子');return;}
+    const cap = getDailyReviewCap();
+    backlog.forEach(([id,item],idx)=>{
+      const offset = Math.floor(idx/cap);
+      if(offset>=days) return; // 超出天数保持原日期
+      const newDate = new Date(today); newDate.setDate(today.getDate()+offset);
+      item.nextReviewDate = newDate.toISOString();
+    });
+    statsData.saveStatistics(stats);
+    alert('已将 '+backlog.length+' 条句子分布到接下来 '+days+' 天');
+  }catch(e){console.warn('smoothSchedule error',e);}
+}
+window.smoothSchedule=smoothSchedule;
+// ====== End config ======
+
 const REVIEW_INTERVALS = {
     low: {
         success: 1,     // 1天后复习
@@ -384,6 +424,13 @@ class Statistics {
 
     // 获取待复习项目
     getReviewItems(options = {}) {
+        // daily cap apply once per day
+        const capDate = localStorage.getItem('review_cap_applied');
+        const todayStr = new Date().toLocaleDateString();
+        if(capDate!==todayStr){
+            this._applyDailyCap();
+            localStorage.setItem('review_cap_applied', todayStr);
+        }
         try {
             const stats = this.getStatistics();
             if (!stats.reviewHistory) return [];
@@ -531,6 +578,32 @@ class Statistics {
             console.error('统计掌握情况出错:', error);
             return { low: 0, medium: 0, high: 0, master: 0 };
         }
+    }
+
+    /* ------------------------------------------------------------------
+     * 每日复习上限：超过上限的条目顺延一天（仅执行一次/日）
+     * ------------------------------------------------------------------*/
+    _applyDailyCap(){
+        try{
+            const stats = this.getStatistics();
+            const cap = getDailyReviewCap();
+            const today = new Date(); today.setHours(0,0,0,0);
+            const due = Object.entries(stats.reviewHistory||{})
+                        .filter(([id,item])=>{
+                            if(!item || !item.nextReviewDate) return false;
+                            const d = new Date(item.nextReviewDate); d.setHours(0,0,0,0);
+                            return d<=today && (item.proficiency!=='high' && item.proficiency!=='master');
+                        })
+                        .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
+            if(due.length<=cap) return;
+            due.slice(cap).forEach(([id,item])=>{
+                const nxt = new Date(item.nextReviewDate);
+                nxt.setDate(nxt.getDate()+1);
+                item.nextReviewDate = nxt.toISOString();
+            });
+            this.saveStatistics(stats);
+            console.log(`[statsData] Daily cap applied. Overflow ${due.length-cap} items postponed.`);
+        }catch(e){console.warn('[statsData] applyDailyCap error',e);}    
     }
 
     /* ------------------------------------------------------------------

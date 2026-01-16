@@ -111,6 +111,14 @@ function initReviewPanel() {
         });
     }
     
+    // 绑定平滑排期按钮
+    document.addEventListener('click',e=>{
+        if(e.target.id==='smoothScheduleBtn'){
+            const days = prompt('将超量句子平均分配到未来多少天？', '10');
+            if(days){window.smoothSchedule(parseInt(days)||10); updateReviewList(); refreshHomeBadges();}
+        }
+    });
+
     // 点击待复习按钮时显示面板
     if (reviewTrigger) {
         reviewTrigger.addEventListener('click', () => {
