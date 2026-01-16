@@ -133,6 +133,10 @@ export const courseData = {
                     'lesson2': {
                         title: '第2课 - 学习作业',
                         description: '学习学习活动相关词汇'
+                    },
+                    'lesson3': {
+                        title: '第3课 - 考试',
+                        description: '学习考试相关词汇'
                     }
                 }
             },
@@ -217,6 +221,10 @@ export const courseData = {
                     'lesson1': {
                         title: '第1课 - 兴趣爱好',
                         description: '学习休闲活动相关词汇'
+                    },
+                    'lesson2': {
+                        title: '第2课 - 兴趣活动',
+                        description: '学习更多兴趣相关词汇'
                     }
                 }
             },
