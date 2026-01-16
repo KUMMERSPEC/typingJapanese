@@ -68,6 +68,7 @@ function salvageJson(str) {
 }
 
 const CHUNK_SIZE = 300000; // chars < 1MiB
+const COLLECTION_SPLIT_THRESHOLD = 800000; // bytes, beyond this use layered storage
 const EMPTY_STATS = () => JSON.stringify({
   firstUseDate: new Date().toISOString(),
   lastStudyDate: '',
@@ -178,6 +179,49 @@ export function initFirebaseSync(services) {
 }
 
 /******************** Core load / save ******************************/
+// Helper: persist per-collection documents under users/{uid}/collections/{collectionId}
+async function saveCollectionsToFirebase(allCollectionsJsonStr) {
+  if (!db || !auth) return;
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    if (typeof allCollectionsJsonStr !== 'string') {
+      allCollectionsJsonStr = JSON.stringify(allCollectionsJsonStr);
+    }
+    const collectionsObj = jsonIsValid(allCollectionsJsonStr) ? JSON.parse(allCollectionsJsonStr) : {};
+    const userDocRef = doc(db, 'users', user.uid);
+    const collectionsColRef = collection(userDocRef, 'collections');
+
+    // Load existing docs to detect deletions
+    const existingSnap = await getDocs(query(collectionsColRef));
+    const batch = writeBatch(db);
+
+    // Delete custom_collections field in root doc (migration)
+    batch.update(userDocRef, { custom_collections: deleteField() });
+
+    // Track which remain
+    const remaining = new Set(Object.keys(collectionsObj));
+
+    existingSnap.forEach((d) => {
+      if (!remaining.has(d.id)) {
+        batch.delete(d.ref); // removed locally, delete remotely
+      }
+    });
+
+    // Upsert each collection
+    for (const [cid, colData] of Object.entries(collectionsObj)) {
+      const colDocRef = doc(collectionsColRef, cid);
+      const contentStr = typeof colData === 'string' ? colData : JSON.stringify(colData);
+      batch.set(colDocRef, { content: contentStr }, { merge: true });
+    }
+
+    await batch.commit();
+    console.log('[firebaseSync] Saved collections as individual documents');
+  } catch (e) {
+    console.error('[firebaseSync] saveCollectionsToFirebase error', e);
+  }
+}
+
 async function loadDataFromFirebase() {
     if (!db || !auth) return;
     const user = auth.currentUser;
@@ -252,10 +296,29 @@ async function loadDataFromFirebase() {
         mergeWithLocal(finalStatsJson);
 
         // 6. 处理 custom_collections（收藏夹）
-        let collectionsStr = raw.custom_collections;
-        if (collectionsStr && typeof collectionsStr !== 'string') {
-            collectionsStr = JSON.stringify(collectionsStr);
+        // 6a. 新结构：每个 collection 一文档
+        let collectionsStr = '{}';
+        try {
+            const colSnap = await getDocs(query(collection(userDocRef, 'collections')));
+            if (!colSnap.empty) {
+                const obj = {};
+                colSnap.forEach(d => {
+                    const c = d.data()?.content;
+                    if (typeof c === 'string' && jsonIsValid(c)) {
+                        obj[d.id] = JSON.parse(c);
+                    }
+                });
+                collectionsStr = JSON.stringify(obj);
+            }
+        } catch(e){ console.warn('[firebaseSync] load collections subcollection fail', e); }
+
+        // 6b. 兼容旧字段
+        if (collectionsStr === '{}' ) {
+            let legacyCol = raw.custom_collections;
+            if (legacyCol && typeof legacyCol !== 'string') {
+                legacyCol = JSON.stringify(legacyCol);
         }
+                collectionsStr = legacyCol; }
         if (!collectionsStr) {
             collectionsStr = '{}'; // 保底空对象
         } else if (!jsonIsValid(collectionsStr)) {
@@ -312,6 +375,10 @@ function mergeWithLocal(cloudJsonStr) {
 }
 
 async function saveDataToFirebase(key, value) {
+    // Special handling for collections: store as one-doc-per-collection to avoid exceeding 1MiB limit
+    if (key === 'custom_collections') {
+        return await saveCollectionsToFirebase(value); // delegate, keep promise chain
+    }
     if (!db || !auth) return;
     const user = auth.currentUser;
     if (!user) return;
