@@ -197,7 +197,7 @@ async function saveCollectionsToFirebase(allCollectionsJsonStr) {
     const batch = writeBatch(db);
 
     // Delete custom_collections field in root doc (migration)
-    batch.update(userDocRef, { custom_collections: deleteField() });
+    batch.set(userDocRef, { custom_collections: deleteField() }, { merge: true });
 
     // Track which remain
     const remaining = new Set(Object.keys(collectionsObj));
