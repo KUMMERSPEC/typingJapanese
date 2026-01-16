@@ -111,6 +111,21 @@ function initReviewPanel() {
         });
     }
     
+    // 初始化每日上限输入框值
+    document.addEventListener('DOMContentLoaded',()=>{
+        const inp=document.getElementById('dailyCapInput');
+        if(inp){inp.value=localStorage.getItem('review_daily_cap')||80;}
+    });
+
+    // 保存每日上限
+    document.addEventListener('click',e=>{
+        if(e.target.id==='dailyCapSave'){
+            const v=parseInt(document.getElementById('dailyCapInput').value)||80;
+            window.setDailyReviewCap(v);
+            alert('已保存每日上限为 '+v);
+        }
+    });
+
     // 绑定平滑排期按钮
     document.addEventListener('click',e=>{
         if(e.target.id==='smoothScheduleBtn'){
