@@ -332,7 +332,12 @@ async function loadDataFromFirebase() {
             const localPrevStr = localStorage.getItem('custom_collections') || '{}';
             const localObj = JSON.parse(localPrevStr);
             const cloudObj = JSON.parse(collectionsStr || '{}');
-            if (Object.keys(localObj).length > Object.keys(cloudObj).length) {
+            // If there is a content mismatch between local and cloud, prefer local (assumes recent local edits)
+            if (localPrevStr !== collectionsStr) {
+                console.log('[firebaseSync] Local collections differ from cloud, preferring local copy and scheduling push.');
+                collectionsStr = localPrevStr;
+                pushToCloud = true;
+            } else if (Object.keys(localObj).length > Object.keys(cloudObj).length) {
                 // 本地收藏夹更多，认为本地较新
                 console.log('[firebaseSync] Local collections newer, will push to cloud');
                 collectionsStr = localPrevStr;
