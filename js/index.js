@@ -130,11 +130,14 @@ function initReviewPanel() {
         }
     });
 
-    // 绑定平滑排期按钮
+    // 绑定顽固句按钮
     document.addEventListener('click',e=>{
         if(e.target.id==='smoothScheduleBtn'){
-            const days = prompt('将超量句子平均分配到未来多少天？', '10');
-            if(days){window.smoothSchedule(parseInt(days)||10); updateReviewList(); refreshHomeBadges();}
+            // 切换筛选到顽固句并刷新列表
+            const filterSel = document.getElementById('reviewFilter');
+            if(filterSel){ filterSel.value='leech'; }
+            reviewPage = 1;
+            updateReviewList();
         }
     });
 
@@ -440,6 +443,9 @@ function updateReviewList() {
         case 'today':
             items = allItems.filter(item => item.needsReview && item.proficiency !== 'high' && item.proficiency !== 'master');
             break;
+        case 'leech':
+            items = allItems.filter(it=>it.isLeech);
+            break;
         case 'weak':
             items = allItems.filter(item => item.proficiency === 'low' || 
                 (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6));
@@ -622,6 +628,11 @@ window.startReview = function(mode) {
             case 'today':
                 // 今日待复习：只选择今天需要复习的句子
                 if (nextReview <= today) {
+                    reviewItems.push({...item, id: key});
+                }
+                break;
+            case 'leech':
+                if(item.isLeech){
                     reviewItems.push({...item, id: key});
                 }
                 break;

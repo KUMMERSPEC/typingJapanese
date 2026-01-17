@@ -685,6 +685,9 @@ class Statistics {
             }
             record.proficiency = proficiencyOrder[idx];
 
+            // Leech detection (顽固句)
+            const wrongRatio = (record.reviewCount - (record.correctCount||0)) / record.reviewCount;
+            record.isLeech = record.reviewCount >= 3 && wrongRatio >= 0.6;
             // --- 下一次复习间隔 ---
             const profCfg = REVIEW_INTERVALS[record.proficiency] || REVIEW_INTERVALS.low;
             const baseDays = isCorrect ? profCfg.success : profCfg.failure;
