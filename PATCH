@@ -1,60 +1,45 @@
 diff --git a/js/review/typing.js b/js/review/typing.js
 @@
-     constructor() {
-         this.currentIndex = 0;
-         this.sentences = [];
-         this.questionStartTime = null;
-         this.logs = [];
-         this.correctCount = 0;
-         this.totalAttempts = 0;
-+        this.hintUsed = false; // 是否在当前题目使用过提示
-         this.init();
-         this.initKeyboardMaintain();
-+
-+        // 绑定提示按钮
+-        this.init();
+-        this.initKeyboardMaintain();
++        // 绑定提示按钮（页面静态存在）
 +        const hintBtn = document.getElementById('hintBtn');
 +        if(hintBtn){
 +            hintBtn.addEventListener('click', ()=> this.showHint());
 +        }
-     }
++
++        this.init();
++        this.initKeyboardMaintain();
 @@
      showQuestion() {
          const current = this.sentences[this.currentIndex];
          if (!current) return;
 +
-+        // 重置提示状态 & 按钮
++        // 重置提示按钮状态
 +        this.hintUsed = false;
 +        const hintBtn = document.getElementById('hintBtn');
-+        if(hintBtn){
-+            hintBtn.disabled = false;
-+            hintBtn.style.opacity = 1;
-+        }
++        if(hintBtn){ hintBtn.disabled=false; hintBtn.style.opacity=1; }
 @@
      }
 +
-+    // ---------- Hint 相关 ----------
++    // 提示：填首块假名
 +    showHint(){
 +        if(this.hintUsed) return;
 +        const current = this.sentences[this.currentIndex];
 +        if(!current||!current.hiragana) return;
 +
-+        // 取首块假名
 +        const firstUnit = stripPunct(current.hiragana).split(':').filter(Boolean)[0]||'';
-+        const firstInput = document.querySelector('.input-area .split-input');
-+        if(firstInput && !firstInput.value){
-+            firstInput.value = firstUnit;
-+            // 若首块已填满则自动聚焦下一输入框
-+            const next = document.querySelector('.input-area input[data-index="1"]');
-+            next?.focus();
-+        }
-+        this.hintUsed = true;
++        if(!firstUnit) return;
++        const inputs = Array.from(document.querySelectorAll('.input-area .split-input'));
++        if(!inputs.length) return;
++        const firstInput = inputs[0];
++        if(firstInput.value.trim()==='') firstInput.value = firstUnit;
++        // 聚焦下一个输入
++        if(inputs.length>1) inputs[1].focus();
 +
-+        // 视觉禁用按钮
++        this.hintUsed = true;
 +        const hintBtn = document.getElementById('hintBtn');
-+        if(hintBtn){
-+            hintBtn.disabled = true;
-+            hintBtn.style.opacity = 0.5;
-+        }
++        if(hintBtn){ hintBtn.disabled=true; hintBtn.style.opacity=0.5; }
 +    }
 @@
 -        statsData.updateReviewProgress(current.id, isCorrect);

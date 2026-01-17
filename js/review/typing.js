@@ -8,6 +8,7 @@ function stripPunct(str='') {
 
 class ReviewManager {
     constructor() {
+        this.hintUsed = false;
         this.currentIndex = 0;
         this.sentences = [];
         this.questionStartTime = null;
