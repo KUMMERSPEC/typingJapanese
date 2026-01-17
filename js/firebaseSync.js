@@ -150,6 +150,14 @@ export function initFirebaseSync(services) {
     if (user) {
       cloudLoaded = true;
       console.log('[firebaseSync] User is authenticated. Sync to cloud is now active.');
+      // 登录后立即推送本地可能离线新增的收藏夹/统计数据
+      try {
+        const collectionsLocal = localStorage.getItem('custom_collections') || '{}';
+        if (collectionsLocal && collectionsLocal !== '{}') {
+          saveDataToFirebase('custom_collections', collectionsLocal);
+        }
+      } catch(_) {}
+
     } else {
       cloudLoaded = false;
       console.log('[firebaseSync] User is not authenticated. Sync to cloud is disabled.');
