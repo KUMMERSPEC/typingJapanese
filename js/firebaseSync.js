@@ -150,13 +150,8 @@ export function initFirebaseSync(services) {
     if (user) {
       cloudLoaded = true;
       console.log('[firebaseSync] User is authenticated. Sync to cloud is now active.');
-      // 登录后立即推送本地可能离线新增的收藏夹/统计数据
-      try {
-        const collectionsLocal = localStorage.getItem('custom_collections') || '{}';
-        if (collectionsLocal && collectionsLocal !== '{}') {
-          saveDataToFirebase('custom_collections', collectionsLocal);
-        }
-      } catch(_) {}
+      // 登录后优先拉取云端权威数据，避免旧标签页覆盖云端
+      loadDataFromFirebase();
 
     } else {
       cloudLoaded = false;
