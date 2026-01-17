@@ -141,6 +141,9 @@ function initReviewPanel() {
     // 点击待复习按钮时显示面板
     if (reviewTrigger) {
         reviewTrigger.addEventListener('click', () => {
+            // 打开面板前刷新每日上限输入框的值
+            const capInput = document.getElementById('dailyCapInput');
+            if(capInput) capInput.value = localStorage.getItem('review_daily_cap') || 80;
             if (reviewPanel && overlay) {
                 reviewPage = 1; // 打开时回到第一页
                 if (filterSelect) {
