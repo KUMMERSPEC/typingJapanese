@@ -147,11 +147,11 @@ function smoothSchedule(days=10){
       })
       .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
     if(!backlog.length){alert('当前没有需要平滑的超量句子');return;}
-    const cap = getDailyReviewCap();
-    backlog.forEach(([id,item],idx)=>{
-      const offset = Math.floor(idx/cap);
-      if(offset>=days) return; // 超出天数保持原日期
-      const newDate = new Date(today); newDate.setDate(today.getDate()+offset);
+    const perDay = Math.ceil(backlog.length / days);
+    backlog.forEach(([id, item], idx) => {
+      const offset = Math.floor(idx / perDay);   // 均匀拆分到 days 天
+      const newDate = new Date(today);
+      newDate.setDate(today.getDate() + offset);
       item.nextReviewDate = newDate.toISOString();
     });
     statsData.saveStatistics(stats);
@@ -596,10 +596,11 @@ class Statistics {
                         })
                         .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
             if(due.length<=cap) return;
-            due.slice(cap).forEach(([id,item])=>{
-                const nxt = new Date(item.nextReviewDate);
-                nxt.setDate(nxt.getDate()+1);
-                item.nextReviewDate = nxt.toISOString();
+            due.forEach(([id, item], idx) => {
+                const offset = Math.floor(idx / cap); // 0 表示今天，1 表示明天，以此类推
+                const newDate = new Date(today);
+                newDate.setDate(today.getDate() + offset);
+                item.nextReviewDate = newDate.toISOString();
             });
             this.saveStatistics(stats);
             console.log(`[statsData] Daily cap applied. Overflow ${due.length-cap} items postponed.`);
