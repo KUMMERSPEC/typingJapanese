@@ -223,7 +223,7 @@ class Statistics {
                 firstUseDate: new Date().toISOString(),
                 lastStudyDate: '',
                 consecutiveDays: 0,
-                dailyStats: {},
+                dailyStats: {},  // { [date]: { sentencesLearned:number, reviewsDone:number } }
                 totalSentences: 0,
                 completedQuestions: [],
                 reviewHistory: {}
@@ -360,12 +360,20 @@ class Statistics {
         // 将日期字符串转为时间戳并降序排列
         const sorted = dates.sort((a, b) => new Date(b) - new Date(a));
         let streak = 0;
-        let cursor = new Date(sorted[0]); // 最近一次学习日期
+        // 找到最近一次存在学习/复习记录的日期
+        let cursor = null;
+        for (const ds of sorted) {
+            if (((daily[ds].sentencesLearned||0)+(daily[ds].reviewsDone||0))>0){
+                cursor = new Date(ds);
+                break;
+            }
+        }
+        if(!cursor) return 0;
         for (const ds of sorted) {
             const d = new Date(ds);
             if (d.toDateString() === cursor.toDateString()) {
-                // 该天确实学过句子才算有效
-                if ((daily[ds].sentencesLearned || 0) > 0) {
+                // 该天学习/复习过句子才算有效
+                if (((daily[ds].sentencesLearned || 0) + (daily[ds].reviewsDone || 0)) > 0) {
                     streak++;
                     cursor.setDate(cursor.getDate() - 1); // 期待再往前一天
                     continue;
@@ -382,7 +390,7 @@ class Statistics {
         const dates = Object.keys(daily).sort(); // 升序
         let longest = 0, current = 0, prev = null;
         for (const ds of dates) {
-            if ((daily[ds].sentencesLearned || 0) === 0) continue;
+            if (((daily[ds].sentencesLearned || 0)+(daily[ds].reviewsDone||0)) === 0) continue;
             if (prev) {
                 const exp = new Date(prev);
                 exp.setDate(exp.getDate() + 1);
@@ -493,6 +501,7 @@ class Statistics {
             if (!stats.dailyStats[today]) {
                 stats.dailyStats[today] = {
                     sentencesLearned: 0,
+                    reviewsDone: 0,
                     completedLessons: {}
                 };
             }
@@ -679,6 +688,11 @@ class Statistics {
             const now = new Date();
             record.lastReview = now.toISOString();
             record.nextReviewDate = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000).toISOString();
+
+            // 写入每日复习统计
+            const today = new Date().toLocaleDateString();
+            if (!stats.dailyStats[today]) stats.dailyStats[today] = { sentencesLearned:0, reviewsDone:0 };
+            stats.dailyStats[today].reviewsDone = (stats.dailyStats[today].reviewsDone||0) + 1;
 
             // 回写并保存
             stats.reviewHistory[sentenceId] = record;

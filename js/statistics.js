@@ -121,7 +121,7 @@ class Statistics {
         // 更新待复习数量
         const reviewItemsElement = document.querySelector('.review-items');
         if (reviewItemsElement) {
-            reviewItemsElement.textContent = statsData.getReviewCount();
+            reviewItemsElement.textContent = statsData.getReviewItems().filter(it=>it.needsReview).length;
         }
 
         // 更新掌握情况

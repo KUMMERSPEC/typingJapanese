@@ -114,7 +114,7 @@ class StatsChart {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '学习句子数',
+                    label: '学习/复习次数',
                     data: data,
                     backgroundColor: 'rgba(79, 171, 247, 0.8)',
                     borderColor: 'rgba(79, 171, 247, 1)',
@@ -159,7 +159,7 @@ class StatsChart {
             const date = new Date(currentDate);
             date.setDate(date.getDate() - i);
             const dateStr = date.toLocaleDateString();
-            monthData[dateStr] = stats.dailyStats[dateStr]?.sentencesLearned || 0;
+            monthData[dateStr] = (stats.dailyStats[dateStr]?.sentencesLearned||0) + (stats.dailyStats[dateStr]?.reviewsDone||0);
         }
         
         return monthData;
