@@ -327,6 +327,8 @@ export class CustomCollectionsManager {
 
     // --- MODAL DISPLAY METHODS ---
     showCollectionsModal() {
+        // 每次打开弹窗都重新从 localStorage 读取一次，确保数据最新
+        this.collections = this.loadCollections();
         let modal = document.getElementById('collectionsModal');
         if (!modal) {
             modal = document.createElement('div');
