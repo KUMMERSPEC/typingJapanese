@@ -179,6 +179,22 @@ function initAuthLogic() {
     }
 }
 
+function quickDisplayCachedUser(){
+    const cached = localStorage.getItem('lastUserDisplay');
+    if(!cached) return;
+    const nameEl = document.getElementById('userDisplayName');
+    if(nameEl){
+        nameEl.textContent = cached;
+        nameEl.style.display = 'inline';
+    }
+    // 预先隐藏登录按钮，等 Firebase 返回再决定是否显示
+    const googleBtn = document.getElementById('googleBtn');
+    const emailBtn  = document.getElementById('emailBtn');
+    if(googleBtn) googleBtn.style.display='none';
+    if(emailBtn)  emailBtn.style.display='none';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    quickDisplayCachedUser();
     initializeAuth();
 });
