@@ -559,7 +559,15 @@ export class CustomCollectionsManager {
         showEditSentenceModal(sentenceData, updatedData => {
             this.editSentence(collectionId, sentenceId, updatedData);
             if (document.getElementById('manageSentencesModal')?.classList.contains('show')) {
-                this.renderManageSentences(); // Re-render the list if it's open
+                // Preserve current page before re-rendering
+                const currentPage = this.manageState.page;
+                // Re-read pageSize from dropdown in case it was changed
+                const pageSizeSelect = document.querySelector('#msPageSize');
+                if (pageSizeSelect) {
+                    this.manageState.pageSize = parseInt(pageSizeSelect.value, 10);
+                }
+                this.manageState.page = currentPage; // keep user at same page if still valid
+                this.renderManageSentences();
             }
         });
     }

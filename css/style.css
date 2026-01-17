@@ -460,6 +460,16 @@ form {
     text-align: center;
 }
 
+/* 管理句子弹窗 - 仅句子列表滚动，分页栏固定 */
+#manageSentencesModal .modal-body{display:flex;flex-direction:column;max-height:80vh;}
+#manageSentencesModal .sentences-container{flex:1 1 auto;overflow-y:auto;}
+#manageSentencesModal .ms-pagination{position:sticky;bottom:0;left:0;background:#fff;padding-bottom:16px;}
+
+/* 移动端隐藏分词/罗马音 */
+@media (max-width: 480px){
+  #manageSentencesModal .sentence-item .meta{display:none;}
+}
+
 /* 管理句子工具栏样式优化 */
 .ms-toolbar {
     display: flex;
@@ -790,6 +800,7 @@ form {
 
 /* 收藏夹卡片基础样式 */
 .collection-item {
+    box-sizing: border-box;
     background: white;
     border-radius: 12px; /* 增加圆角 */
     padding: 20px 20px 20px 20px; /* 增加内边距 */
