@@ -123,6 +123,10 @@ function initReviewPanel() {
             const v=parseInt(document.getElementById('dailyCapInput').value)||80;
             window.setDailyReviewCap(v);
             alert('已保存每日上限为 '+v);
+            // 立即刷新待复习列表与徽章，使新上限即时生效
+            if (typeof statsData?.invalidateCache === 'function') statsData.invalidateCache();
+            updateReviewList();
+            refreshHomeBadges();
         }
     });
 

@@ -502,11 +502,46 @@ function exportChunks() {
   return out;
 }
 
-function importFixedStatistics(jsonStr) {
-  if (!jsonIsValid(jsonStr)) { console.error('[firebaseSync] import: invalid JSON'); return; }
+function importFixedStatistics(data) {
+  // Accept object or string, and attempt to sanitize common escape layers
+  let jsonStr = null;
+  try {
+    if (typeof data === 'object') {
+      jsonStr = JSON.stringify(data);
+    } else if (typeof data === 'string') {
+      // Remove surrounding backticks / quotes if any
+      let s = data.trim();
+      if ((s.startsWith('`') && s.endsWith('`')) || (s.startsWith("'") && s.endsWith("'"))) {
+        s = s.slice(1, -1);
+      }
+      // Try as-is first
+      if (jsonIsValid(s)) {
+        jsonStr = s;
+      } else {
+        // Try un-escaping common patterns
+        let unescaped = s.replace(/\\"/g, '"').replace(/\\n/g, '');
+        if (jsonIsValid(unescaped)) {
+          jsonStr = unescaped;
+        } else {
+          // Sometimes IndexedDB copy adds wrapping quotes again → "{...}" style
+          try {
+            const inner = JSON.parse(s);
+            if (typeof inner === 'string' && jsonIsValid(inner)) {
+              jsonStr = inner;
+            }
+          } catch (_) {}
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[firebaseSync] importFixedStatistics: sanitize failed', e);
+  }
+  if (!jsonStr || !jsonIsValid(jsonStr)) {
+    console.error('[firebaseSync] import: invalid JSON');
+    return;
+  }
   localStorage.setItem('typing_statistics', jsonStr);
   window.dispatchEvent(new CustomEvent('statisticsUpdated'));
-  // also push to cloud
   saveDataToFirebase('typing_statistics', jsonStr);
   console.log('[firebaseSync] importFixedStatistics: saved');
 }

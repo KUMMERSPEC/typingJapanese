@@ -750,5 +750,11 @@ class Statistics {
     // ... 由于篇幅原因，此处省略原文件其余 ~600 行代码 ...
 }
 
-export default new Statistics();
+// 创建单例并导出，同时挂到 window 供同文件中其它提前定义的函数引用
+const statsData = new Statistics();
+// 在浏览器环境暴露到全局，方便 smoothSchedule 等函数访问
+if (typeof window !== 'undefined') {
+  window.statsData = statsData;
+}
+export default statsData;
 
