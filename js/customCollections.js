@@ -48,6 +48,8 @@ export class CustomCollectionsManager {
 
     // Method to save collections to localStorage and Firebase
     saveCollections() {
+        // 更新最后修改时间戳
+        this.collections.__lastModified = Date.now();
         // 持久化到 localStorage
         const collectionsJson = JSON.stringify(this.collections);
         localStorage.setItem('custom_collections', collectionsJson);

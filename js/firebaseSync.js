@@ -329,22 +329,20 @@ async function loadDataFromFirebase() {
             collectionsStr = '{}';
         }
 
-        // --- 决定以谁为准，本地 or 云端 ---
+        // --- 决定以谁为准，本地 or 云端（基于 __lastModified 时间戳） ---
         let pushToCloud = false;
         try {
             const localPrevStr = localStorage.getItem('custom_collections') || '{}';
             const localObj = JSON.parse(localPrevStr);
             const cloudObj = JSON.parse(collectionsStr || '{}');
-            // If there is a content mismatch between local and cloud, prefer local (assumes recent local edits)
-            if (localPrevStr !== collectionsStr) {
-                console.log('[firebaseSync] Local collections differ from cloud, preferring local copy and scheduling push.');
+            const localTS = localObj.__lastModified || 0;
+            const cloudTS = cloudObj.__lastModified || 0;
+            if (localTS > cloudTS) {
+                console.log('[firebaseSync] Local collections newer (ts), push to cloud');
                 collectionsStr = localPrevStr;
                 pushToCloud = true;
-            } else if (Object.keys(localObj).length > Object.keys(cloudObj).length) {
-                // 本地收藏夹更多，认为本地较新
-                console.log('[firebaseSync] Local collections newer, will push to cloud');
-                collectionsStr = localPrevStr;
-                pushToCloud = true;
+            } else {
+                console.log('[firebaseSync] Cloud collections same/newer, keep cloud copy');
             }
         } catch (e) { console.warn('[firebaseSync] compare collections failed', e); }
 
