@@ -121,9 +121,39 @@ const storageManager = new StorageManager(STATS_STORAGE_KEY);
  ****************************************************************************************/
 
 // 间隔复习算法配置
-// ====== Daily review cap (configurable) ======
+// ====== Daily review cap (configurable & adaptive) ======
 const DEFAULT_DAILY_REVIEW_CAP = 80; // fallback when user未设置
+const REVIEW_CAP_MAX = 300;
+const REVIEW_CAP_MIN = 20;
+function _autoAdjustDailyCap(){
+  try{
+    const todayStr = new Date().toLocaleDateString();
+    if(localStorage.getItem('review_cap_auto_date')===todayStr) return; // 已调整
+    const stats = window.statsData?.getStatistics();
+    if(!stats||!stats.dailyStats) return;
+    // 最近 3 天数据
+    const dates = Object.keys(stats.dailyStats).sort().slice(-3);
+    if(dates.length<3) return;
+    const cap = parseInt(localStorage.getItem('review_daily_cap')||stats.reviewDailyCap||DEFAULT_DAILY_REVIEW_CAP);
+    let goodDays = 0, badDays = 0;
+    dates.forEach(ds=>{
+      const done = stats.dailyStats[ds].reviewsDone||0;
+      if(done >= cap*0.9) goodDays++;
+      if(done < cap*0.5) badDays++;
+    });
+    let newCap = cap;
+    if(goodDays===3){ newCap = Math.min(Math.round(cap*1.1), REVIEW_CAP_MAX); }
+    else if(badDays>=2){ newCap = Math.max(Math.round(cap*0.8), REVIEW_CAP_MIN); }
+    if(newCap!==cap){
+      console.info(`[AdaptiveCap] auto adjust daily cap ${cap} -> ${newCap}`);
+      window.setDailyReviewCap(newCap);
+    }
+    localStorage.setItem('review_cap_auto_date', todayStr);
+  }catch(e){console.warn('autoAdjustDailyCap err',e);}  
+}
+
 function getDailyReviewCap(){
+  _autoAdjustDailyCap();
   // 优先从全局统计对象读取（便于跨设备同步）
   try{
     if(window.statsData){
