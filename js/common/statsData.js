@@ -124,13 +124,32 @@ const storageManager = new StorageManager(STATS_STORAGE_KEY);
 // ====== Daily review cap (configurable) ======
 const DEFAULT_DAILY_REVIEW_CAP = 80; // fallback when user未设置
 function getDailyReviewCap(){
+  // 优先从全局统计对象读取（便于跨设备同步）
+  try{
+    if(window.statsData){
+      const s = window.statsData.getStatistics();
+      const v = parseInt(s.reviewDailyCap||'');
+      if(Number.isFinite(v) && v>0) return v;
+    }
+  }catch(e){console.warn('getDailyReviewCap stats error',e);}
+  // 回退到本地缓存
   const v = parseInt(localStorage.getItem('review_daily_cap')||'');
   return Number.isFinite(v) && v>0 ? v : DEFAULT_DAILY_REVIEW_CAP;
 }
 function setDailyReviewCap(n){
+  n = parseInt(n);
+  if(!Number.isFinite(n)||n<=0) return;
+  // 本地立即生效
   localStorage.setItem('review_daily_cap', String(n));
-  // reset applied flag so今天立即生效
   localStorage.removeItem('review_cap_applied');
+  // 写入统计数据以便同步到云端
+  try{
+    if(window.statsData){
+      const s = window.statsData.getStatistics();
+      s.reviewDailyCap = n;
+      window.statsData.saveStatistics(s);
+    }
+  }catch(e){console.warn('setDailyReviewCap stats error',e);}
 }
 window.setDailyReviewCap = setDailyReviewCap;
 
@@ -468,10 +487,14 @@ class Statistics {
                     statusClass: status.class,
                     needsReview: (() => {
                         const reviewDate = new Date(item.nextReviewDate);
-                        reviewDate.setHours(0, 0, 0, 0);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return reviewDate <= today;
+                        // 精确到时间，只要计划复习时间已过即判定为待复习
+                        const now = new Date();
+                        // 如果今天已经复习过该句子，则不再计入今日待复习
+                        if (item.lastReview){
+                            const lr = new Date(item.lastReview);
+                            if (lr.toDateString() === now.toDateString()) return false;
+                        }
+                        return reviewDate <= now;
                     })()
                 };
             });
@@ -698,8 +721,8 @@ class Statistics {
             stats.reviewHistory[sentenceId] = record;
             stats.reviewHistory[sentenceId] = record;
             this._stats = stats;
-            // 不再立即保存，由外部调用者决定何时保存
-            // this.saveStatistics(stats);
+            // 立即保存，确保刷新页面后已复习条目不会被重新计入今日待复习
+            this.saveStatistics(stats);
             return stats; // 返回更新后的状态
         } catch (err) {
             console.error('[statsData] updateReviewProgress error:', err);
