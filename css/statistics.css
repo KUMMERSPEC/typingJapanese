@@ -58,7 +58,7 @@
     padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -72,8 +72,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
-    padding-bottom: 4px;
+    margin-bottom: 2px;
+    padding-bottom: 2px;
     border-bottom: 2px solid #f1f5f9;
 }
 
@@ -81,7 +81,7 @@
     font-size: 1.25rem;
     color: #1a1a1a;
     font-weight: 600;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
 }
 
 /* 学习趋势图表容器 */
