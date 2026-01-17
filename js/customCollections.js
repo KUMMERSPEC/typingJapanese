@@ -354,6 +354,7 @@ export class CustomCollectionsManager {
         if (!container) return;
         container.innerHTML = '';
         Object.entries(this.collections).forEach(([id, collection]) => {
+            if (!collection || typeof collection !== 'object' || !collection.name) return; // Skip metadata or malformed entries
             const item = document.createElement('div');
             item.className = 'collection-item';
             item.dataset.collectionId = id;
