@@ -679,18 +679,20 @@ class Statistics {
      * @param {boolean} isCorrect   用户这次答题是否正确
      * @param {object}  options     { responseTime:number(ms), hintUsed:boolean }
      */
-    updateReviewProgress(sentenceId, isCorrect, options = {}) {
+    resolveKey(id) {
         const stats = this.getStatistics();
-        // 尝试在不同编码形式之间匹配 key，确保兼容旧逻辑
-        const resolveKey = (id) => {
-            if (stats.reviewHistory && stats.reviewHistory[id]) return id;
-            const enc = encodeId(id);
-            if (stats.reviewHistory && stats.reviewHistory[enc]) return enc;
-            const dec = decodeId(id);
-            if (stats.reviewHistory && stats.reviewHistory[dec]) return dec;
-            return id;
-        };
-        const safeId = resolveKey(sentenceId);
+        if (!stats || !stats.reviewHistory) return id;
+
+        if (stats.reviewHistory[id]) return id;
+        const enc = encodeId(id);
+        if (stats.reviewHistory[enc]) return enc;
+        const dec = decodeId(id);
+        if (stats.reviewHistory[dec]) return dec;
+        return id;
+    }
+
+    updateReviewProgress(sentenceId, isCorrect, options = {}) {
+        const safeId = this.resolveKey(sentenceId);
         sentenceId = safeId;
         try {
             const stats = this.getStatistics();
@@ -771,6 +773,25 @@ class Statistics {
     save() {
         if (this._stats) {
             this.saveStatistics(this._stats);
+        }
+    }
+
+    markAsLeech(sentenceId) {
+        const safeId = this.resolveKey(sentenceId);
+        sentenceId = safeId;
+
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory || !stats.reviewHistory[sentenceId]) {
+                console.warn('[statsData] markAsLeech: Could not find sentence', sentenceId);
+                return;
+            }
+            const record = stats.reviewHistory[sentenceId];
+            record.isLeech = true;
+            this.saveStatistics(stats);
+            console.log(`[statsData] Sentence "${record.japanese}" marked as leech.`);
+        } catch (err) {
+            console.error('[statsData] markAsLeech error:', err);
         }
     }
 

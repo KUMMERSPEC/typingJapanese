@@ -15,6 +15,7 @@ class FlashcardManager {
         this.touchStartX = 0;
         this.touchEndX = 0;
         this.minSwipeDistance = 50;
+        this.incorrectCounts = {}; // Track incorrect answers for the current session
 
         this.isLoading = true;  // 添加加载状态标记
         this.init();
@@ -586,47 +587,46 @@ class FlashcardManager {
     }
 
     handleReview(isCorrect) {
-        console.log('处理复习结果，正确:', isCorrect);
         const current = this.sentences[this.currentIndex];
-        
-        // 更新复习记录
-        try {
-            // 更新复习进度并获取更新后的记录
-            const updatedRecord = statsData.updateReviewProgress(current.id, isCorrect);
-            
-            // 更新当前句子的掌握度
-            if (updatedRecord) {
-                current.proficiency = updatedRecord.proficiency;
-                
-                // 更新 sessionStorage 中的数据
-                const sentences = JSON.parse(sessionStorage.getItem('reviewSentences'));
-                if (sentences) {
-                    const index = sentences.findIndex(s => s.id === current.id);
-                    if (index !== -1) {
-                        sentences[index].proficiency = updatedRecord.proficiency;
-                        sessionStorage.setItem('reviewSentences', JSON.stringify(sentences));
-                    }
-                }
+        if (!current) return;
+
+        // Always update the proficiency stats in the background
+        statsData.updateReviewProgress(current.id, isCorrect);
+
+        if (isCorrect) {
+            // Correct: Remove the sentence from the current session's queue.
+            this.sentences.splice(this.currentIndex, 1);
+            // No need to advance currentIndex, as the array has shifted.
+        } else {
+            // Incorrect: Increment count and decide whether to re-queue or mark as leech.
+            const sentenceId = current.id;
+            this.incorrectCounts[sentenceId] = (this.incorrectCounts[sentenceId] || 0) + 1;
+
+            if (this.incorrectCounts[sentenceId] >= 3) {
+                // Leech threshold reached: Remove from session and mark as leech.
+                console.log(`Sentence "${current.japanese}" marked as leech.`);
+                statsData.markAsLeech(sentenceId);
+                this.sentences.splice(this.currentIndex, 1);
+            } else {
+                // Re-queue: Move the current sentence to the end of the array.
+                const sentenceToRequeue = this.sentences.splice(this.currentIndex, 1)[0];
+                this.sentences.push(sentenceToRequeue);
             }
-        } catch (error) {
-            console.error('更新复习记录失败:', error);
         }
 
-        // 移动到下一个句子
-        if (this.currentIndex < this.sentences.length - 1) {
-            this.currentIndex++;
-            console.log('移动到下一个句子，索引:', this.currentIndex);
-            
-            // 显示新卡片
-            setTimeout(() => {
-                this.showCurrentCard();
-            }, 50);
-        } else {
-            console.log('已到达最后一个句子');
-            // 清除 sessionStorage 中的复习数据，防止再次点击复习时使用旧数据
-            sessionStorage.removeItem('reviewSentences');
+        // Check if the session is complete
+        if (this.sentences.length === 0) {
             this.showComplete();
+            return;
         }
+
+        // Ensure currentIndex is valid after potential splicing
+        if (this.currentIndex >= this.sentences.length) {
+            this.currentIndex = 0;
+        }
+
+        // Show the next card in the queue
+        this.showCurrentCard();
     }
 
     updateProgress() {

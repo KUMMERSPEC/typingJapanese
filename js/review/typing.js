@@ -15,6 +15,7 @@ class ReviewManager {
         this.logs = [];
         this.correctCount = 0;
         this.totalAttempts = 0;
+        this.incorrectCounts = {}; // Track incorrect answers for the current session
         this.init();
         this.initKeyboardMaintain();
     }
@@ -225,56 +226,84 @@ class ReviewManager {
     checkAnswer(answer) {
         const current = this.sentences[this.currentIndex];
         const isCorrect = stripPunct(answer) === stripPunct(current.hiragana);
-        
-        console.log('检查答案:', answer, '正确答案:', current.hiragana, '结果:', isCorrect);
-        
-        this.totalAttempts++;
-        if(isCorrect) this.correctCount++;
+
+        // Always update proficiency stats in the background
         statsData.updateReviewProgress(current.id, isCorrect);
 
-        if (!isCorrect) {
-            const inputs = document.querySelectorAll('.split-input');
-            const correctUnits = stripPunct(current.hiragana).split(':');
-            const answerUnits = answer.split(':');
-            
-            inputs.forEach((input, index) => {
-                if (index < correctUnits.length && index < answerUnits.length) {
-                    if (answerUnits[index] !== correctUnits[index]) {
-                        input.classList.add('error');
-                    }
-                }
-            });
-            
-            console.log('答案错误，只标记错误的输入框');
-            
-            setTimeout(() => {
-                inputs.forEach(input => {
-                    input.classList.remove('error');
-                });
-            }, 1000);
-            
-            return;
+        if (isCorrect) {
+            // Correct: Show the answer, play audio, and remove the sentence from the queue.
+            this.showAnswerFeedback(current);
+            this.sentences.splice(this.currentIndex, 1);
+        } else {
+            // Incorrect: Mark wrong inputs, increment count, and decide whether to re-queue or mark as leech.
+            this.markIncorrectInputs(answer, current.hiragana);
+
+            const sentenceId = current.id;
+            this.incorrectCounts[sentenceId] = (this.incorrectCounts[sentenceId] || 0) + 1;
+
+            if (this.incorrectCounts[sentenceId] >= 3) {
+                // Leech threshold reached: Remove from session and mark as leech.
+                console.log(`Sentence "${current.japanese}" marked as leech.`);
+                statsData.markAsLeech(sentenceId);
+                this.sentences.splice(this.currentIndex, 1);
+            } else {
+                // Re-queue: Move the current sentence to the end of the array.
+                const sentenceToRequeue = this.sentences.splice(this.currentIndex, 1)[0];
+                this.sentences.push(sentenceToRequeue);
+            }
         }
 
-        console.log('答案正确，显示答案');
-        
+        // After a delay, check if the session is complete or show the next question.
+        setTimeout(() => {
+            if (this.sentences.length === 0) {
+                this.showComplete();
+                return;
+            }
+
+            // Ensure currentIndex is valid after potential splicing
+            if (this.currentIndex >= this.sentences.length) {
+                this.currentIndex = 0;
+            }
+
+            this.showQuestion();
+        }, isCorrect ? 2000 : 1000); // Shorter delay for incorrect answers
+    }
+
+    markIncorrectInputs(answer, correctAnswer) {
+        const inputs = document.querySelectorAll('.split-input');
+        const correctUnits = stripPunct(correctAnswer).split(':');
+        const answerUnits = answer.split(':');
+
+        inputs.forEach((input, index) => {
+            if (index < correctUnits.length && index < answerUnits.length) {
+                if (answerUnits[index] !== correctUnits[index]) {
+                    input.classList.add('error');
+                }
+            }
+        });
+
+        setTimeout(() => {
+            inputs.forEach(input => input.classList.remove('error'));
+        }, 1000);
+    }
+
+    showAnswerFeedback(current) {
         const answerDisplay = document.querySelector('.answer-display');
         if (answerDisplay) {
             const kanjiText = answerDisplay.querySelector('.kanji-text');
             const kanaText = answerDisplay.querySelector('.kana-text');
             const romajiText = answerDisplay.querySelector('.romaji-text');
             const meaningText = answerDisplay.querySelector('.meaning-text');
-            
-            if (kanjiText) kanjiText.textContent = current.japanese || current.sentence || current.character || current.text || '';
+
+            if (kanjiText) kanjiText.textContent = current.japanese || current.sentence || '';
             if (kanaText) kanaText.textContent = (current.hiragana || '').replace(/:/g, '');
-            if (romajiText) romajiText.textContent = current.romaji || '' ;
+            if (romajiText) romajiText.textContent = current.romaji || '';
             if (meaningText) meaningText.textContent = current.meaning;
-            
+
             answerDisplay.classList.add('show');
             answerDisplay.style.display = 'block';
         }
-        
-        // 播放音频和跳转到下一题应该并行，且音频失败不应阻塞流程
+
         try {
             const textToSpeak = (current.hiragana || '').replace(/:/g, '');
             this.playAudioWithUserInteraction(textToSpeak);
@@ -283,18 +312,6 @@ class ReviewManager {
         }
 
         document.dispatchEvent(new Event('answer-checked'));
-
-        // 无论音频是否成功，都应该在2秒后继续
-        setTimeout(() => {
-            if (this.currentIndex < this.sentences.length - 1) {
-                this.currentIndex++;
-                this.showQuestion();
-                console.log('已跳转到下一题');
-            } else {
-                this.showComplete();
-                console.log('已完成所有题目');
-            }
-        }, 2000); 
     }
 
     async speak(text) {
