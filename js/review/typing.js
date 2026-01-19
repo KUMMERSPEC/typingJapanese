@@ -337,16 +337,16 @@ class ReviewManager {
                 console.log('音频播放成功');
             } catch (error) {
                 console.error('播放失败，尝试后备方案:', error);
-                this.fallbackSpeak(textToSpeak);
+                this.fallbackSpeak(textToSpeak, current.lang || 'ja');
             }
 
         } catch (error) {
             console.error('播放语音失败:', error);
-            this.fallbackSpeak(text);
+            this.fallbackSpeak(text, 'ja');
         }
     }
 
-    fallbackSpeak(text) {
+    fallbackSpeak(text, lang='ja') {
         try {
             if (!('speechSynthesis' in window)) {
                 console.warn('浏览器不支持语音合成');
@@ -360,7 +360,7 @@ class ReviewManager {
             utterance.pitch = 1;
             utterance.volume = 1;
             // 根据语言自动选择
-            const tgtLang = (current && current.lang) || 'ja';
+            const tgtLang = lang;
             utterance.lang = tgtLang === 'en' ? 'en-US' : 'ja-JP';
 
             const voices = window.speechSynthesis.getVoices();

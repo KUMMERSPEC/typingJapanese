@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (collections && collections.length) {
                 const og2 = document.createElement('optgroup');
                 og2.label = '收藏夹';
-                collections.forEach(c => og2.appendChild(new Option(c.name, `collection:${c.id}`)));
+                collections.filter(c=>c && c.name && c.name.trim()).forEach(c=> og2.appendChild(new Option(c.name, `collection:${c.id}`)));
                 courseSelector.appendChild(og2);
             }
         };

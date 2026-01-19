@@ -292,6 +292,8 @@ class FlashcardManager {
 
     // 播放日语语音
     async speak(text) {
+        const current = this.sentences[this.currentIndex] || {};
+        const lang = current.lang || 'ja';
         try {
             if (!text) {
                 console.error('尝试朗读空文本');
@@ -331,7 +333,7 @@ class FlashcardManager {
 
             audio.play().catch(error => {
                 console.error('播放失败，尝试后备方案:', error);
-                this.fallbackSpeak(textToSpeak);
+                this.fallbackSpeak(textToSpeak, current.lang || 'ja');
             });
 
         } catch (error) {
@@ -341,7 +343,7 @@ class FlashcardManager {
     }
 
     // 添加后备播放方法
-    fallbackSpeak(text) {
+    fallbackSpeak(text, lang = 'ja') {
         try {
             if (!('speechSynthesis' in window)) {
                 console.warn('浏览器不支持语音合成');
@@ -355,7 +357,7 @@ class FlashcardManager {
             utterance.rate = 1;
             utterance.pitch = 1;
             utterance.volume = 1;
-            const tgtLang = (current && current.lang) || 'ja';
+            const tgtLang = lang;
             utterance.lang = tgtLang==='en' ? 'en-US' : 'ja-JP';
 
             // 选择匹配语言的 voice
