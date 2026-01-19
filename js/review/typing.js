@@ -298,51 +298,37 @@ class ReviewManager {
     }
 
     async speak(text) {
+        const current = this.sentences[this.currentIndex] || {};
+        const lang = current.lang || 'ja';
+        const textToSpeak = text || current.japanese || current.sentence;
+
+        if (!textToSpeak) {
+            console.error('No text to speak for the current card.');
+            return;
+        }
+
+        // If the language is English, go directly to the browser's speech synthesis.
+        if (lang === 'en') {
+            this.fallbackSpeak(textToSpeak, 'en');
+            return;
+        }
+
+        // For Japanese, first try the Youdao API.
         try {
-            if (!text) {
-                console.error('尝试朗读空文本');
-                return;
-            }
-            
-            const currentSentence = this.sentences[this.currentIndex];
-            if (!currentSentence) {
-                console.error('当前句子不存在');
-                return;
-            }
-            
-            const textToSpeak = text || 
-                               currentSentence.japanese || 
-                               currentSentence.sentence || 
-                               (currentSentence.id && currentSentence.id.split('_').pop());
-            
-            if (!textToSpeak) {
-                console.error('没有可朗读的文本');
-                return;
-            }
-
-            console.log('Speaking text:', textToSpeak);
-
             const audio = new Audio();
-            audio.preload = 'auto';  
+            audio.preload = 'auto';
             audio.src = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(textToSpeak)}&le=jap&type=3`;
 
             await new Promise((resolve, reject) => {
                 audio.oncanplaythrough = resolve;
-                audio.onerror = reject;
-                audio.load();  
+                audio.onerror = (e) => reject(e); // Pass error event to the catch block
+                audio.load();
             });
 
-            try {
-                await audio.play();
-                console.log('音频播放成功');
-            } catch (error) {
-                console.error('播放失败，尝试后备方案:', error);
-                this.fallbackSpeak(textToSpeak, current.lang || 'ja');
-            }
-
+            await audio.play();
         } catch (error) {
-            console.error('播放语音失败:', error);
-            this.fallbackSpeak(text, 'ja');
+            console.error('Primary audio API failed, using fallback speech synthesis.', error);
+            this.fallbackSpeak(textToSpeak, 'ja');
         }
     }
 
