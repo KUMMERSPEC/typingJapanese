@@ -195,9 +195,13 @@ export class CustomCollectionsManager {
                         const sentenceItem = e.target.closest('[data-sentence-id]');
                         if (!sentenceItem) break;
                         const sId = sentenceItem.dataset.sentenceId;
+                        // Re-fetch collections to ensure data is not stale
+                        this.collections = this.loadCollections();
                         const data = this.collections[collectionId]?.sentences[sId];
                         if (data) {
                             this.showEditSentenceModal(collectionId, sId, data);
+                        } else {
+                            console.error('Could not find sentence data for edit:', {collectionId, sId});
                         }
                         break;
                     }
