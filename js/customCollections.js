@@ -144,6 +144,7 @@ export class CustomCollectionsManager {
             Object.assign(this.collections[collectionId].sentences[sentenceId], sentenceData, { updated_at: new Date().toISOString() });
             const newData = this.collections[collectionId].sentences[sentenceId];
             this.saveCollections();
+            console.log('[customCollections] Dispatching sentenceUpdated', { collectionId, sentenceId, newData, oldData });
             window.dispatchEvent(new CustomEvent('sentenceUpdated',{
                 detail:{
                     collectionId:collectionId,

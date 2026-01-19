@@ -836,6 +836,7 @@ class Statistics {
       const stats = statsData.getStatistics();
       let changed = false;
       const oldKey = getContentKey(oldData);
+      console.log('[statsData] Received sentenceUpdated', { collectionId, sentenceId, oldKey, data, oldData });
 
       Object.entries(stats.reviewHistory||{}).forEach(([rid, item]) => {
         if (item.course === '收藏夹' && item.lesson === collectionId) {
