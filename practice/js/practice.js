@@ -111,7 +111,8 @@ export class PracticeManager {
             const collectionData = collections[collection];
             if (!collectionData) throw new Error('Collection not found');
 
-            this.questions = Object.values(collectionData.sentences).map(s => ({
+            this.questions = Object.entries(collectionData.sentences).map(([id, s]) => ({
+                id, // Preserve the original sentence ID
                 type: 'split',
                 character: s.japanese,
                 hiragana: s.hiragana,

@@ -585,6 +585,7 @@ class Statistics {
                         }
 
                         stats.reviewHistory[questionId] = {
+                            id: q.id, // Persist the original sentence ID from collections
                             type: 'split',
                             japanese: q.character,
                             sentence: q.character,
