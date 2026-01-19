@@ -78,6 +78,8 @@ export class CustomCollectionsManager {
             review: { last_review: null, next_review: null, interval_days: 7, review_count: 0 }
         };
         this.saveCollections();
+        // 通知外部新句子
+        window.dispatchEvent(new CustomEvent('sentenceAdded',{detail:{collectionId:collectionId,sentenceId:id,data:this.collections[collectionId].sentences[id]}}));
         return id;
     }
 
@@ -99,6 +101,7 @@ export class CustomCollectionsManager {
         if (this.collections[collectionId]) {
             delete this.collections[collectionId];
             this.saveCollections();
+            window.dispatchEvent(new CustomEvent('sentenceDeleted',{detail:{collectionId:collectionId,ids:[sentenceId]}}));
             return true;
         }
         return false;
@@ -109,6 +112,7 @@ export class CustomCollectionsManager {
         if (this.collections[collectionId]?.sentences[sentenceId]) {
             delete this.collections[collectionId].sentences[sentenceId];
             this.saveCollections();
+            window.dispatchEvent(new CustomEvent('sentenceUpdated',{detail:{collectionId:collectionId,sentenceId:sentenceId,data:this.collections[collectionId].sentences[sentenceId]}}));
             return true;
         }
         return false;

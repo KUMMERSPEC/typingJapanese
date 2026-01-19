@@ -821,6 +821,30 @@ class Statistics {
     // ... 由于篇幅原因，此处省略原文件其余 ~600 行代码 ...
 }
 
+// --- Listen to collection sentence changes ---
+(function(){
+  if(typeof window==='undefined') return;
+  const sync = (type,detail)=>{
+    try{
+      const stats = statsData.getStatistics();
+      let changed=false;
+      Object.entries(stats.reviewHistory||{}).forEach(([rid,item])=>{
+        if(item.course==='收藏夹' && item.lesson===detail.collectionId){
+          if(type==='sentenceUpdated' && item.id===detail.sentenceId){
+             Object.assign(item, detail.data); changed=true;
+          }
+          if(type==='sentenceDeleted' && detail.ids?.includes(item.id)){
+             delete stats.reviewHistory[rid]; changed=true;
+          }
+        }
+      });
+      if(changed) statsData.saveStatistics(stats);
+    }catch(e){console.warn('sync collections to reviewHistory err',e);}
+  };
+  window.addEventListener('sentenceUpdated',e=>sync('sentenceUpdated',e.detail));
+  window.addEventListener('sentenceDeleted',e=>sync('sentenceDeleted',e.detail));
+})();
+
 // 创建单例并导出，同时挂到 window 供同文件中其它提前定义的函数引用
 const statsData = new Statistics();
 // 在浏览器环境暴露到全局，方便 smoothSchedule 等函数访问
