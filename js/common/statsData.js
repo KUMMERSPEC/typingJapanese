@@ -839,8 +839,16 @@ class Statistics {
       const oldKey = getContentKey(oldData);
       console.log('[statsData] Received sentenceUpdated', { collectionId, sentenceId, oldKey, data, oldData });
 
+      // Get the collection name from the ID, as reviewHistory stores the name in the 'lesson' field.
+      const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+      const collectionName = collections[collectionId]?.name;
+      if (!collectionName) {
+          console.warn(`[statsData] Could not find collection name for ID: ${collectionId}`);
+          return;
+      }
+
       Object.entries(stats.reviewHistory||{}).forEach(([rid, item]) => {
-        if (item.course === '收藏夹' && item.lesson === collectionId) {
+        if (item.course === '收藏夹' && item.lesson === collectionName) {
           // Match by content key, as ID might differ or be unreliable in older data
           if (getContentKey(item) === oldKey) {
             Object.assign(item, data); // Update with new data
