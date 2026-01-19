@@ -85,12 +85,23 @@ import statsData from '../common/statsData.js';
     }
   }
 
+  // 推断语言（兼容旧数据）
+  function detectLang(row) {
+    if (row.lang && (row.lang === 'ja' || row.lang === 'en')) return row.lang;
+    const txt = (row.japanese || '').trim();
+    const hasKanaKanji = /[\u3040-\u30FF\u4E00-\u9FFF]/.test(txt);
+    if (hasKanaKanji) return 'ja';
+    // 纯 ASCII 视作英文
+    const isAscii = /^[\x00-\x7F]+$/.test(txt);
+    return isAscii ? 'en' : 'ja';
+  }
+
   function applyFilter() {
     const q = (query || '').trim().toLowerCase();
 
     filteredRows = allRows.filter(row => {
       // 语言筛选
-      const rowLang = (row.lang || 'ja');
+      const rowLang = detectLang(row);
       if (lang !== 'all' && rowLang !== lang) return false;
 
       if (!q) return true;
@@ -153,7 +164,7 @@ import statsData from '../common/statsData.js';
       } else {
         tbody.innerHTML = sliced.map(r => `
           <tr>
-            <td>${escapeHtml(r.japanese)}</td>
+            <td>${escapeHtml(r.japanese)} <span class="lang-badge lang-badge-${detectLang(r)}"></span></td>
             <td>${escapeHtml(formatHiraganaDisplay(r.hiragana, r.lang))}</td>
             <td>${escapeHtml(r.meaning)}</td>
             <td class="nowrap">${escapeHtml(displayText(r.course))}</td>
