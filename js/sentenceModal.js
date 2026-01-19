@@ -118,7 +118,7 @@ export function showAddSentenceModal(onSave) {
             meaning: form.querySelector('#smMeaning').value.trim(),
             lang: form.querySelector('#smLang').value
         };
-        if (onSave) onSave(data);
+        if (onSave) onSave(data, originalData); // Pass back originalData as well
         modal.classList.remove('show');
     };
     form.reset();

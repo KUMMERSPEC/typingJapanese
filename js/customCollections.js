@@ -583,17 +583,11 @@ export class CustomCollectionsManager {
     }
 
     showEditSentenceModal(collectionId, sentenceId, sentenceData) {
-        showEditSentenceModal(sentenceData, updatedData => {
-            this.editSentence(collectionId, sentenceId, updatedData);
+        // Pass the original data to the modal, and receive it back in the save callback
+        showEditSentenceModal(sentenceData, (updatedData, originalData) => {
+            // Now call editSentence with the correct oldData
+            this.editSentence(collectionId, sentenceId, updatedData, originalData);
             if (document.getElementById('manageSentencesModal')?.classList.contains('show')) {
-                // Preserve current page before re-rendering
-                const currentPage = this.manageState.page;
-                // Re-read pageSize from dropdown in case it was changed
-                const pageSizeSelect = document.querySelector('#msPageSize');
-                if (pageSizeSelect) {
-                    this.manageState.pageSize = parseInt(pageSizeSelect.value, 10);
-                }
-                this.manageState.page = currentPage; // keep user at same page if still valid
                 this.renderManageSentences();
             }
         });
