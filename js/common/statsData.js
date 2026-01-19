@@ -821,28 +821,58 @@ class Statistics {
     // ... 由于篇幅原因，此处省略原文件其余 ~600 行代码 ...
 }
 
-// --- Listen to collection sentence changes ---
+// --- Listen to collection sentence changes for reviewHistory sync ---
 (function(){
   if(typeof window==='undefined') return;
-  const sync = (type,detail)=>{
-    try{
+
+  const normalize = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+  const getContentKey = item => [normalize(item.japanese || item.sentence || ''), normalize(item.hiragana || ''), normalize(item.meaning || '')].join('||');
+
+  window.addEventListener('sentenceUpdated', e => {
+    try {
+      const { collectionId, sentenceId, data, oldData } = e.detail || {};
+      if (!collectionId || !data || !oldData) return;
+
       const stats = statsData.getStatistics();
-      let changed=false;
-      Object.entries(stats.reviewHistory||{}).forEach(([rid,item])=>{
-        if(item.course==='收藏夹' && item.lesson===detail.collectionId){
-          if(type==='sentenceUpdated' && item.id===detail.sentenceId){
-             Object.assign(item, detail.data); changed=true;
-          }
-          if(type==='sentenceDeleted' && detail.ids?.includes(item.id)){
-             delete stats.reviewHistory[rid]; changed=true;
+      let changed = false;
+      const oldKey = getContentKey(oldData);
+
+      Object.entries(stats.reviewHistory||{}).forEach(([rid, item]) => {
+        if (item.course === '收藏夹' && item.lesson === collectionId) {
+          // Match by content key, as ID might differ or be unreliable in older data
+          if (getContentKey(item) === oldKey) {
+            Object.assign(item, data); // Update with new data
+            item.id = sentenceId; // Also align the sentenceId
+            changed = true;
           }
         }
       });
+
       if(changed) statsData.saveStatistics(stats);
-    }catch(e){console.warn('sync collections to reviewHistory err',e);}
-  };
-  window.addEventListener('sentenceUpdated',e=>sync('sentenceUpdated',e.detail));
-  window.addEventListener('sentenceDeleted',e=>sync('sentenceDeleted',e.detail));
+    } catch(err) { console.warn('Error syncing updated sentence to reviewHistory:', err); }
+  });
+
+  window.addEventListener('sentenceDeleted', e => {
+    try {
+      const { collectionId, ids } = e.detail || {};
+      if (!collectionId || !ids || !ids.length) return;
+
+      const stats = statsData.getStatistics();
+      let changed = false;
+
+      Object.entries(stats.reviewHistory||{}).forEach(([rid, item]) => {
+        if (item.course === '收藏夹' && item.lesson === collectionId && ids.includes(item.id)) {
+          delete stats.reviewHistory[rid];
+          changed = true;
+        }
+      });
+
+      if(changed) statsData.saveStatistics(stats);
+    } catch(err) { console.warn('Error syncing deleted sentence to reviewHistory:', err); }
+  });
+
+  // Note: sentenceAdded does not need a listener, because the item is only added
+  // to reviewHistory when it is first practiced, not when it's added to a collection.
 })();
 
 // 创建单例并导出，同时挂到 window 供同文件中其它提前定义的函数引用

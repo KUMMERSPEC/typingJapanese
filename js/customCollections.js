@@ -79,7 +79,7 @@ export class CustomCollectionsManager {
         };
         this.saveCollections();
         // 通知外部新句子
-        window.dispatchEvent(new CustomEvent('sentenceAdded',{detail:{collectionId:collectionId,sentenceId:id,data:this.collections[collectionId].sentences[id]}}));
+        
         return id;
     }
 
@@ -93,6 +93,14 @@ export class CustomCollectionsManager {
             created_at: new Date().toISOString()
         };
         this.saveCollections();
+        const newSentence = this.collections[collectionId].sentences[id];
+        window.dispatchEvent(new CustomEvent('sentenceAdded', {
+            detail: {
+                collectionId: collectionId,
+                sentenceId: id,
+                data: newSentence
+            }
+        }));
         return id;
     }
 
@@ -112,7 +120,7 @@ export class CustomCollectionsManager {
         if (this.collections[collectionId]?.sentences[sentenceId]) {
             delete this.collections[collectionId].sentences[sentenceId];
             this.saveCollections();
-            window.dispatchEvent(new CustomEvent('sentenceUpdated',{detail:{collectionId:collectionId,sentenceId:sentenceId,data:this.collections[collectionId].sentences[sentenceId]}}));
+            window.dispatchEvent(new CustomEvent('sentenceDeleted',{detail:{collectionId:collectionId,ids:[sentenceId]}}));
             return true;
         }
         return false;
@@ -132,8 +140,18 @@ export class CustomCollectionsManager {
     // Method to edit a sentence
     editSentence(collectionId, sentenceId, sentenceData) {
         if (this.collections[collectionId]?.sentences[sentenceId]) {
+            const oldData = { ...this.collections[collectionId].sentences[sentenceId] };
             Object.assign(this.collections[collectionId].sentences[sentenceId], sentenceData, { updated_at: new Date().toISOString() });
+            const newData = this.collections[collectionId].sentences[sentenceId];
             this.saveCollections();
+            window.dispatchEvent(new CustomEvent('sentenceUpdated',{
+                detail:{
+                    collectionId:collectionId,
+                    sentenceId:sentenceId,
+                    data:newData,
+                    oldData:oldData
+                }
+            }));
             return true;
         }
         return false;
