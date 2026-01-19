@@ -903,8 +903,14 @@ class Statistics {
       const stats = statsData.getStatistics();
       let changed = false;
 
+      // Get the collection name from the ID to match against the 'lesson' field.
+      const collections = JSON.parse(localStorage.getItem('custom_collections') || '{}');
+      const collectionName = collections[collectionId]?.name;
+
       Object.entries(stats.reviewHistory||{}).forEach(([rid, item]) => {
-        if (item.course === '收藏夹' && item.lesson === collectionId && ids.includes(item.id)) {
+        // An item should be deleted if its ID is in the list of deleted IDs AND
+        // (it matches the collection name OR we couldn't find a name, in which case we trust the ID match)
+        if (item.course === '收藏夹' && ids.includes(item.id) && (!collectionName || item.lesson === collectionName)) {
           delete stats.reviewHistory[rid];
           changed = true;
         }
