@@ -613,42 +613,36 @@ window.startReview = function(mode) {
         }, 300);
     }
     
-    // 获取需要复习的句子
-    const stats = statsData.getStatistics();
-    const reviewHistory = stats.reviewHistory || {};
-    let reviewItems = [];
-    
-    // 根据筛选条件获取复习项
-    const today = new Date().toISOString().split('T')[0];
-    Object.entries(reviewHistory).forEach(([key, item]) => {
-        const nextReview = new Date(item.nextReviewDate).toISOString().split('T')[0];
-        
-        // 根据选择的过滤条件筛选句子
-        switch(selectedFilter) {
-            case 'today':
-                // 今日待复习：只选择今天需要复习的句子
-                if (nextReview <= today) {
-                    reviewItems.push({...item, id: key});
-                }
-                break;
-            case 'leech':
-                if(item.isLeech){
-                    reviewItems.push({...item, id: key});
-                }
-                break;
-            case 'weak':
-                // 需要加强：选择掌握度低或正确率低的句子
-                if (item.proficiency === 'low' || 
-                    (item.reviewCount > 0 && (item.correctCount / item.reviewCount) < 0.6)) {
-                    reviewItems.push({...item, id: key});
-                }
-                break;
-            default: // 'all'
-                // 全部句子：显示所有学习过的句子
-                reviewItems.push({...item, id: key});
-                break;
-        }
+    // 获取需要复习的句子（与面板列表逻辑保持一致）
+    let allItems = statsData.getReviewItems().filter(item => item && (item.japanese || item.sentence));
+    // --- 去重：同一句（按日文+假名+中文）保留掌握度高/有复习日期的 ---
+    const seen = new Map();
+    const norm = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+    allItems.forEach(it=>{
+        const key = [norm(it.japanese||it.sentence||''), norm(it.hiragana||''), norm(it.meaning||'')].join('||');
+        if(!seen.has(key)) { seen.set(key, it); return; }
+        const existed = seen.get(key);
+        const profRank = p=>({low:0,medium:1,high:2,master:3}[p]??0);
+        const pick = ((existed.nextReviewDate?1:0)+profRank(existed.proficiency)) >= ((it.nextReviewDate?1:0)+profRank(it.proficiency)) ? existed : it;
+        seen.set(key, pick);
     });
+    allItems = Array.from(seen.values());
+
+    let reviewItems = [];
+    switch(selectedFilter){
+        case 'all':
+            reviewItems = allItems;
+            break;
+        case 'today':
+            reviewItems = allItems.filter(it=>it.needsReview && it.proficiency!=='high' && it.proficiency!=='master');
+            break;
+        case 'leech':
+            reviewItems = allItems.filter(it=>it.isLeech);
+            break;
+        case 'weak':
+            reviewItems = allItems.filter(it=> it.proficiency==='low' || (it.reviewCount>0 && (it.correctCount/it.reviewCount)<0.6));
+            break;
+    }
 
     // 如果没有需要复习的句子，显示对应的提示信息
     if (reviewItems.length === 0) {
