@@ -516,15 +516,27 @@ class Statistics {
                     displayStatus: status.text,
                     statusClass: status.class,
                     needsReview: (() => {
-                        const reviewDate = new Date(item.nextReviewDate);
-                        // 精确到时间，只要计划复习时间已过即判定为待复习
                         const now = new Date();
-                        // 如果今天已经复习过该句子，则不再计入今日待复习
-                        if (item.lastReview){
-                            const lr = new Date(item.lastReview);
-                            if (lr.toDateString() === now.toDateString()) return false;
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Today at midnight
+
+                        // If it was reviewed today, it absolutely does not need review again.
+                        if (item.lastReview) {
+                            const lastReviewDate = new Date(item.lastReview);
+                            if (lastReviewDate.toDateString() === today.toDateString()) {
+                                return false;
+                            }
                         }
-                        return reviewDate <= now;
+
+                        // If it has no next review date, it's not due.
+                        if (!item.nextReviewDate) {
+                            return false;
+                        }
+
+                        // If its next review date is on or before today (ignoring time), it needs review.
+                        const nextReview = new Date(item.nextReviewDate);
+                        const nextReviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
+                        
+                        return nextReviewDay <= today;
                     })()
                 };
             });
