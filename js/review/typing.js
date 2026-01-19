@@ -359,16 +359,15 @@ class ReviewManager {
             utterance.rate = 1;
             utterance.pitch = 1;
             utterance.volume = 1;
-            utterance.lang = 'ja-JP';
+            // 根据语言自动选择
+            const tgtLang = (current && current.lang) || 'ja';
+            utterance.lang = tgtLang === 'en' ? 'en-US' : 'ja-JP';
 
             const voices = window.speechSynthesis.getVoices();
-            const japaneseVoice = voices.find(voice => 
-                voice.lang.includes('ja') || voice.lang.includes('JP')
-            );
+            const selVoice = voices.find(v => tgtLang==='en' ? v.lang.startsWith('en') : v.lang.startsWith('ja'));
+            if(selVoice) utterance.voice = selVoice;
             
-            if (japaneseVoice) {
-                utterance.voice = japaneseVoice;
-            }
+            
 
             window.speechSynthesis.speak(utterance);
         } catch (error) {

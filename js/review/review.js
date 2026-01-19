@@ -110,7 +110,8 @@ class ReviewManager {
         const current = this.sentences[this.currentIndex];
         if (current) {
             const utterance = new SpeechSynthesisUtterance(current.japanese);
-            utterance.lang = 'ja-JP';
+            const tgtLang = (current && current.lang)||'ja';
+        utterance.lang = tgtLang==='en' ? 'en-US':'ja-JP';
             window.speechSynthesis.speak(utterance);
         }
     }

@@ -364,7 +364,7 @@ export class PracticeManager {
         this.$.ansDisplay.style.display = 'block';
         this.$.ansDisplay.classList.add('show');
 
-        this.speak(question.character);
+        this.speak(question.character, question.lang || 'ja');
 
         if (isTabPress) {
             this.nextQuestionTimer = setTimeout(() => {
@@ -429,7 +429,7 @@ export class PracticeManager {
 
     playSound() {
         const question = this.questions[this.currentQuestionIndex];
-        if (question) this.speak(question.character);
+        if (question) this.speak(question.character, question.lang || 'ja');
     }
 
     showComplete() {
