@@ -261,6 +261,17 @@ class Statistics {
         // 当其他模块(如 firebaseSync)写入 localStorage 并触发 statisticsUpdated 时，
         // 这里清理缓存，确保后续读取最新数据
         window.addEventListener('statisticsUpdated', () => this.invalidateCache());
+
+        // Move _applyDailyCap here and ensure it runs only once per day
+        const capDate = localStorage.getItem('review_cap_applied');
+        const todayStr = new Date().toLocaleDateString();
+        if (capDate !== todayStr) {
+            // Use a timeout to ensure stats are loaded before applying the cap
+            setTimeout(() => {
+                this._applyDailyCap();
+                localStorage.setItem('review_cap_applied', todayStr);
+            }, 1000); // Delay to allow initial stats loading
+        }
     }
 
     /* ---------------------- 初始化 / 获取 ---------------------- */
@@ -481,13 +492,6 @@ class Statistics {
 
     // 获取待复习项目
     getReviewItems(options = {}) {
-        // daily cap apply once per day
-        const capDate = localStorage.getItem('review_cap_applied');
-        const todayStr = new Date().toLocaleDateString();
-        if(capDate!==todayStr){
-            this._applyDailyCap();
-            localStorage.setItem('review_cap_applied', todayStr);
-        }
         try {
             const stats = this.getStatistics();
             if (!stats.reviewHistory) return [];
