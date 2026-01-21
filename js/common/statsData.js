@@ -666,6 +666,8 @@ class Statistics {
         try{
             const stats = this.getStatistics();
             const cap = getDailyReviewCap();
+            const alreadyDone = (stats.dailyStats && stats.dailyStats[today.toLocaleDateString()] && stats.dailyStats[today.toLocaleDateString()].reviewsDone) || 0;
+            const remainingCap = Math.max(cap - alreadyDone, 0);
             const today = new Date(); today.setHours(0,0,0,0);
             const due = Object.entries(stats.reviewHistory||{})
                         .filter(([id,item])=>{
@@ -675,8 +677,11 @@ class Statistics {
                         })
                         .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
             if(due.length<=cap) return;
+            // 根据今日已做数量，保留 remainingCap 条在今天，其余顺延
             due.forEach(([id, item], idx) => {
-                const offset = Math.floor(idx / cap); // 0 表示今天，1 表示明天，以此类推
+                if (idx < remainingCap) return; // 今日额度内，保持不变
+                const adjIdx = idx - remainingCap; // 从0开始计数溢出条目
+                const offset = Math.floor(adjIdx / cap) + 1; // +1 表示从明天开始
                 const newDate = new Date(today);
                 newDate.setDate(today.getDate() + offset);
                 item.nextReviewDate = newDate.toISOString();
