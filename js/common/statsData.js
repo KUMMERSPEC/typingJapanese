@@ -540,7 +540,9 @@ class Statistics {
                         const nextReview = new Date(item.nextReviewDate);
                         const nextReviewDay = new Date(nextReview.getFullYear(), nextReview.getMonth(), nextReview.getDate());
                         
-                        return nextReviewDay <= today;
+                        // Strict check: only items due exactly today should be counted.
+                        // The _applyDailyCap function is responsible for moving overdue items to today.
+                        return nextReviewDay.getTime() === today.getTime();
                     })()
                 };
             });
