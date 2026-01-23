@@ -345,6 +345,8 @@ canvas#learningTrendChart {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
+    flex-grow: 1; /* Allow this grid to fill vertical space */
+    align-content: center; /* Center the grid items vertically */
 }
 
 /* On smaller screens, stack them vertically */
