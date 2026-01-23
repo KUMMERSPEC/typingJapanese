@@ -343,10 +343,10 @@ canvas#learningTrendChart {
 /* Responsive grid for mastery indicators */
 .mastery-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    grid-template-columns: 1fr; /* Single column for a row-based layout */
+    gap: 12px; /* Slightly reduce gap for a tighter look */
     flex-grow: 1; /* Allow this grid to fill vertical space */
-    align-content: center; /* Center the grid items vertically */
+    align-content: center; /* Center the block of items vertically */
 }
 
 /* On smaller screens, stack them vertically */
