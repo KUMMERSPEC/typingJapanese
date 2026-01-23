@@ -339,3 +339,18 @@ canvas#learningTrendChart {
 .overlay.show {
     opacity: 1;
 }
+
+/* Responsive grid for mastery indicators */
+.mastery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* On smaller screens, stack them vertically */
+@media (max-width: 768px) {
+    .mastery-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
