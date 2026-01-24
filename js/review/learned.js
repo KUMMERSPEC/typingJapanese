@@ -22,6 +22,11 @@ import statsData from '../common/statsData.js';
   const backHome = document.getElementById('backHome');
   const langFilter = document.getElementById('langFilter');
   const tableHead = document.querySelector('.table-wrap thead');
+  if (tableHead && tableHead.querySelector('tr')) {
+      const th = document.createElement('th');
+      th.textContent = '操作';
+      tableHead.querySelector('tr').appendChild(th);
+  }
 
   function updateHeadersByLang(currentLang) {
     if (!tableHead) return;
@@ -171,6 +176,7 @@ import statsData from '../common/statsData.js';
             <td class="nowrap">${escapeHtml(displayText(r.lesson))}</td>
             <td class="nowrap"><span class="badge ${badgeClass(r.proficiency)}">${proficiencyText(r.proficiency)}</span></td>
             <td class="nowrap">${fmtDate(r.nextReviewDate)}</td>
+            <td class="nowrap"><button class="delete-btn" data-id="${escapeHtml(r.id)}" style="background:none; border:none; color: #ef4444; cursor:pointer;">删除</button></td>
           </tr>
         `).join('');
       }
@@ -248,6 +254,21 @@ import statsData from '../common/statsData.js';
     lang = e.target.value || 'all'; 
     updateHeadersByLang(lang);
     applyFilter(); 
+  });
+
+  // Event delegation for delete buttons
+  tbody?.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-btn')) {
+      const sentenceId = e.target.getAttribute('data-id');
+      const row = e.target.closest('tr');
+      const sentenceText = row ? row.cells[0].textContent.trim() : 'this sentence';
+
+      if (sentenceId && confirm(`确定要永久删除句子 “${sentenceText}” 吗？\n此操作无法撤销。`)) {
+        statsData.deleteSentence(sentenceId);
+        // Reload data from statsData and re-render the table
+        load();
+      }
+    }
   });
 
   // init

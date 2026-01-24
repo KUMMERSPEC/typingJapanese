@@ -191,6 +191,9 @@ class FlashcardManager {
                             认识
                         </button>
                     </div>
+                    <div class="extra-actions" style="text-align: center; margin-top: 15px;">
+                        <button class="ignore-btn" style="background: none; border: none; color: #999; cursor: pointer;">永不出现</button>
+                    </div>
                 </div>
             `;
         }
@@ -437,6 +440,27 @@ class FlashcardManager {
                     break;
             }
         });
+
+        // Ignore button
+        const ignoreBtn = document.querySelector('.ignore-btn');
+        if (ignoreBtn) {
+            ignoreBtn.addEventListener('click', () => {
+                const current = this.sentences[this.currentIndex];
+                if (current && confirm(`确定要将“${current.japanese || current.sentence}”标记为永不出现吗？`)) {
+                    statsData.ignoreSentence(current.id);
+                    // Remove from current session and move to the next card
+                    this.sentences.splice(this.currentIndex, 1);
+                    if (this.sentences.length === 0) {
+                        this.showComplete();
+                        return;
+                    }
+                    if (this.currentIndex >= this.sentences.length) {
+                        this.currentIndex = 0;
+                    }
+                    this.showCurrentCard();
+                }
+            });
+        }
 
         // 添加触摸事件
         if (flashcard) {

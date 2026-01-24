@@ -496,7 +496,9 @@ class Statistics {
             const stats = this.getStatistics();
             if (!stats.reviewHistory) return [];
             const now = new Date();
-            let items = Object.entries(stats.reviewHistory).map(([rawId, item]) => {
+            let items = Object.entries(stats.reviewHistory)
+                .filter(([_, item]) => !item.isIgnored)
+                .map(([rawId, item]) => {
                 // ensure id safe encoded for UI & downstream operations
                 const id = rawId.includes(':') ? encodeId(rawId) : rawId;
                 // 处理收藏夹显示
@@ -796,6 +798,48 @@ class Statistics {
     save() {
         if (this._stats) {
             this.saveStatistics(this._stats);
+        }
+    }
+
+    ignoreSentence(sentenceId) {
+        const safeId = this.resolveKey(sentenceId);
+        sentenceId = safeId;
+
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory || !stats.reviewHistory[sentenceId]) {
+                console.warn('[statsData] ignoreSentence: Could not find sentence', sentenceId);
+                return;
+            }
+            const record = stats.reviewHistory[sentenceId];
+            record.isIgnored = true;
+            this.saveStatistics(stats);
+            console.log(`[statsData] Sentence "${record.japanese}" marked as ignored.`);
+        } catch (err) {
+            console.error('[statsData] ignoreSentence error:', err);
+        }
+    }
+
+    deleteSentence(sentenceId) {
+        const safeId = this.resolveKey(sentenceId);
+        sentenceId = safeId;
+
+        try {
+            const stats = this.getStatistics();
+            if (!stats.reviewHistory || !stats.reviewHistory[sentenceId]) {
+                console.warn('[statsData] deleteSentence: Could not find sentence', sentenceId);
+                return;
+            }
+            
+            delete stats.reviewHistory[sentenceId];
+            
+            // Recalculate total sentences after deletion
+            this.getLearnedSentences(); // This will recount and save
+
+            this.saveStatistics(stats);
+            console.log(`[statsData] Sentence with ID "${sentenceId}" has been deleted.`);
+        } catch (err) {
+            console.error('[statsData] deleteSentence error:', err);
         }
     }
 
