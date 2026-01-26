@@ -262,16 +262,7 @@ class Statistics {
         // 这里清理缓存，确保后续读取最新数据
         window.addEventListener('statisticsUpdated', () => this.invalidateCache());
 
-        // Move _applyDailyCap here and ensure it runs only once per day
-        const capDate = localStorage.getItem('review_cap_applied');
-        const todayStr = new Date().toLocaleDateString();
-        if (capDate !== todayStr) {
-            // Use a timeout to ensure stats are loaded before applying the cap
-            setTimeout(() => {
-                this._applyDailyCap();
-                localStorage.setItem('review_cap_applied', todayStr);
-            }, 1000); // Delay to allow initial stats loading
-        }
+        // The daily cap is now applied on demand when the review panel is opened.
     }
 
     /* ---------------------- 初始化 / 获取 ---------------------- */
@@ -664,9 +655,9 @@ class Statistics {
     }
 
     /* ------------------------------------------------------------------
-     * 每日复习上限：超过上限的条目顺延一天（仅执行一次/日）
+     * 每日复习上限：超过上限的条目顺延一天
      * ------------------------------------------------------------------*/
-    _applyDailyCap(){
+    applyDailyCap(){
         try{
             const stats = this.getStatistics();
             const cap = getDailyReviewCap();
