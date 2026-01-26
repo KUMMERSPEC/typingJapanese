@@ -181,18 +181,16 @@ class FlashcardManager {
                             <i class="fas fa-volume-up"></i>
                         </button>
                     </div>
-                    <div class="review-buttons">
+                    <div class="review-buttons" style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
                         <button class="review-btn wrong">
                             <i class="fas fa-times"></i>
                             不认识
                         </button>
+                        <button class="ignore-btn" style="background:#e5e7eb;color:#374151;border:none;padding:8px 14px;border-radius:8px;min-width:72px;">永不出现</button>
                         <button class="review-btn correct">
                             <i class="fas fa-check"></i>
                             认识
                         </button>
-                    </div>
-                    <div class="extra-actions" style="text-align: center; margin-top: 15px;">
-                        <button class="ignore-btn" style="background: none; border: none; color: #999; cursor: pointer;">永不出现</button>
                     </div>
                 </div>
             `;
