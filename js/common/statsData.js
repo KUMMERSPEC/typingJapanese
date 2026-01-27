@@ -657,42 +657,67 @@ class Statistics {
     /* ------------------------------------------------------------------
      * 每日复习上限：超过上限的条目顺延一天
      * ------------------------------------------------------------------*/
-    applyDailyCap(){
-        try{
+    applyDailyCap() {
+        try {
             const stats = this.getStatistics();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayStr = today.toLocaleDateString();
+
             const cap = getDailyReviewCap();
-            const alreadyDone = (stats.dailyStats && stats.dailyStats[today.toLocaleDateString()] && stats.dailyStats[today.toLocaleDateString()].reviewsDone) || 0;
+            const alreadyDone = (stats.dailyStats?.[todayStr]?.reviewsDone) || 0;
             const remainingCap = Math.max(cap - alreadyDone, 0);
-            const today = new Date(); today.setHours(0,0,0,0);
-            const due = Object.entries(stats.reviewHistory||{})
-                        .filter(([id,item])=>{
-                            if(!item || !item.nextReviewDate) return false;
-                            const d = new Date(item.nextReviewDate); d.setHours(0,0,0,0);
-                            return d<=today && (item.proficiency!=='high' && item.proficiency!=='master');
-                        })
-                        .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
-            if(due.length<=cap) return;
-            // 1. First, bring all overdue items to today.
-            due.forEach(([id, item]) => {
+
+            // Step 1: Find all items due today or earlier (the backlog).
+            const dueItems = Object.entries(stats.reviewHistory || {})
+                .filter(([_, item]) => {
+                    if (!item?.nextReviewDate || item.isIgnored) return false;
+                    const d = new Date(item.nextReviewDate);
+                    d.setHours(0, 0, 0, 0);
+                    return d <= today && item.proficiency !== 'high' && item.proficiency !== 'master';
+                });
+
+            if (dueItems.length === 0) {
+                console.log('[statsData] applyDailyCap: No due items to process.');
+                return; // Nothing to do.
+            }
+
+            // Step 2: Sort the backlog to prioritize the oldest items first.
+            dueItems.sort((a, b) => new Date(a[1].nextReviewDate) - new Date(b[1].nextReviewDate));
+
+            // Step 3: Decide which items will be for today and which to postpone.
+            const itemsForToday = dueItems.slice(0, remainingCap);
+            const itemsToPostpone = dueItems.slice(remainingCap);
+
+            let changed = false;
+
+            // Ensure all of today's items are correctly dated.
+            itemsForToday.forEach(([_, item]) => {
                 const d = new Date(item.nextReviewDate); d.setHours(0,0,0,0);
-                if (d.getTime() < today.getTime()) {
+                if (d.getTime() !== today.getTime()) {
                     item.nextReviewDate = today.toISOString();
+                    changed = true;
                 }
             });
 
-            // 2. Then, apply the cap to today's items.
-            const itemsForToday = due.slice(0, remainingCap);
-            const itemsToPostpone = due.slice(remainingCap);
-
-            itemsToPostpone.forEach(([id, item], idx) => {
-                const offset = Math.floor(idx / cap) + 1; // Postpone starting from tomorrow
+            // Postpone the rest.
+            itemsToPostpone.forEach(([_, item], idx) => {
+                const offset = Math.floor(idx / cap) + 1; // Start postponing from tomorrow
                 const newDate = new Date(today);
                 newDate.setDate(today.getDate() + offset);
                 item.nextReviewDate = newDate.toISOString();
+                changed = true;
             });
-            this.saveStatistics(stats);
-            console.log(`[statsData] Daily cap applied. Overflow ${due.length-cap} items postponed.`);
-        }catch(e){console.warn('[statsData] applyDailyCap error',e);}    
+
+            if (changed) {
+                this.saveStatistics(stats);
+                console.log(`[statsData] Daily cap applied. ${itemsForToday.length} items for today, ${itemsToPostpone.length} items postponed.`);
+            } else {
+                console.log('[statsData] Daily cap checked, no changes needed.');
+            }
+        } catch (e) {
+            console.warn('[statsData] applyDailyCap error', e);
+        }
     }
 
     /* ------------------------------------------------------------------
