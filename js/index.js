@@ -18,8 +18,20 @@ function refreshHomeBadges() {
     // 待复习
     const reviewBadge = document.querySelector('.review-items');
     if (reviewBadge) {
-      const todayCount = statsData.getReviewItems()
-                         .filter(item => item.needsReview).length;
+      // --- 与复习面板完全相同的过滤、去重逻辑，确保数字一致 ---
+      let allItems = statsData.getReviewItems().filter(item => item && (item.japanese || item.sentence));
+      const seen = new Map();
+      const norm = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+      allItems.forEach(it=>{
+          const key = [norm(it.japanese||it.sentence||''), norm(it.hiragana||''), norm(it.meaning||'')].join('||');
+          if(!seen.has(key)) { seen.set(key, it); return; }
+          const existed = seen.get(key);
+          const profRank = p=>({low:0,medium:1,high:2,master:3}[p]??0);
+          const pick = ((existed.nextReviewDate?1:0)+profRank(existed.proficiency)) >= ((it.nextReviewDate?1:0)+profRank(it.proficiency)) ? existed : it;
+          seen.set(key, pick);
+      });
+      allItems = Array.from(seen.values());
+      const todayCount = allItems.filter(item => item.needsReview && item.proficiency !== 'high' && item.proficiency !== 'master').length;
       reviewBadge.textContent = todayCount;
     }
 
@@ -291,7 +303,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
         if (elements.reviewItems) {
         // 直接从过滤后的数组中获取“今日待复习”的数量
-        const todayCount = statsData.getReviewItems().filter(item => item.needsReview).length;
+        // 直接从过滤后的数组中获取“今日待复习”的数量
+        // --- 与复习面板完全相同的过滤、去重逻辑，确保数字一致 ---
+        let allItems = statsData.getReviewItems().filter(item => item && (item.japanese || item.sentence));
+        const seen = new Map();
+        const norm = s => (s||'').replace(/[:、。！？….,，;；:：!？\s]+/g,'');
+        allItems.forEach(it=>{
+            const key = [norm(it.japanese||it.sentence||''), norm(it.hiragana||''), norm(it.meaning||'')].join('||');
+            if(!seen.has(key)) { seen.set(key, it); return; }
+            const existed = seen.get(key);
+            const profRank = p=>({low:0,medium:1,high:2,master:3}[p]??0);
+            const pick = ((existed.nextReviewDate?1:0)+profRank(existed.proficiency)) >= ((it.nextReviewDate?1:0)+profRank(it.proficiency)) ? existed : it;
+            seen.set(key, pick);
+        });
+        allItems = Array.from(seen.values());
+        const todayCount = allItems.filter(item => item.needsReview && item.proficiency !== 'high' && item.proficiency !== 'master').length;
         elements.reviewItems.textContent = todayCount;
     }
 
