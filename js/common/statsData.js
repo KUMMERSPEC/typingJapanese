@@ -672,11 +672,20 @@ class Statistics {
                         })
                         .sort((a,b)=> new Date(a[1].nextReviewDate)-new Date(b[1].nextReviewDate));
             if(due.length<=cap) return;
-            // 根据今日已做数量，保留 remainingCap 条在今天，其余顺延
-            due.forEach(([id, item], idx) => {
-                if (idx < remainingCap) return; // 今日额度内，保持不变
-                const adjIdx = idx - remainingCap; // 从0开始计数溢出条目
-                const offset = Math.floor(adjIdx / cap) + 1; // +1 表示从明天开始
+            // 1. First, bring all overdue items to today.
+            due.forEach(([id, item]) => {
+                const d = new Date(item.nextReviewDate); d.setHours(0,0,0,0);
+                if (d.getTime() < today.getTime()) {
+                    item.nextReviewDate = today.toISOString();
+                }
+            });
+
+            // 2. Then, apply the cap to today's items.
+            const itemsForToday = due.slice(0, remainingCap);
+            const itemsToPostpone = due.slice(remainingCap);
+
+            itemsToPostpone.forEach(([id, item], idx) => {
+                const offset = Math.floor(idx / cap) + 1; // Postpone starting from tomorrow
                 const newDate = new Date(today);
                 newDate.setDate(today.getDate() + offset);
                 item.nextReviewDate = newDate.toISOString();
