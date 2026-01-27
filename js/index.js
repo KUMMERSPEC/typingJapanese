@@ -376,6 +376,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 显示复习面板
 function showReviewPanel() {
+    // 在显示面板前，先应用每日上限逻辑，将过期的条目挪到今天
+    if (window.statsData && typeof window.statsData.applyDailyCap === 'function') {
+        window.statsData.applyDailyCap();
+    }
     const reviewPanel = document.querySelector('.review-panel');
     const overlay = document.querySelector('.overlay');
     
