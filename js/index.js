@@ -98,7 +98,7 @@ function initReviewPanel() {
         btnPrev.addEventListener('click', () => {
             if (reviewPage > 1) {
                 reviewPage--;
-                updateReviewList();
+                // updateReviewList(); // Do not call directly, let the 'statisticsUpdated' event handle it.
             }
         });
     }
